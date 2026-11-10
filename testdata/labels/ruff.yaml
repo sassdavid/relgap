@@ -1,0 +1,102 @@
+tool: ruff
+repo: astral-sh/ruff
+range: 0.16.0..0.17.4
+entries:
+    - version: 0.16.1
+      heading: [Release Notes, Other changes]
+      text: Vendor latest annotate-snippets ([#27033](https://github.com/astral-sh/ruff/pull/27033))
+      breaking: false
+    - version: 0.16.1
+      heading: [Release Notes, Documentation]
+      text: \[`flake8-bandit`\] Document `TYPE_CHECKING` exception (`S101`) ([#27004](https://github.com/astral-sh/ruff/pull/27004))
+      breaking: false
+    - version: 0.16.4
+      heading: [Release Notes, Rule changes]
+      text: '[syntax-errors] Detect duplicate keyword arguments ([#17804](https://github.com/astral-sh/ruff/pull/17804))'
+      breaking: false
+    - version: 0.16.5
+      heading: [Release Notes, Server]
+      text: Fix duplicated "of" in `ClientOptions` doc comment ([#27978](https://github.com/astral-sh/ruff/pull/27978))
+      breaking: false
+    - version: 0.16.6
+      heading: [Release Notes, Documentation]
+      text: Add duplicate work guidance ([#28229](https://github.com/astral-sh/ruff/pull/28229))
+      breaking: false
+    - version: 0.16.6
+      heading: [Release Notes, Bug fixes]
+      text: \[`flake8-pytest-style`\] Avoid duplicate `PT017` diagnostics ([#27918](https://github.com/astral-sh/ruff/pull/27918))
+      breaking: false
+    - version: 0.16.7
+      heading: [Release Notes, Rule changes]
+      text: \[`pyupgrade`\] Stop recommending removed `typing.no_type_check_decorator` (`UP035`) ([#28475](https://github.com/astral-sh/ruff/pull/28475))
+      breaking: false
+    - version: 0.16.7
+      heading: [Release Notes, Documentation]
+      text: Fix `line-length` path in `--config` example ([#28392](https://github.com/astral-sh/ruff/pull/28392))
+      breaking: false
+    - version: 0.16.7
+      heading: [Release Notes, Preview features]
+      text: \[`ruff`\] Recognize `re.prefixmatch` (`RUF039`, `RUF055`) ([#28311](https://github.com/astral-sh/ruff/pull/28311))
+      breaking: false
+    - version: 0.16.8
+      heading: [Release Notes, Rule changes]
+      text: Recognize quoted types in `typing.TypeForm` ([#28507](https://github.com/astral-sh/ruff/pull/28507))
+      breaking: false
+    - version: 0.16.9
+      heading: [Release Notes]
+      text: Released on 2026-09-24.
+      breaking: false
+    - version: 0.17.0
+      heading: [Release Notes, Breaking changes]
+      text: |-
+        Support Unicode dummy variable names ([#28722](https://github.com/astral-sh/ruff/pull/28722))
+
+          The default [`lint.dummy-variable-rgx`](https://docs.astral.sh/ruff/settings/#lint_dummy-variable-rgx) now recognizes underscore-prefixed Unicode names, such as `_次`, as dummy variables.
+      breaking: true
+    - version: 0.17.0
+      heading: [Release Notes, Breaking changes]
+      text: |-
+        Update Rust crate quick-junit to 0.8.0 ([#27295](https://github.com/astral-sh/ruff/pull/27295))
+
+          JUnit output now uses a `skipped` attribute instead of `disabled` on `<testsuite>` elements and includes a `skipped` attribute on the root `<testsuites>` element.
+      breaking: true
+    - version: 0.17.0
+      heading: [Release Notes, Breaking changes]
+      text: |-
+        Update the default and latest Python versions for 3.15 ([#28792](https://github.com/astral-sh/ruff/pull/28792))
+
+          Ruff now defaults to Python 3.11 instead of 3.10 when no Python version is configured through [`target-version`](https://docs.astral.sh/ruff/settings/#target-version) or [`requires-python`](https://docs.astral.sh/ruff/configuration/#inferring-the-python-version). When checking for syntax errors without a configured Python version, Ruff now defaults to Python 3.15 instead of 3.14.
+      breaking: true
+    - version: 0.17.0
+      heading: [Release Notes, Breaking changes]
+      text: |-
+        Remove support for ruff-lsp ([#28750](https://github.com/astral-sh/ruff/pull/28750))
+
+          Support for `ruff-lsp`, the legacy Python language server [deprecated in Ruff v0.9.5](https://github.com/astral-sh/ruff/releases/tag/0.9.5), has been removed. The Ruff VS Code extension now always uses the native language server; `ruff.nativeServer` is deprecated and ignored. See the [migration guide](https://docs.astral.sh/ruff/editors/migration/).
+      breaking: true
+    - version: 0.17.0
+      heading: [Release Notes, Breaking changes]
+      text: |-
+        Update to Unicode 17 ([#21229](https://github.com/astral-sh/ruff/pull/21229), [#28784](https://github.com/astral-sh/ruff/pull/28784))
+
+          Ruff now uses Unicode 17 data for identifier normalization and named character escapes (`"\N{...}"`).
+      breaking: false
+    - version: 0.17.0
+      heading: [Release Notes, Breaking changes]
+      text: |-
+        Remove the Python dependency from conda-forge builds ([conda-forge/ruff-feedstock#361](https://github.com/conda-forge/ruff-feedstock/pull/361))
+
+          The conda-forge build no longer depends on Python, now supports linux-riscv64, win-arm64, and linux-ppc64le platforms, and now includes shell completions. However, no longer depending on Python means that `python -m ruff` and `import ruff` will no longer work. Use `ruff` directly from `PATH` instead. PyPI installations and those from the standalone installer are unaffected.
+      breaking: true
+    - version: 0.17.0
+      heading: [Release Notes, Stabilization]
+      text: 'The following rules have been stabilized and are no longer in preview:'
+      breaking: false
+    - version: 0.17.1
+      heading: [Release Notes, Documentation]
+      text: \[`flake8-import-conventions`\] Update default and example `aliases` ([#29333](https://github.com/astral-sh/ruff/pull/29333))
+      breaking: false
+    - version: 0.17.2
+      heading: [Release Notes, Configuration]
+      text: \[`pylint`\] Add a configurable allowlist for `magic-value-comparison` (`PLR2004`) ([#18961](https://github.com/astral-sh/ruff/pull/18961))
+      breaking: false

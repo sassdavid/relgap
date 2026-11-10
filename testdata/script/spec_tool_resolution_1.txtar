@@ -30,7 +30,7 @@ version.tag_prefix  "v"                                                         
 version.universe    releases                                                                     relgap registry
 version.line        none                                                                         default
 sources.0           changelog-file path=CHANGELOG.md ref=v{major}.{minor} heading=^{version} \(  relgap registry
-sources.1           gh-release                                                                   relgap registry
+sources.1           gh-release ignore=Previous Releases                                          relgap registry
 eol                 terraform {major}.{minor}                                                    relgap registry
 osv                 Go github.com/hashicorp/terraform                                            relgap registry
 -- tf.txt --
@@ -46,7 +46,7 @@ version.tag_prefix  "v"                                                         
 version.universe    releases                                                                     relgap registry
 version.line        none                                                                         default
 sources.0           changelog-file path=CHANGELOG.md ref=v{major}.{minor} heading=^{version} \(  relgap registry
-sources.1           gh-release                                                                   relgap registry
+sources.1           gh-release ignore=Previous Releases                                          relgap registry
 eol                 terraform {major}.{minor}                                                    relgap registry
 osv                 Go github.com/hashicorp/terraform                                            relgap registry
 -- env.txt --
@@ -62,7 +62,7 @@ version.tag_prefix  "v"                                                         
 version.universe    releases                                                                     relgap registry
 version.line        none                                                                         default
 sources.0           changelog-file path=CHANGELOG.md ref=v{major}.{minor} heading=^{version} \(  relgap registry
-sources.1           gh-release                                                                   relgap registry
+sources.1           gh-release ignore=Previous Releases                                          relgap registry
 eol                 terraform {major}.{minor}                                                    relgap registry
 osv                 Go github.com/hashicorp/terraform                                            relgap registry
 -- aqua.txt --
@@ -78,6 +78,6 @@ version.tag_prefix  "v"                                                         
 version.universe    releases                                                                     relgap registry
 version.line        none                                                                         default
 sources.0           changelog-file path=CHANGELOG.md ref=v{major}.{minor} heading=^{version} \(  relgap registry
-sources.1           gh-release                                                                   relgap registry
+sources.1           gh-release ignore=Previous Releases                                          relgap registry
 eol                 terraform {major}.{minor}                                                    relgap registry
 osv                 Go github.com/hashicorp/terraform                                            relgap registry

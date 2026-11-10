@@ -1,0 +1,127 @@
+tool: mise
+repo: jdx/mise
+range: 2026.10.10..2026.11.6
+entries:
+    - version: 2026.10.11
+      heading: [Speed and GitHub API usage]
+      text: |-
+        **Faster version resolution:**
+        - Multi-tool commands such as `mise outdated` can resolve many registry tools with one request to the mise-versions index. [#14473](https://github.com/jdx/mise/pull/14473)
+        - `latest` is resolved without refetching the list. [#14456](https://github.com/jdx/mise/pull/14456)
+        - Explicit backend args such as `aqua:jqlang/jq` reuse the registry tool's version list. [#14459](https://github.com/jdx/mise/pull/14459)
+        - Release tags come from the versions host instead of being listed or guessed. [#14442](https://github.com/jdx/mise/pull/14442)
+        - Packslip installs no longer re-download what resolution already verified. [#14466](https://github.com/jdx/mise/pull/14466)
+        - Install tracking and the Python version list are served from static assets. [#14441](https://github.com/jdx/mise/pull/14441)
+      breaking: false
+    - version: 2026.10.11
+      heading: [Speed and GitHub API usage]
+      text: |-
+        Other requests also moved off the GitHub API:
+        - `mise x`, `mise exec`, shims and `hook-env` use mise-versions when they auto-install a tool. [#14458](https://github.com/jdx/mise/pull/14458)
+        - `mise self-update` reads mise's releases from mise-versions and downloads the archive from github.com release downloads. Packslip and zipsign verification are unchanged. [#14464](https://github.com/jdx/mise/pull/14464)
+        - `mise lock` downloads artifacts for provenance checks from github.com instead of the API asset endpoint. [#14465](https://github.com/jdx/mise/pull/14465)
+        - Aqua registries hosted on GitHub are fetched from raw.githubusercontent.com. [#14470](https://github.com/jdx/mise/pull/14470)
+        - Ruby looks up the latest ruby-build release through mise-versions. [#14471](https://github.com/jdx/mise/pull/14471)
+      breaking: false
+    - version: 2026.10.17
+      heading: [Upgrading]
+      text: '**`find_up` in a global config:** a relative `find_up` entry in `env._.file` used to search from the current directory. It now searches from the config root, which is `~` for a global config, so it no longer finds project files. To keep the old behavior, put `{{cwd}}/` in front of the path. `find_up` was added in 2026.10.12.'
+      breaking: true
+    - version: 2026.10.18
+      heading: [Fixed, 'Tasks, bootstrap and generate']
+      text: '`mise tasks list` now works as an alias for `mise tasks ls`. If you have a task named `list`, that task still runs. [#14878](https://github.com/jdx/mise/pull/14878) (@jdx, @mcstafford-git)'
+      breaking: false
+    - version: 2026.10.18
+      heading: [Fixed, Windows]
+      text: In tasks, `run_windows = []` now skips the task on Windows instead of running `run`. [#14859](https://github.com/jdx/mise/pull/14859) (@jdx)
+      breaking: false
+    - version: 2026.10.19
+      heading: [Breaking Changes]
+      text: |-
+        **Other changes:**
+        - `MISE_OVERRIDE_*_FILENAMES` entries are matched as literal file names;
+        - config, lock and task files over 16 MiB are refused;
+        - a `.tool-versions` or idiomatic version file that links to a file with a different name is skipped;
+        - a relative `go.repo` resolves from `$HOME`;
+        - a bare `OWNER/REPO` passed to `bootstrap --adopt` that matches a local path is an error (write `./OWNER/REPO` for the local path).
+      breaking: true
+    - version: 2026.10.19
+      heading: [Breaking Changes]
+      text: 'Most setups need no changes. Check these cases:'
+      breaking: false
+    - version: 2026.10.19
+      heading: [Breaking Changes]
+      text: '**Lockfiles:** installs now rewrite `mise.lock` in `generate` mode. To keep the old behavior, set `lockfile_mode = "merge"`.'
+      breaking: true
+    - version: 2026.10.19
+      heading: []
+      text: 'Most of this release closes ways an untrusted repository, download host or mirror could run code, leak credentials or get around verification. Some of these fixes make mise stricter, so check **Breaking Changes** before you upgrade. Also in this release: `lockfile_mode = "generate"` is now the default, `mise lsp` sends semantic highlighting, and there is a new `{{ mise_config_dir }}` template variable.'
+      breaking: true
+    - version: 2026.10.19
+      heading: [Security, Trust and safe mode]
+      text: '`cd`-ing into a hostile repository can no longer hang or crash `hook-env` or make mise print files from outside the repo. Causes this covers include configs linked to devices, symlink mazes in task directories, non-UTF-8 paths, oversized files, glob characters in paths, and version files that link to another file. [#14916](https://github.com/jdx/mise/pull/14916) (@jdx)'
+      breaking: false
+    - version: 2026.10.21
+      heading: [Added]
+      text: |-
+        **Stow packages need no `[dotfile_groups]` tables.** If a name in `[bootstrap] dotfile_groups` has no matching table but is a directory under `dotfiles.root`, mise treats it as a group with the default settings: that directory is deployed into `~` file by file. A table with the same name still overrides the defaults. `mise dot add --group`, `mise dot unapply --group` and orphan reporting work for these groups too. [#15025](https://github.com/jdx/mise/pull/15025) (@jdx, @lhs-12, @Mossop)
+
+        ```toml
+        [bootstrap]
+        dotfile_groups = ["kitty", "nvim", "zsh"]
+        ```
+      breaking: false
+    - version: 2026.10.22
+      heading: [Changed]
+      text: 'Setting `system_packages.elevate_with = ""` now means "never elevate": package manager commands run as the current user. This helps on hosts without root, such as Termux. Before, an empty value fell back to `sudo`, `run0` or `doas`. If the setting is unset, mise still picks an elevator from `PATH`. [#15049](https://github.com/jdx/mise/pull/15049) (@jdx, @iliqiliev)'
+      breaking: true
+    - version: 2026.10.22
+      heading: [Fixed]
+      text: When api.github.com times out (5xx) listing releases for repositories with many assets per release, such as `github:be5invis/Iosevka`, mise now retries with smaller pages of 30 and then 10 releases instead of failing. [#15078](https://github.com/jdx/mise/pull/15078) (@jdx)
+      breaking: false
+    - version: 2026.10.23
+      heading: [Changed]
+      text: '`mise dot status` and `mise dot sync` no longer start one git process per tracked file. In one test with about 860 tracked files, a warm `mise dot status` dropped from about 7s to 1.4s. Output is unchanged. [#15127](https://github.com/jdx/mise/pull/15127) (@waynehoover)'
+      breaking: false
+    - version: 2026.10.25
+      heading: []
+      text: '`mise tasks` can now add, change and remove tasks in a chosen config file without an editor, and `mise watch --once` waits for one change, runs the tasks and exits. Both suit scripts and coding agents. The release also adds opt-in env caching for configs with redacted values, and fixes concurrent installs, lockfiles in symlinked config dirs, slow reshims and signed macOS app bundles.'
+      breaking: false
+    - version: 2026.10.25
+      heading: [Fixed]
+      text: A `[bootstrap.repos]` entry whose `ref` is an annotated tag now reports `current` once that tag is checked out. Before, it always reported `differs`, and every `apply` checked the tag out again. [#15199](https://github.com/jdx/mise/pull/15199) (@jdx)
+      breaking: false
+    - version: 2026.11.0
+      heading: [Breaking Changes]
+      text: '**`--locked` fails on lockfile entries without checksums.** This affects lockfiles written by hand or by an older mise. Run `mise lock` once to fill in the checksums. Lockfiles in `lockfile_mode = "merge"` are exempt. To keep the old behavior, set `locked_require_checksum = false`, or set it to `true` to require checksums in merge mode too. The setting will start warning in 2027.10.0. [#15285](https://github.com/jdx/mise/pull/15285)'
+      breaking: true
+    - version: 2026.11.1
+      heading: [Breaking Changes]
+      text: |-
+        **npm provenance is verified by default.** [#15341](https://github.com/jdx/mise/pull/15341) (@jdx) `npm.provenance` is now `true` by default. Here is what changes:
+        - An `npm:` package whose provenance doesn't verify, or that comes from a repository other than the one pinned in `mise.lock`, now fails to install.
+        - Packages and registries that publish no provenance install as before, unless `mise.lock` already pins a repository for that version.
+        - Installs through another `npm.package_manager`, and local archives pinned only by a `checksum`, are installed without a check instead of failing. They still fail under the `provenance` category of `paranoid`.
+        - Verification fetches Sigstore's trust roots. If your network blocks them, installs of packages that publish provenance fail until you opt out.
+        - Only the tool's own package is checked, not its dependencies. Private or authenticated registries are not queried.
+
+        To opt out:
+
+        ```toml
+        [settings.npm]
+        provenance = false   # or MISE_NPM_PROVENANCE=0
+        ```
+      breaking: true
+    - version: 2026.11.1
+      heading: [Fixed]
+      text: '**PowerShell prompt status:** with `mise activate pwsh`, the prompt that mise wraps, such as starship''s, can see `$?` again, so it shows when a native command failed. [#15315](https://github.com/jdx/mise/pull/15315) (@meop)'
+      breaking: false
+    - version: 2026.11.2
+      heading: [Fixed]
+      text: |-
+        **Lockfiles and safe mode**
+        - `MISE_SAFE=1 MISE_LOCKED=1 mise install` works again for `node`, `python` and `go` when `mise.lock` has their checksums. It used to fail with "No lockfile URL found". These tools now work out their own download URL and check it against the locked checksum. If safe mode is the reason a URL is missing, the error now says so. [#15392](https://github.com/jdx/mise/pull/15392) (@jdx)
+        - `npm:` tools locked through aube now install in safe mode and in untrusted projects. mise keeps the lockfile's dependency graph if it only fetches from the registry using integrity hashes. Graphs that name tarball URLs, git sources or local paths are still dropped. [#15401](https://github.com/jdx/mise/pull/15401) (@jdx)
+        - `mise lock java@temurin-27` no longer rewrites `java = "temurin-26"` to the broken `temurin-temurin`. It now writes `temurin-27`, with the same precision as the original request. Switching vendor at the same version, as in `java@zulu-26`, is saved too. [#15386](https://github.com/jdx/mise/pull/15386) (@jdx)
+        - When `mise lock tool@3.0.1` changes `tool = "2"` to `tool = "3"` in the config, the lockfile entry now records `"3"`, the request the config holds, instead of `"3.0.1"`. Before, later lookups for that request couldn't find the entry. [#15404](https://github.com/jdx/mise/pull/15404) (@jdx)
+      breaking: false

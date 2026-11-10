@@ -1,0 +1,143 @@
+tool: gh
+repo: cli/cli
+range: 2.96.0..2.103.3
+entries:
+    - version: 2.101.0
+      heading: [Copy authentication codes to the clipboard by default]
+      text: |-
+        `gh auth login` and `gh auth refresh` now copy OAuth device codes to the clipboard by default, saving a manual copy step during authentication.
+
+        To persistently opt out, run:
+
+        ```shell
+        gh config set clipboard disabled
+        ```
+
+        Explicit clipboard options still take precedence for an individual invocation.
+      breaking: false
+    - version: 2.101.0
+      heading: [What's Changed, "\U0001F4DA Docs & Chores"]
+      text: Fix Go bump workflow authentication by @williammartin in https://github.com/cli/cli/pull/14412
+      breaking: false
+    - version: 2.101.0
+      heading: [What's Changed, ':dependabot: Dependencies']
+      text: 'chore(deps): bump golang.org/x/term from 0.45.0 to 0.46.0 by @dependabot[bot] in https://github.com/cli/cli/pull/14445'
+      breaking: false
+    - version: 2.101.0
+      heading: [What's Changed, ':dependabot: Dependencies']
+      text: 'chore(deps): bump golang.org/x/sys from 0.47.0 to 0.48.0 by @dependabot[bot] in https://github.com/cli/cli/pull/14417'
+      breaking: false
+    - version: 2.101.0
+      heading: [What's Changed, "\U0001F41B Fixes"]
+      text: Retire multi-account migration by @williammartin in https://github.com/cli/cli/pull/14430
+      breaking: false
+    - version: 2.101.0
+      heading: [What's Changed, "\U0001F41B Fixes"]
+      text: Use API SSH URLs for repository clones by @williammartin in https://github.com/cli/cli/pull/14346
+      breaking: false
+    - version: 2.101.0
+      heading: [What's Changed, "\U0001F41B Fixes"]
+      text: Finalize telemetry at invocation completion by @williammartin in https://github.com/cli/cli/pull/14390
+      breaking: false
+    - version: 2.102.0
+      heading: [What's Changed, ':dependabot: Dependencies']
+      text: 'chore(deps): bump the codeql-actions group with 3 updates by @dependabot in [#14543](https://github.com/cli/cli/pull/14543)'
+      breaking: false
+    - version: 2.102.0
+      heading: [What's Changed, ':dependabot: Dependencies']
+      text: 'chore(deps): bump the codeql-actions group with 3 updates by @dependabot in [#14486](https://github.com/cli/cli/pull/14486)'
+      breaking: false
+    - version: 2.102.0
+      heading: [What's Changed, "\U0001F4DA Docs & Chores"]
+      text: Remove host versions from `gh project item-list` help by @BagToad in [#14553](https://github.com/cli/cli/pull/14553)
+      breaking: false
+    - version: 2.103.0
+      heading: [Manage issue artifacts with `gh issue artifact` (private preview)]
+      text: |-
+        `gh issue artifact` brings issue artifacts to the command line. Users and organizations enrolled in the private preview can use the `list`, `view`, `create`, `edit`, `download`, and `delete` commands to manage issue artifacts.
+
+        ```shell
+        # Create a Markdown document with an attached image
+        gh issue artifact create 142 signin-plan.md --attach ./signin-flow.png
+
+        # Create an HTML document
+        gh issue artifact create 142 menu-prototype.html
+
+        # List or view artifacts
+        gh issue artifact list 142
+        gh issue artifact view 142 2
+
+        # Update a document or restore an earlier version
+        gh issue artifact edit 142 2 --body-file signin-plan-v2.md
+        gh issue artifact edit 142 2 --restore-version 5
+        ```
+
+        Artifacts can also be addressed by their GitHub URLs, and Markdown documents support image and video attachments with `--attach`.
+
+        > [!IMPORTANT]
+        > Issue artifacts are in private preview. These commands only work for repositories enrolled in the preview. See the [Issue Artifacts private preview announcement and feedback discussion](https://github.com/orgs/community/discussions/205881) for access instructions and to share feedback.
+      breaking: false
+    - version: 2.103.0
+      heading: ['Expiring, auto-refreshing OAuth tokens (preview)']
+      text: |-
+        `gh` can now sign in with expiring OAuth credentials that it refreshes automatically. When you opt in, `gh` stores a short-lived access token alongside a rotating refresh token and refreshes the access token whenever it is needed, so you stay signed in without having to authenticate again.
+
+        To opt in for a single sign-in, run:
+
+        ```shell
+        gh auth login --expiring
+        ```
+
+        To prefer expiring credentials for every sign-in, run:
+
+        ```shell
+        gh config set expiring_credentials enabled
+        ```
+
+        `gh auth status` shows whether a credential is refreshable and when the current access token expires. Both `gh auth status` and `gh auth token` automatically refresh the access token when needed. Expiring tokens are available on github.com and GHE.com; on hosts that do not issue them, `gh` falls back to a regular non-expiring token.
+
+        If you use HTTPS as your git protocol, we advise using git 2.46 or newer and letting `gh` act as your git credential helper by running `gh auth setup-git`. This way `gh` serves and refreshes the expiring credential for git, and git does not cache it past its lifetime.
+
+        > [!IMPORTANT]
+        > Expiring access tokens should not be cached. Scripts and extensions that store the output of `gh auth token` will eventually hold an expired token, so run `gh auth token` again each time a token is needed. Tokens supplied through `GH_TOKEN` or `GITHUB_TOKEN` are never refreshed.
+
+        For more information, see [Authenticating with GitHub CLI](https://docs.github.com/github-cli/github-cli/authenticating-with-github-cli#using-expiring-refreshable-tokens).
+      breaking: false
+    - version: 2.103.0
+      heading: [What's Changed, ':dependabot: Dependencies']
+      text: 'chore(deps): bump actions/setup-node from 7.0.0 to 7.1.0 by @dependabot[bot] in https://github.com/cli/cli/pull/14697'
+      breaking: false
+    - version: 2.97.0
+      heading: [What's Changed, ':dependabot: Dependencies']
+      text: 'chore(deps): bump actions/setup-go from 6.5.0 to 7.0.0 by @dependabot in [#13933](https://github.com/cli/cli/pull/13933)'
+      breaking: false
+    - version: 2.97.0
+      heading: [What's Changed, ':dependabot: Dependencies']
+      text: 'chore(deps): bump https://github.com/yuin/goldmark from 1.8.2 to 1.8.4 by @dependabot in [#13888](https://github.com/cli/cli/pull/13888)'
+      breaking: false
+    - version: 2.98.0
+      heading: [What's Changed, "\U0001F4DA Docs & Chores"]
+      text: Tell agents to use the PR template in AGENTS.md by @williammartin in https://github.com/cli/cli/pull/14074
+      breaking: false
+    - version: 2.98.0
+      heading: [What's Changed, ':dependabot: Dependencies']
+      text: Upgrade gh-aw workflows to v0.85.4 by @tidy-dev in https://github.com/cli/cli/pull/14141
+      breaking: false
+    - version: 2.98.0
+      heading: [What's Changed, "\U0001F4DA Docs & Chores"]
+      text: Make Dependabot triage cheaper and more decisive by @williammartin in https://github.com/cli/cli/pull/14079
+      breaking: false
+    - version: 2.99.0
+      heading: [Worktree support extended to `gh issue develop`]
+      text: |-
+        `gh issue develop` can now create a linked branch and check it out in a new Git worktree, leaving your current working copy unchanged:
+
+        ```shell
+        # Create a linked branch for an issue and check it out in a worktree
+        gh issue develop 123 --checkout --worktree /path/to/wt-feature
+        ```
+      breaking: false
+    - version: 2.99.0
+      heading: [What's Changed, "\U0001F41B Fixes"]
+      text: 'fix(issue develop): reject non-empty worktree targets before creating a branch by @tidy-dev in [#14244](https://github.com/cli/cli/pull/14244)'
+      breaking: false

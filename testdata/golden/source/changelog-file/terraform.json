@@ -1,0 +1,54 @@
+[
+  {
+    "version": "1.16.6",
+    "tag": "v1.16.6",
+    "source": {
+      "adapter": "changelog-file",
+      "url": "https://github.com/hashicorp/terraform/blob/v1.16/CHANGELOG.md",
+      "heading": [
+        "1.16.6 (October 14, 2026)"
+      ]
+    },
+    "markdown": "BUG FIXES:\n\n* cloud: `terraform init` can now find workspaces selected by key/value tags whose keys contain uppercase letters. ([#39306](https://github.com/hashicorp/terraform/issues/39306))\n\n* test: Allow module under test to use deprecated outputs. ([#39207](https://github.com/hashicorp/terraform/issues/39207))\n\n\nNOTES:\n\n* Prevent a HTTP/2 resource exhaustion via CVE-2026-78669. Exploitation would require a compromised (untrusted) provider/module registry. Such a threat is considered to be outside the perimeter of Terraform core security guarantees. ([#39375](https://github.com/hashicorp/terraform/issues/39375))\n",
+    "line": 19
+  },
+  {
+    "version": "1.16.7",
+    "tag": "v1.16.7",
+    "source": {
+      "adapter": "changelog-file",
+      "url": "https://github.com/hashicorp/terraform/blob/v1.16/CHANGELOG.md",
+      "heading": [
+        "1.16.7 (October 22, 2026)"
+      ]
+    },
+    "markdown": "BUG FIXES:\n\n* command/test: Avoid panic when testing schema w/ deprecated values ([#39406](https://github.com/hashicorp/terraform/issues/39406))\n\n\nNOTES:\n\n* Terraform is now built with Go 1.26.10, which no longer trusts certificates issued through a set of compromised eMudhra intermediate CAs (CVE-2026-111943) ([#39417](https://github.com/hashicorp/terraform/issues/39417))\n",
+    "line": 6
+  },
+  {
+    "version": "1.17.0",
+    "tag": "v1.17.0",
+    "source": {
+      "adapter": "changelog-file",
+      "url": "https://github.com/hashicorp/terraform/blob/v1.17/CHANGELOG.md",
+      "heading": [
+        "1.17.0 (October 21, 2026)"
+      ]
+    },
+    "markdown": "NEW FEATURES:\n\n* Terraform now supports variables and locals in provider requirements ([#39153](https://github.com/hashicorp/terraform/issues/39153))\n\n* A new `-minimal-refresh` planning option has been added, which will only refresh resources that have proposed changes. ([#35290](https://github.com/hashicorp/terraform/issues/35290))\n\n* policy: Terraform Policy is now generally available. The `-policies` flag for `plan`, `apply`, and `query` no longer requires an experimental build or the `-allow-experimental-features` flag. Query policies evaluate resources discovered by list blocks and report human-readable or JSON results. See https://developer.hashicorp.com/terraform/policy for more information. ([#38970](https://github.com/hashicorp/terraform/issues/38970))\n\n\nENHANCEMENTS:\n\n* command/init: Enrich log messages with provider versions ([#38918](https://github.com/hashicorp/terraform/issues/38918))\n\n* test: Add mock_provider support for ephemeral resources ([#38928](https://github.com/hashicorp/terraform/issues/38928))\n\n* command/login: display warning after successful login if user is subject to an organization's TTL policy\n\n\nBUG FIXES:\n\n* funcs: pow and log no longer panic when result is not a number ([#38912](https://github.com/hashicorp/terraform/issues/38912))\n\n* ephemeral: Terraform will now use and display diagnostics raised when _renewing_ an ephemeral resource. This may cause warnings to appear that previously were lost. We expect that any error diagnostics that were previously lost would have caused confusing downstream errors, so we do not anticipate this change to be breaking. ([#38989](https://github.com/hashicorp/terraform/issues/38989))\n\n* test: Deterministic dependency ordering in cleanup graph ([#38247](https://github.com/hashicorp/terraform/issues/38247))\n\n* query: report Unknown and N/A results for policy evaluations of discovered resources ([#39058](https://github.com/hashicorp/terraform/issues/39058))\n\n* query: `terraform query -policies` now rejects a path that is not a directory, instead of passing it on to the policy engine ([#39238](https://github.com/hashicorp/terraform/issues/39238))\n\n* funcs: The `log` and `pow` functions now raise errors when they return +/- Infinity, as this result is not usable in downstream code. ([#39304](https://github.com/hashicorp/terraform/issues/39304))\n\n* show: Read variable values from the plan file when showing a local plan ([#39362](https://github.com/hashicorp/terraform/issues/39362))\n\n\nNOTES:\n\n* version: JSON output now includes a new `format_version` field, which will enable safer future changes of the command's JSON output format. It is assumed existing tooling ignores unknown fields and therefore this change should not be breaking in itself but we advice consumers to pay attention to `format_version` in future releases and/or use latest version of hashicorp/terraform-json \u0026 hashicorp/terraform-exec which does. ([#38930](https://github.com/hashicorp/terraform/issues/38930))\n\n* Terraform is now built with Go 1.26.10, which no longer trusts certificates issued through a set of compromised eMudhra intermediate CAs (CVE-2026-111943) ([#39417](https://github.com/hashicorp/terraform/issues/39417))\nEXPERIMENTS:\n\nExperiments are only enabled in alpha releases of Terraform CLI. The following features are not yet available in stable releases.\n\n- The experimental \"deferred actions\" feature, enabled by passing the `-allow-deferral` option to `terraform plan`, permits `count` and `for_each` arguments in `module`, `resource`, and `data` blocks to have unknown values and allows providers to react more flexibly to unknown values.\n- `terraform test cleanup`: The experimental `test cleanup` command. In experimental builds of Terraform, a manifest file and state files for each failed cleanup operation during test operations are saved within the `.terraform` local directory. The `test cleanup` command will attempt to clean up the local state files left behind automatically, without requiring manual intervention.\n- `terraform test`: `backend` blocks and `skip_cleanup` attributes:\n  - Test authors can now specify `backend` blocks within `run` blocks in Terraform Test files. Run blocks with `backend` blocks will load state from the specified backend instead of starting from empty state on every execution. This allows test authors to keep long-running test infrastructure alive between test operations, saving time during regular test operations.\n  - Test authors can now specify `skip_cleanup` attributes within test files and within run blocks. The `skip_cleanup` attribute tells `terraform test` not to clean up state files produced by run blocks with this attribute set to true. The state files for affected run blocks will be written to disk within the `.terraform` directory, where they can then be cleaned up manually using the also experimental `terraform test cleanup` command.\n",
+    "line": 18
+  },
+  {
+    "version": "1.17.1",
+    "tag": "v1.17.1",
+    "source": {
+      "adapter": "changelog-file",
+      "url": "https://github.com/hashicorp/terraform/blob/v1.17/CHANGELOG.md",
+      "heading": [
+        "1.17.1 (October 28, 2026)"
+      ]
+    },
+    "markdown": "BUG FIXES:\n\n* fmt: The original content of a file is now preserved if Terraform experiences an error writing to the original file. ([#39303](https://github.com/hashicorp/terraform/issues/39303))\n\n* Always evaluate module policies during destroy plan ([#39455](https://github.com/hashicorp/terraform/issues/39455))\n\n* stacks: report every policy result for a replaced resource instead of only one of them ([#39453](https://github.com/hashicorp/terraform/issues/39453))\n",
+    "line": 6
+  }
+]

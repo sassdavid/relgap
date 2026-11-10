@@ -1,0 +1,91 @@
+tool: golangci-lint
+repo: golangci/golangci-lint
+range: 2.9.0..2.15.0
+entries:
+    - version: 2.10.1
+      heading: []
+      text: |-
+        `golangci-lint` is a free and open-source project built by volunteers.
+
+        If you value it, consider supporting us, the [maintainers](https://donate.golangci.org) and [linter authors](https://golangci-lint.run/docs/product/thanks/).
+
+        We appreciate it! :heart:
+
+        For key updates, see the [changelog](https://golangci-lint.run/docs/product/changelog/#2101).
+      breaking: false
+    - version: 2.11.0
+      heading: [Changelog]
+      text: 'a97407a99fb608c28e4d2b963232be9439528f93 build(deps): bump actions/attest-build-provenance from 3 to 4 in the github-actions group (#6404)'
+      breaking: false
+    - version: 2.11.0
+      heading: [Changelog]
+      text: 'd8bb8c4c6f0e5d4d9b10d1d50413a7959b7cc26b build(deps): bump goreleaser/goreleaser-action from 6 to 7 in the github-actions group (#6384)'
+      breaking: false
+    - version: 2.11.4
+      heading: [Changelog]
+      text: '92706b69ec54f4542985dfcba16a27a666a0fed5 build(deps): bump golang.org/x/mod from 0.33.0 to 0.34.0 (#6433)'
+      breaking: false
+    - version: 2.11.4
+      heading: [Changelog]
+      text: '4bbfc35c455da805b505a4470bc612cdfd63a719 build(deps): bump github.com/fatih/color from 1.18.0 to 1.19.0 (#6451)'
+      breaking: false
+    - version: 2.12.0
+      heading: [Changelog]
+      text: 'bb01e407079871ca4c6edf39b4720a72efbab57a build(deps): bump github.com/sourcegraph/go-diff from 0.7.0 to 0.8.0 (#6524)'
+      breaking: false
+    - version: 2.12.0
+      heading: [Changelog]
+      text: '3ad7eac33ff388240568f0fd0cccb2631e36f85d build(deps): bump github.com/ashanbrown/makezero/v2 from 2.1.0 to 2.2.0 (#6492)'
+      breaking: false
+    - version: 2.12.0
+      heading: [Changelog]
+      text: '8116fb5fbf42ccfd49807b9f96185fe61a7d9a54 build(deps): bump github.com/bombsimon/wsl/v5 from 5.6.0 to 5.8.0 (#6536)'
+      breaking: false
+    - version: 2.12.0
+      heading: [Changelog]
+      text: '4ab3b4477b0d1ded2253af1cafcad6dcb9c396ba build(deps): bump github.com/ashanbrown/makezero/v2 from 2.2.0 to 2.2.1 (#6503)'
+      breaking: false
+    - version: 2.12.1
+      heading: [Changelog]
+      text: '3a006ab284f52a5aac0a7daa77ae683e43fb7b69 gomodguard: fix panic with migration suggestion (#6542)'
+      breaking: false
+    - version: 2.13.0
+      heading: [Changelog]
+      text: '0da5bde5476d1743a399a11e966253b3de3681dd build(deps): bump the linter-testdata group across 4 directories with 6 updates (#6726)'
+      breaking: false
+    - version: 2.13.0
+      heading: [Changelog]
+      text: '0f08d30088922a298d1e8a72f70f6daf6c539830 build(deps): bump golang.org/x/sync from 0.20.0 to 0.21.0 (#6636)'
+      breaking: false
+    - version: 2.13.0
+      heading: [Changelog]
+      text: '17b0746d8802b6b29df5b60e657a48ab5936cd87 build(deps): bump github.com/firefart/nonamedreturns from 1.0.6 to 1.0.7 (#6644)'
+      breaking: false
+    - version: 2.13.0
+      heading: [Changelog]
+      text: '5cc065bd977ffe01f00ae480b88436b345baa593 build(deps): bump the github-actions group with 5 updates (#6712)'
+      breaking: false
+    - version: 2.13.0
+      heading: [Changelog]
+      text: '40c94e07a8506e9ae17604d9e1fc17017fc565fd build(deps): bump github.com/shirou/gopsutil/v4 from 4.26.4 to 4.26.5 (#6610)'
+      breaking: false
+    - version: 2.13.0
+      heading: [Changelog]
+      text: '6827c19bdde9e33b95a1f34c5327e9436b18827e build(deps): bump github.com/Abirdcfly/dupword from 0.1.7 to 0.1.8 (#6569)'
+      breaking: false
+    - version: 2.13.0
+      heading: [Changelog]
+      text: 42a05302e2bbb966fc3ed0636001dbe4fc2b0c58 go1.27 support (#6642)
+      breaking: false
+    - version: 2.14.0
+      heading: [Changelog]
+      text: 'e2891447d93a6be4afb168e7ffbfb752093250e4 build(deps): bump go.augendre.info/fatcontext from 0.10.0 to 0.10.1 (#6792)'
+      breaking: false
+    - version: 2.14.0
+      heading: [Changelog]
+      text: '238321a824bd20040b6c05b6b852ca8ac1e89b04 build(deps): bump mvdan.cc/gofumpt from 0.11.1-0.20260823225713-28272d18f832 to 0.12.0 (#6788)'
+      breaking: false
+    - version: 2.15.0
+      heading: [Changelog]
+      text: 'bb193df40e5ab0ff7105d5e89c6f0c08e466a870 build(deps): bump github.com/uudashr/gocognit from 1.2.1 to 1.3.0 (#6850)'
+      breaking: false

@@ -1,0 +1,114 @@
+tool: k9s
+repo: derailed/k9s
+range: 0.50.0..0.51.0
+entries:
+    - version: 0.50.1
+      heading: [Release v0.51, Resolved Issues]
+      text: '[#3262](https://github.com/derailed/k9s/issues/3262) Crash when no shellPod is defined in config file'
+      breaking: false
+    - version: 0.50.10
+      heading: [Release v0.50.10, Resolved Issues]
+      text: '[#3470](https://github.com/derailed/k9s/issues/3470) Aliases for pods with unequal (!=) label filters not working'
+      breaking: false
+    - version: 0.50.10
+      heading: [Release v0.50.10, Contributed PRs]
+      text: '[#3505](https://github.com/derailed/k9s/pull/3505) docs: Add installation method with gah'
+      breaking: false
+    - version: 0.50.11
+      heading: [Release v0.50.11, Maintenance Release!]
+      text: Oh dear! Hopefully we're happier on this drop?? Apologizes for the `disturbance in the farce`...
+      breaking: false
+    - version: 0.50.14
+      heading: [Release v0.50.14, Maintenance Release!]
+      text: |-
+        Sponsorships are dropping at an alarming rate which puts this project in the red. This is becoming a concern and sad not to mention unsustainable ;( If you dig `k9s` and want to help the project, please consider `paying it forward!` and don't become just another `satisfied, non paying customer!`. K9s does take a lot of my `free` time to maintain, enhance and keep the light on. Many cool ideas are making it straight to the `freezer` as I just can't budget them in.
+        I know many of you work for big corporations, so please put in the word/work and have them help us out via sponsorships or other means.
+
+        Thank you!
+      breaking: false
+    - version: 0.50.14
+      heading: [Release v0.50.14, Resolved Issues]
+      text: '[#3591](https://github.com/derailed/k9s/issues/3591) Accept suggestion with enter (without having to "tab")'
+      breaking: false
+    - version: 0.50.16
+      heading: [Release v0.50.16, Maintenance Release!, Warp Speed Scotty!]
+      text: |-
+        As of this drop, we are introducing `namespace warp` via shortcut `w`.
+        This affords to view all resources of that type based on the currently selected resource namespace.
+        This command is only available on namespaced resources.
+        For example, if you are in pod view and select pod-xxx in namespace `bozo`, hitting `w` will `warp`
+        you to view all pods in namespace `bozo`.
+      breaking: false
+    - version: 0.50.17
+      heading: [Release v0.50.17, Contributed PRs]
+      text: '[#3650](https://github.com/derailed/k9s/pull/3650) Sort all columns'
+      breaking: false
+    - version: 0.50.17
+      heading: [Release v0.50.17, Contributed PRs]
+      text: '[#3720](https://github.com/derailed/k9s/pull/3720) fix(internal/render): ensure object is deep copied before realization in Render method'
+      breaking: false
+    - version: 0.50.17
+      heading: [Release v0.50.17, Contributed PRs]
+      text: '[#3690](https://github.com/derailed/k9s/pull/3690) feat: add support for scaling HPA targets'
+      breaking: false
+    - version: 0.50.17
+      heading: [Release v0.50.17, A Word From Our Sponsors...]
+      text: '[Kraken Tech](https://github.com/kraken-tech)'
+      breaking: false
+    - version: 0.50.17
+      heading: [Release v0.50.17, Contributed PRs]
+      text: '[#3763](https://github.com/derailed/k9s/pull/3763) feat: enable copying multiple resource, namespace names to clipboard'
+      breaking: false
+    - version: 0.50.18
+      heading: [Release v0.50.18, Maintenance Release!]
+      text: |-
+        Oops! I've missed a PR in the v0.50.17 excitement ;( Dropping v0.50.18 with feelings...
+
+        Sponsorships are dropping at an alarming rate which puts this project in the red. This is becoming a concern and sad not to mention unsustainable ;( If you dig `k9s` and want to help the project, please consider `paying it forward!` and don't become just another `satisfied, non paying customer!`. K9s does take a lot of my `free` time to maintain, enhance and keep the light on. Many cool ideas are making it straight to the `freezer` as I just can't budget them in.
+        I know many of you work for big corporations, so please put in the word/work and have them help us out via sponsorships or other means.
+
+        Thank you!
+      breaking: false
+    - version: 0.50.3
+      heading: [Release v0.50.3, Maintenance Release!]
+      text: 'A bit more code spring cleaning/TLC and address a few bugs:'
+      breaking: false
+    - version: 0.50.3
+      heading: [Release v0.50.3, Maintenance Release!]
+      text: '[Custom Views] Fix issue with parsing `jq` filters and bombing out (Big Thanks to Pierre for flagging it!)'
+      breaking: false
+    - version: 0.50.3
+      heading: [Release v0.50.3, Maintenance Release!]
+      text: '[RBAC View] Fix issue bombing out on RBAC cluster roles'
+      breaking: false
+    - version: 0.50.4
+      heading: [Release v0.50.4, Contributed PRs]
+      text: '[#3253](https://github.com/derailed/k9s/pull/3253) fix: set default request timeout to 120 seconds'
+      breaking: false
+    - version: 0.50.7
+      heading: [Release v0.50.7, Contributed PRs]
+      text: '[#3347](https://github.com/derailed/k9s/pull/3347) Fix GVR Title option in readme'
+      breaking: false
+    - version: 0.50.7
+      heading: [Release v0.50.7, Resolved Issues]
+      text: '[#3398](https://github.com/derailed/k9s/issues/3398) Improve the UX of FieldManager field on restart'
+      breaking: false
+    - version: 0.51.0
+      heading: [Release v0.51.0, Maintenance Release!]
+      text: |-
+        Please help me welcome [Ümüt Özalp](https://github.com/uozalp) as a core contributor to K9s!
+        Ümüt has been instrumental in helping this project grow.
+        I trust you will help Ümüt triage issues and prs reviews and show him
+        the kindness and patience all k9sers are famous for!
+
+        Sponsorships are dropping at an alarming rate which puts this project in the red.
+        This is becoming a concern and sad not to mention unsustainable ;(
+        If you dig `k9s` and want to help the project, please consider `paying it forward!` and
+        don't become just another `satisfied, non paying customer!`.
+        K9s does take a lot of my `free` time to maintain, enhance and keep the light on.
+        Many cool ideas are making it straight to the `freezer` as I just can't budget them in.
+        I know many of you work for big corporations, so please put in the word/work and have
+        them help us out via sponsorships or other means.
+
+        Thank you!
+      breaking: false

@@ -1,0 +1,84 @@
+tool: claude-code
+repo: anthropics/claude-code
+range: 2.1.200..2.1.322
+entries:
+    - version: 2.1.234
+      heading: []
+      text: 'Windows: startup no longer stalls on repeated rename retries when `~/.claude.json` is read-only'
+      breaking: false
+    - version: 2.1.234
+      heading: []
+      text: '`SendMessage` and `ListAgents` now say when your account''s session list was too long to check completely, instead of treating unseen sessions as absent'
+      breaking: false
+    - version: 2.1.257
+      heading: []
+      text: 'Fixed `←` doing nothing in the `/btw` panel inside a `claude agents` session: it now returns to the agents list (even mid-answer), and the panel comes back when you reopen the session'
+      breaking: false
+    - version: 2.1.257
+      heading: []
+      text: Fixed the main agent not being told when you resume a subagent you had stopped from its transcript view
+      breaking: false
+    - version: 2.1.259
+      heading: []
+      text: 'Added `--permission-prompts none` for unattended headless hosts: anything that would prompt is denied automatically while the active permission mode (including auto mode) keeps deciding'
+      breaking: false
+    - version: 2.1.260
+      heading: []
+      text: Changed server-managed settings so a managed CLAUDE.md (`claudeMd`) no longer triggers the security approval dialog; hooks, shell-command, sandbox, and unsafe `env` settings still require approval
+      breaking: false
+    - version: 2.1.265
+      heading: []
+      text: 'Updated the `.claude` folder permission option to say what it actually allows: editing files in the project''s `.claude` folder (or `~/.claude`) for the session'
+      breaking: false
+    - version: 2.1.269
+      heading: []
+      text: Fixed `CLAUDE_CODE_RESUME_INTERRUPTED_TURN` re-running a turn that had failed with an API error over 6 hours earlier, or longer ago than `CLAUDE_CODE_RESUME_INTERRUPTED_TURN_MAX_AGE_MS` when set
+      breaking: false
+    - version: 2.1.275
+      heading: []
+      text: Fixed self-hosted runners with `--drain-wait-sec` losing the final result of a turn that finished during a SIGTERM drain; the runner now waits briefly for the turn to be reported
+      breaking: false
+    - version: 2.1.277
+      heading: []
+      text: Removed the background Haiku auto-title request from `claude -p` runs launched outside an SDK or IDE
+      breaking: false
+    - version: 2.1.284
+      heading: []
+      text: 'Improved `/claude-api`: `hillclimb` no longer spends rounds on prompt rewordings too small for the eval to measure, and an extra page you ask for beside `report.html` is built as one local file that loads nothing from the network'
+      breaking: false
+    - version: 2.1.284
+      heading: []
+      text: Added certificate client authentication (`private_key_jwt`) between the Claude apps gateway and its identity provider, for identity providers that issue certificate credentials instead of client secrets
+      breaking: false
+    - version: 2.1.285
+      heading: []
+      text: 'Changed the MCP server name `widgets` to be reserved in cloud sessions and on self-hosted runners: your own server under it, or a close spelling such as `widgets_`, no longer loads, so rename it'
+      breaking: true
+    - version: 2.1.290
+      heading: []
+      text: Changed an in-process teammate's `agent_id` in Agent results to its agent ID (its `name@team` address stays in `teammate_id`); TeammateIdle hooks no longer fire from its subagents or forks
+      breaking: true
+    - version: 2.1.292
+      heading: []
+      text: Fixed "instruction file not loaded" lines going stale or missing after `/cd` or a permission change, and added a transcript line when a nested one isn't loaded
+      breaking: false
+    - version: 2.1.295
+      heading: []
+      text: 'Changed what Claude and you read when a mod denies a tool call after the tool ran: it now says the tool ran and a plugin withheld its result'
+      breaking: false
+    - version: 2.1.301
+      heading: []
+      text: Fixed the permission prompt for a plugin or skill hook's `ask` decision not showing which plugin or skill the hook comes from
+      breaking: false
+    - version: 2.1.314
+      heading: []
+      text: Changed `/permissions` Recently blocked to refuse approving a call you can't read in full, including one the terminal is too short to show
+      breaking: false
+    - version: 2.1.318
+      heading: []
+      text: Removed the 2.1.288 fix that kept the model's earlier thinking when resuming a conversation started on 2.1.286 or earlier; that thinking can now be dropped
+      breaking: false
+    - version: 2.1.321
+      heading: []
+      text: 'Changed Remote Control sessions to keep the folder they were started in: a connected client can no longer move a session to another folder'
+      breaking: true

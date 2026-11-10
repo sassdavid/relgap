@@ -1,0 +1,84 @@
+tool: node
+repo: nodejs/node
+range: 25.0.0..26.13.0
+entries:
+    - version: 25.1.0
+      heading: [Notable Changes]
+      text: '\[[`f437204491`](https://github.com/nodejs/node/commit/f437204491)] - **(SEMVER-MINOR)** **src**: add watch config namespace (Marco Ippolito) [#60178](https://github.com/nodejs/node/pull/60178)'
+      breaking: false
+    - version: 25.2.0
+      heading: [Notable Changes]
+      text: '\[[`399b340022`](https://github.com/nodejs/node/commit/399b340022)] - **(SEMVER-MINOR)** **v8**: adding total\_allocated\_bytes to HeapStatistics (Caio Lima) [#60573](https://github.com/nodejs/node/pull/60573)'
+      breaking: false
+    - version: 25.4.0
+      heading: [Notable Changes]
+      text: '\[[`44f61dfb92`](https://github.com/nodejs/node/commit/44f61dfb92)] - **doc**: add @avivkeller to collaborators (Aviv Keller) [#61115](https://github.com/nodejs/node/pull/61115)'
+      breaking: false
+    - version: 26.0.0
+      heading: [Semver-Major Commits]
+      text: '\[[`fadb214d95`](https://github.com/nodejs/node/commit/fadb214d95)] - **(SEMVER-MAJOR)** **stream**: readable read one buffer at a time (Robert Nagy) [#60441](https://github.com/nodejs/node/pull/60441)'
+      breaking: true
+    - version: 26.0.0
+      heading: [Semver-Major Commits]
+      text: '\[[`e508489e37`](https://github.com/nodejs/node/commit/e508489e37)] - **(SEMVER-MAJOR)** **tools**: update V8 gypfiles for 14.4 (Michaël Zasso) [#61898](https://github.com/nodejs/node/pull/61898)'
+      breaking: false
+    - version: 26.0.0
+      heading: [Semver-Major Commits]
+      text: '\[[`908c468828`](https://github.com/nodejs/node/commit/908c468828)] - **(SEMVER-MAJOR)** **build**: reset embedder string to "-node.0" (Michaël Zasso) [#60488](https://github.com/nodejs/node/pull/60488)'
+      breaking: false
+    - version: 26.0.0
+      heading: [Semver-Major Commits]
+      text: '\[[`5334433437`](https://github.com/nodejs/node/commit/5334433437)] - **(SEMVER-MAJOR)** **src**: replace uses of deprecated v8::External APIs (gahaas) [#61898](https://github.com/nodejs/node/pull/61898)'
+      breaking: false
+    - version: 26.0.0
+      heading: [Semver-Major Commits]
+      text: '\[[`a8ab08b373`](https://github.com/nodejs/node/commit/a8ab08b373)] - **(SEMVER-MAJOR)** **build**: reset embedder string to "-node.0" (Michaël Zasso) [#61898](https://github.com/nodejs/node/pull/61898)'
+      breaking: false
+    - version: 26.0.0
+      heading: [Semver-Major Commits]
+      text: '\[[`44f64f1dd9`](https://github.com/nodejs/node/commit/44f64f1dd9)] - **(SEMVER-MAJOR)** **deps**: V8: backport bef0d9c1bc90 (Joyee Cheung) [#61898](https://github.com/nodejs/node/pull/61898)'
+      breaking: false
+    - version: 26.0.0
+      heading: [Semver-Major Commits]
+      text: '\[[`ebfaf25870`](https://github.com/nodejs/node/commit/ebfaf25870)] - **(SEMVER-MAJOR)** **test**: update wpt Wasm jsapi expectations (Michaël Zasso) [#61898](https://github.com/nodejs/node/pull/61898)'
+      breaking: false
+    - version: 26.0.0
+      heading: [Semver-Major Commits]
+      text: '\[[`0998c37eb6`](https://github.com/nodejs/node/commit/0998c37eb6)] - **(SEMVER-MAJOR)** **build**: target Power 9 for AIX/IBM i (Richard Lau) [#62296](https://github.com/nodejs/node/pull/62296)'
+      breaking: true
+    - version: 26.10.0
+      heading: [Commits]
+      text: '\[[`bfb544eb00`](https://github.com/nodejs/node/commit/bfb544eb00)] - **crypto**: optimize and benchmark key preparation (Filip Skokan) [#65892](https://github.com/nodejs/node/pull/65892)'
+      breaking: false
+    - version: 26.11.0
+      heading: [Commits]
+      text: '\[[`e241cb80da`](https://github.com/nodejs/node/commit/e241cb80da)] - **stream**: keep webstreams nil requests in fast mode (Matteo Collina) [#66230](https://github.com/nodejs/node/pull/66230)'
+      breaking: false
+    - version: 26.3.0
+      heading: [Commits]
+      text: '\[[`0479f28e95`](https://github.com/nodejs/node/commit/0479f28e95)] - **tools**: fix skip of `test-internet` on forks (Antoine du Hamel) [#63492](https://github.com/nodejs/node/pull/63492)'
+      breaking: false
+    - version: 26.4.0
+      heading: [Commits]
+      text: '\[[`7591949457`](https://github.com/nodejs/node/commit/7591949457)] - **dgram**: add synchronous Socket connectSync() (Guy Bedford) [#63932](https://github.com/nodejs/node/pull/63932)'
+      breaking: false
+    - version: 26.4.0
+      heading: [Commits]
+      text: '\[[`b17817eb2b`](https://github.com/nodejs/node/commit/b17817eb2b)] - **(SEMVER-MINOR)** **vfs**: dispatch fs/promises to mounted VFS instances (Matteo Collina) [#63537](https://github.com/nodejs/node/pull/63537)'
+      breaking: false
+    - version: 26.5.1
+      heading: [Notable Changes]
+      text: 'deps: update llhttp to 9.4.3 (Paolo Insogna)'
+      breaking: false
+    - version: 26.9.0
+      heading: [Commits]
+      text: '\[[`4b9b53f958`](https://github.com/nodejs/node/commit/4b9b53f958)] - **(SEMVER-MINOR)** **lib**: add `node:bench` explicit createRunner (James M Snell) [#65606](https://github.com/nodejs/node/pull/65606)'
+      breaking: false
+    - version: 26.9.0
+      heading: [Commits]
+      text: '\[[`c39e20e9ca`](https://github.com/nodejs/node/commit/c39e20e9ca)] - **(SEMVER-MINOR)** **lib**: implement bench/reporters (James M Snell) [#65606](https://github.com/nodejs/node/pull/65606)'
+      breaking: false
+    - version: 26.9.0
+      heading: [Notable Changes]
+      text: '\[[`d414624dce`](https://github.com/nodejs/node/commit/d414624dce)] - **(SEMVER-MINOR)** **crypto**: add a generic MAC API (Filip Skokan) [#65553](https://github.com/nodejs/node/pull/65553)'
+      breaking: false

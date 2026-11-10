@@ -1,0 +1,227 @@
+[
+  {
+    "path": "doc/changelogs/CHANGELOG_V26.md",
+    "sections": [
+      {
+        "version": "26.13.0",
+        "heading": [
+          "Node.js 26 ChangeLog",
+          "2026-10-28, Version 26.13.0 'Lithium' (LTS), @richardlau"
+        ],
+        "heading_line": 69,
+        "line": 70,
+        "start": 1780,
+        "end": 2436
+      },
+      {
+        "version": "26.12.1",
+        "heading": [
+          "Node.js 26 ChangeLog",
+          "2026-10-21, Version 26.12.1 (Current), @aduh95 prepared by @RafaelGSS"
+        ],
+        "heading_line": 87,
+        "line": 88,
+        "start": 2509,
+        "end": 7833
+      },
+      {
+        "version": "26.12.0",
+        "heading": [
+          "Node.js 26 ChangeLog",
+          "2026-10-14, Version 26.12.0 (Current), @richardlau"
+        ],
+        "heading_line": 133,
+        "line": 134,
+        "start": 7887,
+        "end": 28744
+      },
+      {
+        "version": "26.11.1",
+        "heading": [
+          "Node.js 26 ChangeLog",
+          "2026-10-07, Version 26.11.1 (Current), @aduh95"
+        ],
+        "heading_line": 250,
+        "line": 251,
+        "start": 28794,
+        "end": 29288
+      },
+      {
+        "version": "26.11.0",
+        "heading": [
+          "Node.js 26 ChangeLog",
+          "2026-10-07, Version 26.11.0 (Current), @aduh95"
+        ],
+        "heading_line": 260,
+        "line": 261,
+        "start": 29338,
+        "end": 89148
+      },
+      {
+        "version": "26.10.0",
+        "heading": [
+          "Node.js 26 ChangeLog",
+          "2026-09-22, Version 26.10.0 (Current), @aduh95"
+        ],
+        "heading_line": 578,
+        "line": 579,
+        "start": 89198,
+        "end": 133481
+      },
+      {
+        "version": "26.9.0",
+        "heading": [
+          "Node.js 26 ChangeLog",
+          "2026-09-16, Version 26.9.0 (Current), @aduh95"
+        ],
+        "heading_line": 816,
+        "line": 817,
+        "start": 133530,
+        "end": 176229
+      },
+      {
+        "version": "26.8.2",
+        "heading": [
+          "Node.js 26 ChangeLog",
+          "2026-09-09, Version 26.8.2 (Current), @aduh95"
+        ],
+        "heading_line": 1045,
+        "line": 1046,
+        "start": 176278,
+        "end": 191729
+      },
+      {
+        "version": "26.8.1",
+        "heading": [
+          "Node.js 26 ChangeLog",
+          "2026-08-26, Version 26.8.1 (Current), @aduh95"
+        ],
+        "heading_line": 1135,
+        "line": 1136,
+        "start": 191778,
+        "end": 192295
+      },
+      {
+        "version": "26.8.0",
+        "heading": [
+          "Node.js 26 ChangeLog",
+          "2026-08-26, Version 26.8.0 (Current), @aduh95"
+        ],
+        "heading_line": 1148,
+        "line": 1149,
+        "start": 192344,
+        "end": 260686
+      },
+      {
+        "version": "26.7.0",
+        "heading": [
+          "Node.js 26 ChangeLog",
+          "2026-08-05, Version 26.7.0 (Current), @aduh95"
+        ],
+        "heading_line": 1513,
+        "line": 1514,
+        "start": 260735,
+        "end": 290748
+      },
+      {
+        "version": "26.6.0",
+        "heading": [
+          "Node.js 26 ChangeLog",
+          "2026-08-03, Version 26.6.0 (Current), @aduh95"
+        ],
+        "heading_line": 1679,
+        "line": 1680,
+        "start": 290797,
+        "end": 320318
+      },
+      {
+        "version": "26.5.1",
+        "heading": [
+          "Node.js 26 ChangeLog",
+          "2026-07-29, Version 26.5.1 (Current), @RafaelGSS"
+        ],
+        "heading_line": 1842,
+        "line": 1843,
+        "start": 320370,
+        "end": 324335
+      },
+      {
+        "version": "26.5.0",
+        "heading": [
+          "Node.js 26 ChangeLog",
+          "2026-07-08, Version 26.5.0 (Current), @richardlau"
+        ],
+        "heading_line": 1878,
+        "line": 1879,
+        "start": 324388,
+        "end": 350891
+      },
+      {
+        "version": "26.4.0",
+        "heading": [
+          "Node.js 26 ChangeLog",
+          "2026-06-24, Version 26.4.0 (Current), @aduh95"
+        ],
+        "heading_line": 2029,
+        "line": 2030,
+        "start": 350940,
+        "end": 387857
+      },
+      {
+        "version": "26.3.1",
+        "heading": [
+          "Node.js 26 ChangeLog",
+          "2026-06-18, Version 26.3.1 (Current), @aduh95"
+        ],
+        "heading_line": 2227,
+        "line": 2228,
+        "start": 387906,
+        "end": 393040
+      },
+      {
+        "version": "26.3.0",
+        "heading": [
+          "Node.js 26 ChangeLog",
+          "2026-06-01, Version 26.3.0 (Current), @aduh95"
+        ],
+        "heading_line": 2267,
+        "line": 2268,
+        "start": 393089,
+        "end": 422185
+      },
+      {
+        "version": "26.2.0",
+        "heading": [
+          "Node.js 26 ChangeLog",
+          "2026-05-20, Version 26.2.0 (Current), @aduh95"
+        ],
+        "heading_line": 2437,
+        "line": 2438,
+        "start": 422234,
+        "end": 444954
+      },
+      {
+        "version": "26.1.0",
+        "heading": [
+          "Node.js 26 ChangeLog",
+          "2026-05-07, Version 26.1.0 (Current), @aduh95"
+        ],
+        "heading_line": 2564,
+        "line": 2565,
+        "start": 445003,
+        "end": 503802
+      },
+      {
+        "version": "26.0.0",
+        "heading": [
+          "Node.js 26 ChangeLog",
+          "2026-05-05, Version 26.0.0 (Current), @RafaelGSS"
+        ],
+        "heading_line": 2887,
+        "line": 2888,
+        "start": 503854,
+        "end": 541026
+      }
+    ]
+  }
+]

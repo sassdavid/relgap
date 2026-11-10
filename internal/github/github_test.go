@@ -37,6 +37,8 @@ type fakeAPI struct {
 	auth     []string
 	gqlCalls []string
 	paths    []string
+	accept   []string // Accept headers of contents requests
+	refs     []string // ref query values of contents requests
 }
 
 var aliasRe = regexp.MustCompile(`r(\d+): release\(tagName: \$t\d+\)`)
@@ -143,6 +145,17 @@ func (f *fakeAPI) rest(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Link", `<`+next.String()+`>; rel="next"`)
 		}
 		writeJSON(w, out)
+	case strings.HasPrefix(r.URL.Path, "/repos/o/r/contents/"):
+		f.mu.Lock()
+		f.accept = append(f.accept, r.Header.Get("Accept"))
+		f.refs = append(f.refs, r.URL.Query().Get("ref"))
+		f.mu.Unlock()
+		if r.URL.Path != "/repos/o/r/contents/doc/change logs/CHANGELOG.md" {
+			w.WriteHeader(http.StatusNotFound)
+			writeJSON(w, map[string]any{"message": "Not Found"})
+			return
+		}
+		_, _ = w.Write([]byte("## 1.0.0\n\n- a\n"))
 	case r.URL.Path == "/repos/o/r/tags":
 		writeJSON(w, []map[string]any{{"name": "v1"}, {"name": "v2"}})
 	case strings.HasPrefix(r.URL.Path, "/repos/o/r/releases/tags/"):
@@ -253,6 +266,25 @@ func TestRESTBodiesWithoutListing(t *testing.T) {
 	got, err := c.ReleaseBodies(t.Context(), "o/r", []string{"v1"})
 	require.NoError(t, err)
 	assert.Empty(t, got, "a 404 means no release")
+}
+
+func TestFile(t *testing.T) {
+	t.Parallel()
+	for _, token := range []string{"tok", ""} {
+		t.Run("token="+token, func(t *testing.T) {
+			t.Parallel()
+			f := &fakeAPI{}
+			c := newClient(t, f, token)
+			got, err := c.File(t.Context(), "o/r", "release-1.0", "doc/change logs/CHANGELOG.md")
+			require.NoError(t, err)
+			assert.Equal(t, "## 1.0.0\n\n- a\n", string(got))
+
+			_, err = c.File(t.Context(), "o/r", "", "missing.md")
+			require.ErrorIs(t, err, github.ErrNotFound)
+			assert.Equal(t, []string{"application/vnd.github.raw", "application/vnd.github.raw"}, f.accept)
+			assert.Equal(t, []string{"release-1.0", ""}, f.refs)
+		})
+	}
 }
 
 func TestUnauthorized(t *testing.T) {

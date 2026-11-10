@@ -35,10 +35,17 @@ groups the entries by kind: breaking changes, deprecations, security, features, 
 <tool> resolves as in 'relgap resolve'. Without <to> the range ends at the latest stable
 version on the release line (--line).
 
+Notes come from the tool's registry sources: GitHub release bodies and changelog files, each
+file fetched and parsed once. A bullet that two sources share is shown once. Each entry has a
+confidence between 0 and 1; entries below --min-confidence (default 0.5) are hidden and counted.
+--format md writes PR-ready Markdown with one <details> block per version.
+
 GitHub token: GH_TOKEN, GITHUB_TOKEN, gh's config file, then 'gh auth token'. Without one,
 relgap uses the REST API (60 requests per hour) with 2 concurrent requests.`,
 		Example: `  relgap digest terraform 1.15.8..1.17.1
   relgap digest helm 3.19.0.. --line major
+  relgap digest kubectl 1.36.0..1.37.2 --format md > digest.md
+  relgap digest terraform 1.15.8..1.17.1 --min-confidence 0
   relgap digest terraform 1.15.8..1.17.1 --format json | jq '.data.tools[].entries[] | select(.kind == "breaking")'`,
 		Args: exactArgs(2), //nolint:mnd // tool and range
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -54,7 +61,7 @@ relgap uses the REST API (60 requests per hour) with 2 concurrent requests.`,
 }
 
 func runDigest(cmd *cobra.Command, d *app.Deps, g *globals, f digestFlags, tool, rangeArg string) error {
-	if err := g.outFormat.Check(render.FormatTTY, render.FormatPlain, render.FormatJSON); err != nil {
+	if err := g.outFormat.Check(render.FormatTTY, render.FormatPlain, render.FormatMD, render.FormatJSON); err != nil {
 		return usageError(err)
 	}
 	from, to, err := parseRange(rangeArg)
@@ -90,6 +97,9 @@ func runDigest(cmd *cobra.Command, d *app.Deps, g *globals, f digestFlags, tool,
 	data := &report.Digest{Tools: []report.ToolDigest{*digest}}
 	if g.outFormat == render.FormatJSON {
 		return render.JSON(d.Stdout, render.NewEnvelope(buildinfo.Get().Version, d.Clock(), data))
+	}
+	if g.outFormat == render.FormatMD {
+		return render.DigestMarkdown(d.Stdout, data)
 	}
 	color := g.outFormat == render.FormatTTY &&
 		render.UseColor(render.ColorMode(g.color), d.Env.Lookup, app.IsTerminal(d.Stdout))

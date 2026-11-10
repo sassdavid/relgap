@@ -1,13 +1,18 @@
 package report
 
 import (
+	"cmp"
 	"context"
 	"fmt"
 	"log/slog"
+	"regexp"
+	"slices"
+	"strings"
 	"time"
 
 	"github.com/sassdavid/relgap/internal/classify"
 	"github.com/sassdavid/relgap/internal/github"
+	"github.com/sassdavid/relgap/internal/mdindex"
 	"github.com/sassdavid/relgap/internal/registry"
 	"github.com/sassdavid/relgap/internal/source"
 	"github.com/sassdavid/relgap/internal/version"
@@ -44,6 +49,7 @@ type GitHub interface {
 	Releases(ctx context.Context, repo string) ([]github.Release, error)
 	Tags(ctx context.Context, repo string) ([]string, error)
 	source.ReleaseFetcher
+	source.FileFetcher
 }
 
 // DigestRequest says what to digest.
@@ -57,14 +63,21 @@ type DigestRequest struct {
 
 // Digester builds digests from GitHub.
 type Digester struct {
-	logger     *slog.Logger
-	gh         GitHub
-	classifier *classify.Classifier
+	logger *slog.Logger
+	gh     GitHub
+	files  *mdindex.Cache
 }
 
-// NewDigester returns a digester that reads from gh.
+// NewDigester returns a digester that reads from gh. Changelog files are fetched and parsed once
+// per digester.
 func NewDigester(logger *slog.Logger, gh GitHub) *Digester {
-	return &Digester{logger: logger, gh: gh, classifier: classify.New()}
+	return &Digester{logger: logger, gh: gh, files: source.NewFileCache(gh)}
+}
+
+// reader is an adapter with the classifier for its source.
+type reader struct {
+	adapter    source.Adapter
+	classifier *classify.Classifier
 }
 
 // Digest lists the tool's versions, selects the range and classifies the notes of each version.
@@ -101,19 +114,58 @@ func (d *Digester) Digest(ctx context.Context, req DigestRequest) (*ToolDigest, 
 	for _, v := range r.Versions {
 		out.Versions = append(out.Versions, versionOf(v, releases[v.Tag]))
 	}
-	for _, a := range d.adapters(ctx, t) {
-		notes, fetchErr := a.Fetch(ctx, t, r.Versions)
-		if fetchErr != nil {
-			return nil, fmt.Errorf("%s: %w", t.Name, fetchErr)
+	readers, err := d.readers(ctx, t)
+	if err != nil {
+		return nil, err
+	}
+	entries, err := collect(ctx, t, readers, r.Versions)
+	if err != nil {
+		return nil, err
+	}
+	urls := map[string]string{}
+	order := map[string]int{}
+	for i, v := range out.Versions {
+		urls[v.Version] = v.URL
+		order[v.Version] = i
+	}
+	entries = append(classify.Jumps(rules.Scheme, r.From, r.Versions, entries, urls), entries...)
+	slices.SortStableFunc(
+		entries,
+		func(a, b classify.Entry) int { return cmp.Compare(order[a.Version], order[b.Version]) },
+	)
+	for _, e := range entries {
+		if e.Confidence < req.MinConfidence {
+			out.Hidden++
+			continue
+		}
+		out.Entries = append(out.Entries, e)
+		out.Counts[e.Kind]++
+	}
+	return out, nil
+}
+
+// collect runs every reader and drops entries an earlier source already had for the version,
+// since a release body often repeats the changelog.
+func collect(
+	ctx context.Context,
+	t registry.ToolSpec,
+	readers []reader,
+	vs []version.Version,
+) ([]classify.Entry, error) {
+	var out []classify.Entry
+	seen := map[string]bool{}
+	for _, rd := range readers {
+		notes, err := rd.adapter.Fetch(ctx, t, vs)
+		if err != nil {
+			return nil, fmt.Errorf("%s: %w", t.Name, err)
 		}
 		for _, n := range notes {
-			for _, e := range d.classifier.Entries(n) {
-				if e.Confidence < req.MinConfidence {
-					out.Hidden++
-					continue
+			for _, e := range rd.classifier.Entries(n) {
+				key := e.Version + "\x00" + normalize(e.Text)
+				if !seen[key] {
+					seen[key] = true
+					out = append(out, e)
 				}
-				out.Entries = append(out.Entries, e)
-				out.Counts[e.Kind]++
 			}
 		}
 	}
@@ -146,22 +198,44 @@ func (d *Digester) refs(ctx context.Context, t registry.ToolSpec) ([]version.Ref
 	return refs, byTag, nil
 }
 
-// adapters returns the adapters for the tool's sources. Without sources it falls back to
-// gh-release, the first step of auto-discovery.
-func (d *Digester) adapters(ctx context.Context, t registry.ToolSpec) []source.Adapter {
-	if len(t.Sources) == 0 {
-		return []source.Adapter{source.NewGHRelease(d.gh)}
+// readers returns an adapter and classifier for each of the tool's sources. Without sources it
+// falls back to gh-release, the first step of auto-discovery.
+func (d *Digester) readers(ctx context.Context, t registry.ToolSpec) ([]reader, error) {
+	sources := t.Sources
+	if len(sources) == 0 {
+		sources = []registry.Source{{Kind: source.KindGHRelease}}
 	}
-	var out []source.Adapter
-	for _, s := range t.Sources {
+	var out []reader
+	for _, s := range sources {
+		var a source.Adapter
 		switch s.Kind {
 		case source.KindGHRelease:
-			out = append(out, source.NewGHRelease(d.gh))
+			a = source.NewGHRelease(d.gh)
+		case source.KindChangelogFile:
+			a = source.NewChangelogFile(d.logger, d.files, s)
 		default:
 			d.logger.DebugContext(ctx, "skipping a source kind relgap can't read yet", "tool", t.Name, "kind", s.Kind)
+			continue
 		}
+		c, err := classify.New(classify.Options{BreakingMarkers: t.BreakingMarkers, IgnoreSections: s.IgnoreSections})
+		if err != nil {
+			return nil, fmt.Errorf("%s: %w", t.Name, err)
+		}
+		out = append(out, reader{adapter: a, classifier: c})
 	}
-	return out
+	return out, nil
+}
+
+var (
+	issueRef = regexp.MustCompile(`\]\([^)]*\)|#\d+\b|https?://\S+`)
+	nonWord  = regexp.MustCompile(`[^\p{L}\p{N}]+`)
+)
+
+// normalize reduces an entry to its words without link targets, issue numbers or URLs, so the
+// same bullet from two sources compares equal.
+func normalize(text string) string {
+	text = issueRef.ReplaceAllString(strings.ToLower(text), " ")
+	return strings.TrimSpace(nonWord.ReplaceAllString(text, " "))
 }
 
 func versionOf(v version.Version, rel github.Release) Version {

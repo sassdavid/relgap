@@ -92,6 +92,7 @@
             "description": "Regular expression for a version's heading; {version} is replaced first."
           },
           "ignore_sections": {
+            "description": "Headings, or heading paths joined with \" \u203a \", whose entries are dropped. A heading matches when it equals the item or starts with it and a space.",
             "type": "array",
             "items": { "type": "string", "minLength": 1 }
           },

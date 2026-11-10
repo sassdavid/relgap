@@ -13,6 +13,7 @@ sources:
     ref: "v{major}.{minor}"
     heading: "^{version} \\("
   - kind: gh-release
+    ignore_sections: ["Previous Releases"]
 eol: { product: terraform, cycle: "{major}.{minor}" }
 osv:
   - { ecosystem: Go, name: github.com/hashicorp/terraform }
