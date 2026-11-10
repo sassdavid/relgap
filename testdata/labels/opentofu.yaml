@@ -1,0 +1,106 @@
+tool: opentofu
+repo: opentofu/opentofu
+range: 1.11.0..1.13.9
+entries:
+    - version: 1.11.12
+      heading: ['BUG FIXES:']
+      text: Correct Source Provider Address now passed into Provider MoveResource requests. (#4355)[https://github.com/opentofu/opentofu/pull/4355]
+      breaking: false
+    - version: 1.11.12
+      heading: ['BUG FIXES:']
+      text: Moved block now correctly compares provider source addresses. (#4280)[https://github.com/opentofu/opentofu/pull/4280]
+      breaking: false
+    - version: 1.11.2
+      heading: ['UPGRADE NOTES:']
+      text: |-
+        The change from [#2643](https://github.com/opentofu/opentofu/pull/2643), that was announced previously in v1.11.0, has been reverted in this release. OpenTofu will no longer directly recommend using the `-exclude=` option to work around problems caused by unknown values in provider configurations.
+
+          Unfortunately there are existing providers that spuriously report that they cannot plan due to unknown values even when planning would have been successful, and so we cannot rely on providers to accurately signal when unknown values are the cause of an error. Using `-exclude` is still a valid workaround for these problems even though OpenTofu cannot accurately detect when it's useful to make that suggestion.
+      breaking: false
+    - version: 1.11.4
+      heading: ['BREAKING CHANGES:']
+      text: |-
+        Modules containing local provider configurations now also reject the `enabled` argument, matching existing behavior for `count`, `for_each`, and `depends_on`. ([#3680](https://github.com/opentofu/opentofu/pull/3680))
+
+          This was an oversight in the original design of the enabled feature and was missed during the review process. Although our goal is to not introduce breaking changes in patch releases, in some cases it may be warranted. Anyone who has used the enabled feature in this particular way will have unintentionally introduced a foot-gun into their infrastructure and should remedy it post-haste.
+      breaking: true
+    - version: 1.11.4
+      heading: ['BUG FIXES:']
+      text: Resources containing write-only attributes now are rendered consistently during planning. ([#3667](https://github.com/opentofu/opentofu/pull/3667))
+      breaking: false
+    - version: 1.11.5
+      heading: ['BUG FIXES:']
+      text: '**Full Changelog**: https://github.com/opentofu/opentofu/blob/67fe9db49b7dafd46470cf9ac7f437aaa95f5c40/CHANGELOG.md'
+      breaking: false
+    - version: 1.11.6
+      heading: ['BUG FIXES:']
+      text: When installing module packages from "tar" archives, OpenTofu now accepts only a limited number of sparse file entries to avoid unbounded memory usage from maliciously-crafted archives containing many sparse regions. ([#3966](https://github.com/opentofu/opentofu/pull/3966))
+      breaking: false
+    - version: 1.12.0
+      heading: [OpenTofu 1.12.0, Compatibility Notes]
+      text: On Unix systems OpenTofu now considers the `BROWSER` environment variable as a possible override for the default behavior for launching a web browser. If you run OpenTofu in a context where an environment variable of that name is already set, it may cause OpenTofu to now open a web browser in a different way than previous versions would have. Unsetting that environment variable will restore the previous platform-specific behavior.
+      breaking: true
+    - version: 1.12.0
+      heading: [OpenTofu 1.12.0, Compatibility Notes]
+      text: The `OPENTOFU_USER_AGENT` environment variable, which allowed fully overriding the default User-Agent header on all HTTP requests, has been removed.
+      breaking: true
+    - version: 1.12.0
+      heading: [OpenTofu 1.12.0]
+      text: "We're proud to announce that OpenTofu 1.12.0 is now officially available! \U0001F389"
+      breaking: false
+    - version: 1.12.0
+      heading: [OpenTofu 1.12.0, Reference]
+      text: '[Blog Post](https://opentofu.org/blog/opentofu-1-12-0)'
+      breaking: false
+    - version: 1.12.0
+      heading: [OpenTofu 1.12.0, Deprecation Notices, WinRM for Provisioners is Now Deprecated]
+      text: |-
+        Some of the Go libraries that OpenTofu uses for WinRM connection support in provisioners have become unmaintained over time, and so unfortunately we are phasing out support for WinRM in OpenTofu starting with deprecation warnings in this release.
+
+        If your configuration includes a `connection` block with `type = "winrm"` then OpenTofu v1.12 will warn that this connection type is deprecated, but provisioning should otherwise still work as it did before.
+
+        We intend to remove WinRM support completely in the forthcoming OpenTofu v1.13 series, and so if you are currently relying on WinRM support we recommend that you begin planning to migrate to using [OpenSSH for Windows](https://learn.microsoft.com/en-us/windows-server/administration/openssh/openssh_install_firstuse) instead.
+      breaking: false
+    - version: 1.12.0
+      heading: [OpenTofu 1.12.0, Deprecation Notices, Phasing Out Support for 32-bit CPU Architectures]
+      text: |-
+        We are also planning to stop producing official releases for 32-bit CPU architectures (`386` and `arm`) in a future version of OpenTofu. Support for 64-bit architectures (`amd64` and `arm64`) is unaffected.
+
+        OpenTofu v1.12 does not include any changes to CPU support yet, but we expect that the official builds in the forthcoming v1.13 series will begin producing warnings when running on 32-bit CPU architectures, before we stop producing those packages altogether in a future release series.
+      breaking: false
+    - version: 1.12.1
+      heading: ['SECURITY ADVISORIES:']
+      text: |-
+        Previous releases in the v1.12 series could be affected by several vulnerabilities:
+        * ssh usage through OpenTofu generate hangs or panics.
+        * Previously, a revoked 'SignatureKey' belonging to a CA was not correctly checked for revocation. Now, both the 'key' and 'key.SignatureKey' are checked for `@revoked`.
+
+        This is fixed now by ([#4145](https://github.com/opentofu/opentofu/pull/4145))
+      breaking: false
+    - version: 1.12.7
+      heading: ['SECURITY ADVISORIES:']
+      text: |-
+        When using either a `remote-exec` or `file` provisioner to connect to an attacker-controlled SSH server, the server could previously deadlock the connection by sending certain unexpected packet types. ([#4551](https://github.com/opentofu/opentofu/pull/4551))
+
+          This addresses the upstream Go security advisories [CVE-2026-78662](https://www.cve.org/CVERecord?id=CVE-2026-78662) and [CVE-2026-56855](https://pkg.go.dev/vuln/GO-2026-6355).
+      breaking: false
+    - version: 1.13.0
+      heading: [OpenTofu 1.13.0, Compatibility Notes]
+      text: '`base64gzip` produces results that are equivalent but _not_ byte-for-byte identical to previous versions, this is due to a required golang version upgrade'
+      breaking: true
+    - version: 1.13.0
+      heading: [OpenTofu 1.13.0, Compatibility Notes]
+      text: 'macOS: Requires macOS 13 Ventura or later'
+      breaking: true
+    - version: 1.13.0
+      heading: [OpenTofu 1.13.0, Compatibility Notes]
+      text: OpenTofu v1.13 will be the last series that includes official releases for 32 bit CPUs
+      breaking: false
+    - version: 1.13.0
+      heading: [OpenTofu 1.13.0, Compatibility Notes]
+      text: WinRM is no longer supported for provisioners
+      breaking: true
+    - version: 1.13.0
+      heading: [OpenTofu 1.13.0, Highlights, Windows on ARM64 is now a supported platform]
+      text: Starting with OpenTofu v1.13.0 we are now offering official packages targeting Windows on the ARM64 (also known as "aarch64") CPU architecture.
+      breaking: false

@@ -1,0 +1,17 @@
+# kubectl's GitHub releases are boilerplate. Its notes come from CHANGELOG/CHANGELOG-1.xx.md on
+# master, one file per minor, each fetched and parsed once. Entries under Dependencies are dropped
+# (registry ignore_sections) and ACTION REQUIRED items are breaking (registry breaking_markers).
+# Record again with: VCR_RECORD=1 GH_TOKEN=... go test ./internal/cli -run TestScripts/digest_kubectl
+env TEST_NOW=2026-11-10T12:00:00Z
+env GH_TOKEN=$TEST_GH_TOKEN
+env TEST_CASSETTE=$CASSETTES/digest/kubectl-1.36.0..1.37.2.yaml
+
+exec relgap digest kubectl 1.36.0..1.37.2 --format json
+golden stdout digest/kubectl.json
+jsonschema digest-v1.json stdout
+! stderr .
+! stdout '"Dependencies"'
+
+exec relgap digest kubectl 1.36.0..1.37.2 --format md
+golden stdout digest/kubectl.md
+! stderr .

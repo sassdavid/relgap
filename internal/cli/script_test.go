@@ -32,6 +32,7 @@ import (
 const (
 	scriptDir   = "../../testdata/script"
 	cassetteDir = "../../testdata/cassettes"
+	goldenDir   = "../../testdata/golden"
 )
 
 // Test-only environment read by the relgap command of the test binary.
@@ -157,6 +158,11 @@ func scriptParams(t *testing.T, files ...string) testscript.Params {
 				return err
 			}
 			env.Setenv("CASSETTES", cassettes)
+			golden, err := filepath.Abs(goldenDir)
+			if err != nil {
+				return err
+			}
+			env.Setenv("GOLDEN", golden)
 			env.Setenv(envToken, ghtest.Token())
 			if vcr.Recording() {
 				env.Setenv(vcr.RecordEnv, "1")
@@ -173,10 +179,56 @@ func scriptParams(t *testing.T, files ...string) testscript.Params {
 			return false, fmt.Errorf("unknown condition %q", cond)
 		},
 		Cmds: map[string]func(ts *testscript.TestScript, neg bool, args []string){
+			"golden":     cmdGolden,
 			"jsonschema": cmdJSONSchema,
 			"slowgithub": cmdSlowGitHub,
 		},
 	}
+}
+
+// cmdGolden compares stdout, stderr or a file with a golden file under testdata/golden, or
+// rewrites the golden file under GOLDEN_UPDATE=1. Large outputs that quote upstream release notes
+// live there instead of in the script:
+//
+//	golden stdout digest/kubectl.md
+func cmdGolden(ts *testscript.TestScript, neg bool, args []string) {
+	const wantArgs = 2
+	if neg || len(args) != wantArgs {
+		ts.Fatalf("usage: golden <stdout|stderr|file> <path under testdata/golden>")
+	}
+	got := ts.ReadFile(args[0])
+	path := filepath.Join(ts.Getenv("GOLDEN"), filepath.FromSlash(args[1]))
+	if testutil.Updating() {
+		ts.Check(os.MkdirAll(filepath.Dir(path), 0o750))
+		ts.Check(os.WriteFile(path, []byte(got), 0o600))
+		return
+	}
+	want, err := os.ReadFile(path)
+	if err != nil {
+		ts.Fatalf("read golden %s: %v (run `mise run test:golden -- -update` to create it)", args[1], err)
+	}
+	if string(want) != got {
+		ts.Fatalf("%s differs from golden %s:\n%s\nrun `mise run test:golden -- -update` and review the diff",
+			args[0], args[1], diffLines(string(want), got))
+	}
+}
+
+// diffLines returns the first differing line of want and got.
+func diffLines(want, got string) string {
+	w, g := strings.Split(want, "\n"), strings.Split(got, "\n")
+	for i := range max(len(w), len(g)) {
+		var wl, gl string
+		if i < len(w) {
+			wl = w[i]
+		}
+		if i < len(g) {
+			gl = g[i]
+		}
+		if wl != gl {
+			return fmt.Sprintf("line %d:\n- %s\n+ %s", i+1, wl, gl)
+		}
+	}
+	return ""
 }
 
 // cmdJSONSchema validates stdout, stderr or a file against an embedded schema:
@@ -272,6 +324,12 @@ func TestSpec_tool_resolution_4(t *testing.T) {
 func TestSpec_config_2(t *testing.T) {
 	t.Parallel()
 	testscript.Run(t, scriptParams(t, filepath.Join(scriptDir, "spec_config_2.txtar")))
+}
+
+// TestSpec_classification_4: --min-confidence hides entries below the threshold and counts them.
+func TestSpec_classification_4(t *testing.T) {
+	t.Parallel()
+	testscript.Run(t, scriptParams(t, filepath.Join(scriptDir, "spec_classification_4.txtar")))
 }
 
 type slowServerKey struct{}

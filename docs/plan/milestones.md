@@ -27,9 +27,9 @@ Scope: `httpx` (retry, rate, no cache yet), go-github + githubv4 batch, token di
 - [x] Ctrl-C mid-digest exits 130 within 1 s (testscript with a slow fake server).
 
 ### M3: `changelog-file`, section index, full classifier → [classification](specs/classification.md)
-- [ ] mdindex parses each file once (request counter test). kubernetes, claude-code and node fixtures are golden.
+- [x] mdindex parses each file once (request counter test). kubernetes, claude-code and node fixtures are golden.
 - [ ] All classification.md criteria. The precision check over the labelled set passes ≥ 0.9.
-- [ ] `md` renderer golden output for 3 tools.
+- [x] `md` renderer golden output for 3 tools.
 
 ### M4: Cache, ETag, offline
 - [ ] A second identical digest makes 0 non-304 requests (counter). `--offline` works with the network disabled (testscript sets a bogus proxy).

@@ -1,0 +1,88 @@
+tool: kubectl
+repo: kubernetes/kubernetes
+range: 1.35.0..1.37.2
+entries:
+    - version: 1.35.4
+      heading: [Changes by Kind, Bug or Regression]
+      text: Fixes a 1.35 regression in StatefulSet Parallel pod management by disabling the MaxUnavailableStatefulSet feature by default. ([#137926](https://github.com/kubernetes/kubernetes/pull/137926), [@soltysh](https://github.com/soltysh)) [SIG Apps]
+      breaking: false
+    - version: 1.35.6
+      heading: [Changes by Kind, Bug or Regression]
+      text: Fixed a bug where Pods that share multi-node claims and also have per-node claims can get stuck in Pending. ([#139362](https://github.com/kubernetes/kubernetes/pull/139362), [@nojnhuh](https://github.com/nojnhuh)) [SIG Node and Scheduling]
+      breaking: false
+    - version: 1.36.0
+      heading: [Changes by Kind, API Change]
+      text: 'ACTION REQUIRED: Renamed metric `etcd_bookmark_counts` to `etcd_bookmark_total`. If you are using custom monitoring dashboards or alerting rules based on the `etcd_bookmark_counts` metric, update them to use the new `etcd_bookmark_total` metric. ([#136483](https://github.com/kubernetes/kubernetes/pull/136483), [@petern48](https://github.com/petern48)) [SIG API Machinery, Etcd, Instrumentation and Testing]'
+      breaking: true
+    - version: 1.36.0
+      heading: [Urgent Upgrade Notes, '(No, really, you MUST read this before you upgrade)']
+      text: |-
+        Added support for running PreBind plugins in parallel in the scheduler framework to improve binding latency.
+        ACTION REQUIRED: Plugins can opt-in to parallel execution by returning `AllowParallel: true` from the `PreBindPreFlight` method. PreBind plugin implementations need to be updated to return `PreBindPreFlightResult` from the `PreBindPreFlight` method; returning nil retains the existing sequential behavior. ([#135393](https://github.com/kubernetes/kubernetes/pull/135393), [@tosi3k](https://github.com/tosi3k)) [SIG Node, Scheduling, Storage and Testing]
+      breaking: true
+    - version: 1.36.0
+      heading: [Changes by Kind, API Change]
+      text: 'ACTION REQUIRED: DRA (Dynamic Resource Allocation) drivers and controllers now require granular RBAC permissions to update ResourceClaim statuses when the `DRAResourceClaimGranularStatusAuthorization` feature gate is enabled (beta in `v1.36`). Schedulers and controllers must be granted `update`/`patch` on `resourceclaims/binding`. DRA drivers must be granted `associated-node:update` or `arbitrary-node:update` (or patch equivalents) on `resourceclaims/driver`, restricted by their specific `resourceNames`. ([#134947](https://github.com/kubernetes/kubernetes/pull/134947), [@aojea](https://github.com/aojea)) [SIG API Machinery, Apps, Auth, Instrumentation, Node, Scheduling and Testing]'
+      breaking: true
+    - version: 1.36.0
+      heading: [Changes by Kind, API Change]
+      text: 'ACTION REQUIRED: Removed the integrated support for flex-volumes in kubeadm. Users were advised to migrate away from flex-volumes as recommended by SIG Storage since `v1.22`. If `kubeadm` users wish to continue using the feature, they need a custom image for the KCM that is not based on distroless, pass the KCM flag `--flex-volume-plugin-dir`, and mount the directory `/usr/libexec/kubernetes/kubelet-plugins/volume/exec` in the KCM static pod using `kubeadm`''s `extraVolumes` mechanism before upgrading to `v1.36`. Previously, `kubeadm` automatically did the mounting if the user passed the flag. ([#136423](https://github.com/kubernetes/kubernetes/pull/136423), [@neolit123](https://github.com/neolit123)) [SIG Cluster Lifecycle]'
+      breaking: true
+    - version: 1.36.0
+      heading: [Urgent Upgrade Notes, '(No, really, you MUST read this before you upgrade)']
+      text: |-
+        ACTION REQUIRED:
+        kube-controller-manager: Renamed metric `volume_operation_total_errors` to `volume_operation_errors_total`. If you are using custom monitoring dashboards or alerting rules based on the `volume_operation_total_errors` metric, update them to use the new `volume_operation_errors_total` metric. ([#136399](https://github.com/kubernetes/kubernetes/pull/136399), [@tico88612](https://github.com/tico88612)) [SIG Apps, Instrumentation, Storage and Testing]
+      breaking: true
+    - version: 1.36.0
+      heading: [Changes by Kind, Deprecation]
+      text: Direct access to the `Raw` field of `metav1.FieldsV1` is deprecated. Code that constructs or reads `FieldsV1` should migrate to the new `NewFieldsV1(string)`, `GetRawBytes()`, `GetRawString()`, and `SetRawBytes()` accessor methods. ([#137304](https://github.com/kubernetes/kubernetes/pull/137304), [@aaron-prindle](https://github.com/aaron-prindle)) [SIG API Machinery, Apps and Testing]
+      breaking: false
+    - version: 1.36.0
+      heading: [Changes by Kind, Deprecation]
+      text: Added warnings and deprecation for Service `.spec.externalIPs`. ([#137293](https://github.com/kubernetes/kubernetes/pull/137293), [@adrianmoisey](https://github.com/adrianmoisey)) [SIG Apps, Network and Windows]
+      breaking: false
+    - version: 1.36.0
+      heading: [Changes by Kind, Deprecation]
+      text: Renamed `AllowlistEntry.Name` to `AllowlistEntry.Command` in the credential plugin allowlist. ([#137272](https://github.com/kubernetes/kubernetes/pull/137272), [@pmengelbert](https://github.com/pmengelbert)) [SIG API Machinery, Auth, CLI and Testing]
+      breaking: false
+    - version: 1.36.0
+      heading: [Changes by Kind, API Change]
+      text: Marked the `endpoints` field as optional in the OpenAPI spec for `discovery.k8s.io/v1` EndpointSlice. This matches server behavior and resolves validation issues. ([#136111](https://github.com/kubernetes/kubernetes/pull/136111), [@aojea](https://github.com/aojea)) [SIG Network]
+      breaking: false
+    - version: 1.36.0
+      heading: [Changes by Kind, Feature]
+      text: Added ALPHA counter metric `scheduler_pod_scheduled_after_flush_total` to track pods successfully scheduled after timeout flush from the `unschedulablePods` queue. ([#135126](https://github.com/kubernetes/kubernetes/pull/135126), [@mrvarmazyar](https://github.com/mrvarmazyar)) [SIG Scheduling]
+      breaking: false
+    - version: 1.36.0
+      heading: [Changes by Kind, API Change]
+      text: Added the PlacementScore extension point to the scheduler for scoring placements in placement-based PodGroup scheduling, guarded by the `TopologyAwareWorkloadScheduling` feature gate. Deprecated `MinNodeScore` and `MaxNodeScore` in favor of `MinScore` and `MaxScore`. ([#137201](https://github.com/kubernetes/kubernetes/pull/137201), [@brejman](https://github.com/brejman)) [SIG Scheduling]
+      breaking: false
+    - version: 1.37.0
+      heading: [Urgent Upgrade Notes, '(No, really, you MUST read this before you upgrade)']
+      text: 'ACTION REQUIRED: Updated the `kubelet` to log its effective configuration at startup. Because these logs can expose configuration details, cluster administrators should restrict the `nodes/logs` ClusterRole to trusted users. This is largely a reminder of an existing best practice, since most effective configuration values can already be inferred from other log messages or `kubelet` behavior. ([#139837](https://github.com/kubernetes/kubernetes/pull/139837), [@SergeyKanzhelev](https://github.com/SergeyKanzhelev)) [SIG Node]'
+      breaking: true
+    - version: 1.37.0
+      heading: [Urgent Upgrade Notes, '(No, really, you MUST read this before you upgrade)']
+      text: 'ACTION REQUIRED: Fixed `eventRecordQPS` handling in `kubelet` configuration to treat 0 as unlimited (no rate limit), aligning behavior with the documentation. Users relying on the previous default behavior should explicitly set a non-zero value (for example, 50). ([#117119](https://github.com/kubernetes/kubernetes/pull/117119), [@HirazawaUi](https://github.com/HirazawaUi)) [SIG API Machinery, Auth and Node]'
+      breaking: true
+    - version: 1.37.0
+      heading: [Urgent Upgrade Notes, '(No, really, you MUST read this before you upgrade)']
+      text: 'ACTION REQUIRED: Graduated the `SELinuxMount` feature gate to GA. The feature is enabled by default in `v1.37`, which may break existing workloads in clusters with SELinux enabled. Please see [the Kubernetes blog post](https://kubernetes.io/blog/2026/04/22/breaking-changes-in-selinux-volume-labeling/) to identify potentially problematic workloads in a `v1.36` cluster and how to fix them or opt out of `SELinuxMount` changes before upgrading to `v1.37`. Admins of clusters without SELinux enabled can ignore this release note. ([#139956](https://github.com/kubernetes/kubernetes/pull/139956), [@jsafrane](https://github.com/jsafrane)) [SIG API Machinery, Apps and Node]'
+      breaking: true
+    - version: 1.37.0
+      heading: [Changes by Kind, Deprecation]
+      text: '`kubeadm`: Added a (delayed) warning that `kube-proxy`''s ipvs mode is deprecated since `v1.35` and users on newer Linux kernels should be using the nftables mode instead, which became GA in `v1.33`. For older kernel versions, users can use iptables, which is still the default. ([#139067](https://github.com/kubernetes/kubernetes/pull/139067), [@neolit123](https://github.com/neolit123)) [SIG Cluster Lifecycle]'
+      breaking: false
+    - version: 1.37.0
+      heading: [Changes by Kind, Feature]
+      text: Updated admission webhooks to skip auth/authz virtual resources, such as `tokenreviews` and `subjectaccessreviews`, that ValidatingAdmissionPolicy and MutatingAdmissionPolicy already exclude. Added the `ExcludeAdmissionWebhookVirtualResources` feature gate in Beta, enabled by default, with an opt-out option to restore the previous behavior. ([#140019](https://github.com/kubernetes/kubernetes/pull/140019), [@BenTheElder](https://github.com/BenTheElder)) [SIG API Machinery and Testing]
+      breaking: true
+    - version: 1.37.0
+      heading: [Changes by Kind, Bug or Regression]
+      text: Updated `client-go` to preserve the source file's permissions when migrating a `kubeconfig` file (for example, `~/.kube/.kubeconfig` to `~/.kube/config`). Previously, the destination file was created with broader permissions, which could expose credentials to other users on the same system. ([#138142](https://github.com/kubernetes/kubernetes/pull/138142), [@brianpursley](https://github.com/brianpursley)) [SIG API Machinery]
+      breaking: false
+    - version: 1.37.0
+      heading: [Changes by Kind, Feature]
+      text: Reduced the scope of `EventedPLEG` to only accelerate detection of unexpected container terminations. ([#139262](https://github.com/kubernetes/kubernetes/pull/139262), [@HirazawaUi](https://github.com/HirazawaUi)) [SIG Node]
+      breaking: false

@@ -1,0 +1,152 @@
+tool: terragrunt
+repo: gruntwork-io/terragrunt
+range: 1.0.0..1.2.1
+entries:
+    - version: 1.0.1
+      heading: [What's Changed]
+      text: 'fix: Addressing #5828 feedback by @yhakbar in https://github.com/gruntwork-io/terragrunt/pull/5876'
+      breaking: false
+    - version: 1.0.1
+      heading: ['`hcl validate` no longer fails on `dependency.outputs` references']
+      text: |-
+        `terragrunt hcl validate` previously failed with "Unsupported attribute" when a configuration referenced `dependency.<name>.outputs.<key>` without `mock_outputs`. 
+
+        During validation, output resolution is skipped, but the `outputs` attribute was never added to the dependency evaluation context, causing any output reference to error. The fix provides a dynamic placeholder for dependency outputs (and inputs) during validation so that attribute access evaluates to unknown rather than failing. Additionally, the dependency resolution pipeline is now more resilient during validation. Dependencies with unresolvable `config_path` values or nonexistent targets no longer cause the entire `dependency` namespace to disappear from the evaluation context.
+      breaking: false
+    - version: 1.0.2
+      heading: ['`catalog-redesign` — Reworked `terragrunt catalog` TUI']
+      text: |-
+        A new `catalog-redesign` experiment reworks the design of the `terragrunt catalog` TUI.
+
+        `terragrunt catalog` now launches the TUI right away and runs discovery in the background instead of waiting for discovery to complete before launching the TUI. As a consequence, `terragrunt catalog` users with large catalogs should see significant speed improvements as they launch the `terragrunt catalog` TUI.
+
+        Modules now stream into the list view of the catalog as they are discovered, so you'll be able to select and use a module even if your entire catalog hasn't been discovered yet.
+
+        If `catalog.urls` is not configured in `root.hcl`, `terragrunt catalog` no longer errors. A welcome screen explains how to populate the catalog and can open the catalog documentation on a keypress. In addition, `terraform.source` values from existing units are automatically included in the set of URLs used for discovery, so users with existing units get a populated catalog pointing to other modules that can be pulled from the same module source without any additional configuration.
+
+        This experiment is subject to change, and core elements of the design are being iterated on rapidly.
+
+        To try it out, run:
+
+        ```bash
+        terragrunt catalog --experiment catalog-redesign
+        ```
+
+        To learn more, see the [experiment documentation](https://docs.terragrunt.com/reference/experiments/active#catalog-redesign).
+      breaking: false
+    - version: 1.1.0
+      heading: [Fix `permission denied` when generated files overwrite CAS-materialized files]
+      text: 'With the CAS enabled, Terragrunt fetches sources as read-only files. Writing a generated file over one of them no longer fails with `permission denied`:'
+      breaking: false
+    - version: 1.1.0
+      heading: [Fix panic on non-string literal interpolation in `autoinclude` templates]
+      text: '`terragrunt stack generate` no longer panics when an `autoinclude` template interpolates a non-string literal (for example `"${0}"` or `"${true}"`) alongside a `dependency.*` reference. The interpolated literal is now rendered to its string form (`${0}` becomes `0`) and the dependency reference is preserved for the unit.'
+      breaking: false
+    - version: 1.1.0
+      heading: [Redesigned `terragrunt catalog`]
+      text: |-
+        The [`catalog`](https://docs.terragrunt.com/features/catalog) command has been redesigned. It now starts without any configuration, discovers components across your catalog repositories in the background, and streams them into the TUI as they're found.
+
+        Discovery is no longer limited to a `modules/` directory; components can live anywhere in a catalog repository. To control what gets discovered, add a `.terragrunt-catalog-ignore` file with `.gitignore`-style globs for the paths you want filtered out.
+
+        Components in the TUI now carry metadata to help you navigate a large catalog: each one shows a kind label (`template`, `stack`, `unit`, or `module`) and optional tags defined in the front-matter of its `README.md`. From the component list, press `s` to open a new screen that interactively collects the values used to [scaffold](https://docs.terragrunt.com/features/catalog/scaffold) the component into your repository.
+
+        Previously gated behind the `catalog-redesign` experiment, the redesigned catalog is now the default `terragrunt catalog` experience.
+      breaking: false
+    - version: 1.1.0
+      heading: [Scaffold only detects variables in the module directory]
+      text: '`terragrunt scaffold` now reads input variables from the module directory itself, matching what OpenTofu and Terraform load for a root module. Previously it scanned subdirectories too, so `variable` blocks defined in nested modules or examples leaked into the scaffolded inputs even though the module never exposes them.'
+      breaking: false
+    - version: 1.1.2
+      heading: [Pull Requests, "\U0001F41B Bug Fixes"]
+      text: 'fix: Fixing report path prefix trim by [@yhakbar](https://github.com/yhakbar) in [#6527](https://github.com/gruntwork-io/terragrunt/pull/6527)'
+      breaking: false
+    - version: 1.1.4
+      heading: [Pull Requests, "\U0001F41B Bug Fixes"]
+      text: 'fix: Fixing deprecated `TG_HCLVALIDATE_STRICT_VALIDATE` env var by [@yhakbar](https://github.com/yhakbar) in [#6730](https://github.com/gruntwork-io/terragrunt/pull/6730)'
+      breaking: false
+    - version: 1.1.4
+      heading: [Pull Requests, "\U0001F9F9 Chores"]
+      text: 'chore: Virtualizing util.file.go functions by [@yhakbar](https://github.com/yhakbar) in [#6653](https://github.com/gruntwork-io/terragrunt/pull/6653)'
+      breaking: false
+    - version: 1.1.5
+      heading: [Finding the repository root no longer launches `git`]
+      text: |-
+        [`get_repo_root()`](https://docs.terragrunt.com/reference/hcl/functions#get_repo_root), [`get_path_from_repo_root()`](https://docs.terragrunt.com/reference/hcl/functions#get_path_from_repo_root), [`get_path_to_repo_root()`](https://docs.terragrunt.com/reference/hcl/functions#get_path_to_repo_root), the runner, and discovery all need the root of the enclosing repository. Terragrunt used to ask Git for it by running `git rev-parse --show-toplevel`, and starting that process cost far more than producing the answer did.
+
+        Terragrunt now finds the root itself, by looking for a `.git` entry in the working directory and each directory above it. Linked worktrees and submodules resolve the way they did before.
+
+        In [benchmarks](https://github.com/gruntwork-io/terragrunt/blob/main/internal/git/repo_root_exec_bench_test.go) on an Apple M3 Max, resolving one root, where depth is how many directories separate the starting point from the root:
+
+        | depth | before | after |
+        | --- | --- | --- |
+        | 1 | 5.29ms | 14µs |
+        | 5 | 5.20ms | 24µs |
+        | 10 | 5.25ms | 38µs |
+
+        Because Terragrunt no longer asks Git, some of Git's own settings for locating a repository stop applying. `GIT_CEILING_DIRECTORIES` still stops the search where it did. `GIT_DIR`, `GIT_WORK_TREE` and `core.worktree` are ignored, and the `safe.directory` ownership check is not applied, so `get_repo_root()` now answers in a repository owned by another user where Git refuses. A path inside a bare repository still reports that there is no repository. This is assumed to be _more_ expected from the perspective of a Terragrunt user, and usage of `git rev-parse --show-toplevel` from a `run_cmd` is still available otherwise. If this impacts your workflows, please open a bug report, and maintainers are happy to work with you on this.
+      breaking: true
+    - version: 1.1.5
+      heading: [Fewer remote probes for sources shared across units]
+      text: See [Recorded probes](https://docs.terragrunt.com/features/caching/cas#recorded-probes) and the [`offline-cas` experiment](https://docs.terragrunt.com/reference/experiments/active#offline-cas).
+      breaking: false
+    - version: 1.1.5
+      heading: [Pull Requests, "\U0001F9F9 Chores"]
+      text: 'chore: Cover object and tuple `for_each` in the expansion engine tests by [@yhakbar](https://github.com/yhakbar) in [#6829](https://github.com/gruntwork-io/terragrunt/pull/6829)'
+      breaking: false
+    - version: 1.1.5
+      heading: [Pull Requests, ✨ Features]
+      text: 'feat: Add ability to open browser for approval by [@yhakbar](https://github.com/yhakbar) in [#6793](https://github.com/gruntwork-io/terragrunt/pull/6793)'
+      breaking: false
+    - version: 1.2.0
+      heading: [Collect runtime profiles]
+      text: |-
+        Terragrunt writes CPU, heap, and goroutine profiles on request, so you can see where a slow run spends its time. Pass `--profile-cpu`, `--profile-mem` or `--profile-goroutine` with a path, or `--profile-dir` to collect all three into one directory under conventional names. Each flag has a matching `TG_PROFILE_*` environment variable.
+
+        ```bash
+        terragrunt --profile-dir /tmp/profiles run --all -- plan
+        ```
+
+        Read the result with `go tool pprof`. The profiles cover Terragrunt itself, not the OpenTofu/Terraform processes it runs.
+
+        Previously gated behind the `profiling` experiment, the profile flags no longer require `--experiment profiling`.
+      breaking: false
+    - version: 1.2.0
+      heading: [Nested stacks now generate inside Git filter worktrees]
+      text: |-
+        A stack file can reference another stack with a `stack` block. For a brand-new stack like that, `terragrunt find --filter '[a...b]'` reported the nested stack, but `terragrunt run` with the same filter warned `No units discovered` and did nothing. Terragrunt never generated the nested stack in the temporary worktree, so no units existed there to run.
+
+        Worktree generation now recurses into nested stacks, the same way it does in the working directory, including nested stacks that set `no_dot_terragrunt_stack = true`. `find` and `run` agree again, and Terragrunt discovers and runs the units of added, changed, and removed nested stacks.
+
+        After each level of generation, Terragrunt now only walks the directories of the stacks it just generated, instead of walking everything again.
+      breaking: false
+    - version: 1.2.0
+      heading: ['`mcp-command` — Serve Terragrunt operations to AI agents']
+      text: |-
+        `--allow=env` passes the server's environment variables to configurations and the commands the tools run.
+
+        Unless it is granted, tool calls start from an empty environment, so `get_env()` returns its default. The server also clears its own environment variables and points `HOME` at an empty directory, so cloud SDKs, the SOPS decrypter, and `git` commands Terragrunt runs will find no credentials in environment variables or your home directory.
+      breaking: false
+    - version: 1.2.0
+      heading: [CAS leaves `.terragrunt-stack` out of local sources]
+      text: |-
+        A stack reading a local source from its own repository, such as `source = "../..//catalog/stacks/foo"` with `update_source_with_cas = true`, got a new [CAS](https://docs.terragrunt.com/features/caching/cas) key on every `stack generate`, even when the source had not changed.
+
+        CAS now leaves `.terragrunt-stack` out of local sources, like it does for `.terraform` and `.terragrunt-cache`.
+      breaking: false
+    - version: 1.2.0
+      heading: [Pull Requests, ✨ Features]
+      text: 'feat(profiling): collect runtime profiles by default by [@denis256](https://github.com/denis256) in [#6945](https://github.com/gruntwork-io/terragrunt/pull/6945)'
+      breaking: false
+    - version: 1.2.1
+      heading: [Reading a unit's outputs no longer collides with that unit's own run]
+      text: |-
+        In `run --all`, a unit could run at the same time as another unit reading its outputs, e.g. with [`--queue-ignore-dag-order`](https://docs.terragrunt.com/reference/cli/commands/run#queue-ignore-dag-order), or when a Git filter plans the destroy of a removed unit while its dependents plan. Both ran OpenTofu/Terraform in the unit's `.terragrunt-cache` directory, so one could reinstall providers while the other used them, and the run failed with errors such as:
+
+        ```text
+        Error: Required plugins are not installed
+          - registry.opentofu.org/hashicorp/null: the cached package for registry.opentofu.org/hashicorp/null 3.2.4 (in .terraform/providers) does not match any of the checksums recorded in the dependency lock file
+        ```
+
+        Terragrunt now waits for a unit's run to finish before reading its outputs, and waits for a read in progress before running the unit.
+      breaking: false

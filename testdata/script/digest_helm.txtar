@@ -1,0 +1,16 @@
+# helm's release bodies list commits with conventional-commit prefixes ("fix: ...",
+# "chore(deps): ..."). The download links under "Installation and Upgrading" are dropped.
+# Record again with: VCR_RECORD=1 GH_TOKEN=... go test ./internal/cli -run TestScripts/digest_helm
+env TEST_NOW=2026-11-10T12:00:00Z
+env GH_TOKEN=$TEST_GH_TOKEN
+env TEST_CASSETTE=$CASSETTES/digest/helm-3.21.0..3.22.1.yaml
+
+exec relgap digest helm 3.21.0..3.22.1 --format json
+golden stdout digest/helm.json
+jsonschema digest-v1.json stdout
+! stderr .
+! stdout 'get\.helm\.sh'
+
+exec relgap digest helm 3.21.0..3.22.1 --format md
+golden stdout digest/helm.md
+! stderr .

@@ -27,6 +27,7 @@ type Ref struct {
 type VersionNotes struct {
 	Version  version.Version
 	Markdown string
+	Line     int // 1-based line where Markdown starts in a file; 0 for release bodies
 	Source   Ref
 }
 

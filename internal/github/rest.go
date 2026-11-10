@@ -1,10 +1,13 @@
 package github
 
 import (
+	"bytes"
 	"context"
 	"errors"
 	"fmt"
 	"net/http"
+	"net/url"
+	"strings"
 
 	gogithub "github.com/google/go-github/v93/github"
 )
@@ -75,4 +78,37 @@ func mapRESTError(err error) error {
 		return fmt.Errorf("%w: %w", ErrNotFound, err)
 	}
 	return err
+}
+
+// File returns the content of path in repo at ref (empty means the default branch) through the
+// contents API with the raw media type, which works for files over 1 MB.
+func (c *Client) File(ctx context.Context, repo, ref, path string) ([]byte, error) {
+	owner, name, err := splitRepo(repo)
+	if err != nil {
+		return nil, err
+	}
+	u := fmt.Sprintf("repos/%s/%s/contents/%s", owner, name, escapePath(path))
+	if ref != "" {
+		u += "?ref=" + url.QueryEscape(ref)
+	}
+	req, err := c.rest.NewRequest(ctx, http.MethodGet, u, nil)
+	if err != nil {
+		return nil, fmt.Errorf("fetch %s of %s at %q: %w", path, repo, ref, err)
+	}
+	req.Header.Set("Accept", rawMediaType)
+	var buf bytes.Buffer
+	if _, err = c.rest.Do(req, &buf); err != nil {
+		return nil, fmt.Errorf("fetch %s of %s at %q: %w", path, repo, ref, mapRESTError(err))
+	}
+	return buf.Bytes(), nil
+}
+
+const rawMediaType = "application/vnd.github.raw"
+
+func escapePath(p string) string {
+	parts := strings.Split(strings.TrimPrefix(p, "/"), "/")
+	for i, s := range parts {
+		parts[i] = url.PathEscape(s)
+	}
+	return strings.Join(parts, "/")
 }

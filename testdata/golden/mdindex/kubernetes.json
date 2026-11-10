@@ -1,0 +1,222 @@
+[
+  {
+    "path": "CHANGELOG/CHANGELOG-1.36.md",
+    "sections": [
+      {
+        "version": "1.36.6",
+        "heading": [
+          "v1.36.6"
+        ],
+        "heading_line": 214,
+        "line": 215,
+        "start": 8559,
+        "end": 20765
+      },
+      {
+        "version": "1.36.5",
+        "heading": [
+          "v1.36.5"
+        ],
+        "heading_line": 317,
+        "line": 318,
+        "start": 20775,
+        "end": 32071
+      },
+      {
+        "version": "1.36.4",
+        "heading": [
+          "v1.36.4"
+        ],
+        "heading_line": 412,
+        "line": 413,
+        "start": 32081,
+        "end": 44968
+      },
+      {
+        "version": "1.36.3",
+        "heading": [
+          "v1.36.3"
+        ],
+        "heading_line": 511,
+        "line": 512,
+        "start": 44978,
+        "end": 58198
+      },
+      {
+        "version": "1.36.2",
+        "heading": [
+          "v1.36.2"
+        ],
+        "heading_line": 615,
+        "line": 616,
+        "start": 58208,
+        "end": 71100
+      },
+      {
+        "version": "1.36.1",
+        "heading": [
+          "v1.36.1"
+        ],
+        "heading_line": 721,
+        "line": 722,
+        "start": 71110,
+        "end": 83221
+      },
+      {
+        "version": "1.36.0",
+        "heading": [
+          "v1.36.0"
+        ],
+        "heading_line": 813,
+        "line": 814,
+        "start": 83231,
+        "end": 216015
+      },
+      {
+        "version": "1.36.0-rc.1",
+        "heading": [
+          "v1.36.0-rc.1"
+        ],
+        "heading_line": 1383,
+        "line": 1384,
+        "start": 216030,
+        "end": 226436
+      },
+      {
+        "version": "1.36.0-rc.0",
+        "heading": [
+          "v1.36.0-rc.0"
+        ],
+        "heading_line": 1465,
+        "line": 1466,
+        "start": 226451,
+        "end": 243076
+      },
+      {
+        "version": "1.36.0-beta.0",
+        "heading": [
+          "v1.36.0-beta.0"
+        ],
+        "heading_line": 1581,
+        "line": 1582,
+        "start": 243093,
+        "end": 303219
+      },
+      {
+        "version": "1.36.0-alpha.2",
+        "heading": [
+          "v1.36.0-alpha.2"
+        ],
+        "heading_line": 1924,
+        "line": 1925,
+        "start": 303237,
+        "end": 329804
+      },
+      {
+        "version": "1.36.0-alpha.1",
+        "heading": [
+          "v1.36.0-alpha.1"
+        ],
+        "heading_line": 2106,
+        "line": 2107,
+        "start": 329822,
+        "end": 385725
+      }
+    ]
+  },
+  {
+    "path": "CHANGELOG/CHANGELOG-1.37.md",
+    "sections": [
+      {
+        "version": "1.37.2",
+        "heading": [
+          "v1.37.2"
+        ],
+        "heading_line": 173,
+        "line": 174,
+        "start": 6938,
+        "end": 18852
+      },
+      {
+        "version": "1.37.1",
+        "heading": [
+          "v1.37.1"
+        ],
+        "heading_line": 275,
+        "line": 276,
+        "start": 18862,
+        "end": 30578
+      },
+      {
+        "version": "1.37.0",
+        "heading": [
+          "v1.37.0"
+        ],
+        "heading_line": 372,
+        "line": 373,
+        "start": 30588,
+        "end": 183540
+      },
+      {
+        "version": "1.37.0-rc.1",
+        "heading": [
+          "v1.37.0-rc.1"
+        ],
+        "heading_line": 1002,
+        "line": 1003,
+        "start": 183555,
+        "end": 193451
+      },
+      {
+        "version": "1.37.0-rc.0",
+        "heading": [
+          "v1.37.0-rc.0"
+        ],
+        "heading_line": 1081,
+        "line": 1082,
+        "start": 193466,
+        "end": 239625
+      },
+      {
+        "version": "1.37.0-beta.0",
+        "heading": [
+          "v1.37.0-beta.0"
+        ],
+        "heading_line": 1319,
+        "line": 1320,
+        "start": 239642,
+        "end": 273145
+      },
+      {
+        "version": "1.37.0-alpha.3",
+        "heading": [
+          "v1.37.0-alpha.3"
+        ],
+        "heading_line": 1515,
+        "line": 1516,
+        "start": 273163,
+        "end": 302448
+      },
+      {
+        "version": "1.37.0-alpha.2",
+        "heading": [
+          "v1.37.0-alpha.2"
+        ],
+        "heading_line": 1704,
+        "line": 1705,
+        "start": 302466,
+        "end": 324702
+      },
+      {
+        "version": "1.37.0-alpha.1",
+        "heading": [
+          "v1.37.0-alpha.1"
+        ],
+        "heading_line": 1851,
+        "line": 1852,
+        "start": 324720,
+        "end": 390868
+      }
+    ]
+  }
+]

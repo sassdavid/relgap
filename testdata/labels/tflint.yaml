@@ -1,0 +1,91 @@
+tool: tflint
+repo: terraform-linters/tflint
+range: 0.58.0..0.66.0
+entries:
+    - version: 0.59.1
+      heading: [What's Changed, Chores]
+      text: 'deps: Bump Go version to 1.25 by @wata727 in https://github.com/terraform-linters/tflint/pull/2374'
+      breaking: false
+    - version: 0.59.1
+      heading: [What's Changed, Chores]
+      text: 'build(deps): Bump docker/login-action from 3.4.0 to 3.5.0 by @dependabot[bot] in https://github.com/terraform-linters/tflint/pull/2350'
+      breaking: false
+    - version: 0.60.0
+      heading: [What's Changed]
+      text: |-
+        This release introduces a new configuration file format: `.tflint.json`. This is useful for workflows such as automatically generating configuration files.
+        Please note that in order to use the `.tflint.json`, enabled plugins must be built with SDK v0.23+.
+
+        From this release, Cosign signatures (`checksums.txt.keyless.sig` and `checksums.txt.pem`) are deprecated. They will not be included in future releases. If your installation scripts depend on them, please migrate to `gh attestation verify`.
+      breaking: false
+    - version: 0.60.0
+      heading: [What's Changed, Changes]
+      text: Alphabetize rulesets in version output by @bendrucker in https://github.com/terraform-linters/tflint/pull/2404
+      breaking: false
+    - version: 0.60.0
+      heading: [What's Changed, Chores]
+      text: 'build(deps): Bump github.com/sigstore/sigstore-go from 1.1.1 to 1.1.2 by @dependabot[bot] in https://github.com/terraform-linters/tflint/pull/2383'
+      breaking: false
+    - version: 0.61.0
+      heading: [What's Changed, Chores]
+      text: 'build(deps): Bump github.com/sigstore/sigstore-go from 1.1.3 to 1.1.4 by @dependabot[bot] in https://github.com/terraform-linters/tflint/pull/2433'
+      breaking: false
+    - version: 0.61.0
+      heading: [What's Changed, Chores]
+      text: Add an integration test for root only traversal by @wata727 in https://github.com/terraform-linters/tflint/pull/2436
+      breaking: false
+    - version: 0.61.0
+      heading: [What's Changed, Chores]
+      text: 'build(deps): Bump github.com/sigstore/sigstore from 1.10.3 to 1.10.4 by @dependabot[bot] in https://github.com/terraform-linters/tflint/pull/2452'
+      breaking: false
+    - version: 0.62.0
+      heading: [What's Changed, Chores]
+      text: 'build(deps): Bump github.com/hashicorp/go-getter from 1.8.4 to 1.8.6 by @dependabot[bot] in https://github.com/terraform-linters/tflint/pull/2502'
+      breaking: false
+    - version: 0.62.0
+      heading: [What's Changed, Chores]
+      text: 'build(deps): Bump github.com/zclconf/go-cty from 1.17.0 to 1.18.0 by @dependabot[bot] in https://github.com/terraform-linters/tflint/pull/2473'
+      breaking: false
+    - version: 0.62.0
+      heading: [What's Changed, Chores]
+      text: 'build(deps): Bump docker/login-action from 4.0.0 to 4.1.0 by @dependabot[bot] in https://github.com/terraform-linters/tflint/pull/2504'
+      breaking: false
+    - version: 0.62.1
+      heading: [What's Changed, Chores]
+      text: 'build(deps): Bump google.golang.org/grpc from 1.80.0 to 1.81.0 by @dependabot[bot] in https://github.com/terraform-linters/tflint/pull/2519'
+      breaking: false
+    - version: 0.63.0
+      heading: [What's Changed]
+      text: |-
+        > [!NOTE]
+        > Due to a release pipeline issue, this release does not have a corresponding artifact attestation.
+        > If you need to pass `gh attestation verify`, please use v0.63.1.
+      breaking: false
+    - version: 0.64.0
+      heading: [What's Changed, Chores]
+      text: 'build(deps): Bump alpine from 3.24.0 to 3.24.1 by @dependabot[bot] in https://github.com/terraform-linters/tflint/pull/2570'
+      breaking: false
+    - version: 0.64.0
+      heading: [What's Changed, Chores]
+      text: 'build(deps): Bump alpine from 3.23.4 to 3.24.0 by @dependabot[bot] in https://github.com/terraform-linters/tflint/pull/2566'
+      breaking: false
+    - version: 0.64.0
+      heading: [What's Changed, Chores]
+      text: Inline per-format print methods into their adapters by @bendrucker in https://github.com/terraform-linters/tflint/pull/2557
+      breaking: false
+    - version: 0.65.0
+      heading: [What's Changed, Changes]
+      text: 'terraform: iterate primary files in a deterministic order by @KetchupBomb in https://github.com/terraform-linters/tflint/pull/2633'
+      breaking: false
+    - version: 0.65.0
+      heading: [What's Changed, Chores]
+      text: 'build(deps): Bump docker/metadata-action from 6.1.0 to 6.2.0 by @dependabot[bot] in https://github.com/terraform-linters/tflint/pull/2586'
+      breaking: false
+    - version: 0.65.0
+      heading: [What's Changed, Chores]
+      text: Remove the auto installation script by @wata727 in https://github.com/terraform-linters/tflint/pull/2607
+      breaking: true
+    - version: 0.65.0
+      heading: [What's Changed, Chores]
+      text: 'build(deps): Bump docker/build-push-action from 7.3.0 to 7.4.0 by @dependabot[bot] in https://github.com/terraform-linters/tflint/pull/2653'
+      breaking: false

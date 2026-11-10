@@ -1,0 +1,100 @@
+tool: argocd
+repo: argoproj/argo-cd
+range: 3.4.0..3.6.1
+entries:
+    - version: 3.4.1
+      heading: [Changelog, Dependency updates]
+      text: '560d428381fc728ecfae141fd78b0bae7cbac7b3 chore(deps): bump docker/build-push-action from 6.19.2 to 7.0.0 (#26706) (dependabot[bot])'
+      breaking: false
+    - version: 3.4.1
+      heading: [Changelog, Features]
+      text: 'c2e594c5f5a05bda9d0de1e630e8c70d06f44312 feat: disable gRPC service config DNS TXT lookups by default (#26077) (Valentin Stoican, Valentin Stoican)'
+      breaking: false
+    - version: 3.4.1
+      heading: [Changelog, Dependency updates]
+      text: '89cd590cb868367d2ce6a3cc44cdb936027cdc98 chore(deps): bump gitlab.com/gitlab-org/api/client-go from 1.8.1 to 1.8.2 (#25676) (dependabot[bot])'
+      breaking: false
+    - version: 3.4.1
+      heading: [Changelog, Other work]
+      text: '08390e21cbcd209da656ca81060615379fee9ac4 chore: bumps notification engine to the latest (#25887) (Papapetrou Patroklos)'
+      breaking: false
+    - version: 3.4.10
+      heading: [Changelog, Potentially-breaking changes]
+      text: Kustomize builds that render Helm charts no longer honor `helmGlobals.configHome`. Ordinary `http`, `https`, and `oci` chart repositories still work. Builds that depended on a Helm plugin registered from that directory will not ([GHSA-fw5c-w8rc-j7fx](https://github.com/argoproj/argo-cd/security/advisories/GHSA-fw5c-w8rc-j7fx)).
+      breaking: true
+    - version: 3.4.10
+      heading: [Changelog, Potentially-breaking changes]
+      text: An OCI manifest larger than 4 MiB is now rejected ([GHSA-w996-f2wq-x9c6](https://github.com/argoproj/argo-cd/security/advisories/GHSA-w996-f2wq-x9c6)).
+      breaking: true
+    - version: 3.5.0
+      heading: [Changelog, Dependency updates]
+      text: '9e80e058e73cf8a895102a63ba183089bb0cf827: chore(deps): bump library/golang from 1.26.1 to 1.26.2 in /test/container (#27248) (@dependabot[bot])'
+      breaking: false
+    - version: 3.5.0
+      heading: [Changelog, Bug fixes]
+      text: '67db597810188690d6df1dccd7a9b2295238abb0: fix: stack overflow when processing circular ownerrefs in resource graph (#26783) (#26790) (@jcogilvie)'
+      breaking: false
+    - version: 3.5.0
+      heading: [Changelog, Dependency updates]
+      text: '5471c9465714367fbb10f1e079c154f5b034aebf: chore(deps): bump helm to 3.21.0 (#27855) (@nitishfy)'
+      breaking: false
+    - version: 3.5.0
+      heading: [Changelog, Dependency updates]
+      text: 'd75a6b1523e5f26eb9d50ccde92a225877516693: chore(deps): bump sigstore/cosign-installer from 4.1.0 to 4.1.1 (#27031) (@dependabot[bot])'
+      breaking: false
+    - version: 3.5.0
+      heading: [Changelog, Bug fixes]
+      text: 'b4af746c4fdd9beeffe1e85e9169b53c45aa5a7d: fix(ui): ApplicationSet detail view for non-default namespace (#27928) (#27931) (@AsifAd)'
+      breaking: false
+    - version: 3.5.0
+      heading: [Changelog, Other work]
+      text: '1f7f12c3a2667d666658e2a9c448d5acc9dedb92: chore: wrap errors in util/db/gpgkeys.go to improve observability (#1… (#27849) (@IanEff)'
+      breaking: false
+    - version: 3.5.0
+      heading: [Changelog, Bug fixes]
+      text: '45a84dfa38c17483baef283e3fb5f80a13b988cf: fix(ci): add .gitkeep to images dir (#26892) (@blakepettersson)'
+      breaking: false
+    - version: 3.5.4
+      heading: [Quick Start, 'HA:']
+      text: |-
+        ```shell
+        kubectl create namespace argocd
+        kubectl apply -n argocd --server-side --force-conflicts -f https://raw.githubusercontent.com/argoproj/argo-cd/v3.5.4/manifests/ha/install.yaml
+        ```
+      breaking: false
+    - version: 3.5.5
+      heading: [Quick Start, 'HA:']
+      text: |-
+        ```shell
+        kubectl create namespace argocd
+        kubectl apply -n argocd --server-side --force-conflicts -f https://raw.githubusercontent.com/argoproj/argo-cd/v3.5.5/manifests/ha/install.yaml
+        ```
+      breaking: false
+    - version: 3.5.6
+      heading: [Quick Start, 'Non-HA:']
+      text: |-
+        ```shell
+        kubectl create namespace argocd
+        kubectl apply -n argocd --server-side --force-conflicts -f https://raw.githubusercontent.com/argoproj/argo-cd/v3.5.6/manifests/install.yaml
+        ```
+      breaking: false
+    - version: 3.5.7
+      heading: [Quick Start, 'Non-HA:']
+      text: |-
+        ```shell
+        kubectl create namespace argocd
+        kubectl apply -n argocd --server-side --force-conflicts -f https://raw.githubusercontent.com/argoproj/argo-cd/v3.5.7/manifests/install.yaml
+        ```
+      breaking: false
+    - version: 3.6.0
+      heading: [Changelog, Other work]
+      text: '82479c8b9ed4ca2ba840dc1088ff485a598f1d89: fix(manifest-generate-paths): do not report changes on cache miss without path updates (cherry-pick #29442 for 3.6) (#29854) (@argo-cd-cherry-pick-bot[bot])'
+      breaking: false
+    - version: 3.6.0
+      heading: [Changelog, Dependency updates]
+      text: '494b13848f551707256366068b411668c844ca0d: chore(deps): bump the aws-sdk-v2 group with 5 updates (#28710) (@dependabot[bot])'
+      breaking: false
+    - version: 3.6.0
+      heading: [Changelog, Dependency updates]
+      text: '222258680cd7a728674ae12250a2a95ef8731b65: chore(deps): update docker.io/library/golang docker tag to v1.27.1 (#29492) (@argoproj-renovate[bot])'
+      breaking: false

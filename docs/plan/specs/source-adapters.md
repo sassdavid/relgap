@@ -38,6 +38,6 @@ Following Renovate and Dependabot:
 ## Acceptance criteria
 - [ ] Each adapter kind has cassette-backed tests with golden `VersionNotes` for at least 2 tools.
 - [ ] terraform 1.15.8..1.17.1, kubectl 1.36.0..1.37.2, awscli 2.31.0..2.31.10, argocd 3.5.0..3.6.1 and claude-code 2.1.300..2.1.319 produce golden digests (the corpus subset).
-- [ ] A changelog file is fetched exactly once per digest regardless of how many versions it contains (asserted via the request counter).
+- [x] A changelog file is fetched exactly once per digest regardless of how many versions it contains (asserted via the request counter).
 - [ ] The stale-changelog guard is covered by an argocd fixture.
 - [ ] Auto-discovery picks `HISTORY.md` / `CHANGES.rst` / `RELEASE_NOTES.md` in fixtures and rejects `changelog.json`.
