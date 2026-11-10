@@ -1,0 +1,33 @@
+# The 30-tool corpus from docs/plan/testing.md, written the way a user types each tool. Fields for
+# digests (range, adapters, expected breaking count, golden path) are added when digests exist.
+tools:
+  - tool: terraform
+  - tool: opentofu
+  - tool: terragrunt
+  - tool: tflint
+  - tool: terraform-docs
+  - tool: tfprovider:hashicorp/aws
+  - tool: tfprovider:hashicorp/kubernetes
+  - tool: kubectl
+  - tool: helm
+  - tool: argocd
+  - tool: k9s
+  - tool: kubeconform
+  - tool: chart:argo/argo-cd
+  - tool: awscli
+  - tool: gh
+  - tool: 1password-cli
+  - tool: aqua:mongodb/mongodb-atlas-cli/atlascli
+  - tool: node
+  - tool: python
+  - tool: go
+  - tool: temurin
+  - tool: mise
+  - tool: uv
+  - tool: ruff
+  - tool: claude-code
+  - tool: golangci-lint
+  - tool: gitleaks
+  - tool: hk
+  - tool: usage
+  - tool: fnox

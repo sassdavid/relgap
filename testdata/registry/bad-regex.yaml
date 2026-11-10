@@ -1,0 +1,10 @@
+name: bad-regex
+repo: acme/tool
+version:
+  scheme: regex
+  extract: "jdk-(\\d+"
+  exclude: "-(alpha|beta"
+sources:
+  - kind: changelog-file
+    path_template: CHANGELOG.md
+    heading: "^v{version}[$"

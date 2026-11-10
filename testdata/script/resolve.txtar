@@ -1,0 +1,38 @@
+# A tool known only to mise and aqua resolves from the snapshots.
+exec relgap resolve uv
+cmp stdout uv.txt
+
+# Config tools and aliases take part.
+exec relgap resolve TG_VERSION
+stdout 'input +TG_VERSION \(config alias, found in config\)'
+stdout 'repo +acme/terragrunt-fork +config'
+
+# Unknown names, unsupported syntax and tools without a repository are usage errors.
+exec expect-exit 2 relgap resolve no-such-tool-anywhere
+stderr 'unknown tool "no-such-tool-anywhere"'
+exec expect-exit 2 relgap resolve tfprovider:hashicorp/aws
+stderr 'unsupported tool syntax'
+exec expect-exit 2 relgap resolve node
+stderr 'set tools.node.repo in the config'
+exec expect-exit 2 relgap resolve
+stderr 'takes 1 argument'
+exec expect-exit 2 relgap resolve terraform --format md
+stderr 'not supported by this command'
+
+-- .relgap.yaml --
+tools:
+  terragrunt:
+    repo: acme/terragrunt-fork
+aliases:
+  TG_VERSION: terragrunt
+-- uv.txt --
+input          uv (name, found in mise registry)
+mise registry  snapshot
+
+FIELD             VALUE           SOURCE
+name              uv              mise registry
+repo              astral-sh/uv    aqua registry
+version.scheme    loose           default
+version.universe  releases        default
+version.line      none            default
+sources           auto-discovery  default

@@ -1,0 +1,7 @@
+name: missing-field
+repo: acme/tool
+version:
+  scheme: semver
+  extract: "v(\\d+)"
+sources:
+  - kind: web-doc

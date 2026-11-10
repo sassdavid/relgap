@@ -63,6 +63,10 @@ func scriptParams(t *testing.T, files ...string) testscript.Params {
 			env.Setenv("XDG_CONFIG_HOME", filepath.Join(env.WorkDir, ".config"))
 			env.Setenv("XDG_CACHE_HOME", filepath.Join(env.WorkDir, ".cache"))
 			env.Setenv("NO_COLOR", "1")
+			// Keep only testscript's own bin directory, so a mise installed on the machine doesn't
+			// change resolve output. Scripts that need a fake mise prepend its directory.
+			bin, _, _ := strings.Cut(env.Getenv("PATH"), string(os.PathListSeparator))
+			env.Setenv("PATH", bin)
 			return nil
 		},
 		Cmds: map[string]func(ts *testscript.TestScript, neg bool, args []string){
@@ -134,6 +138,19 @@ func TestScripts(t *testing.T) {
 func TestSpec_config_1(t *testing.T) {
 	t.Parallel()
 	testscript.Run(t, scriptParams(t, filepath.Join(scriptDir, "spec_config_1.txtar")))
+}
+
+// TestSpec_tool_resolution_1: resolve prints the same ToolSpec for tf, terraform,
+// TERRAFORM_VERSION and aqua:hashicorp/terraform, with the layer of each field (golden).
+func TestSpec_tool_resolution_1(t *testing.T) {
+	t.Parallel()
+	testscript.Run(t, scriptParams(t, filepath.Join(scriptDir, "spec_tool_resolution_1.txtar")))
+}
+
+// TestSpec_tool_resolution_4: registry lint rejects unknown keys and bad regexes with file:line.
+func TestSpec_tool_resolution_4(t *testing.T) {
+	t.Parallel()
+	testscript.Run(t, scriptParams(t, filepath.Join(scriptDir, "spec_tool_resolution_4.txtar")))
 }
 
 // TestSpec_config_2: unknown keys and wrong types each produce a precise error.

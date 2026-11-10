@@ -45,7 +45,7 @@ goreleaser, chezmoi, k9s, golangci-lint.
 | JSON Schema validate | `github.com/santhosh-tekuri/jsonschema/v6` | v6.0.3 | |
 | JSON Schema generate | `github.com/invopop/jsonschema` | v0.14.0 | config struct → schema; test-only (the schema sync test generates `schemas/config-v1.json`) |
 | YAML | `go.yaml.in/yaml/v4` | **v4.0.0** (2026-11-04) | YAML org's maintained successor of `gopkg.in/yaml.v3`. If v4.0.0 shows early bugs at M0, fall back to `go.yaml.in/yaml/v3` v3.0.6 |
-| TOML | `github.com/pelletier/go-toml/v2` | v2.4.3 | |
+| TOML | `github.com/pelletier/go-toml/v2` | v2.4.3 | reads mise's `registry/*.toml` in `scripts/regsnapshot` |
 | MCP | `github.com/modelcontextprotocol/go-sdk` | v1.8.0 | [ADR-0011](adr/0011-mcp-go-sdk.md) |
 
 ## Testing
@@ -67,7 +67,7 @@ goreleaser, chezmoi, k9s, golangci-lint.
 | GitHub auth | `github.com/cli/go-gh/v2` | v2.17.0 | `pkg/auth` |
 | Markdown AST | `github.com/yuin/goldmark/v2` | **v2.1.15** | stable since v2.0.0 (2026-08-27); GitHub "Latest" release; 29 v2 releases. Every node carries a start position, which is what mdindex needs. The README's "early stages" note concerns third-party extensions only, and relgap uses none ([relgap ADR-0001](../plan/adr/0001-goldmark-section-index.md)) |
 | HTML to Markdown | `github.com/JohannesKaufmann/html-to-markdown/v2` | v2.5.2 | web-doc adapter |
-| Versions | `github.com/Masterminds/semver/v3` + `github.com/hashicorp/go-version` | v3.5.0 + v1.9.0 | |
+| Versions | `github.com/Masterminds/semver/v3` + `github.com/hashicorp/go-version` | v3.5.0 + v1.9.0 | go-version only parses the `loose` scheme. relgap compares loose versions itself because go-version's `Compare` isn't transitive (`FuzzCompareProperties` found `"0" <= "0.0.0.0" <= "0A"` but `"0" > "0A"`) |
 | Terraform pins | `github.com/hashicorp/terraform-config-inspect` | v0.0.0-20260904064934-75d64de68c31 | pseudo-versions only |
 | HCL | `github.com/hashicorp/hcl/v2` | v2.25.0 | |
 | Dockerfile | `github.com/moby/buildkit` (`frontend/dockerfile/parser`) | v0.34.2 | **heavy module**. At M5, measure the binary and `go.sum` impact. If it's over 3 MB or pulls in many dependencies, use a ~150-line hand-written parser for FROM/ARG/ENV |

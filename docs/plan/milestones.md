@@ -17,7 +17,7 @@ Scope: repo, `cmd/relgap`, cobra root with `version` and `completion`, koanf con
 
 ### M1: Versions and resolution → [versions](specs/versions-and-ranges.md), [resolution](specs/tool-resolution.md)
 Scope: `version` schemes, embedded mise and aqua snapshots + `registry:snapshot` task, override registry loader + 5 seed entries, `relgap resolve`.
-- [ ] All acceptance criteria in versions-and-ranges.md, plus resolution criteria 1, 2 and 4.
+- [x] All acceptance criteria in versions-and-ranges.md, plus resolution criteria 1, 2 and 4.
 - [ ] Fuzz targets run for 60 s in CI without failures.
 
 ### M2: GitHub client and `gh-release` digest → [adapters](specs/source-adapters.md)

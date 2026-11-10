@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=../schemas/registry-v1.json
+# Tags are go1.N, go1.N.P and go1.NrcK. Release notes are on go.dev, one page per minor.
+name: go
+aliases: [golang]
+repo: golang/go
+version:
+  scheme: loose
+  tag_prefix: "go"
+  universe: tags
+sources:
+  - kind: web-doc
+    url_template: "https://go.dev/doc/go{major}.{minor}"
+eol: { product: go, cycle: "{major}.{minor}" }
+osv:
+  - { ecosystem: Go, name: stdlib }

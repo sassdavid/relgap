@@ -1,0 +1,151 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/sassdavid/relgap/schemas/registry-v1.json",
+  "title": "relgap registry entry",
+  "description": "One file per tool in registry/<name>.yaml. Check an entry with `relgap registry lint`.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["name", "repo"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._-]*$",
+      "description": "Canonical tool name; must match the file name."
+    },
+    "aliases": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 },
+      "description": "Other names that resolve to this tool, such as tf or KUBECTL_VERSION."
+    },
+    "repo": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$",
+      "description": "GitHub owner/repo."
+    },
+    "min_relgap": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+      "description": "Oldest relgap version that understands this entry."
+    },
+    "version": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "scheme": {
+          "enum": ["semver", "loose", "calver", "python", "regex"],
+          "description": "How tags are parsed and ordered. Default loose."
+        },
+        "extract": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Regular expression for scheme regex; capture groups are joined with dots."
+        },
+        "tag_prefix": {
+          "type": "string",
+          "description": "Stripped from tags before parsing; tags without it are ignored."
+        },
+        "exclude": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Regular expression on the tag; matching tags are ignored."
+        },
+        "universe": {
+          "enum": ["releases", "tags"],
+          "description": "What defines the versions in a range. Default releases."
+        },
+        "line": {
+          "enum": ["none", "major", "minor"],
+          "description": "Default release line for the end of a range."
+        }
+      }
+    },
+    "sources": {
+      "type": "array",
+      "description": "Changelog sources, tried and merged in order. Empty means auto-discovery.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["kind"],
+        "properties": {
+          "kind": {
+            "enum": ["gh-release", "changelog-file", "structured-json", "web-doc", "upgrade-guide", "upgrade-notes"]
+          },
+          "path_template": {
+            "type": "string",
+            "minLength": 1,
+            "description": "File path in the repo; supports {version}, {major}, {minor} and {prev_minor}."
+          },
+          "url_template": {
+            "type": "string",
+            "pattern": "^https://",
+            "description": "Allow-listed URL; same placeholders as path_template."
+          },
+          "ref": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Git ref; may be a template such as v{major}.{minor}."
+          },
+          "heading": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Regular expression for a version's heading; {version} is replaced first."
+          },
+          "ignore_sections": {
+            "type": "array",
+            "items": { "type": "string", "minLength": 1 }
+          },
+          "from_heading": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Heading whose section holds the upgrade notes."
+          }
+        },
+        "allOf": [
+          {
+            "if": { "properties": { "kind": { "enum": ["changelog-file", "structured-json"] } } },
+            "then": { "required": ["path_template"] }
+          },
+          {
+            "if": { "properties": { "kind": { "const": "web-doc" } } },
+            "then": { "required": ["url_template"] }
+          },
+          {
+            "if": { "properties": { "kind": { "const": "upgrade-guide" } } },
+            "then": { "anyOf": [{ "required": ["path_template"] }, { "required": ["url_template"] }] }
+          },
+          {
+            "if": { "properties": { "kind": { "const": "upgrade-notes" } } },
+            "then": { "required": ["from_heading"] }
+          }
+        ]
+      }
+    },
+    "eol": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["product"],
+      "properties": {
+        "product": { "type": "string", "minLength": 1, "description": "endoflife.date product." },
+        "cycle": { "type": "string", "minLength": 1, "description": "Cycle template such as {major}.{minor}." }
+      }
+    },
+    "osv": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["ecosystem", "name"],
+        "properties": {
+          "ecosystem": { "type": "string", "minLength": 1 },
+          "name": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "breaking_markers": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "description": "Literal text that marks an entry as breaking."
+    }
+  }
+}
