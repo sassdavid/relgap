@@ -5,7 +5,10 @@ go 1.27.0
 require (
 	github.com/Masterminds/semver/v3 v3.5.0
 	github.com/adrg/xdg v0.5.3
+	github.com/cli/go-gh/v2 v2.17.0
 	github.com/google/go-cmp v0.7.0
+	github.com/google/go-github/v93 v93.0.0
+	github.com/hashicorp/go-retryablehttp v0.7.8
 	github.com/hashicorp/go-version v1.9.0
 	github.com/invopop/jsonschema v0.14.0
 	github.com/knadh/koanf/providers/env/v2 v2.0.2
@@ -16,11 +19,15 @@ require (
 	github.com/pelletier/go-toml/v2 v2.4.3
 	github.com/rogpeppe/go-internal v1.16.0
 	github.com/santhosh-tekuri/jsonschema/v6 v6.0.3
+	github.com/shurcooL/githubv4 v0.0.0-20260209031235-2402fdf4a9ed
 	github.com/spf13/cobra v1.10.2
 	github.com/spf13/pflag v1.1.0
 	github.com/stretchr/testify v1.12.1
 	go.yaml.in/yaml/v4 v4.0.0
+	golang.org/x/sync v0.25.0
 	golang.org/x/sys v0.49.0
+	golang.org/x/time v0.16.0
+	gopkg.in/dnaeon/go-vcr.v4 v4.0.7
 )
 
 require (
@@ -28,13 +35,19 @@ require (
 	github.com/buger/jsonparser v1.1.2 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.6 // indirect
 	github.com/go-viper/mapstructure/v2 v2.4.0 // indirect
+	github.com/google/go-querystring v1.2.0 // indirect
+	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/knadh/koanf/maps v0.1.2 // indirect
 	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
 	github.com/pb33f/ordered-map/v2 v2.3.1 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
+	github.com/shurcooL/graphql v0.0.0-20240915155400-7ee5256398cf // indirect
+	github.com/yuin/goldmark/v2 v2.1.15 // indirect
 	go.yaml.in/yaml/v3 v3.0.5 // indirect
+	golang.org/x/oauth2 v0.38.0 // indirect
 	golang.org/x/text v0.43.0 // indirect
 	golang.org/x/tools v0.51.0 // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

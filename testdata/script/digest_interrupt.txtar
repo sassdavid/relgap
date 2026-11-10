@@ -1,0 +1,12 @@
+# Ctrl-C while a GitHub request hangs stops relgap within a second with exit code 130.
+[windows] skip 'a process cannot be sent os.Interrupt on Windows'
+
+env GH_TOKEN=test-token
+slowgithub start
+exec expect-exit 130 relgap digest terraform 1.15.8..1.17.1 &digest&
+slowgithub wait
+kill -INT digest
+wait digest
+slowgithub within 1s
+stderr '^relgap: interrupted$'
+! stdout .

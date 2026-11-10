@@ -1,0 +1,25 @@
+# Usage errors exit 2 before or after listing versions.
+[recording] skip 'replays the cassette digest_terraform.txtar records'
+env GH_TOKEN=$TEST_GH_TOKEN
+env TEST_CASSETTE=$CASSETTES/gh-release/terraform-1.15.8..1.17.1.yaml
+
+exec expect-exit 2 relgap digest terraform 1.17.1..1.15.8
+stderr 'range goes backwards: 1.17.1 is newer than 1.15.8; swap the arguments'
+
+exec expect-exit 2 relgap digest terraform 1.15.8..1.99.0
+stderr 'version not found: 1.99.0'
+
+exec expect-exit 2 relgap digest terraform ..1.17.1
+stderr 'invalid range "..1.17.1": want <from>..<to> or <from>..'
+
+exec expect-exit 2 relgap digest terraform 1.15.8..1.17.1 --line patch
+stderr 'invalid line "patch"'
+
+exec expect-exit 2 relgap digest no-such-tool-xyz 1.0.0..2.0.0
+stderr 'unknown tool'
+
+exec expect-exit 2 relgap digest terraform 1.15.8..1.17.1 --format sarif
+stderr 'format "sarif" is not supported by this command'
+
+exec expect-exit 2 relgap digest terraform
+stderr 'takes 2 argument'

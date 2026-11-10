@@ -42,26 +42,9 @@ Layers, highest precedence first:
 			if err := g.outFormat.Check(render.FormatTTY, render.FormatPlain, render.FormatJSON); err != nil {
 				return usageError(err)
 			}
-			res, err := g.loadConfig(cmd, d)
+			resolution, err := g.resolveTool(cmd, d, args[0])
 			if err != nil {
 				return err
-			}
-			cfg := registry.ConfigLayer{Tools: map[string]string{}, Aliases: res.Config.Aliases}
-			for name, t := range res.Config.Tools {
-				cfg.Tools[name] = t.Repo
-			}
-			runner := execx.NewRunner(d.Logger, execx.WithEnviron(func() []string { return d.Env }))
-			r, err := registry.Load(cmd.Context(), d.Logger, misex.New(runner), cfg)
-			if err != nil {
-				return err
-			}
-			resolution, err := r.Resolve(args[0])
-			if errors.Is(err, registry.ErrUnknownTool) || errors.Is(err, registry.ErrUnsupported) ||
-				errors.Is(err, registry.ErrNoRepo) {
-				return usageError(err)
-			}
-			if err != nil {
-				return fmt.Errorf("resolve %s: %w", args[0], err)
 			}
 			if g.outFormat == render.FormatJSON {
 				return render.JSON(d.Stdout, render.NewEnvelope(buildinfo.Get().Version, d.Clock(), resolution))
@@ -69,6 +52,35 @@ Layers, highest precedence first:
 			return writeResolution(d, resolution)
 		},
 	}
+}
+
+// resolveTool loads the config and the registries and resolves name. Unknown tools are usage errors.
+func (g *globals) resolveTool(cmd *cobra.Command, d *app.Deps, name string) (*registry.Resolution, error) {
+	res, err := g.loadConfig(cmd, d)
+	if err != nil {
+		return nil, err
+	}
+	cfg := registry.ConfigLayer{Tools: map[string]string{}, Aliases: res.Config.Aliases}
+	for tool, t := range res.Config.Tools {
+		cfg.Tools[tool] = t.Repo
+	}
+	r, err := registry.Load(cmd.Context(), d.Logger, misex.New(newRunner(d)), cfg)
+	if err != nil {
+		return nil, err
+	}
+	resolution, err := r.Resolve(name)
+	if errors.Is(err, registry.ErrUnknownTool) || errors.Is(err, registry.ErrUnsupported) ||
+		errors.Is(err, registry.ErrNoRepo) {
+		return nil, usageError(err)
+	}
+	if err != nil {
+		return nil, fmt.Errorf("resolve %s: %w", name, err)
+	}
+	return resolution, nil
+}
+
+func newRunner(d *app.Deps) *execx.Runner {
+	return execx.NewRunner(d.Logger, execx.WithEnviron(func() []string { return d.Env }))
 }
 
 func writeResolution(d *app.Deps, res *registry.Resolution) error {

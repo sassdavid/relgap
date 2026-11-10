@@ -22,9 +22,9 @@ Scope: `version` schemes, embedded mise and aqua snapshots + `registry:snapshot`
 
 ### M2: GitHub client and `gh-release` digest → [adapters](specs/source-adapters.md)
 Scope: `httpx` (retry, rate, no cache yet), go-github + githubv4 batch, token discovery, `gh-release` adapter, minimal classifier (heading rules only), `digest` with tty/plain/json.
-- [ ] `relgap digest terraform 1.15.8..1.17.1 --format json` matches the golden file (cassette).
-- [ ] Without a token: a single warning, concurrency drops to 2, the result is still correct.
-- [ ] Ctrl-C mid-digest exits 130 within 1 s (testscript with a slow fake server).
+- [x] `relgap digest terraform 1.15.8..1.17.1 --format json` matches the golden file (cassette).
+- [x] Without a token: a single warning, concurrency drops to 2, the result is still correct.
+- [x] Ctrl-C mid-digest exits 130 within 1 s (testscript with a slow fake server).
 
 ### M3: `changelog-file`, section index, full classifier → [classification](specs/classification.md)
 - [ ] mdindex parses each file once (request counter test). kubernetes, claude-code and node fixtures are golden.

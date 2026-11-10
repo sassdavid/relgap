@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/sassdavid/relgap/schemas/digest-v1.json",
+  "title": "relgap digest --format json",
+  "description": "The report-v1.json envelope with digest data: per tool, the versions in the range and the classified entries of their release notes.",
+  "allOf": [{ "$ref": "report-v1.json" }],
+  "properties": {
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tools"],
+      "properties": {
+        "tools": { "type": "array", "items": { "$ref": "#/$defs/tool" } }
+      }
+    }
+  },
+  "$defs": {
+    "count": { "type": "integer", "minimum": 0 },
+    "kind": { "enum": ["breaking", "deprecation", "security", "feature", "fix", "other"] },
+    "tool": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tool", "repo", "from", "to", "versions", "entries", "counts", "hidden", "warnings"],
+      "properties": {
+        "tool": { "description": "Canonical tool name.", "type": "string", "minLength": 1 },
+        "repo": { "description": "GitHub owner/repo.", "type": "string", "minLength": 1 },
+        "from": { "description": "Start of the range, excluded.", "type": "string", "minLength": 1 },
+        "to": { "description": "End of the range, included.", "type": "string", "minLength": 1 },
+        "versions": {
+          "description": "Versions in the range, oldest first.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["version", "tag"],
+            "properties": {
+              "version": { "type": "string", "minLength": 1 },
+              "tag": { "type": "string", "minLength": 1 },
+              "published_at": { "type": "string", "format": "date-time" },
+              "url": { "description": "GitHub release page.", "type": "string", "format": "uri" }
+            }
+          }
+        },
+        "entries": {
+          "description": "Entries at or above the minimum confidence, by version, then in document order.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["version", "kind", "confidence", "text", "source"],
+            "properties": {
+              "version": { "type": "string", "minLength": 1 },
+              "kind": { "$ref": "#/$defs/kind" },
+              "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+              "text": { "description": "Markdown.", "type": "string", "minLength": 1 },
+              "source": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["adapter", "url"],
+                "properties": {
+                  "adapter": { "enum": ["gh-release", "changelog-file", "structured-json", "web-doc", "upgrade-guide"] },
+                  "url": { "type": "string" },
+                  "heading": { "description": "Heading path inside the source document.", "type": "array", "items": { "type": "string" } }
+                }
+              }
+            }
+          }
+        },
+        "counts": {
+          "description": "Number of entries shown, per kind.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["breaking", "deprecation", "security", "feature", "fix", "other"],
+          "properties": {
+            "breaking": { "$ref": "#/$defs/count" },
+            "deprecation": { "$ref": "#/$defs/count" },
+            "security": { "$ref": "#/$defs/count" },
+            "feature": { "$ref": "#/$defs/count" },
+            "fix": { "$ref": "#/$defs/count" },
+            "other": { "$ref": "#/$defs/count" }
+          }
+        },
+        "hidden": { "description": "Entries below the minimum confidence.", "type": "integer", "minimum": 0 },
+        "warnings": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}
