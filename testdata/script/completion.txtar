@@ -1,0 +1,8 @@
+exec relgap completion bash
+stdout '__start_relgap'
+exec relgap completion zsh
+stdout '#compdef relgap'
+exec relgap completion fish
+stdout 'complete -c relgap'
+exec relgap completion powershell
+stdout 'Register-ArgumentCompleter'

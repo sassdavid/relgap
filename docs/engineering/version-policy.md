@@ -9,7 +9,7 @@ CI matrices.
 
 | Tool | Hard floor | Gated features | CI test matrix | Raise the floor when |
 |---|---|---|---|---|
-| **Go** (building) | `go 1.26.0` directive (no patch pin, so `go install` works on both supported Go minors); release builds use toolchain **1.27.3** | — | 1.26 + 1.27 | Go 1.28 ships (~Feb 2027) → `go 1.27.0` |
+| **Go** (building) | `go 1.27.0` directive (no patch pin; same as the sibling repo); builds, lint and releases use toolchain **1.27.3** | — | 1.27 | Go 1.28 ships (~Feb 2027) → `go 1.28.0`, in both repos at once |
 | **mise** | none required. If mise is absent or older than **v2025.12.7** (`registry --json`), relgap parses `mise.toml` and uses the embedded registry snapshot | `release_url` from `outdated --json` ≥ **v2026.8.15** (the key is *omitted* when unknown, so check `mise version --json`). Below that, relgap builds the URL from registry data + the GitHub API | latest mise weekly (mise ships about 5 releases a week) | — |
 | **gh** (token discovery) | none. go-gh's `auth.TokenForHost` reads env, config and keyring; `gh` isn't required | — | — | — |
 

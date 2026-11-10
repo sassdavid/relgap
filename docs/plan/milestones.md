@@ -10,9 +10,9 @@ Release mapping: **v0.1.0 = M0–M8** (MVP), v0.2 = M9–M10, v0.3 = M11–M12.
 
 ### M0: Skeleton and pipeline
 Scope: repo, `cmd/relgap`, cobra root with `version` and `completion`, koanf config + `config show|path|validate`, slog/tint, `Deps` struct, render package stub, mise tasks, golden lint config, CI, goreleaser snapshot, release-please.
-- [ ] `mise run check` passes on a clean clone (lint + `go test -race` + govulncheck).
-- [ ] `relgap version --format json` validates against `schemas/report-v1.json` (envelope only).
-- [ ] `goreleaser release --snapshot --clean` produces 6 archives, checksums and an SBOM.
+- [x] `mise run check` passes on a clean clone (lint + `go test -race` + govulncheck).
+- [x] `relgap version --format json` validates against `schemas/report-v1.json` (envelope only).
+- [x] `goreleaser release --snapshot --clean` produces 6 archives, checksums and an SBOM.
 - [ ] CI is green on ubuntu, macos and windows. Actions are pinned by SHA and zizmor is clean.
 
 ### M1: Versions and resolution → [versions](specs/versions-and-ranges.md), [resolution](specs/tool-resolution.md)

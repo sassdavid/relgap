@@ -1,0 +1,99 @@
+# With no files, config show prints the defaults as YAML.
+exec relgap config show
+cmp stdout want-defaults.yaml
+! stderr .
+
+# config path lists the user file and the discovered project file.
+[!windows] exec relgap config path
+[!windows] cmpenv stdout want-path-none.txt
+mkdir .git
+cp project.yaml .relgap.yaml
+mkdir sub/dir
+cd sub/dir
+[!windows] exec relgap config path
+[!windows] cmpenv stdout $WORK/want-path-found.txt
+exec relgap config path --format json
+jsonschema report-v1.json stdout
+stdout '"kind": "project"'
+stdout '"found": true'
+
+# The project-file walk stops at the git root.
+cd $WORK
+mkdir repo/.git
+cd repo
+exec relgap config show
+stdout 'host: github.com'
+! stdout 'concurrency: 3'
+
+# Project file values override defaults; config show reads it from a subdirectory.
+cd $WORK/sub/dir
+exec relgap config show
+stdout '^  concurrency: 3$'
+
+# validate reports the files it checked.
+exec relgap config validate
+stdout '^valid: .*\.relgap\.yaml$'
+exec relgap config validate --format json
+jsonschema report-v1.json stdout
+
+# --config replaces discovery and must exist.
+exec relgap config show --config $WORK/project.yaml
+stdout '^  concurrency: 3$'
+exec expect-exit 2 relgap config show --config $WORK/missing.yaml
+stderr 'config file .*missing.yaml does not exist'
+env RELGAP_CONFIG=$WORK/missing.yaml
+exec expect-exit 2 relgap config show
+stderr 'missing.yaml does not exist'
+env RELGAP_CONFIG=
+
+# Unknown RELGAP_ variables are ignored with a warning on stderr.
+env RELGAP_NOT_A_KEY=1
+exec relgap config show
+stderr 'WRN ignoring unknown environment variable name=RELGAP_NOT_A_KEY'
+env RELGAP_NOT_A_KEY=
+
+# JSON output is the shared envelope.
+exec relgap config show --sources --format json
+jsonschema report-v1.json stdout
+stdout '"github.concurrency": "project file .*\.relgap\.yaml"'
+
+-- project.yaml --
+github:
+  concurrency: 3
+-- want-path-none.txt --
+user     not found   $WORK/.config/relgap/config.yaml
+project  none found  -
+-- want-path-found.txt --
+user     not found  $WORK/.config/relgap/config.yaml
+project  found      $WORK/.relgap.yaml
+-- want-defaults.yaml --
+aliases: {}
+cache:
+  dir: ""
+  ttl_override: {}
+github:
+  concurrency: 8
+  host: github.com
+ignore: []
+llm:
+  api_key_env: ""
+  aws_profile: ""
+  base_url: ""
+  max_input_tokens: 30000
+  model: ""
+  provider: ""
+policy:
+  fail_on: []
+  max_behind: ""
+  min_confidence: 0.5
+scan:
+  detectors:
+    ci_actions: false
+    generic: false
+  exclude:
+    - '**/node_modules/**'
+    - '**/.terragrunt-cache/**'
+  extra_files: []
+  roots: []
+schema_version: 1
+tools: {}

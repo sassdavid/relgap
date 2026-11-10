@@ -1,0 +1,61 @@
+# config spec criterion 1: `config show --sources` prints the key, value and source of every
+# key, across all five layers: defaults < user file < project file < env < flags.
+# Paths in the golden use forward slashes.
+[windows] skip 'golden paths use forward slashes'
+
+mkdir .git
+env RELGAP_SCAN_ROOTS=/src/infra,/src/github
+env RELGAP_SCAN__DETECTORS__CI_ACTIONS=true
+exec relgap config show --sources --min-confidence 0.7
+cmpenv stdout want-sources.txt
+! stderr .
+
+# The same provenance is available as JSON.
+exec relgap config show --sources --format json --min-confidence 0.7
+jsonschema report-v1.json stdout
+stdout '"policy.min_confidence": "flag --min-confidence"'
+stdout '"scan.roots": "env RELGAP_SCAN_ROOTS"'
+
+-- .config/relgap/config.yaml --
+github:
+  concurrency: 2
+llm:
+  provider: bedrock
+  aws_profile: dev
+-- .relgap.yaml --
+schema_version: 1
+github:
+  concurrency: 4
+tools:
+  hk:
+    repo: jdx/hk
+aliases:
+  TG_VERSION: terragrunt
+ignore:
+  - tool: java
+policy:
+  fail_on: [eol, vuln]
+-- want-sources.txt --
+KEY                        VALUE                                             SOURCE
+aliases.TG_VERSION         terragrunt                                        project file $WORK/.relgap.yaml
+cache.dir                  ""                                                default
+cache.ttl_override         {}                                                default
+github.concurrency         4                                                 project file $WORK/.relgap.yaml
+github.host                github.com                                        default
+ignore                     [{"tool":"java"}]                                 project file $WORK/.relgap.yaml
+llm.api_key_env            ""                                                default
+llm.aws_profile            dev                                               user file $WORK/.config/relgap/config.yaml
+llm.base_url               ""                                                default
+llm.max_input_tokens       30000                                             default
+llm.model                  ""                                                default
+llm.provider               bedrock                                           user file $WORK/.config/relgap/config.yaml
+policy.fail_on             ["eol","vuln"]                                    project file $WORK/.relgap.yaml
+policy.max_behind          ""                                                default
+policy.min_confidence      0.7                                               flag --min-confidence
+scan.detectors.ci_actions  true                                              env RELGAP_SCAN__DETECTORS__CI_ACTIONS
+scan.detectors.generic     false                                             default
+scan.exclude               ["**/node_modules/**","**/.terragrunt-cache/**"]  default
+scan.extra_files           []                                                default
+scan.roots                 ["/src/infra","/src/github"]                      env RELGAP_SCAN_ROOTS
+schema_version             1                                                 project file $WORK/.relgap.yaml
+tools.hk.repo              jdx/hk                                            project file $WORK/.relgap.yaml

@@ -1,0 +1,108 @@
+# config spec criterion 2: unknown keys and wrong types each produce a precise error
+# (exit 2, origin:line:column, key path, what's wrong). Nothing goes to stdout.
+mkdir .git
+
+# Unknown key in the project file.
+cp unknown.yaml .relgap.yaml
+exec expect-exit 2 relgap config show
+! stdout .
+[!windows] cmpenv stderr want-unknown.txt
+stderr '\.relgap\.yaml:2:3: github\.hots: unknown key$'
+
+# Wrong type in the project file.
+cp wrongtype.yaml .relgap.yaml
+exec expect-exit 2 relgap config validate
+! stdout .
+[!windows] cmpenv stderr want-wrongtype.txt
+stderr '\.relgap\.yaml:2:16: github\.concurrency: wrong type: got string, want integer$'
+
+# Every problem in a file is reported, in file order, including nested and list items.
+cp many.yaml .relgap.yaml
+exec expect-exit 2 relgap config validate
+[!windows] cmpenv stderr want-many.txt
+stderr '\.relgap\.yaml:12:1: color: unknown key$'
+
+# validate with explicit files checks each one and reports all problems.
+rm .relgap.yaml
+exec expect-exit 2 relgap config validate unknown.yaml wrongtype.yaml ok.yaml
+cmp stderr want-explicit.txt
+exec relgap config validate ok.yaml
+stdout '^valid: ok.yaml$'
+
+# Invalid YAML syntax.
+exec expect-exit 2 relgap config validate broken.yaml
+stderr '^  broken.yaml: invalid YAML: .*line 2'
+
+# Errors in the user file name the user file.
+mkdir .config/relgap
+cp unknown.yaml .config/relgap/config.yaml
+exec expect-exit 2 relgap config show
+stderr 'config.yaml:2:3: github.hots: unknown key$'
+rm .config/relgap/config.yaml
+
+# Wrong types and out-of-range values from env vars and flags name their origin.
+env RELGAP_GITHUB_CONCURRENCY=eight
+exec expect-exit 2 relgap config show
+cmp stderr want-env-type.txt
+env RELGAP_GITHUB_CONCURRENCY=0
+exec expect-exit 2 relgap config show
+cmp stderr want-env-range.txt
+env RELGAP_GITHUB_CONCURRENCY=
+exec expect-exit 2 relgap config show --min-confidence 1.5
+cmp stderr want-flag-range.txt
+exec expect-exit 2 relgap config show --concurrency many
+stderr 'invalid argument "many" for "--concurrency" flag'
+
+-- ok.yaml --
+github:
+  concurrency: 4
+-- unknown.yaml --
+github:
+  hots: github.example.com
+-- wrongtype.yaml --
+github:
+  concurrency: "eight"
+-- many.yaml --
+schema_version: 2
+github:
+  concurrency: 8.5
+tools:
+  hk:
+    repo: not-a-repo
+    version: 1
+ignore:
+  - path: "**/legacy/**"
+policy:
+  fail_on: [eol, sometimes]
+color: true
+-- broken.yaml --
+github:
+	concurrency: 4
+-- want-unknown.txt --
+relgap: invalid configuration:
+  $WORK/.relgap.yaml:2:3: github.hots: unknown key
+-- want-wrongtype.txt --
+relgap: invalid configuration:
+  $WORK/.relgap.yaml:2:16: github.concurrency: wrong type: got string, want integer
+-- want-many.txt --
+relgap: invalid configuration:
+  $WORK/.relgap.yaml:1:17: schema_version: value must be 1
+  $WORK/.relgap.yaml:3:16: github.concurrency: wrong type: got number, want integer
+  $WORK/.relgap.yaml:6:11: tools.hk.repo: 'not-a-repo' does not match pattern '^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$'
+  $WORK/.relgap.yaml:7:5: tools.hk.version: unknown key
+  $WORK/.relgap.yaml:9:5: ignore.0: missing property 'tool'
+  $WORK/.relgap.yaml:11:18: policy.fail_on.1: value must be one of 'breaking', 'deprecation', 'eol', 'vuln', 'drift', 'outdated'
+  $WORK/.relgap.yaml:12:1: color: unknown key
+-- want-explicit.txt --
+relgap: invalid configuration:
+  unknown.yaml:2:3: github.hots: unknown key
+  wrongtype.yaml:2:16: github.concurrency: wrong type: got string, want integer
+-- want-env-type.txt --
+relgap: invalid configuration:
+  env RELGAP_GITHUB_CONCURRENCY: github.concurrency: wrong type: "eight" is not an integer
+-- want-env-range.txt --
+relgap: invalid configuration:
+  env RELGAP_GITHUB_CONCURRENCY: github.concurrency: minimum: got 0, want 1
+-- want-flag-range.txt --
+relgap: invalid configuration:
+  flag --min-confidence: policy.min_confidence: maximum: got 1.5, want 1

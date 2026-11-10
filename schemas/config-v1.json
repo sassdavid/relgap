@@ -1,0 +1,202 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/sassdavid/relgap/schemas/config-v1.json",
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "enum": [
+        1
+      ],
+      "description": "Config file format version."
+    },
+    "github": {
+      "properties": {
+        "host": {
+          "type": "string",
+          "minLength": 1,
+          "description": "GitHub host. Only github.com is supported in v0.x."
+        },
+        "concurrency": {
+          "type": "integer",
+          "maximum": 64,
+          "minimum": 1,
+          "description": "Maximum concurrent requests per tool."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "cache": {
+      "properties": {
+        "dir": {
+          "type": "string",
+          "description": "Cache directory. Empty means $XDG_CACHE_HOME/relgap."
+        },
+        "ttl_override": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "type": "object",
+          "description": "Per-source TTL overrides as Go durations, e.g. {endoflife: 24h}."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "scan": {
+      "properties": {
+        "roots": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "description": "Directories scanned by drift and pins when no roots are given."
+        },
+        "exclude": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "description": "Glob patterns excluded from scanning."
+        },
+        "detectors": {
+          "properties": {
+            "ci_actions": {
+              "type": "boolean",
+              "description": "Detect tool versions in CI workflow files."
+            },
+            "generic": {
+              "type": "boolean",
+              "description": "Detect NAME_VERSION=x.y.z assignments in extra_files."
+            }
+          },
+          "additionalProperties": false,
+          "type": "object"
+        },
+        "extra_files": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "description": "Extra glob patterns scanned by the generic detector."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "tools": {
+      "additionalProperties": {
+        "properties": {
+          "repo": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$",
+            "description": "GitHub owner/repo."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "repo"
+        ]
+      },
+      "type": "object",
+      "description": "Local tool overrides and additions, keyed by tool name."
+    },
+    "aliases": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "type": "object",
+      "description": "Maps a raw pin name (e.g. TG_VERSION) to a tool name."
+    },
+    "ignore": {
+      "items": {
+        "properties": {
+          "tool": {
+            "type": "string",
+            "minLength": 1
+          },
+          "path": {
+            "type": "string",
+            "description": "Glob; when set, the tool is ignored only under matching paths."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "tool"
+        ]
+      },
+      "type": "array",
+      "description": "Tools (optionally limited to paths) that are never reported."
+    },
+    "policy": {
+      "properties": {
+        "fail_on": {
+          "items": {
+            "type": "string",
+            "enum": [
+              "breaking",
+              "deprecation",
+              "eol",
+              "vuln",
+              "drift",
+              "outdated"
+            ]
+          },
+          "type": "array"
+        },
+        "max_behind": {
+          "type": "string",
+          "pattern": "^((major|minor|patch|releases|days):[0-9]+)?$",
+          "description": "e.g. minor:2, releases:10, days:90."
+        },
+        "min_confidence": {
+          "type": "number",
+          "maximum": 1,
+          "minimum": 0,
+          "description": "Entries below this confidence are hidden."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "llm": {
+      "properties": {
+        "provider": {
+          "type": "string",
+          "enum": [
+            "",
+            "openai-compatible",
+            "anthropic",
+            "bedrock"
+          ],
+          "description": "Empty disables the summarizer."
+        },
+        "model": {
+          "type": "string"
+        },
+        "base_url": {
+          "type": "string"
+        },
+        "api_key_env": {
+          "type": "string",
+          "description": "Name of the env var holding the API key. Keys are never read from files."
+        },
+        "aws_profile": {
+          "type": "string"
+        },
+        "max_input_tokens": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "type": "object",
+  "title": "relgap configuration",
+  "description": "Schema for $XDG_CONFIG_HOME/relgap/config.yaml and .relgap.yaml. Generated from internal/config by `mise run test:golden -- -update`; do not edit."
+}
