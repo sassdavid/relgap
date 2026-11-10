@@ -102,6 +102,7 @@ stdout carries data, stderr carries logs. Use --format json for scripting.`,
 		newVersionCmd(d, g),
 		newConfigCmd(d, g),
 		newResolveCmd(d, g),
+		newDigestCmd(d, g),
 		newRegistryCmd(d, g),
 	)
 	return root, g

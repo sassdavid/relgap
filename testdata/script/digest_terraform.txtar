@@ -1,0 +1,1179 @@
+# relgap digest replays a recorded GitHub session. With a token relgap lists releases and fetches
+# bodies over GraphQL. Without one it uses REST, warns once and drops to 2 concurrent requests;
+# the digest is the same. Record again with: VCR_RECORD=1 GH_TOKEN=... go test ./internal/cli
+env TEST_NOW=2026-11-10T12:00:00Z
+
+# With a token: GraphQL.
+env GH_TOKEN=$TEST_GH_TOKEN
+env TEST_CASSETTE=$CASSETTES/gh-release/terraform-1.15.8..1.17.1.yaml
+exec relgap digest terraform 1.15.8..1.17.1 --format json
+cmp stdout digest.json
+jsonschema digest-v1.json stdout
+! stderr .
+
+exec relgap digest terraform 1.15.8..1.17.1 --format plain
+cmp stdout digest.txt
+! stderr .
+
+exec relgap digest tf 1.15.8..1.17.1 --format tty --color always
+stdout '^\x1b\[1mterraform 1\.15\.8\.\.1\.17\.1\x1b\[0m  hashicorp/terraform$'
+stdout '^\x1b\[1m\x1b\[31mBreaking changes\x1b\[0m$'
+
+exec relgap digest terraform 1.15.8..1.17.1 --format json -vv
+stderr 'DBG github client authenticated=true token_source=GH_TOKEN concurrency=8'
+
+# Without a token: REST, one warning, concurrency 2, the same digest.
+env GH_TOKEN=
+env TEST_CASSETTE=$CASSETTES/gh-release/terraform-1.15.8..1.17.1-notoken.yaml
+exec relgap digest terraform 1.15.8..1.17.1 --format json
+cmp stdout digest.json
+stderr -count=1 '^.+$'
+stderr 'WRN no GitHub token found; using the REST API \(60 requests per hour\) with 2 concurrent requests'
+
+exec relgap digest terraform 1.15.8..1.17.1 --format json -vv
+stderr -count=1 'WRN'
+stderr 'DBG github client authenticated=false token_source="" concurrency=2'
+! stderr 'Authorization'
+
+-- digest.json --
+{
+  "schema_version": "1",
+  "tool": "relgap",
+  "version": "dev",
+  "generated_at": "2026-11-10T12:00:00Z",
+  "data": {
+    "tools": [
+      {
+        "tool": "terraform",
+        "repo": "hashicorp/terraform",
+        "from": "1.15.8",
+        "to": "1.17.1",
+        "versions": [
+          {
+            "version": "1.15.9",
+            "tag": "v1.15.9",
+            "published_at": "2026-08-19T14:29:32Z",
+            "url": "https://github.com/hashicorp/terraform/releases/tag/v1.15.9"
+          },
+          {
+            "version": "1.16.0",
+            "tag": "v1.16.0",
+            "published_at": "2026-08-26T13:05:28Z",
+            "url": "https://github.com/hashicorp/terraform/releases/tag/v1.16.0"
+          },
+          {
+            "version": "1.16.1",
+            "tag": "v1.16.1",
+            "published_at": "2026-09-02T14:49:32Z",
+            "url": "https://github.com/hashicorp/terraform/releases/tag/v1.16.1"
+          },
+          {
+            "version": "1.16.2",
+            "tag": "v1.16.2",
+            "published_at": "2026-09-09T13:22:31Z",
+            "url": "https://github.com/hashicorp/terraform/releases/tag/v1.16.2"
+          },
+          {
+            "version": "1.16.3",
+            "tag": "v1.16.3",
+            "published_at": "2026-09-16T14:33:39Z",
+            "url": "https://github.com/hashicorp/terraform/releases/tag/v1.16.3"
+          },
+          {
+            "version": "1.16.4",
+            "tag": "v1.16.4",
+            "published_at": "2026-09-23T12:44:16Z",
+            "url": "https://github.com/hashicorp/terraform/releases/tag/v1.16.4"
+          },
+          {
+            "version": "1.16.5",
+            "tag": "v1.16.5",
+            "published_at": "2026-10-02T13:04:00Z",
+            "url": "https://github.com/hashicorp/terraform/releases/tag/v1.16.5"
+          },
+          {
+            "version": "1.16.6",
+            "tag": "v1.16.6",
+            "published_at": "2026-10-14T09:31:54Z",
+            "url": "https://github.com/hashicorp/terraform/releases/tag/v1.16.6"
+          },
+          {
+            "version": "1.16.7",
+            "tag": "v1.16.7",
+            "published_at": "2026-10-22T09:30:19Z",
+            "url": "https://github.com/hashicorp/terraform/releases/tag/v1.16.7"
+          },
+          {
+            "version": "1.17.0",
+            "tag": "v1.17.0",
+            "published_at": "2026-10-21T17:32:54Z",
+            "url": "https://github.com/hashicorp/terraform/releases/tag/v1.17.0"
+          },
+          {
+            "version": "1.17.1",
+            "tag": "v1.17.1",
+            "published_at": "2026-10-28T18:02:22Z",
+            "url": "https://github.com/hashicorp/terraform/releases/tag/v1.17.1"
+          }
+        ],
+        "entries": [
+          {
+            "version": "1.15.9",
+            "kind": "fix",
+            "confidence": 0.9,
+            "text": "validate: Child module validation has been fixed and will now raise errors or warning diagnostics for invalid blocks. (`list`, `import`, `backend`, and `cloud`) ([#38994](https://github.com/hashicorp/terraform/issues/38994))",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/hashicorp/terraform/releases/tag/v1.15.9",
+              "heading": [
+                "1.15.9 (August 19, 2026)",
+                "BUG FIXES:"
+              ]
+            }
+          },
+          {
+            "version": "1.16.0",
+            "kind": "feature",
+            "confidence": 0.9,
+            "text": "Terraform now stores planned private data for providers, allowing provider-specific state to be preserved across plan and apply. ([#37986](https://github.com/hashicorp/terraform/issues/37986))",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/hashicorp/terraform/releases/tag/v1.16.0",
+              "heading": [
+                "1.16.0 (August 26, 2026)",
+                "NEW FEATURES:"
+              ]
+            }
+          },
+          {
+            "version": "1.16.0",
+            "kind": "feature",
+            "confidence": 0.9,
+            "text": "`terraform_data`: The new `store` block can hold ephemeral and sensitive values across plan and apply. ([#38298](https://github.com/hashicorp/terraform/issues/38298))",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/hashicorp/terraform/releases/tag/v1.16.0",
+              "heading": [
+                "1.16.0 (August 26, 2026)",
+                "NEW FEATURES:"
+              ]
+            }
+          },
+          {
+            "version": "1.16.0",
+            "kind": "feature",
+            "confidence": 0.9,
+            "text": "Providers can now use nested blocks as computed values ([#38305](https://github.com/hashicorp/terraform/issues/38305))",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/hashicorp/terraform/releases/tag/v1.16.0",
+              "heading": [
+                "1.16.0 (August 26, 2026)",
+                "NEW FEATURES:"
+              ]
+            }
+          },
+          {
+            "version": "1.16.0",
+            "kind": "feature",
+            "confidence": 0.9,
+            "text": "import: `import` blocks inside modules are now supported. ([#38352](https://github.com/hashicorp/terraform/issues/38352))",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/hashicorp/terraform/releases/tag/v1.16.0",
+              "heading": [
+                "1.16.0 (August 26, 2026)",
+                "NEW FEATURES:"
+              ]
+            }
+          },
+          {
+            "version": "1.16.0",
+            "kind": "feature",
+            "confidence": 0.9,
+            "text": "Terraform is now available as a pre-built binary for Linux s390x (zLinux). ([#38384](https://github.com/hashicorp/terraform/issues/38384))",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/hashicorp/terraform/releases/tag/v1.16.0",
+              "heading": [
+                "1.16.0 (August 26, 2026)",
+                "NEW FEATURES:"
+              ]
+            }
+          },
+          {
+            "version": "1.16.0",
+            "kind": "feature",
+            "confidence": 0.9,
+            "text": "Resource action triggers can now use `on_failure` modes of `halt`, `taint`, or `continue`. ([#38722](https://github.com/hashicorp/terraform/issues/38722))",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/hashicorp/terraform/releases/tag/v1.16.0",
+              "heading": [
+                "1.16.0 (August 26, 2026)",
+                "NEW FEATURES:"
+              ]
+            }
+          },
+          {
+            "version": "1.16.0",
+            "kind": "feature",
+            "confidence": 0.9,
+            "text": "state show: The `state show` command can now produce machine-readable output when supplied with the `-json` flag ([#23940](https://github.com/hashicorp/terraform/issues/23940))",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/hashicorp/terraform/releases/tag/v1.16.0",
+              "heading": [
+                "1.16.0 (August 26, 2026)",
+                "ENHANCEMENTS:"
+              ]
+            }
+          },
+          {
+            "version": "1.16.0",
+            "kind": "feature",
+            "confidence": 0.9,
+            "text": "workspace: The `workspace list` command can now produce machine-readable output when supplied with the `-json` flag ([#38397](https://github.com/hashicorp/terraform/issues/38397))",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/hashicorp/terraform/releases/tag/v1.16.0",
+              "heading": [
+                "1.16.0 (August 26, 2026)",
+                "ENHANCEMENTS:"
+              ]
+            }
+          },
+          {
+            "version": "1.16.0",
+            "kind": "feature",
+            "confidence": 0.9,
+            "text": "test: Terraform now reports which resources were left behind when `skip_cleanup` is set. ([#38449](https://github.com/hashicorp/terraform/issues/38449))",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/hashicorp/terraform/releases/tag/v1.16.0",
+              "heading": [
+                "1.16.0 (August 26, 2026)",
+                "ENHANCEMENTS:"
+              ]
+            }
+          },
+          {
+            "version": "1.16.0",
+            "kind": "feature",
+            "confidence": 0.9,
+            "text": "stacks: Action configurations now have access to a `caller` symbol containing the object value of the calling resource. ([#38668](https://github.com/hashicorp/terraform/issues/38668))",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/hashicorp/terraform/releases/tag/v1.16.0",
+              "heading": [
+                "1.16.0 (August 26, 2026)",
+                "ENHANCEMENTS:"
+              ]
+            }
+          },
+          {
+            "version": "1.16.0",
+            "kind": "feature",
+            "confidence": 0.9,
+            "text": "Actions can now use `before_destroy` and `after_destroy` events. ([#38668](https://github.com/hashicorp/terraform/issues/38668))",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/hashicorp/terraform/releases/tag/v1.16.0",
+              "heading": [
+                "1.16.0 (August 26, 2026)",
+                "ENHANCEMENTS:"
+              ]
+            }
+          },
+          {
+            "version": "1.16.0",
+            "kind": "feature",
+            "confidence": 0.9,
+            "text": "cloud: Terraform now displays a summary of policy evaluation outcomes for `plan` and `apply` runs against HCP Terraform. ([#38715](https://github.com/hashicorp/terraform/issues/38715))",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/hashicorp/terraform/releases/tag/v1.16.0",
+              "heading": [
+                "1.16.0 (August 26, 2026)",
+                "ENHANCEMENTS:"
+              ]
+            }
+          },
+          {
+            "version": "1.16.0",
+            "kind": "feature",
+            "confidence": 0.9,
+            "text": "policy: Terraform now resolves policy plugin credentials from the configured cloud or remote backend during `init`, `plan`, and `apply`, rather than requiring the plugin to read credentials itself. ([#38716](https://github.com/hashicorp/terraform/issues/38716))",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/hashicorp/terraform/releases/tag/v1.16.0",
+              "heading": [
+                "1.16.0 (August 26, 2026)",
+                "ENHANCEMENTS:"
+              ]
+            }
+          },
+          {
+            "version": "1.16.0",
+            "kind": "feature",
+            "confidence": 0.9,
+            "text": "graph: The `terraform graph` command can now output graphs in Mermaid format using the `-format=mermaid` flag. ([#38719](https://github.com/hashicorp/terraform/issues/38719))",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/hashicorp/terraform/releases/tag/v1.16.0",
+              "heading": [
+                "1.16.0 (August 26, 2026)",
+                "ENHANCEMENTS:"
+              ]
+            }
+          },
+          {
+            "version": "1.16.0",
+            "kind": "feature",
+            "confidence": 0.9,
+            "text": "Child module outputs with unreferenced deprecated nested attributes no longer return deprecation warnings. ([#38778](https://github.com/hashicorp/terraform/issues/38778))",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/hashicorp/terraform/releases/tag/v1.16.0",
+              "heading": [
+                "1.16.0 (August 26, 2026)",
+                "ENHANCEMENTS:"
+              ]
+            }
+          },
+          {
+            "version": "1.16.0",
+            "kind": "feature",
+            "confidence": 0.9,
+            "text": "Resource `lifecycle` blocks now support `destroy = false` to prevent a resource from being destroyed. ([#38784](https://github.com/hashicorp/terraform/issues/38784))",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/hashicorp/terraform/releases/tag/v1.16.0",
+              "heading": [
+                "1.16.0 (August 26, 2026)",
+                "ENHANCEMENTS:"
+              ]
+            }
+          },
+          {
+            "version": "1.16.0",
+            "kind": "feature",
+            "confidence": 0.9,
+            "text": "The `contains()` function can now test for `null` values. ([#38792](https://github.com/hashicorp/terraform/issues/38792))",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/hashicorp/terraform/releases/tag/v1.16.0",
+              "heading": [
+                "1.16.0 (August 26, 2026)",
+                "ENHANCEMENTS:"
+              ]
+            }
+          },
+          {
+            "version": "1.16.0",
+            "kind": "feature",
+            "confidence": 0.9,
+            "text": "console: The `terraform console` command now accepts an optional `-scope=<module address>` flag, which can be used to evaluate expressions within the scope of a module or a specific module instance. ([#31861](https://github.com/hashicorp/terraform/issues/31861))",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/hashicorp/terraform/releases/tag/v1.16.0",
+              "heading": [
+                "1.16.0 (August 26, 2026)",
+                "ENHANCEMENTS:"
+              ]
+            }
+          },
+          {
+            "version": "1.16.0",
+            "kind": "feature",
+            "confidence": 0.9,
+            "text": "`-invoke` can now be combined with `-target` to specify the calling resource instance when multiple resources trigger the same action. ([#38845](https://github.com/hashicorp/terraform/issues/38845))",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/hashicorp/terraform/releases/tag/v1.16.0",
+              "heading": [
+                "1.16.0 (August 26, 2026)",
+                "ENHANCEMENTS:"
+              ]
+            }
+          },
+          {
+            "version": "1.16.0",
+            "kind": "feature",
+            "confidence": 0.9,
+            "text": "The `terraform stacks` command now automatically infers the target hostname from the local credentials file (`credentials.tfrc.json`) when neither `TF_STACKS_HOSTNAME` nor `TF_CLOUD_HOSTNAME` is set ([#38896](https://github.com/hashicorp/terraform/issues/38896))",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/hashicorp/terraform/releases/tag/v1.16.0",
+              "heading": [
+                "1.16.0 (August 26, 2026)",
+                "ENHANCEMENTS:"
+              ]
+            }
+          },
+          {
+            "version": "1.16.0",
+            "kind": "fix",
+            "confidence": 0.9,
+            "text": "`import` blocks now correctly respect provider local names. ([#38338](https://github.com/hashicorp/terraform/issues/38338))",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/hashicorp/terraform/releases/tag/v1.16.0",
+              "heading": [
+                "1.16.0 (August 26, 2026)",
+                "BUG FIXES:"
+              ]
+            }
+          },
+          {
+            "version": "1.16.0",
+            "kind": "fix",
+            "confidence": 0.9,
+            "text": "`terraform apply` no longer panics when the plan contains a no-op change for a deposed resource that has `lifecycle.precondition` or `lifecycle.postcondition` blocks. ([#38586](https://github.com/hashicorp/terraform/issues/38586))",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/hashicorp/terraform/releases/tag/v1.16.0",
+              "heading": [
+                "1.16.0 (August 26, 2026)",
+                "BUG FIXES:"
+              ]
+            }
+          },
+          {
+            "version": "1.16.0",
+            "kind": "fix",
+            "confidence": 0.9,
+            "text": "workspace: Terraform now raises an error if an invalid workspace name becomes selected due to out-of-band changes. ([#38594](https://github.com/hashicorp/terraform/issues/38594))",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/hashicorp/terraform/releases/tag/v1.16.0",
+              "heading": [
+                "1.16.0 (August 26, 2026)",
+                "BUG FIXES:"
+              ]
+            }
+          },
+          {
+            "version": "1.16.0",
+            "kind": "fix",
+            "confidence": 0.9,
+            "text": "test: Terraform now raises a warning when a file referenced via the `-filter` flag does not exist. ([#38603](https://github.com/hashicorp/terraform/issues/38603))",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/hashicorp/terraform/releases/tag/v1.16.0",
+              "heading": [
+                "1.16.0 (August 26, 2026)",
+                "BUG FIXES:"
+              ]
+            }
+          },
+          {
+            "version": "1.16.0",
+            "kind": "fix",
+            "confidence": 0.9,
+            "text": "init: Terraform no longer removes locks from the dependency lock file for providers configured as `dev_override`. ([#38634](https://github.com/hashicorp/terraform/issues/38634))",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/hashicorp/terraform/releases/tag/v1.16.0",
+              "heading": [
+                "1.16.0 (August 26, 2026)",
+                "BUG FIXES:"
+              ]
+            }
+          },
+          {
+            "version": "1.16.0",
+            "kind": "fix",
+            "confidence": 0.9,
+            "text": "init: Terraform now warns when unmanaged providers are in use and may impact provider installation. ([#38656](https://github.com/hashicorp/terraform/issues/38656))",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/hashicorp/terraform/releases/tag/v1.16.0",
+              "heading": [
+                "1.16.0 (August 26, 2026)",
+                "BUG FIXES:"
+              ]
+            }
+          },
+          {
+            "version": "1.16.0",
+            "kind": "fix",
+            "confidence": 0.9,
+            "text": "Actions are now invoked with respect to all resource dependencies. ([#38668](https://github.com/hashicorp/terraform/issues/38668))",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/hashicorp/terraform/releases/tag/v1.16.0",
+              "heading": [
+                "1.16.0 (August 26, 2026)",
+                "BUG FIXES:"
+              ]
+            }
+          },
+          {
+            "version": "1.16.0",
+            "kind": "fix",
+            "confidence": 0.9,
+            "text": "Terraform now returns the correct error when an `import` target exists in state but has no corresponding configuration. ([#38782](https://github.com/hashicorp/terraform/issues/38782))",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/hashicorp/terraform/releases/tag/v1.16.0",
+              "heading": [
+                "1.16.0 (August 26, 2026)",
+                "BUG FIXES:"
+              ]
+            }
+          },
+          {
+            "version": "1.16.0",
+            "kind": "fix",
+            "confidence": 0.9,
+            "text": "The `merge()` function no longer panics when passed `null` objects. ([#38792](https://github.com/hashicorp/terraform/issues/38792))",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/hashicorp/terraform/releases/tag/v1.16.0",
+              "heading": [
+                "1.16.0 (August 26, 2026)",
+                "BUG FIXES:"
+              ]
+            }
+          },
+          {
+            "version": "1.16.0",
+            "kind": "fix",
+            "confidence": 0.9,
+            "text": "Allow underscores in provider source address namespaces, so private registry provider addresses are no longer rejected as invalid ([#38894](https://github.com/hashicorp/terraform/issues/38894))",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/hashicorp/terraform/releases/tag/v1.16.0",
+              "heading": [
+                "1.16.0 (August 26, 2026)",
+                "BUG FIXES:"
+              ]
+            }
+          },
+          {
+            "version": "1.16.0",
+            "kind": "fix",
+            "confidence": 0.9,
+            "text": "test: Optional ephemeral values do not have to be set at plan time ([#38974](https://github.com/hashicorp/terraform/issues/38974))",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/hashicorp/terraform/releases/tag/v1.16.0",
+              "heading": [
+                "1.16.0 (August 26, 2026)",
+                "BUG FIXES:"
+              ]
+            }
+          },
+          {
+            "version": "1.16.0",
+            "kind": "breaking",
+            "confidence": 0.95,
+            "text": "`bastion_host_key` is now correctly applied by provisioners. Review your provisioner configurations to verify the configured key is correct before upgrading. ([#38318](https://github.com/hashicorp/terraform/issues/38318))",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/hashicorp/terraform/releases/tag/v1.16.0",
+              "heading": [
+                "1.16.0 (August 26, 2026)",
+                "UPGRADE NOTES:"
+              ]
+            }
+          },
+          {
+            "version": "1.16.1",
+            "kind": "fix",
+            "confidence": 0.9,
+            "text": "cloud: Fixed a bug causing the CLI to pause indefinitely after a run task failure with pending policy evaluations ([#38751](https://github.com/hashicorp/terraform/issues/38751))",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/hashicorp/terraform/releases/tag/v1.16.1",
+              "heading": [
+                "1.16.1 (September 2, 2026)",
+                "BUG FIXES:"
+              ]
+            }
+          },
+          {
+            "version": "1.16.1",
+            "kind": "fix",
+            "confidence": 0.9,
+            "text": "Support referencing modules containing dynamic sources in Terraform Test ([#38950](https://github.com/hashicorp/terraform/issues/38950))",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/hashicorp/terraform/releases/tag/v1.16.1",
+              "heading": [
+                "1.16.1 (September 2, 2026)",
+                "BUG FIXES:"
+              ]
+            }
+          },
+          {
+            "version": "1.16.1",
+            "kind": "fix",
+            "confidence": 0.9,
+            "text": "stacks: Fixed validation to ensure the provider versions in the lock file and configuration are compatible. ([#38829](https://github.com/hashicorp/terraform/issues/38829))",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/hashicorp/terraform/releases/tag/v1.16.1",
+              "heading": [
+                "1.16.1 (September 2, 2026)",
+                "BUG FIXES:"
+              ]
+            }
+          },
+          {
+            "version": "1.16.1",
+            "kind": "fix",
+            "confidence": 0.9,
+            "text": "Fix panic when import identity references sensitive value ([#39013](https://github.com/hashicorp/terraform/issues/39013))",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/hashicorp/terraform/releases/tag/v1.16.1",
+              "heading": [
+                "1.16.1 (September 2, 2026)",
+                "BUG FIXES:"
+              ]
+            }
+          },
+          {
+            "version": "1.16.1",
+            "kind": "fix",
+            "confidence": 0.9,
+            "text": "import: Fixed a bug where import blocks would be ignored when multiple imports targeted different instances of a resource config using `for_each` or `count`. ([#39068](https://github.com/hashicorp/terraform/issues/39068))",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/hashicorp/terraform/releases/tag/v1.16.1",
+              "heading": [
+                "1.16.1 (September 2, 2026)",
+                "BUG FIXES:"
+              ]
+            }
+          },
+          {
+            "version": "1.16.1",
+            "kind": "fix",
+            "confidence": 0.9,
+            "text": "state show: Fix a panic when given an attribute path instead of a resource instance address ([#39087](https://github.com/hashicorp/terraform/issues/39087))",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/hashicorp/terraform/releases/tag/v1.16.1",
+              "heading": [
+                "1.16.1 (September 2, 2026)",
+                "BUG FIXES:"
+              ]
+            }
+          },
+          {
+            "version": "1.16.1",
+            "kind": "fix",
+            "confidence": 0.9,
+            "text": "Fix create_before_destroy ordering in some combinations of changes ([#39091](https://github.com/hashicorp/terraform/issues/39091))",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/hashicorp/terraform/releases/tag/v1.16.1",
+              "heading": [
+                "1.16.1 (September 2, 2026)",
+                "BUG FIXES:"
+              ]
+            }
+          },
+          {
+            "version": "1.16.2",
+            "kind": "fix",
+            "confidence": 0.9,
+            "text": "Fix panic in module installation when encoutering invalid module calls ([#39129](https://github.com/hashicorp/terraform/issues/39129))",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/hashicorp/terraform/releases/tag/v1.16.2",
+              "heading": [
+                "1.16.2 (September 9, 2026)",
+                "BUG FIXES:"
+              ]
+            }
+          },
+          {
+            "version": "1.16.3",
+            "kind": "fix",
+            "confidence": 0.9,
+            "text": "Fix handling of destroy=false around create_before_destroy instances ([#39169](https://github.com/hashicorp/terraform/issues/39169))",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/hashicorp/terraform/releases/tag/v1.16.3",
+              "heading": [
+                "1.16.3 (September 16, 2026)",
+                "BUG FIXES:"
+              ]
+            }
+          },
+          {
+            "version": "1.16.3",
+            "kind": "fix",
+            "confidence": 0.9,
+            "text": "Fix function result comparison when there are multiple marks ([#39170](https://github.com/hashicorp/terraform/issues/39170))",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/hashicorp/terraform/releases/tag/v1.16.3",
+              "heading": [
+                "1.16.3 (September 16, 2026)",
+                "BUG FIXES:"
+              ]
+            }
+          },
+          {
+            "version": "1.16.3",
+            "kind": "fix",
+            "confidence": 0.9,
+            "text": "Filter logic for marks could cause values with multiple marks to erroneously fail validations ([#39171](https://github.com/hashicorp/terraform/issues/39171))",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/hashicorp/terraform/releases/tag/v1.16.3",
+              "heading": [
+                "1.16.3 (September 16, 2026)",
+                "BUG FIXES:"
+              ]
+            }
+          },
+          {
+            "version": "1.16.3",
+            "kind": "fix",
+            "confidence": 0.9,
+            "text": "Fix issue with import provider resolution ([#39185](https://github.com/hashicorp/terraform/issues/39185))",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/hashicorp/terraform/releases/tag/v1.16.3",
+              "heading": [
+                "1.16.3 (September 16, 2026)",
+                "BUG FIXES:"
+              ]
+            }
+          },
+          {
+            "version": "1.16.4",
+            "kind": "fix",
+            "confidence": 0.9,
+            "text": "Fixed an issue where Terraform fails when rendering policy evaluation outcomes for older versions of Terraform Enterprise ([#39095](https://github.com/hashicorp/terraform/issues/39095))",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/hashicorp/terraform/releases/tag/v1.16.4",
+              "heading": [
+                "1.16.4 (September 23, 2026)",
+                "BUG FIXES:"
+              ]
+            }
+          },
+          {
+            "version": "1.16.4",
+            "kind": "fix",
+            "confidence": 0.9,
+            "text": "stacks: Fix invalid deferred error triggered by provider returning a deferral when a resource also has an unknown count/for_each. ([#39237](https://github.com/hashicorp/terraform/issues/39237))",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/hashicorp/terraform/releases/tag/v1.16.4",
+              "heading": [
+                "1.16.4 (September 23, 2026)",
+                "BUG FIXES:"
+              ]
+            }
+          },
+          {
+            "version": "1.16.5",
+            "kind": "fix",
+            "confidence": 0.9,
+            "text": "Fixed a crash that happens when a tainted instance state is seen without a valid status ([#39287](https://github.com/hashicorp/terraform/issues/39287))",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/hashicorp/terraform/releases/tag/v1.16.5",
+              "heading": [
+                "1.16.5 (September 30, 2026)",
+                "BUG FIXES:"
+              ]
+            }
+          },
+          {
+            "version": "1.16.5",
+            "kind": "fix",
+            "confidence": 0.9,
+            "text": "resource-identity: fixed an issue where resource identity could be nil during delete ([#39285](https://github.com/hashicorp/terraform/issues/39285))",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/hashicorp/terraform/releases/tag/v1.16.5",
+              "heading": [
+                "1.16.5 (September 30, 2026)",
+                "BUG FIXES:"
+              ]
+            }
+          },
+          {
+            "version": "1.16.6",
+            "kind": "fix",
+            "confidence": 0.9,
+            "text": "cloud: `terraform init` can now find workspaces selected by key/value tags whose keys contain uppercase letters. ([#39306](https://github.com/hashicorp/terraform/issues/39306))",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/hashicorp/terraform/releases/tag/v1.16.6",
+              "heading": [
+                "1.16.6 (October 14, 2026)",
+                "BUG FIXES:"
+              ]
+            }
+          },
+          {
+            "version": "1.16.6",
+            "kind": "fix",
+            "confidence": 0.9,
+            "text": "test: Allow module under test to use deprecated outputs. ([#39207](https://github.com/hashicorp/terraform/issues/39207))",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/hashicorp/terraform/releases/tag/v1.16.6",
+              "heading": [
+                "1.16.6 (October 14, 2026)",
+                "BUG FIXES:"
+              ]
+            }
+          },
+          {
+            "version": "1.16.7",
+            "kind": "fix",
+            "confidence": 0.9,
+            "text": "command/test: Avoid panic when testing schema w/ deprecated values ([#39406](https://github.com/hashicorp/terraform/issues/39406))",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/hashicorp/terraform/releases/tag/v1.16.7",
+              "heading": [
+                "1.16.7 (October 22, 2026)",
+                "BUG FIXES:"
+              ]
+            }
+          },
+          {
+            "version": "1.17.0",
+            "kind": "feature",
+            "confidence": 0.9,
+            "text": "Terraform now supports variables and locals in provider requirements ([#39153](https://github.com/hashicorp/terraform/issues/39153))",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/hashicorp/terraform/releases/tag/v1.17.0",
+              "heading": [
+                "1.17.0 (October 21, 2026)",
+                "NEW FEATURES:"
+              ]
+            }
+          },
+          {
+            "version": "1.17.0",
+            "kind": "feature",
+            "confidence": 0.9,
+            "text": "A new `-minimal-refresh` planning option has been added, which will only refresh resources that have proposed changes. ([#35290](https://github.com/hashicorp/terraform/issues/35290))",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/hashicorp/terraform/releases/tag/v1.17.0",
+              "heading": [
+                "1.17.0 (October 21, 2026)",
+                "NEW FEATURES:"
+              ]
+            }
+          },
+          {
+            "version": "1.17.0",
+            "kind": "feature",
+            "confidence": 0.9,
+            "text": "policy: Terraform Policy is now generally available. The `-policies` flag for `plan`, `apply`, and `query` no longer requires an experimental build or the `-allow-experimental-features` flag. Query policies evaluate resources discovered by list blocks and report human-readable or JSON results. See https://developer.hashicorp.com/terraform/policy for more information. ([#38970](https://github.com/hashicorp/terraform/issues/38970))",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/hashicorp/terraform/releases/tag/v1.17.0",
+              "heading": [
+                "1.17.0 (October 21, 2026)",
+                "NEW FEATURES:"
+              ]
+            }
+          },
+          {
+            "version": "1.17.0",
+            "kind": "feature",
+            "confidence": 0.9,
+            "text": "command/init: Enrich log messages with provider versions ([#38918](https://github.com/hashicorp/terraform/issues/38918))",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/hashicorp/terraform/releases/tag/v1.17.0",
+              "heading": [
+                "1.17.0 (October 21, 2026)",
+                "ENHANCEMENTS:"
+              ]
+            }
+          },
+          {
+            "version": "1.17.0",
+            "kind": "feature",
+            "confidence": 0.9,
+            "text": "test: Add mock_provider support for ephemeral resources ([#38928](https://github.com/hashicorp/terraform/issues/38928))",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/hashicorp/terraform/releases/tag/v1.17.0",
+              "heading": [
+                "1.17.0 (October 21, 2026)",
+                "ENHANCEMENTS:"
+              ]
+            }
+          },
+          {
+            "version": "1.17.0",
+            "kind": "feature",
+            "confidence": 0.9,
+            "text": "command/login: display warning after successful login if user is subject to an organization's TTL policy",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/hashicorp/terraform/releases/tag/v1.17.0",
+              "heading": [
+                "1.17.0 (October 21, 2026)",
+                "ENHANCEMENTS:"
+              ]
+            }
+          },
+          {
+            "version": "1.17.0",
+            "kind": "fix",
+            "confidence": 0.9,
+            "text": "funcs: pow and log no longer panic when result is not a number ([#38912](https://github.com/hashicorp/terraform/issues/38912))",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/hashicorp/terraform/releases/tag/v1.17.0",
+              "heading": [
+                "1.17.0 (October 21, 2026)",
+                "BUG FIXES:"
+              ]
+            }
+          },
+          {
+            "version": "1.17.0",
+            "kind": "fix",
+            "confidence": 0.9,
+            "text": "ephemeral: Terraform will now use and display diagnostics raised when _renewing_ an ephemeral resource. This may cause warnings to appear that previously were lost. We expect that any error diagnostics that were previously lost would have caused confusing downstream errors, so we do not anticipate this change to be breaking. ([#38989](https://github.com/hashicorp/terraform/issues/38989))",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/hashicorp/terraform/releases/tag/v1.17.0",
+              "heading": [
+                "1.17.0 (October 21, 2026)",
+                "BUG FIXES:"
+              ]
+            }
+          },
+          {
+            "version": "1.17.0",
+            "kind": "fix",
+            "confidence": 0.9,
+            "text": "test: Deterministic dependency ordering in cleanup graph ([#38247](https://github.com/hashicorp/terraform/issues/38247))",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/hashicorp/terraform/releases/tag/v1.17.0",
+              "heading": [
+                "1.17.0 (October 21, 2026)",
+                "BUG FIXES:"
+              ]
+            }
+          },
+          {
+            "version": "1.17.0",
+            "kind": "fix",
+            "confidence": 0.9,
+            "text": "query: report Unknown and N/A results for policy evaluations of discovered resources ([#39058](https://github.com/hashicorp/terraform/issues/39058))",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/hashicorp/terraform/releases/tag/v1.17.0",
+              "heading": [
+                "1.17.0 (October 21, 2026)",
+                "BUG FIXES:"
+              ]
+            }
+          },
+          {
+            "version": "1.17.0",
+            "kind": "fix",
+            "confidence": 0.9,
+            "text": "query: `terraform query -policies` now rejects a path that is not a directory, instead of passing it on to the policy engine ([#39238](https://github.com/hashicorp/terraform/issues/39238))",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/hashicorp/terraform/releases/tag/v1.17.0",
+              "heading": [
+                "1.17.0 (October 21, 2026)",
+                "BUG FIXES:"
+              ]
+            }
+          },
+          {
+            "version": "1.17.0",
+            "kind": "fix",
+            "confidence": 0.9,
+            "text": "funcs: The `log` and `pow` functions now raise errors when they return +/- Infinity, as this result is not usable in downstream code. ([#39304](https://github.com/hashicorp/terraform/issues/39304))",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/hashicorp/terraform/releases/tag/v1.17.0",
+              "heading": [
+                "1.17.0 (October 21, 2026)",
+                "BUG FIXES:"
+              ]
+            }
+          },
+          {
+            "version": "1.17.0",
+            "kind": "fix",
+            "confidence": 0.9,
+            "text": "show: Read variable values from the plan file when showing a local plan ([#39362](https://github.com/hashicorp/terraform/issues/39362))",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/hashicorp/terraform/releases/tag/v1.17.0",
+              "heading": [
+                "1.17.0 (October 21, 2026)",
+                "BUG FIXES:"
+              ]
+            }
+          },
+          {
+            "version": "1.17.1",
+            "kind": "fix",
+            "confidence": 0.9,
+            "text": "fmt: The original content of a file is now preserved if Terraform experiences an error writing to the original file. ([#39303](https://github.com/hashicorp/terraform/issues/39303))",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/hashicorp/terraform/releases/tag/v1.17.1",
+              "heading": [
+                "1.17.1 (October 28, 2026)",
+                "BUG FIXES:"
+              ]
+            }
+          },
+          {
+            "version": "1.17.1",
+            "kind": "fix",
+            "confidence": 0.9,
+            "text": "Always evaluate module policies during destroy plan ([#39455](https://github.com/hashicorp/terraform/issues/39455))",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/hashicorp/terraform/releases/tag/v1.17.1",
+              "heading": [
+                "1.17.1 (October 28, 2026)",
+                "BUG FIXES:"
+              ]
+            }
+          },
+          {
+            "version": "1.17.1",
+            "kind": "fix",
+            "confidence": 0.9,
+            "text": "stacks: report every policy result for a replaced resource instead of only one of them ([#39453](https://github.com/hashicorp/terraform/issues/39453))",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/hashicorp/terraform/releases/tag/v1.17.1",
+              "heading": [
+                "1.17.1 (October 28, 2026)",
+                "BUG FIXES:"
+              ]
+            }
+          }
+        ],
+        "counts": {
+          "breaking": 1,
+          "deprecation": 0,
+          "feature": 26,
+          "fix": 41,
+          "other": 0,
+          "security": 0
+        },
+        "hidden": 51,
+        "warnings": []
+      }
+    ]
+  },
+  "errors": []
+}
+-- digest.txt --
+terraform 1.15.8..1.17.1  hashicorp/terraform
+11 versions: 1.15.9, 1.16.0, 1.16.1, 1.16.2, 1.16.3, 1.16.4, 1.16.5, 1.16.6, 1.16.7, 1.17.0, 1.17.1
+breaking 1, deprecation 0, security 0, feature 26, fix 41, other 0; 51 below --min-confidence hidden
+
+Breaking changes
+  1.16.0  https://github.com/hashicorp/terraform/releases/tag/v1.16.0
+    - `bastion_host_key` is now correctly applied by provisioners. Review your provisioner configurations to verify the configured key is correct before upgrading. ([#38318](https://github.com/hashicorp/terraform/issues/38318))
+
+Features
+  1.16.0  https://github.com/hashicorp/terraform/releases/tag/v1.16.0
+    - Terraform now stores planned private data for providers, allowing provider-specific state to be preserved across plan and apply. ([#37986](https://github.com/hashicorp/terraform/issues/37986))
+    - `terraform_data`: The new `store` block can hold ephemeral and sensitive values across plan and apply. ([#38298](https://github.com/hashicorp/terraform/issues/38298))
+    - Providers can now use nested blocks as computed values ([#38305](https://github.com/hashicorp/terraform/issues/38305))
+    - import: `import` blocks inside modules are now supported. ([#38352](https://github.com/hashicorp/terraform/issues/38352))
+    - Terraform is now available as a pre-built binary for Linux s390x (zLinux). ([#38384](https://github.com/hashicorp/terraform/issues/38384))
+    - Resource action triggers can now use `on_failure` modes of `halt`, `taint`, or `continue`. ([#38722](https://github.com/hashicorp/terraform/issues/38722))
+    - state show: The `state show` command can now produce machine-readable output when supplied with the `-json` flag ([#23940](https://github.com/hashicorp/terraform/issues/23940))
+    - workspace: The `workspace list` command can now produce machine-readable output when supplied with the `-json` flag ([#38397](https://github.com/hashicorp/terraform/issues/38397))
+    - test: Terraform now reports which resources were left behind when `skip_cleanup` is set. ([#38449](https://github.com/hashicorp/terraform/issues/38449))
+    - stacks: Action configurations now have access to a `caller` symbol containing the object value of the calling resource. ([#38668](https://github.com/hashicorp/terraform/issues/38668))
+    - Actions can now use `before_destroy` and `after_destroy` events. ([#38668](https://github.com/hashicorp/terraform/issues/38668))
+    - cloud: Terraform now displays a summary of policy evaluation outcomes for `plan` and `apply` runs against HCP Terraform. ([#38715](https://github.com/hashicorp/terraform/issues/38715))
+    - policy: Terraform now resolves policy plugin credentials from the configured cloud or remote backend during `init`, `plan`, and `apply`, rather than requiring the plugin to read credentials itself. ([#38716](https://github.com/hashicorp/terraform/issues/38716))
+    - graph: The `terraform graph` command can now output graphs in Mermaid format using the `-format=mermaid` flag. ([#38719](https://github.com/hashicorp/terraform/issues/38719))
+    - Child module outputs with unreferenced deprecated nested attributes no longer return deprecation warnings. ([#38778](https://github.com/hashicorp/terraform/issues/38778))
+    - Resource `lifecycle` blocks now support `destroy = false` to prevent a resource from being destroyed. ([#38784](https://github.com/hashicorp/terraform/issues/38784))
+    - The `contains()` function can now test for `null` values. ([#38792](https://github.com/hashicorp/terraform/issues/38792))
+    - console: The `terraform console` command now accepts an optional `-scope=<module address>` flag, which can be used to evaluate expressions within the scope of a module or a specific module instance. ([#31861](https://github.com/hashicorp/terraform/issues/31861))
+    - `-invoke` can now be combined with `-target` to specify the calling resource instance when multiple resources trigger the same action. ([#38845](https://github.com/hashicorp/terraform/issues/38845))
+    - The `terraform stacks` command now automatically infers the target hostname from the local credentials file (`credentials.tfrc.json`) when neither `TF_STACKS_HOSTNAME` nor `TF_CLOUD_HOSTNAME` is set ([#38896](https://github.com/hashicorp/terraform/issues/38896))
+  1.17.0  https://github.com/hashicorp/terraform/releases/tag/v1.17.0
+    - Terraform now supports variables and locals in provider requirements ([#39153](https://github.com/hashicorp/terraform/issues/39153))
+    - A new `-minimal-refresh` planning option has been added, which will only refresh resources that have proposed changes. ([#35290](https://github.com/hashicorp/terraform/issues/35290))
+    - policy: Terraform Policy is now generally available. The `-policies` flag for `plan`, `apply`, and `query` no longer requires an experimental build or the `-allow-experimental-features` flag. Query policies evaluate resources discovered by list blocks and report human-readable or JSON results. See https://developer.hashicorp.com/terraform/policy for more information. ([#38970](https://github.com/hashicorp/terraform/issues/38970))
+    - command/init: Enrich log messages with provider versions ([#38918](https://github.com/hashicorp/terraform/issues/38918))
+    - test: Add mock_provider support for ephemeral resources ([#38928](https://github.com/hashicorp/terraform/issues/38928))
+    - command/login: display warning after successful login if user is subject to an organization's TTL policy
+
+Fixes
+  1.15.9  https://github.com/hashicorp/terraform/releases/tag/v1.15.9
+    - validate: Child module validation has been fixed and will now raise errors or warning diagnostics for invalid blocks. (`list`, `import`, `backend`, and `cloud`) ([#38994](https://github.com/hashicorp/terraform/issues/38994))
+  1.16.0  https://github.com/hashicorp/terraform/releases/tag/v1.16.0
+    - `import` blocks now correctly respect provider local names. ([#38338](https://github.com/hashicorp/terraform/issues/38338))
+    - `terraform apply` no longer panics when the plan contains a no-op change for a deposed resource that has `lifecycle.precondition` or `lifecycle.postcondition` blocks. ([#38586](https://github.com/hashicorp/terraform/issues/38586))
+    - workspace: Terraform now raises an error if an invalid workspace name becomes selected due to out-of-band changes. ([#38594](https://github.com/hashicorp/terraform/issues/38594))
+    - test: Terraform now raises a warning when a file referenced via the `-filter` flag does not exist. ([#38603](https://github.com/hashicorp/terraform/issues/38603))
+    - init: Terraform no longer removes locks from the dependency lock file for providers configured as `dev_override`. ([#38634](https://github.com/hashicorp/terraform/issues/38634))
+    - init: Terraform now warns when unmanaged providers are in use and may impact provider installation. ([#38656](https://github.com/hashicorp/terraform/issues/38656))
+    - Actions are now invoked with respect to all resource dependencies. ([#38668](https://github.com/hashicorp/terraform/issues/38668))
+    - Terraform now returns the correct error when an `import` target exists in state but has no corresponding configuration. ([#38782](https://github.com/hashicorp/terraform/issues/38782))
+    - The `merge()` function no longer panics when passed `null` objects. ([#38792](https://github.com/hashicorp/terraform/issues/38792))
+    - Allow underscores in provider source address namespaces, so private registry provider addresses are no longer rejected as invalid ([#38894](https://github.com/hashicorp/terraform/issues/38894))
+    - test: Optional ephemeral values do not have to be set at plan time ([#38974](https://github.com/hashicorp/terraform/issues/38974))
+  1.16.1  https://github.com/hashicorp/terraform/releases/tag/v1.16.1
+    - cloud: Fixed a bug causing the CLI to pause indefinitely after a run task failure with pending policy evaluations ([#38751](https://github.com/hashicorp/terraform/issues/38751))
+    - Support referencing modules containing dynamic sources in Terraform Test ([#38950](https://github.com/hashicorp/terraform/issues/38950))
+    - stacks: Fixed validation to ensure the provider versions in the lock file and configuration are compatible. ([#38829](https://github.com/hashicorp/terraform/issues/38829))
+    - Fix panic when import identity references sensitive value ([#39013](https://github.com/hashicorp/terraform/issues/39013))
+    - import: Fixed a bug where import blocks would be ignored when multiple imports targeted different instances of a resource config using `for_each` or `count`. ([#39068](https://github.com/hashicorp/terraform/issues/39068))
+    - state show: Fix a panic when given an attribute path instead of a resource instance address ([#39087](https://github.com/hashicorp/terraform/issues/39087))
+    - Fix create_before_destroy ordering in some combinations of changes ([#39091](https://github.com/hashicorp/terraform/issues/39091))
+  1.16.2  https://github.com/hashicorp/terraform/releases/tag/v1.16.2
+    - Fix panic in module installation when encoutering invalid module calls ([#39129](https://github.com/hashicorp/terraform/issues/39129))
+  1.16.3  https://github.com/hashicorp/terraform/releases/tag/v1.16.3
+    - Fix handling of destroy=false around create_before_destroy instances ([#39169](https://github.com/hashicorp/terraform/issues/39169))
+    - Fix function result comparison when there are multiple marks ([#39170](https://github.com/hashicorp/terraform/issues/39170))
+    - Filter logic for marks could cause values with multiple marks to erroneously fail validations ([#39171](https://github.com/hashicorp/terraform/issues/39171))
+    - Fix issue with import provider resolution ([#39185](https://github.com/hashicorp/terraform/issues/39185))
+  1.16.4  https://github.com/hashicorp/terraform/releases/tag/v1.16.4
+    - Fixed an issue where Terraform fails when rendering policy evaluation outcomes for older versions of Terraform Enterprise ([#39095](https://github.com/hashicorp/terraform/issues/39095))
+    - stacks: Fix invalid deferred error triggered by provider returning a deferral when a resource also has an unknown count/for_each. ([#39237](https://github.com/hashicorp/terraform/issues/39237))
+  1.16.5  https://github.com/hashicorp/terraform/releases/tag/v1.16.5
+    - Fixed a crash that happens when a tainted instance state is seen without a valid status ([#39287](https://github.com/hashicorp/terraform/issues/39287))
+    - resource-identity: fixed an issue where resource identity could be nil during delete ([#39285](https://github.com/hashicorp/terraform/issues/39285))
+  1.16.6  https://github.com/hashicorp/terraform/releases/tag/v1.16.6
+    - cloud: `terraform init` can now find workspaces selected by key/value tags whose keys contain uppercase letters. ([#39306](https://github.com/hashicorp/terraform/issues/39306))
+    - test: Allow module under test to use deprecated outputs. ([#39207](https://github.com/hashicorp/terraform/issues/39207))
+  1.16.7  https://github.com/hashicorp/terraform/releases/tag/v1.16.7
+    - command/test: Avoid panic when testing schema w/ deprecated values ([#39406](https://github.com/hashicorp/terraform/issues/39406))
+  1.17.0  https://github.com/hashicorp/terraform/releases/tag/v1.17.0
+    - funcs: pow and log no longer panic when result is not a number ([#38912](https://github.com/hashicorp/terraform/issues/38912))
+    - ephemeral: Terraform will now use and display diagnostics raised when _renewing_ an ephemeral resource. This may cause warnings to appear that previously were lost. We expect that any error diagnostics that were previously lost would have caused confusing downstream errors, so we do not anticipate this change to be breaking. ([#38989](https://github.com/hashicorp/terraform/issues/38989))
+    - test: Deterministic dependency ordering in cleanup graph ([#38247](https://github.com/hashicorp/terraform/issues/38247))
+    - query: report Unknown and N/A results for policy evaluations of discovered resources ([#39058](https://github.com/hashicorp/terraform/issues/39058))
+    - query: `terraform query -policies` now rejects a path that is not a directory, instead of passing it on to the policy engine ([#39238](https://github.com/hashicorp/terraform/issues/39238))
+    - funcs: The `log` and `pow` functions now raise errors when they return +/- Infinity, as this result is not usable in downstream code. ([#39304](https://github.com/hashicorp/terraform/issues/39304))
+    - show: Read variable values from the plan file when showing a local plan ([#39362](https://github.com/hashicorp/terraform/issues/39362))
+  1.17.1  https://github.com/hashicorp/terraform/releases/tag/v1.17.1
+    - fmt: The original content of a file is now preserved if Terraform experiences an error writing to the original file. ([#39303](https://github.com/hashicorp/terraform/issues/39303))
+    - Always evaluate module policies during destroy plan ([#39455](https://github.com/hashicorp/terraform/issues/39455))
+    - stacks: report every policy result for a replaced resource instead of only one of them ([#39453](https://github.com/hashicorp/terraform/issues/39453))

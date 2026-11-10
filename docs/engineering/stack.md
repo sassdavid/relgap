@@ -65,7 +65,7 @@ goreleaser, chezmoi, k9s, golangci-lint.
 |---|---|---|---|
 | GitHub REST | `github.com/google/go-github/v93` | v93.0.0 | no v94 yet |
 | GitHub GraphQL | `github.com/shurcooL/githubv4` | v0.0.0-20260209031235-2402fdf4a9ed | pseudo-versions only (normal for this module) |
-| GitHub auth | `github.com/cli/go-gh/v2` | v2.17.0 | `pkg/auth` |
+| GitHub auth | `github.com/cli/go-gh/v2` | v2.17.0 | only `pkg/config`, to read the token in gh's `hosts.yml` (it brings `gopkg.in/yaml.v3`). relgap reads `GH_TOKEN`/`GITHUB_TOKEN` from the injected env and runs `gh auth token` through `execx`, because `pkg/auth` reads `os.Getenv` and runs gh without a timeout |
 | Markdown AST | `github.com/yuin/goldmark/v2` | **v2.1.15** | stable since v2.0.0 (2026-08-27); GitHub "Latest" release; 29 v2 releases. Every node carries a start position, which is what mdindex needs. The README's "early stages" note concerns third-party extensions only, and relgap uses none ([relgap ADR-0001](../plan/adr/0001-goldmark-section-index.md)) |
 | HTML to Markdown | `github.com/JohannesKaufmann/html-to-markdown/v2` | v2.5.2 | web-doc adapter |
 | Versions | `github.com/Masterminds/semver/v3` + `github.com/hashicorp/go-version` | v3.5.0 + v1.9.0 | go-version only parses the `loose` scheme. relgap compares loose versions itself because go-version's `Compare` isn't transitive (`FuzzCompareProperties` found `"0" <= "0.0.0.0" <= "0A"` but `"0" > "0A"`) |
