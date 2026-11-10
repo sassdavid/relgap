@@ -62,4 +62,5 @@ mise run sibling:diff                # compare the files shared with tfcensus
 [internal/registry/snapshot](internal/registry/snapshot/) are derived from
 [jdx/mise](https://github.com/jdx/mise) and
 [aquaproj/aqua-registry](https://github.com/aquaproj/aqua-registry), both MIT; their licenses are
-next to the snapshots.
+next to the snapshots. Each release archive has a `third_party_licenses/` directory with the
+notices of everything compiled into the binary and an index that links each module's source.
