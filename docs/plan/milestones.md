@@ -13,7 +13,7 @@ Scope: repo, `cmd/relgap`, cobra root with `version` and `completion`, koanf con
 - [x] `mise run check` passes on a clean clone (lint + `go test -race` + govulncheck).
 - [x] `relgap version --format json` validates against `schemas/report-v1.json` (envelope only).
 - [x] `goreleaser release --snapshot --clean` produces 6 archives, checksums and an SBOM.
-- [ ] CI is green on ubuntu, macos and windows. Actions are pinned by SHA and zizmor is clean.
+- [x] CI is green on ubuntu, macos and windows. Actions are pinned by SHA and zizmor is clean.
 
 ### M1: Versions and resolution → [versions](specs/versions-and-ranges.md), [resolution](specs/tool-resolution.md)
 Scope: `version` schemes, embedded mise and aqua snapshots + `registry:snapshot` task, override registry loader + 5 seed entries, `relgap resolve`.
