@@ -1,0 +1,45 @@
+# registry lint reports unknown keys and bad regular expressions with file:line:column and exits 2.
+exec expect-exit 2 relgap registry lint unknown-key.yaml bad-regex.yaml
+! stdout .
+cmp stderr lint-errors.txt
+
+# The embedded entries and a valid file pass.
+exec relgap registry lint
+cmp stdout embedded.txt
+
+exec relgap registry lint good.yaml --format json
+jsonschema report-v1.json stdout
+stdout '"good.yaml"'
+
+-- unknown-key.yaml --
+name: unknown-key
+repo: acme/tool
+version:
+  scheme: semver
+  tag_prefixx: "v"
+sourcez: []
+-- bad-regex.yaml --
+name: bad-regex
+repo: acme/tool
+version:
+  scheme: regex
+  extract: "jdk-(\\d+"
+sources:
+  - kind: changelog-file
+    path_template: CHANGELOG.md
+    heading: "^v{version}[$"
+-- good.yaml --
+name: good
+repo: acme/tool
+-- lint-errors.txt --
+relgap: invalid registry entries:
+  unknown-key.yaml:5:3: version.tag_prefixx: unknown key
+  unknown-key.yaml:6:1: sourcez: unknown key
+  bad-regex.yaml:5:12: version.extract: bad regular expression: missing closing ): `jdk-(\d+`
+  bad-regex.yaml:9:14: sources.0.heading: bad regular expression: missing closing ]: `[$`
+-- embedded.txt --
+valid: registry/awscli.yaml
+valid: registry/go.yaml
+valid: registry/helm.yaml
+valid: registry/kubectl.yaml
+valid: registry/terraform.yaml

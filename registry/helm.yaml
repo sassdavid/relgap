@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=../schemas/registry-v1.json
+# v3 and v4 are released side by side, so a range stays on its major line by default.
+name: helm
+repo: helm/helm
+version:
+  scheme: semver
+  tag_prefix: "v"
+  universe: releases
+  line: major
+sources:
+  - kind: gh-release
+osv:
+  - { ecosystem: Go, name: helm.sh/helm/v3 }
+  - { ecosystem: Go, name: helm.sh/helm/v4 }

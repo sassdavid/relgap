@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=../schemas/registry-v1.json
+# Releases are boilerplate; notes are in one CHANGELOG file per minor on master.
+name: kubectl
+aliases: [kubernetes, k8s]
+repo: kubernetes/kubernetes
+version:
+  scheme: semver
+  tag_prefix: "v"
+  exclude: "-(alpha|beta|rc)\\."
+  universe: tags
+sources:
+  - kind: changelog-file
+    path_template: "CHANGELOG/CHANGELOG-{major}.{minor}.md"
+    ref: master
+    heading: "^v{version}$"
+    ignore_sections: ["Dependencies"]
+  - kind: upgrade-notes
+    from_heading: "Urgent Upgrade Notes"
+eol: { product: kubernetes, cycle: "{major}.{minor}" }
+osv:
+  - { ecosystem: Go, name: k8s.io/kubernetes }
+breaking_markers: ["ACTION REQUIRED"]

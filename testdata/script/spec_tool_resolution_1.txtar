@@ -1,0 +1,83 @@
+# tf, terraform, TERRAFORM_VERSION and aqua:hashicorp/terraform print the same ToolSpec. Only the
+# input line differs, and every row names the layer that supplied it.
+exec relgap resolve terraform
+cmp stdout terraform.txt
+
+exec relgap resolve tf
+cmp stdout tf.txt
+
+exec relgap resolve TERRAFORM_VERSION
+cmp stdout env.txt
+
+exec relgap resolve aqua:hashicorp/terraform
+cmp stdout aqua.txt
+
+exec relgap resolve tf --format json
+jsonschema report-v1.json stdout
+stdout '"repo": "hashicorp/terraform"'
+stdout '"mise_source": "snapshot"'
+
+-- terraform.txt --
+input          terraform (name, found in relgap registry)
+mise registry  snapshot
+
+FIELD               VALUE                                                                        SOURCE
+name                terraform                                                                    relgap registry
+aliases             tf                                                                           relgap registry
+repo                hashicorp/terraform                                                          relgap registry
+version.scheme      semver                                                                       relgap registry
+version.tag_prefix  "v"                                                                          relgap registry
+version.universe    releases                                                                     relgap registry
+version.line        none                                                                         default
+sources.0           changelog-file path=CHANGELOG.md ref=v{major}.{minor} heading=^{version} \(  relgap registry
+sources.1           gh-release                                                                   relgap registry
+eol                 terraform {major}.{minor}                                                    relgap registry
+osv                 Go github.com/hashicorp/terraform                                            relgap registry
+-- tf.txt --
+input          tf (alias, found in relgap registry)
+mise registry  snapshot
+
+FIELD               VALUE                                                                        SOURCE
+name                terraform                                                                    relgap registry
+aliases             tf                                                                           relgap registry
+repo                hashicorp/terraform                                                          relgap registry
+version.scheme      semver                                                                       relgap registry
+version.tag_prefix  "v"                                                                          relgap registry
+version.universe    releases                                                                     relgap registry
+version.line        none                                                                         default
+sources.0           changelog-file path=CHANGELOG.md ref=v{major}.{minor} heading=^{version} \(  relgap registry
+sources.1           gh-release                                                                   relgap registry
+eol                 terraform {major}.{minor}                                                    relgap registry
+osv                 Go github.com/hashicorp/terraform                                            relgap registry
+-- env.txt --
+input          TERRAFORM_VERSION (env var name, found in relgap registry)
+mise registry  snapshot
+
+FIELD               VALUE                                                                        SOURCE
+name                terraform                                                                    relgap registry
+aliases             tf                                                                           relgap registry
+repo                hashicorp/terraform                                                          relgap registry
+version.scheme      semver                                                                       relgap registry
+version.tag_prefix  "v"                                                                          relgap registry
+version.universe    releases                                                                     relgap registry
+version.line        none                                                                         default
+sources.0           changelog-file path=CHANGELOG.md ref=v{major}.{minor} heading=^{version} \(  relgap registry
+sources.1           gh-release                                                                   relgap registry
+eol                 terraform {major}.{minor}                                                    relgap registry
+osv                 Go github.com/hashicorp/terraform                                            relgap registry
+-- aqua.txt --
+input          aqua:hashicorp/terraform (aqua package, found in relgap registry)
+mise registry  snapshot
+
+FIELD               VALUE                                                                        SOURCE
+name                terraform                                                                    relgap registry
+aliases             tf                                                                           relgap registry
+repo                hashicorp/terraform                                                          relgap registry
+version.scheme      semver                                                                       relgap registry
+version.tag_prefix  "v"                                                                          relgap registry
+version.universe    releases                                                                     relgap registry
+version.line        none                                                                         default
+sources.0           changelog-file path=CHANGELOG.md ref=v{major}.{minor} heading=^{version} \(  relgap registry
+sources.1           gh-release                                                                   relgap registry
+eol                 terraform {major}.{minor}                                                    relgap registry
+osv                 Go github.com/hashicorp/terraform                                            relgap registry
