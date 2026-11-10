@@ -1,0 +1,39 @@
+## relgap completion
+
+Generate the autocompletion script for the specified shell
+
+### Synopsis
+
+Generate the autocompletion script for relgap for the specified shell.
+See each sub-command's help for details on how to use the generated script.
+
+
+### Options
+
+```
+  -h, --help[=true|false]   help for completion
+```
+
+### Options inherited from parent commands
+
+```
+      --color string            colorize output: auto, always or never (default "auto")
+      --concurrency int         maximum concurrent requests per tool (config github.concurrency) (default 8)
+      --config string           config file to use instead of the discovered .relgap.yaml (env RELGAP_CONFIG)
+      --format string           output format: tty, plain, md, json or sarif (default tty when stdout is a terminal, else plain)
+      --log-file string         write logs to this file instead of stderr
+      --log-format string       log format: text or json (default "text")
+      --min-confidence float    hide entries below this confidence, 0..1 (config policy.min_confidence) (default 0.5)
+      --no-input[=true|false]   never prompt for input
+  -q, --quiet[=true|false]      log errors only
+  -v, --verbose count           more logging: -v info, -vv debug, -vvv trace
+```
+
+### SEE ALSO
+
+* [relgap](relgap.md)	 - Release-notes digests and toolchain drift for the tools you pin
+* [relgap completion bash](relgap_completion_bash.md)	 - Generate the autocompletion script for bash
+* [relgap completion fish](relgap_completion_fish.md)	 - Generate the autocompletion script for fish
+* [relgap completion powershell](relgap_completion_powershell.md)	 - Generate the autocompletion script for powershell
+* [relgap completion zsh](relgap_completion_zsh.md)	 - Generate the autocompletion script for zsh
+

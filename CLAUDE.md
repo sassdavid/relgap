@@ -3,7 +3,7 @@
 Go CLI: release-notes range digests, toolchain drift across repos, EOL/OSV enrichment, MCP server.
 
 ## Verify (run before claiming anything works)
-- `mise run check`: lint + `go test -race ./...` + govulncheck. Must pass before every commit.
+- `mise run check`: lint (golangci-lint, prose, actionlint) + `go test -race ./...` + govulncheck. Must pass before every commit.
 - `mise run test:golden -- -update` regenerates goldens. Review the diff and never update blindly.
 - `mise run docs` regenerates `docs/cli/`. CI fails if it's stale.
 
@@ -32,6 +32,13 @@ Go CLI: release-notes range digests, toolchain drift across repos, EOL/OSV enric
 - A changelog file is parsed once per digest (`mdindex`). Don't re-parse per version.
 - New adapter or detector → fixtures + golden + a spec acceptance-criterion test named `TestSpec_<spec>_<n>`.
 - Conventional Commits. release-please owns versions and tags.
+
+## Sibling repo
+- tfcensus (`~/src/github/tfcensus`) shares this repo's build, lint, test and release setup. Follow `.claude/rules/siblings.md`: reuse its files instead of writing new ones, keep shared files identical (`mise run sibling:diff`), and make shared changes in both repos.
+
+## Writing and comments
+- All text (docs, comments, CLI help, commits, PRs) follows `.claude/rules/writing.md`. `mise run lint:prose` checks part of it.
+- Go code keeps comments few: package docs in `doc.go`, one-sentence doc comments on exported names, why-comments only. Details in `.claude/rules/go.md`.
 
 ## Don't
 - Don't add dependencies without a line in `docs/engineering/stack.md`.

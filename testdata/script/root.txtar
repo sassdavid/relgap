@@ -1,0 +1,30 @@
+# Help goes to stdout and lists the M0 commands.
+exec relgap --help
+stdout 'Usage:'
+stdout '^  config +Inspect and validate configuration'
+stdout '^  version +Print version'
+stdout '^  completion '
+! stderr .
+
+# Unknown commands and flags are usage errors (exit 2).
+exec expect-exit 2 relgap nope
+stderr 'unknown command "nope"'
+stderr 'Run ''relgap --help'' for usage'
+exec expect-exit 2 relgap version --nope
+stderr 'unknown flag: --nope'
+
+# Global flag values are validated before any command runs.
+exec expect-exit 2 relgap version --log-format xml
+stderr 'invalid log format "xml"'
+exec expect-exit 2 relgap version --color sometimes
+stderr 'invalid color mode "sometimes"'
+exec expect-exit 2 relgap version -v -q
+stderr 'none of the others can be'
+
+# Logs go to stderr (or --log-file), never stdout.
+exec relgap -vv version
+stdout '^relgap '
+stderr 'DBG starting command=.relgap version.'
+exec relgap -vv --log-format json --log-file log.json version
+! stderr .
+grep '"level":"DEBUG","msg":"starting"' log.json
