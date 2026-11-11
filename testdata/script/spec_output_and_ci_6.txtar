@@ -1,0 +1,61 @@
+# drift over a generated tree of 60 repositories. The matrix matches the goldens in tty, plain,
+# md and json, constraint pins are marked ≈, --fail-on drift exits 3, and nothing reaches the
+# network: the proxy refuses every connection and the request log stays empty.
+env TEST_NOW=2026-11-11T12:00:00Z
+env HTTPS_PROXY=http://127.0.0.1:1
+env HTTP_PROXY=http://127.0.0.1:1
+gentree tree
+
+exec relgap drift tree --format json
+jsonschema drift-v1.json stdout
+golden stdout drift/tree.json
+
+exec relgap drift tree --format tty --color always
+golden stdout drift/tree.tty
+
+exec relgap drift tree --format plain
+golden stdout drift/tree.txt
+! stderr .
+
+# Repos 24 and 49 pin terraform only as ~> 1.15, which counts as its lower bound. Repo 07
+# pins 1.14.2 next to ~> 1.14, which counts as the exact pin.
+stdout '^tree/team-02/repo-24 +\S+ +\S+ +\S+ +\S+ +≈1\.15\.0\* '
+stdout '^tree/team-00/repo-07 +\S+ +\S+ +\S+ +\S+ +1\.14\.2\* '
+stdout '^In agreement: github-cli 2\.83\.0 \(60 repos\), helm 3\.19\.0 \(60 repos\), image:node 24\.11\.0 \(60 repos\), jq 1\.7\.1 \(1 repo\), terragrunt ≈1\.2\.0 \(60 repos\)$'
+stdout '^Not compared: go ≈1\.27 \(60 repos\)$'
+stdout '^5 of 11 tools drift across 60 repos\.$'
+
+exec relgap drift tree --format md
+golden stdout drift/tree.md
+
+# --fail-on drift names every drifting tool and its versions.
+exec expect-exit 3 relgap drift tree --fail-on drift --format plain
+stderr '^relgap: --fail-on drift matched image:golang \(1\.26\.1, 1\.27\.3\), kubectl \(1\.33\.5, 1\.34\.2\), node \(24\.10\.0, 24\.11\.0\), terraform \(1\.14\.2, 1\.15\.0, 1\.15\.8\), tfprovider:hashicorp/aws \(6\.10\.0, 6\.12\.0\)$'
+
+# policy.fail_on from the config works like the flag; values for outdated are left to it.
+env RELGAP_POLICY_FAIL_ON=drift,outdated,eol
+exec expect-exit 3 relgap drift tree --format plain
+env RELGAP_POLICY_FAIL_ON=
+
+# Without the constraint pins terraform still drifts (1.14.2 and 1.15.8), and the constraint
+# pins show as written.
+exec relgap drift tree --drift-ignore-constraints --tool terraform --format plain
+stdout '^tree/team-02/repo-24 +≈~> 1\.15$'
+stdout '^tree/team-00/repo-07 +1\.14\.2\*, ≈~> 1\.14$'
+stdout '^1 of 1 tool drifts across 60 repos\.$'
+
+# --tool gives every named tool a column, even one in agreement, and accepts aliases.
+exec relgap drift tree --tool helm --tool tf --format plain
+stdout '^REPO +helm +terraform$'
+stdout '^tree/team-00/repo-00 +3\.19\.0 +1\.15\.8$'
+! stdout 'In agreement'
+exec relgap drift tree --tool helm --fail-on drift --format plain
+stdout '^0 of 1 tool drifts across 60 repos\.$'
+
+# Usage errors exit 2.
+exec expect-exit 2 relgap drift tree --fail-on outdated
+stderr 'fail-on outdated isn''t checked by drift'
+exec expect-exit 2 relgap drift tree --format sarif
+stderr 'format "sarif" is not supported by this command'
+
+requests 0

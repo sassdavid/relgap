@@ -127,9 +127,10 @@ func (g *globals) compare(
 	if err != nil {
 		return nil, usageError(err)
 	}
+	ignore := ignoreRules(resolver, cfg.Config.Ignore)
 	var pins []scan.Pin
 	for _, p := range res.Pins {
-		if p.Resolved() && (keep == nil || keep(p)) {
+		if p.Resolved() && !scan.Ignored(ignore, &p) && (keep == nil || keep(p)) {
 			pins = append(pins, p)
 		}
 	}
@@ -143,17 +144,10 @@ func (g *globals) compare(
 	if err != nil {
 		return nil, err
 	}
-	resolve := func(tool string) (registry.ToolSpec, error) {
-		r, rerr := resolver.Resolve(tool)
-		if rerr != nil {
-			return registry.ToolSpec{}, rerr //nolint:wrapcheck // the resolver names the tool
-		}
-		return r.Tool, nil
-	}
 	out, err := report.NewOutdater(report.NewDigester(d.Logger, gh), gh).Outdated(cmd.Context(), report.OutdatedRequest{
 		Repos:         res.Repos,
 		Pins:          pins,
-		Resolve:       resolve,
+		Resolve:       resolveFunc(resolver),
 		MinConfidence: cfg.Config.Policy.MinConfidence,
 		Concurrency:   cfg.Config.GitHub.Concurrency,
 	})
@@ -161,6 +155,31 @@ func (g *globals) compare(
 		return nil, digestError(err)
 	}
 	return &comparison{scan: res, out: out}, nil
+}
+
+// resolveFunc turns a pin's tool name into its spec through resolver.
+func resolveFunc(resolver *registry.Resolver) report.ResolveFunc {
+	return func(tool string) (registry.ToolSpec, error) {
+		r, err := resolver.Resolve(tool)
+		if err != nil {
+			return registry.ToolSpec{}, err //nolint:wrapcheck // the resolver names the tool
+		}
+		return r.Tool, nil
+	}
+}
+
+// ignoreRules turns the config's ignore rules into scan rules, naming each tool the way pins do,
+// so an alias such as tf matches terraform pins.
+func ignoreRules(resolver *registry.Resolver, rules []config.IgnoreRule) []scan.Ignore {
+	out := make([]scan.Ignore, 0, len(rules))
+	for _, r := range rules {
+		tool := r.Tool
+		if name, ok := resolver.Identify(tool); ok {
+			tool = name
+		}
+		out = append(out, scan.Ignore{Tool: tool, Path: r.Path})
+	}
+	return out
 }
 
 // newGate builds the --fail-on checks from the flags and config. Values that belong to another

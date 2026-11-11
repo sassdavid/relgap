@@ -78,10 +78,11 @@ func (m MaxBehind) Exceeded(b *Behind, now time.Time) (bool, bool) {
 	}
 }
 
-// Gate is the set of --fail-on checks outdated and digest run.
+// Gate is the set of --fail-on checks outdated, digest and drift run.
 type Gate struct {
 	Breaking  bool
 	Outdated  bool
+	Drift     bool
 	MaxBehind MaxBehind
 	Now       time.Time
 }
@@ -117,6 +118,14 @@ func (g Gate) Check(o *Outdated) ([]Finding, []*OutdatedPin) {
 		}
 	}
 	return findings, unmeasured
+}
+
+// CheckDrift returns the tools that match --fail-on drift.
+func (g Gate) CheckDrift(d *Drift) []DriftTool {
+	if !g.Drift {
+		return nil
+	}
+	return d.Drifting()
 }
 
 // BreakingIn returns the digests that have a breaking entry at or above the minimum confidence.

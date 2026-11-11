@@ -27,7 +27,7 @@ from many repo roots. Used by `pins`, `outdated` and `drift`. Code: `internal/sc
 
 ## Normalization
 - `v1.2.3` → `1.2.3` for comparison. The raw value is kept for display.
-- Constraints (`~> 1.15`, `>= 1.5, < 2`) are kept as constraints. Drift treats them as their **lowest satisfying** version for sorting and marks them `≈` in the matrix.
+- Constraints (`~> 1.15`, `>= 1.5, < 2`) are kept as constraints. Drift counts them as an exact pin they allow in the same repo, else as their lower bound, and marks them `≈` in the matrix ([ADR-0010](../adr/0010-drift-offline-matrix.md)).
 - Every pin has a `match`: `exact` (1.15.8), `constraint` (~> 1.15, >= 1.5), `prefix` (26, 3.14, mise's `prefix:1.2`) or `channel` (latest, lts, corretto-17). `exact` is true only for `exact`. Tables mark every non-exact value with `≈`.
 - A pin that resolves to no known tool is reported with `tool=""` and listed under "unresolved" (`pins --unresolved`), so users can add aliases. `--unresolved` keeps the same columns with RAW NAME first and prints a hint about `aliases` on stderr.
 

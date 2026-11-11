@@ -1,0 +1,87 @@
+# drift with several roots, config ignore rules, scan.roots, --tool warnings and the exit codes
+# for partial reports. Nothing here reaches the network: the proxy refuses every connection.
+env TEST_NOW=2026-11-11T12:00:00Z
+env HTTPS_PROXY=http://127.0.0.1:1
+env HTTP_PROXY=http://127.0.0.1:1
+
+# Several roots make one matrix. A root without .git is one repository.
+exec relgap drift infra apps --format plain
+cmp stdout matrix.txt
+! stderr .
+
+# scan.roots in the config is the default.
+exec relgap drift --config roots.yaml --format plain
+cmp stdout matrix.txt
+
+# Ignore rules drop kubectl everywhere and terraform under legacy/, so nothing drifts.
+exec relgap drift infra apps --config ignore.yaml --fail-on drift --format plain
+cmp stdout ignored.txt
+
+# --tool warns about a tool no repository pins.
+exec relgap drift infra --tool helm --tool kubectl --format plain
+stderr 'no repository pins this tool.*tool=helm'
+stdout '^REPO +kubectl$'
+
+# A file that doesn't parse exits 1, even when --fail-on drift matches.
+exec expect-exit 1 relgap drift infra apps broken --fail-on drift --format json
+jsonschema drift-v1.json stdout
+stdout '"target": "broken/mise.toml"'
+stderr 'the report is partial'
+
+# A latest version that can't be listed (offline, empty cache) exits 1 after the matrix.
+exec expect-exit 1 relgap drift infra --latest --offline --format plain
+stdout '^latest +error +error$'
+stderr '^relgap: 2 files or tools failed; the report is partial$'
+
+# outdated applies the ignore rules too, and an alias names the tool: with its only pin
+# ignored, it has nothing to look up.
+cd apps
+exec relgap outdated --config ../ignore-all.yaml --format plain
+stdout '^0 of 0 compared pins are behind latest\.$'
+! stdout terraform
+
+-- matrix.txt --
+REPO     kubectl  terraform
+apps     -        1.15.8
+infra/a  1.34.2   1.15.8
+infra/b  1.33.5*  1.5.7*
+
+≈ allows more than one version. A constraint counts as an exact pin it allows in the same repo, else as its lower bound.
+* differs from the version most repos pin.
+2 of 2 tools drift across 3 repos.
+-- ignored.txt --
+In agreement: terraform 1.15.8 (2 repos)
+0 of 1 tool drifts across 3 repos.
+-- roots.yaml --
+schema_version: 1
+scan:
+  roots: [infra, apps]
+-- ignore.yaml --
+schema_version: 1
+ignore:
+  - tool: kubectl
+  - tool: terraform
+    path: "**/legacy/**"
+-- ignore-all.yaml --
+schema_version: 1
+ignore:
+  - tool: tf
+-- infra/a/.git/HEAD --
+ref: refs/heads/main
+-- infra/a/mise.toml --
+[tools]
+terraform = "1.15.8"
+-- infra/a/.tool-versions --
+kubectl 1.34.2
+-- infra/b/.git/HEAD --
+ref: refs/heads/main
+-- infra/b/.tool-versions --
+kubectl 1.33.5
+-- infra/b/legacy/.terraform-version --
+1.5.7
+-- apps/mise.toml --
+[tools]
+terraform = "1.15.8"
+-- broken/mise.toml --
+[tools
+terraform = "1.15.8"

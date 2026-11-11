@@ -116,6 +116,7 @@ stdout carries data, stderr carries logs. Use --format json for scripting.`,
 		newCacheCmd(d, g),
 		newPinsCmd(d, g),
 		newOutdatedCmd(d, g),
+		newDriftCmd(d, g),
 	)
 	return root, g
 }

@@ -43,8 +43,8 @@ Scope: `httpx` (retry, rate, no cache yet), go-github + githubv4 batch, token di
 - [x] Uses at most 2 GraphQL queries for "latest version" of 45 tools (counter).
 
 ### M7: `drift`
-- [ ] A generated tree of 60 repos gives a correct matrix, constraint pins marked `≈`, `--fail-on drift` exits 3.
-- [ ] Offline by default. `--latest` adds the latest column.
+- [x] A generated tree of 60 repos gives a correct matrix, constraint pins marked `≈`, `--fail-on drift` exits 3 (`TestSpec_output_and_ci_6`).
+- [x] Offline by default. `--latest` adds the latest versions, a row in the repo-by-tool layout of [ADR-0010](adr/0010-drift-offline-matrix.md) (`TestSpec_output_and_ci_7`).
 
 ### M8: Remaining adapters, enrichment, curated registry → v0.1.0
 Scope: `structured-json`, `web-doc`, `upgrade-guide` adapters, EOL + OSV, all 20 curated registry entries, `registry lint|test`, live corpus job.

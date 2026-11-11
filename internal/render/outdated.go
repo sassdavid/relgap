@@ -29,26 +29,8 @@ type cell struct {
 // Skipped pins are left out; JSON lists them.
 func OutdatedText(w io.Writer, o *report.Outdated, color bool) error {
 	rows, notes := outdatedRows(o)
-	widths := make([]int, len(rows[0]))
-	for _, r := range rows {
-		for i, c := range r {
-			widths[i] = max(widths[i], utf8.RuneCountInString(c.text))
-		}
-	}
 	var b strings.Builder
-	for _, r := range rows {
-		for i, c := range r {
-			text := c.text
-			if color && c.style != "" {
-				text = c.style + text + ansiReset
-			}
-			b.WriteString(text)
-			if i < len(r)-1 {
-				b.WriteString(strings.Repeat(" ", widths[i]-utf8.RuneCountInString(c.text)+columnGap))
-			}
-		}
-		b.WriteString("\n")
-	}
+	writeAligned(&b, rows, color)
 	if len(notes) > 0 {
 		b.WriteString("\nNotes:\n")
 		for _, n := range notes {
@@ -62,20 +44,35 @@ func OutdatedText(w io.Writer, o *report.Outdated, color bool) error {
 	return nil
 }
 
+// writeAligned writes rows as columns padded to their widest cell. With color it wraps styled
+// cells in ANSI codes, which don't count toward the width.
+func writeAligned(b *strings.Builder, rows [][]cell, color bool) {
+	widths := make([]int, len(rows[0]))
+	for _, r := range rows {
+		for i, c := range r {
+			widths[i] = max(widths[i], utf8.RuneCountInString(c.text))
+		}
+	}
+	for _, r := range rows {
+		for i, c := range r {
+			text := c.text
+			if color && c.style != "" {
+				text = c.style + text + ansiReset
+			}
+			b.WriteString(text)
+			if i < len(r)-1 {
+				b.WriteString(strings.Repeat(" ", widths[i]-utf8.RuneCountInString(c.text)+columnGap))
+			}
+		}
+		b.WriteString("\n")
+	}
+}
+
 // OutdatedMarkdown writes the pins as a Markdown table followed by notes.
 func OutdatedMarkdown(w io.Writer, o *report.Outdated) error {
 	rows, notes := outdatedRows(o)
 	var b strings.Builder
-	for i, r := range rows {
-		texts := make([]string, len(r))
-		for j, c := range r {
-			texts[j] = mdCell(c.text)
-		}
-		b.WriteString("| " + strings.Join(texts, " | ") + " |\n")
-		if i == 0 {
-			b.WriteString("| --- | --- | --- | ---: | ---: | ---: | --- |\n")
-		}
-	}
+	writeMarkdownTable(&b, rows, "| --- | --- | --- | ---: | ---: | ---: | --- |")
 	if len(notes) > 0 {
 		b.WriteString("\n")
 		for _, n := range notes {
@@ -87,6 +84,20 @@ func OutdatedMarkdown(w io.Writer, o *report.Outdated) error {
 		return fmt.Errorf("write outdated: %w", err)
 	}
 	return nil
+}
+
+// writeMarkdownTable writes rows as a Markdown table with sep as the delimiter row.
+func writeMarkdownTable(b *strings.Builder, rows [][]cell, sep string) {
+	for i, r := range rows {
+		texts := make([]string, len(r))
+		for j, c := range r {
+			texts[j] = mdCell(c.text)
+		}
+		b.WriteString("| " + strings.Join(texts, " | ") + " |\n")
+		if i == 0 {
+			b.WriteString(sep + "\n")
+		}
+	}
 }
 
 func mdCell(s string) string {

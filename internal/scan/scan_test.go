@@ -215,3 +215,34 @@ func TestDockerfileEscapeDirective(t *testing.T) {
 	assert.Equal(t, "terraform", res.Pins[1].Tool)
 	assert.Equal(t, 3, res.Pins[1].Location.Line)
 }
+
+func TestIgnored(t *testing.T) {
+	t.Parallel()
+	pin := func(tool, repo, file string) *scan.Pin {
+		return &scan.Pin{Tool: tool, Location: scan.Location{Repo: repo, File: file}}
+	}
+	rules := []scan.Ignore{{Tool: "java"}, {Tool: "terraform", Path: "**/legacy/**"}}
+	tests := []struct {
+		pin  *scan.Pin
+		want bool
+	}{
+		{pin("java", "infra/app", "mise.toml"), true},
+		{pin("Java", "infra/app", "mise.toml"), true},
+		{pin("terraform", "infra/legacy", "versions.tf"), true},
+		{pin("terraform", ".", "legacy/old/versions.tf"), true},
+		{pin("terraform", "infra/app", "versions.tf"), false},
+		{pin("node", "infra/legacy", "mise.toml"), false},
+	}
+	for _, tt := range tests {
+		assert.Equal(
+			t,
+			tt.want,
+			scan.Ignored(rules, tt.pin),
+			"%s %s/%s",
+			tt.pin.Tool,
+			tt.pin.Location.Repo,
+			tt.pin.Location.File,
+		)
+	}
+	assert.False(t, scan.Ignored(nil, pin("java", ".", "mise.toml")))
+}
