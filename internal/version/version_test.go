@@ -228,3 +228,33 @@ func TestConstraint(t *testing.T) {
 	_, err = version.ParseConstraint(s, "~> banana")
 	require.ErrorIs(t, err, version.ErrParse)
 }
+
+func TestConstraintFloor(t *testing.T) {
+	t.Parallel()
+	tests := []struct {
+		scheme version.Scheme
+		expr   string
+		want   string // empty when there is no floor
+	}{
+		{version.Semver(), "~> 1.15", "1.15.0"},
+		{version.Semver(), "~> 1.15.3", "1.15.3"},
+		{version.Semver(), ">= 1.2, < 2", "1.2.0"},
+		{version.Semver(), ">= 1.2, >= 1.4.1", "1.4.1"},
+		{version.Semver(), "1.5.0", "1.5.0"},
+		{version.Semver(), "< 2", ""},
+		{version.Semver(), "> 1.0.0", ""},
+		{version.Semver(), ">= 1.5, > 1.5.0", ""},
+		{version.Semver(), ">= 1.5, != 1.5.0", ""},
+		{version.Semver(), ">= 1.5.0-rc.1", "1.5.0-rc.1"},
+		{version.Loose(), ">= 26", "26.0.0"},
+	}
+	for _, tt := range tests {
+		c, err := version.ParseConstraint(tt.scheme, tt.expr)
+		require.NoError(t, err)
+		v, ok := c.Floor()
+		assert.Equal(t, tt.want != "", ok, tt.expr)
+		if ok {
+			assert.Equal(t, tt.want, v.String(), tt.expr)
+		}
+	}
+}

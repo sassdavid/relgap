@@ -144,3 +144,45 @@ func (u *Universe) ResolvePrefix(prefix string) (V, error) {
 	}
 	return V{}, fmt.Errorf("%w: no stable version starts with %s", ErrNoMatch, prefix)
 }
+
+// Floor returns the lowest version c allows without a version list: its highest inclusive lower
+// bound (=, >= or ~>), padded to three segments. The second result is false when c has no
+// inclusive lower bound, when an exclusive bound (>) sits at or above it, or when the bound
+// itself fails another term, as in ">= 1.5, != 1.5.0".
+func (c Constraint) Floor() (V, bool) {
+	s := c.scheme
+	var floor V
+	for _, t := range c.terms {
+		if (t.op == "=" || t.op == ">=" || t.op == "~>") && (floor.IsZero() || s.Compare(t.v, floor) > 0) {
+			floor = t.v
+		}
+	}
+	if floor.IsZero() {
+		return V{}, false
+	}
+	for _, t := range c.terms {
+		if t.op == ">" && s.Compare(t.v, floor) >= 0 {
+			return V{}, false
+		}
+	}
+	floor = pad(s, floor)
+	return floor, c.Check(floor)
+}
+
+// pad writes a release-only version such as 1.15 as 1.15.0, when the scheme reads both as equal.
+func pad(s Scheme, v V) V {
+	const segments = 3
+	text := v.String()
+	if strings.ContainsAny(text, "-+") || len(v.rel) == 0 {
+		return v
+	}
+	n := len(strings.Split(text, "."))
+	if n >= segments {
+		return v
+	}
+	padded, err := s.Parse(text + strings.Repeat(".0", segments-n))
+	if err != nil || s.Compare(padded, v) != 0 {
+		return v
+	}
+	return padded
+}

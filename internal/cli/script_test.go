@@ -50,6 +50,8 @@ const (
 	// envToken is a real token while recording and a dummy one otherwise. Scripts that test the
 	// token path set GH_TOKEN=$TEST_GH_TOKEN. No RELGAP_ prefix: config warns about unknown ones.
 	envToken = "TEST_GH_TOKEN"
+	// envRequests names a file that gets a line per HTTP request relgap sends (see cmdRequests).
+	envRequests = "TEST_REQUESTS"
 )
 
 func TestMain(m *testing.M) {
@@ -137,7 +139,31 @@ func runRelgap(args []string) int {
 			}
 		}()
 	}
+	if file := os.Getenv(envRequests); file != "" {
+		d.HTTPTransport = requestLog{file: file, rt: cmp.Or[http.RoundTripper](d.HTTPTransport, http.DefaultTransport)}
+	}
 	return cli.Execute(ctx, d, args)
+}
+
+// requestLog appends "METHOD URL" to a file for every request before sending it.
+type requestLog struct {
+	file string
+	rt   http.RoundTripper
+}
+
+func (l requestLog) RoundTrip(req *http.Request) (*http.Response, error) {
+	f, err := os.OpenFile(l.file, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0o600)
+	if err != nil {
+		return nil, fmt.Errorf("open request log: %w", err)
+	}
+	_, err = fmt.Fprintf(f, "%s %s\n", req.Method, req.URL.Redacted())
+	if closeErr := f.Close(); err == nil {
+		err = closeErr
+	}
+	if err != nil {
+		return nil, fmt.Errorf("write request log: %w", err)
+	}
+	return l.rt.RoundTrip(req) //nolint:wrapcheck // the transport's error is the result
 }
 
 type redirect struct {
@@ -183,6 +209,7 @@ func scriptParams(t *testing.T, files ...string) testscript.Params {
 			if vcr.Recording() {
 				env.Setenv(vcr.RecordEnv, "1")
 			}
+			env.Setenv(envRequests, filepath.Join(env.WorkDir, "requests.log"))
 			env.Values[slowServerKey{}] = &slowServer{}
 			return nil
 		},
@@ -199,6 +226,8 @@ func scriptParams(t *testing.T, files ...string) testscript.Params {
 			"jsonschema":  cmdJSONSchema,
 			"slowgithub":  cmdSlowGitHub,
 			"countsmatch": cmdCountsMatch,
+			"gentree":     cmdGenTree,
+			"requests":    cmdRequests,
 		},
 	}
 }

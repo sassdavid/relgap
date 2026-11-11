@@ -44,6 +44,7 @@ llm:
 ## Rules
 - Unknown keys → exit 2 with file:line (validated against the schema before unmarshal).
 - `relgap config init` writes a commented template. With a TTY and huh available (post-MVP) it becomes a wizard.
+- `ignore` rules drop pins in `drift`, `outdated` and `digest --from-mise|--all`. `tool` may be an alias. `path` is a glob on `repo/file` or the repo-relative file, with `**` for any directories. `pins` lists every pin.
 - Env vars: `RELGAP_GITHUB_CONCURRENCY`, `RELGAP_CACHE_DIR`, `RELGAP_LLM_PROVIDER`, and so on. Tokens are **never** read from config files, only from env, gh or the keyring.
 
 ## Acceptance criteria
