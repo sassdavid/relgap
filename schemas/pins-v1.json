@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/sassdavid/relgap/schemas/pins-v1.json",
+  "title": "relgap pins --format json",
+  "description": "The report-v1.json envelope with pins data: the scanned repositories and every pin found, sorted by repo, file and line.",
+  "allOf": [{ "$ref": "report-v1.json" }],
+  "properties": {
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repos", "pins"],
+      "properties": {
+        "repos": {
+          "description": "Scanned repository directories, slash-separated, as reached from the roots.",
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "pins": { "type": "array", "items": { "$ref": "#/$defs/pin" } }
+      }
+    }
+  },
+  "$defs": {
+    "pin": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tool", "raw_name", "kind", "value", "version", "exact", "match", "location"],
+      "properties": {
+        "tool": {
+          "description": "Name relgap digest accepts: a registry name, github:owner/repo, aqua:package, or kind:name for tfprovider, chart, image and action pins. Empty when the pin maps to no known tool.",
+          "type": "string"
+        },
+        "raw_name": {
+          "description": "The name as written, e.g. TERRAFORM_VERSION, hashicorp/aws or http:kafka.",
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": { "enum": ["tool", "tfprovider", "chart", "image", "action"] },
+        "value": { "description": "The value as written.", "type": "string", "minLength": 1 },
+        "version": {
+          "description": "The value without a leading v (or go for a go.mod toolchain), for comparison.",
+          "type": "string",
+          "minLength": 1
+        },
+        "exact": { "description": "True when the value allows exactly one version.", "type": "boolean" },
+        "match": {
+          "description": "exact (1.15.8), constraint (~> 1.15), prefix (26) or channel (latest, lts, corretto-17).",
+          "enum": ["exact", "constraint", "prefix", "channel"]
+        },
+        "location": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["repo", "file", "line", "detector"],
+          "properties": {
+            "repo": { "type": "string", "minLength": 1 },
+            "file": { "description": "Relative to repo, slash-separated.", "type": "string", "minLength": 1 },
+            "line": { "description": "1-based; 0 when the source has no lines (a Renovate report).", "type": "integer", "minimum": 0 },
+            "detector": {
+              "enum": ["mise", "tool-versions", "aqua", "idiomatic", "terraform", "tf-lock", "terragrunt", "dockerfile", "ci", "helm", "generic", "renovate"]
+            }
+          }
+        }
+      }
+    }
+  }
+}

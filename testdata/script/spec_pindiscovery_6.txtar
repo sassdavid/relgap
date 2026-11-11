@@ -1,0 +1,42 @@
+# Unknown *_VERSION names are listed by --unresolved with file:line, and an alias in the config
+# resolves them.
+env TEST_NOW=2026-11-11T00:00:00Z
+exec relgap pins --format plain
+stdout '^-  +2.1.0 +dockerfile +app/Dockerfile:2$'
+stderr '^relgap: 2 pins have no known tool; list them with --unresolved$'
+
+exec relgap pins --unresolved --format plain
+cmp stdout want.txt
+stderr '^relgap: map these names to tools with aliases.<raw name>: <tool> in .relgap.yaml$'
+
+exec relgap pins --unresolved --format json
+jsonschema pins-v1.json stdout
+golden stdout pins/spec-6.json
+
+exec relgap pins --unresolved --format md
+cmp stdout want.md
+
+exec relgap pins --unresolved --format plain --config aliases.yaml
+cmp stdout want-aliased.txt
+
+-- want.txt --
+RAW NAME     VALUE  DETECTOR    LOCATION
+FOO_VERSION  2.1.0  dockerfile  app/Dockerfile:2
+BAR_VERSION  ≈0.3   dockerfile  app/Dockerfile:3
+-- want.md --
+| RAW NAME | VALUE | DETECTOR | LOCATION |
+| --- | --- | --- | --- |
+| FOO_VERSION | 2.1.0 | dockerfile | app/Dockerfile:2 |
+| BAR_VERSION | ≈0.3 | dockerfile | app/Dockerfile:3 |
+-- want-aliased.txt --
+RAW NAME     VALUE  DETECTOR    LOCATION
+BAR_VERSION  ≈0.3   dockerfile  app/Dockerfile:3
+-- aliases.yaml --
+schema_version: 1
+aliases:
+  FOO_VERSION: terraform
+-- app/Dockerfile --
+FROM debian
+ARG FOO_VERSION=2.1.0
+ENV BAR_VERSION=0.3
+ARG TERRAFORM_VERSION=1.15.8

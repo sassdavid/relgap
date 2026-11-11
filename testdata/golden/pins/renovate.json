@@ -1,0 +1,104 @@
+{
+  "schema_version": "1",
+  "tool": "relgap",
+  "version": "dev",
+  "generated_at": "2026-11-11T00:00:00Z",
+  "data": {
+    "repos": [
+      "."
+    ],
+    "pins": [
+      {
+        "tool": "action:actions/checkout",
+        "raw_name": "actions/checkout",
+        "kind": "action",
+        "value": "v5",
+        "version": "5",
+        "exact": false,
+        "match": "prefix",
+        "location": {
+          "repo": "local",
+          "file": ".github/workflows/ci.yml",
+          "line": 0,
+          "detector": "renovate"
+        }
+      },
+      {
+        "tool": "image:node",
+        "raw_name": "node",
+        "kind": "image",
+        "value": "24.11.0-alpine",
+        "version": "24.11.0-alpine",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": "local",
+          "file": "Dockerfile",
+          "line": 0,
+          "detector": "renovate"
+        }
+      },
+      {
+        "tool": "terragrunt",
+        "raw_name": "gruntwork-io/terragrunt",
+        "kind": "tool",
+        "value": "1.2.1",
+        "version": "1.2.1",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": "local",
+          "file": "tools.mk",
+          "line": 0,
+          "detector": "renovate"
+        }
+      },
+      {
+        "tool": "kubectl",
+        "raw_name": "kubectl",
+        "kind": "tool",
+        "value": "v1.34.2",
+        "version": "1.34.2",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": "local",
+          "file": "tools.mk",
+          "line": 0,
+          "detector": "renovate"
+        }
+      },
+      {
+        "tool": "",
+        "raw_name": "unknown-tool",
+        "kind": "tool",
+        "value": "1.0.0",
+        "version": "1.0.0",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": "local",
+          "file": "tools.mk",
+          "line": 0,
+          "detector": "renovate"
+        }
+      },
+      {
+        "tool": "tfprovider:hashicorp/aws",
+        "raw_name": "aws",
+        "kind": "tfprovider",
+        "value": "~> 6.0",
+        "version": "~> 6.0",
+        "exact": false,
+        "match": "constraint",
+        "location": {
+          "repo": "local",
+          "file": "versions.tf",
+          "line": 0,
+          "detector": "renovate"
+        }
+      }
+    ]
+  },
+  "errors": []
+}

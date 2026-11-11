@@ -1,0 +1,59 @@
+{
+  "schema_version": "1",
+  "tool": "relgap",
+  "version": "dev",
+  "generated_at": "2026-11-11T00:00:00Z",
+  "data": {
+    "repos": [
+      "."
+    ],
+    "pins": [
+      {
+        "tool": "argocd",
+        "raw_name": "argocd",
+        "kind": "tool",
+        "value": "v3.2.0",
+        "version": "3.2.0",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": ".",
+          "file": "charts/argocd/Chart.yaml",
+          "line": 4,
+          "detector": "helm"
+        }
+      },
+      {
+        "tool": "chart:argo-cd",
+        "raw_name": "argo-cd",
+        "kind": "chart",
+        "value": "9.1.0",
+        "version": "9.1.0",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": ".",
+          "file": "charts/argocd/Chart.yaml",
+          "line": 7,
+          "detector": "helm"
+        }
+      },
+      {
+        "tool": "chart:redis",
+        "raw_name": "redis",
+        "kind": "chart",
+        "value": "~22.0.0",
+        "version": "~22.0.0",
+        "exact": false,
+        "match": "constraint",
+        "location": {
+          "repo": ".",
+          "file": "charts/argocd/Chart.yaml",
+          "line": 10,
+          "detector": "helm"
+        }
+      }
+    ]
+  },
+  "errors": []
+}

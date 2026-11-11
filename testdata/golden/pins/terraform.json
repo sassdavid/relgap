@@ -1,0 +1,119 @@
+{
+  "schema_version": "1",
+  "tool": "relgap",
+  "version": "dev",
+  "generated_at": "2026-11-11T00:00:00Z",
+  "data": {
+    "repos": [
+      "."
+    ],
+    "pins": [
+      {
+        "tool": "terraform",
+        "raw_name": "required_version",
+        "kind": "tool",
+        "value": "1.15.8",
+        "version": "1.15.8",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": ".",
+          "file": "modules/json/versions.tf.json",
+          "line": 3,
+          "detector": "terraform"
+        }
+      },
+      {
+        "tool": "tfprovider:hashicorp/azurerm",
+        "raw_name": "hashicorp/azurerm",
+        "kind": "tfprovider",
+        "value": "4.50.0",
+        "version": "4.50.0",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": ".",
+          "file": "modules/json/versions.tf.json",
+          "line": 5,
+          "detector": "terraform"
+        }
+      },
+      {
+        "tool": "terraform",
+        "raw_name": "required_version",
+        "kind": "tool",
+        "value": ">= 1.5, < 2",
+        "version": ">= 1.5, < 2",
+        "exact": false,
+        "match": "constraint",
+        "location": {
+          "repo": ".",
+          "file": "versions.tf",
+          "line": 2,
+          "detector": "terraform"
+        }
+      },
+      {
+        "tool": "tfprovider:hashicorp/aws",
+        "raw_name": "hashicorp/aws",
+        "kind": "tfprovider",
+        "value": "~> 6.0",
+        "version": "~> 6.0",
+        "exact": false,
+        "match": "constraint",
+        "location": {
+          "repo": ".",
+          "file": "versions.tf",
+          "line": 7,
+          "detector": "terraform"
+        }
+      },
+      {
+        "tool": "tfprovider:hashicorp/random",
+        "raw_name": "hashicorp/random",
+        "kind": "tfprovider",
+        "value": "3.7.2",
+        "version": "3.7.2",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": ".",
+          "file": "versions.tf",
+          "line": 11,
+          "detector": "terraform"
+        }
+      },
+      {
+        "tool": "tfprovider:hashicorp/google",
+        "raw_name": "registry.terraform.io/hashicorp/google",
+        "kind": "tfprovider",
+        "value": "7.10.0",
+        "version": "7.10.0",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": ".",
+          "file": "versions.tf",
+          "line": 15,
+          "detector": "terraform"
+        }
+      },
+      {
+        "tool": "tfprovider:hashicorp/legacy",
+        "raw_name": "hashicorp/legacy",
+        "kind": "tfprovider",
+        "value": "~> 1.0",
+        "version": "~> 1.0",
+        "exact": false,
+        "match": "constraint",
+        "location": {
+          "repo": ".",
+          "file": "versions.tf",
+          "line": 17,
+          "detector": "terraform"
+        }
+      }
+    ]
+  },
+  "errors": []
+}

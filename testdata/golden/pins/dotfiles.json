@@ -1,0 +1,239 @@
+{
+  "schema_version": "1",
+  "tool": "relgap",
+  "version": "dev",
+  "generated_at": "2026-11-11T00:00:00Z",
+  "data": {
+    "repos": [
+      "dotfiles"
+    ],
+    "pins": [
+      {
+        "tool": "bat",
+        "raw_name": "bat",
+        "kind": "tool",
+        "value": "latest",
+        "version": "latest",
+        "exact": false,
+        "match": "channel",
+        "location": {
+          "repo": "dotfiles",
+          "file": "_mise/conf.d/debian.toml",
+          "line": 2,
+          "detector": "mise"
+        }
+      },
+      {
+        "tool": "fd",
+        "raw_name": "aqua:sharkdp/fd",
+        "kind": "tool",
+        "value": "v0.10.2",
+        "version": "0.10.2",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": "dotfiles",
+          "file": "_mise/conf.d/debian.toml",
+          "line": 3,
+          "detector": "mise"
+        }
+      },
+      {
+        "tool": "age",
+        "raw_name": "age",
+        "kind": "tool",
+        "value": "latest",
+        "version": "latest",
+        "exact": false,
+        "match": "channel",
+        "location": {
+          "repo": "dotfiles",
+          "file": "_mise/config.toml",
+          "line": 6,
+          "detector": "mise"
+        }
+      },
+      {
+        "tool": "awscli",
+        "raw_name": "awscli",
+        "kind": "tool",
+        "value": "latest",
+        "version": "latest",
+        "exact": false,
+        "match": "channel",
+        "location": {
+          "repo": "dotfiles",
+          "file": "_mise/config.toml",
+          "line": 7,
+          "detector": "mise"
+        }
+      },
+      {
+        "tool": "dua",
+        "raw_name": "dua",
+        "kind": "tool",
+        "value": "3.0.0",
+        "version": "3.0.0",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": "dotfiles",
+          "file": "_mise/config.toml",
+          "line": 8,
+          "detector": "mise"
+        }
+      },
+      {
+        "tool": "node",
+        "raw_name": "node",
+        "kind": "tool",
+        "value": "24.11.0",
+        "version": "24.11.0",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": "dotfiles",
+          "file": "_mise/config.toml",
+          "line": 9,
+          "detector": "mise"
+        }
+      },
+      {
+        "tool": "node",
+        "raw_name": "node",
+        "kind": "tool",
+        "value": "26",
+        "version": "26",
+        "exact": false,
+        "match": "prefix",
+        "location": {
+          "repo": "dotfiles",
+          "file": "_mise/config.toml",
+          "line": 9,
+          "detector": "mise"
+        }
+      },
+      {
+        "tool": "java",
+        "raw_name": "java",
+        "kind": "tool",
+        "value": "corretto-17",
+        "version": "corretto-17",
+        "exact": false,
+        "match": "channel",
+        "location": {
+          "repo": "dotfiles",
+          "file": "_mise/config.toml",
+          "line": 10,
+          "detector": "mise"
+        }
+      },
+      {
+        "tool": "python",
+        "raw_name": "python",
+        "kind": "tool",
+        "value": "3.14",
+        "version": "3.14",
+        "exact": false,
+        "match": "prefix",
+        "location": {
+          "repo": "dotfiles",
+          "file": "_mise/config.toml",
+          "line": 11,
+          "detector": "mise"
+        }
+      },
+      {
+        "tool": "terraform",
+        "raw_name": "aqua:hashicorp/terraform",
+        "kind": "tool",
+        "value": "1.15.8",
+        "version": "1.15.8",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": "dotfiles",
+          "file": "_mise/config.toml",
+          "line": 12,
+          "detector": "mise"
+        }
+      },
+      {
+        "tool": "terragrunt",
+        "raw_name": "terragrunt",
+        "kind": "tool",
+        "value": "1.2.1",
+        "version": "1.2.1",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": "dotfiles",
+          "file": "_mise/config.toml",
+          "line": 13,
+          "detector": "mise"
+        }
+      },
+      {
+        "tool": "hk",
+        "raw_name": "hk",
+        "kind": "tool",
+        "value": "latest",
+        "version": "latest",
+        "exact": false,
+        "match": "channel",
+        "location": {
+          "repo": "dotfiles",
+          "file": "_mise/config.toml",
+          "line": 14,
+          "detector": "mise"
+        }
+      },
+      {
+        "tool": "",
+        "raw_name": "http:kafka",
+        "kind": "tool",
+        "value": "3.9.2",
+        "version": "3.9.2",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": "dotfiles",
+          "file": "_mise/config.toml",
+          "line": 17,
+          "detector": "mise"
+        }
+      },
+      {
+        "tool": "github:mongodb/mongodb-atlas-cli",
+        "raw_name": "github:mongodb/mongodb-atlas-cli",
+        "kind": "tool",
+        "value": "1.40.0",
+        "version": "1.40.0",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": "dotfiles",
+          "file": "_mise/config.toml",
+          "line": 23,
+          "detector": "mise"
+        }
+      },
+      {
+        "tool": "",
+        "raw_name": "http:mongodb-database-tools",
+        "kind": "tool",
+        "value": "latest",
+        "version": "latest",
+        "exact": false,
+        "match": "channel",
+        "location": {
+          "repo": "dotfiles",
+          "file": "_mise/config.toml",
+          "line": 27,
+          "detector": "mise"
+        }
+      }
+    ]
+  },
+  "errors": []
+}

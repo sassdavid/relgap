@@ -23,7 +23,9 @@ import (
 
 	"github.com/sassdavid/relgap/internal/app"
 	"github.com/sassdavid/relgap/internal/cli"
+	"github.com/sassdavid/relgap/internal/scan"
 	"github.com/sassdavid/relgap/internal/testutil"
+	"github.com/sassdavid/relgap/internal/testutil/fakebin"
 	"github.com/sassdavid/relgap/internal/testutil/ghtest"
 	"github.com/sassdavid/relgap/internal/testutil/vcr"
 	"github.com/sassdavid/relgap/schemas"
@@ -49,6 +51,7 @@ const (
 )
 
 func TestMain(m *testing.M) {
+	fakebin.Serve()
 	testscript.Main(m, map[string]func(){
 		"relgap": func() {
 			os.Exit(runRelgap(os.Args[1:]))
@@ -305,7 +308,7 @@ func TestScripts(t *testing.T) {
 	}
 	var files []string
 	for _, m := range matches {
-		if !strings.HasPrefix(filepath.Base(m), "spec_") {
+		if base := filepath.Base(m); !strings.HasPrefix(base, "spec_") && !strings.HasPrefix(base, "pins_") {
 			files = append(files, m)
 		}
 	}
@@ -341,6 +344,79 @@ func TestSpec_config_2(t *testing.T) {
 func TestSpec_classification_4(t *testing.T) {
 	t.Parallel()
 	testscript.Run(t, scriptParams(t, filepath.Join(scriptDir, "spec_classification_4.txtar")))
+}
+
+// TestSpec_pindiscovery_1: every detector has a testdata/script/pins_<detector>.txtar fixture
+// with golden JSON.
+func TestSpec_pindiscovery_1(t *testing.T) {
+	t.Parallel()
+	var files []string
+	for _, name := range scan.Detectors() {
+		file := filepath.Join(scriptDir, "pins_"+strings.ReplaceAll(name, "-", "_")+".txtar")
+		data, err := os.ReadFile(file)
+		if err != nil {
+			t.Errorf("detector %s has no fixture: %v", name, err)
+			continue
+		}
+		if !strings.Contains(string(data), "golden stdout pins/") {
+			t.Errorf("%s has no golden JSON", file)
+		}
+		files = append(files, file)
+	}
+	testscript.Run(t, scriptParams(t, files...))
+}
+
+// TestSpec_pindiscovery_2: a dotfiles-shaped mise config parses the same with and without mise
+// on PATH, and pins never runs mise ls.
+func TestSpec_pindiscovery_2(t *testing.T) {
+	t.Parallel()
+	registryJSON, err := filepath.Abs("../../testdata/mise/registry.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	bin := fakebin.Install(t, "mise", fakebin.Spec{Rules: []fakebin.Rule{
+		{Args: []string{"registry", "--json"}, StdoutFile: registryJSON},
+		{Args: []string{"ls"}, Stdout: `{"terraform":[{"version":"0.1.0","requested_version":"0.1.0"}]}`},
+	}})
+	params := scriptParams(t, filepath.Join(scriptDir, "spec_pindiscovery_2.txtar"))
+	setup := params.Setup
+	params.Setup = func(env *testscript.Env) error {
+		env.Setenv("FAKEMISE", filepath.Dir(bin))
+		return setup(env)
+	}
+	// testscript runs the script as a parallel subtest, which starts after this function returns.
+	t.Cleanup(func() {
+		calls := fakebin.Calls(t, bin)
+		if len(calls) == 0 {
+			t.Error("pins never ran mise registry --json with the fake mise on PATH")
+		}
+		for _, c := range calls {
+			if len(c.Args) == 0 || c.Args[0] != "registry" {
+				t.Errorf("pins ran mise %s; it must read mise config files itself", strings.Join(c.Args, " "))
+			}
+		}
+	})
+	testscript.Run(t, params)
+}
+
+// TestSpec_pindiscovery_3: Dockerfile ARG TERRAFORM_VERSION and a renovate-commented
+// ARG TG_VERSION map to terraform and terragrunt.
+func TestSpec_pindiscovery_3(t *testing.T) {
+	t.Parallel()
+	testscript.Run(t, scriptParams(t, filepath.Join(scriptDir, "spec_pindiscovery_3.txtar")))
+}
+
+// TestSpec_pindiscovery_4: .terraform.lock.hcl gives exact tfprovider:hashicorp/aws pins and
+// required_providers gives constraint pins.
+func TestSpec_pindiscovery_4(t *testing.T) {
+	t.Parallel()
+	testscript.Run(t, scriptParams(t, filepath.Join(scriptDir, "spec_pindiscovery_4.txtar")))
+}
+
+// TestSpec_pindiscovery_6: unknown *_VERSION names appear in --unresolved with file:line.
+func TestSpec_pindiscovery_6(t *testing.T) {
+	t.Parallel()
+	testscript.Run(t, scriptParams(t, filepath.Join(scriptDir, "spec_pindiscovery_6.txtar")))
 }
 
 type slowServerKey struct{}

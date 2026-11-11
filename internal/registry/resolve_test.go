@@ -244,6 +244,38 @@ func TestResolve(t *testing.T) {
 	}
 }
 
+func TestIdentify(t *testing.T) {
+	t.Parallel()
+	r := snapshotResolver(t, registry.ConfigLayer{Aliases: map[string]string{"TG_VERSION": "terragrunt"}})
+	tests := []struct {
+		in, want string
+		ok       bool
+	}{
+		{"terraform", "terraform", true},
+		{"tf", "terraform", true},
+		{"TERRAFORM_VERSION", "terraform", true},
+		{"TG_VERSION", "terragrunt", true},
+		{"aqua:hashicorp/terraform", "terraform", true},
+		{"github:gruntwork-io/terragrunt", "terragrunt", true},
+		{"github:acme/unknown-cli", "github:acme/unknown-cli", true},
+		{"uv", "uv", true},
+		{"FOO_VERSION", "", false},
+		{"http:kafka", "", false},
+		{"tfprovider:hashicorp/aws", "", false},
+		{"github:not-a-repo", "", false},
+		{"aqua:no/such-package", "", false},
+		{" ", "", false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.in, func(t *testing.T) {
+			t.Parallel()
+			got, ok := r.Identify(tt.in)
+			assert.Equal(t, tt.ok, ok)
+			assert.Equal(t, tt.want, got)
+		})
+	}
+}
+
 func TestResolveErrors(t *testing.T) {
 	t.Parallel()
 	r := snapshotResolver(t, registry.ConfigLayer{Aliases: map[string]string{"X_VERSION": "nothing-like-this"}})

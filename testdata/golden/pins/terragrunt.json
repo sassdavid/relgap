@@ -1,0 +1,44 @@
+{
+  "schema_version": "1",
+  "tool": "relgap",
+  "version": "dev",
+  "generated_at": "2026-11-11T00:00:00Z",
+  "data": {
+    "repos": [
+      "."
+    ],
+    "pins": [
+      {
+        "tool": "terraform",
+        "raw_name": "terraform_version_constraint",
+        "kind": "tool",
+        "value": ">= 1.15",
+        "version": ">= 1.15",
+        "exact": false,
+        "match": "constraint",
+        "location": {
+          "repo": ".",
+          "file": "root.hcl",
+          "line": 1,
+          "detector": "terragrunt"
+        }
+      },
+      {
+        "tool": "terragrunt",
+        "raw_name": "terragrunt_version_constraint",
+        "kind": "tool",
+        "value": "1.2.1",
+        "version": "1.2.1",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": ".",
+          "file": "root.hcl",
+          "line": 2,
+          "detector": "terragrunt"
+        }
+      }
+    ]
+  },
+  "errors": []
+}

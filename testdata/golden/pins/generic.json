@@ -1,0 +1,74 @@
+{
+  "schema_version": "1",
+  "tool": "relgap",
+  "version": "dev",
+  "generated_at": "2026-11-11T00:00:00Z",
+  "data": {
+    "repos": [
+      "."
+    ],
+    "pins": [
+      {
+        "tool": "terraform",
+        "raw_name": "TERRAFORM_VERSION",
+        "kind": "tool",
+        "value": "1.15.8",
+        "version": "1.15.8",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": ".",
+          "file": "Makefile",
+          "line": 1,
+          "detector": "generic"
+        }
+      },
+      {
+        "tool": "kubectl",
+        "raw_name": "KUBECTL_VERSION",
+        "kind": "tool",
+        "value": "v1.34.2",
+        "version": "1.34.2",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": ".",
+          "file": "Makefile",
+          "line": 2,
+          "detector": "generic"
+        }
+      },
+      {
+        "tool": "",
+        "raw_name": "FOO_VERSION",
+        "kind": "tool",
+        "value": "2.1.0",
+        "version": "2.1.0",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": ".",
+          "file": "Makefile",
+          "line": 3,
+          "detector": "generic"
+        }
+      },
+      {
+        "tool": "helm",
+        "raw_name": "HELM_VERSION",
+        "kind": "tool",
+        "value": "3.19.0",
+        "version": "3.19.0",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": ".",
+          "file": "deploy/tools.env",
+          "line": 1,
+          "detector": "generic"
+        }
+      }
+    ]
+  },
+  "errors": []
+}

@@ -112,6 +112,7 @@ stdout carries data, stderr carries logs. Use --format json for scripting.`,
 		newDigestCmd(d, g),
 		newRegistryCmd(d, g),
 		newCacheCmd(d, g),
+		newPinsCmd(d, g),
 	)
 	return root, g
 }

@@ -1,0 +1,18 @@
+# helm: Chart.yaml dependencies are chart pins; appVersion pins the tool named like the chart.
+env TEST_NOW=2026-11-11T00:00:00Z
+exec relgap pins --format json
+jsonschema pins-v1.json stdout
+golden stdout pins/helm.json
+
+-- charts/argocd/Chart.yaml --
+apiVersion: v2
+name: argocd
+version: 0.1.0
+appVersion: "v3.2.0"
+dependencies:
+  - name: argo-cd
+    version: "9.1.0"
+    repository: https://argoproj.github.io/argo-helm
+  - name: redis
+    version: "~22.0.0"
+    repository: oci://registry-1.docker.io/bitnamicharts

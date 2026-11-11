@@ -1,0 +1,56 @@
+# renovate: --renovate-report adds the deps of a Renovate report, with no line numbers.
+env TEST_NOW=2026-11-11T00:00:00Z
+exec relgap pins --format json --renovate-report report.json
+jsonschema pins-v1.json stdout
+golden stdout pins/renovate.json
+
+! exec relgap pins --renovate-report missing.json
+stderr 'read renovate report'
+
+-- report.json --
+{
+  "problems": [],
+  "repositories": {
+    "local": {
+      "problems": [],
+      "branches": [],
+      "packageFiles": {
+        "dockerfile": [
+          {
+            "packageFile": "Dockerfile",
+            "deps": [
+              { "depName": "node", "currentValue": "24.11.0-alpine", "datasource": "docker" },
+              { "depName": "scratch", "skipReason": "unsupported" }
+            ]
+          }
+        ],
+        "regex": [
+          {
+            "packageFile": "tools.mk",
+            "deps": [
+              { "depName": "gruntwork-io/terragrunt", "currentValue": "1.2.1", "datasource": "github-releases" },
+              { "depName": "kubectl", "packageName": "kubernetes/kubernetes", "currentValue": "v1.34.2", "datasource": "github-tags" },
+              { "depName": "unknown-tool", "currentValue": "1.0.0", "datasource": "npm" }
+            ]
+          }
+        ],
+        "terraform": [
+          {
+            "packageFile": "versions.tf",
+            "deps": [
+              { "depName": "aws", "packageName": "hashicorp/aws", "currentValue": "~> 6.0", "datasource": "terraform-provider" }
+            ]
+          }
+        ],
+        "github-actions": [
+          {
+            "packageFile": ".github/workflows/ci.yml",
+            "deps": [
+              { "depName": "actions/checkout", "currentValue": "v5", "datasource": "github-tags" }
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

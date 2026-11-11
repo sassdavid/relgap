@@ -1,0 +1,17 @@
+# terragrunt: literal version constraints in any .hcl file. Expressions aren't evaluated, and
+# .hcl files without the attributes aren't parsed at all.
+env TEST_NOW=2026-11-11T00:00:00Z
+exec relgap pins --format json
+jsonschema pins-v1.json stdout
+golden stdout pins/terragrunt.json
+
+-- root.hcl --
+terraform_version_constraint  = ">= 1.15"
+terragrunt_version_constraint = "1.2.1"
+-- live/prod/terragrunt.hcl --
+include "root" {
+  path = find_in_parent_folders("root.hcl")
+}
+terraform_version_constraint = local.tf_constraint
+-- packer/build.pkr.hcl --
+this is not { valid hcl

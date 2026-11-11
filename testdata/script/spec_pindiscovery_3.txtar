@@ -1,0 +1,20 @@
+# ARG TERRAFORM_VERSION maps to terraform through the NAME_VERSION rule. A renovate comment
+# above ARG TG_VERSION maps it to terragrunt through its GitHub repository.
+env TEST_NOW=2026-11-11T00:00:00Z
+exec relgap pins --format plain
+cmp stdout want.txt
+
+exec relgap pins --format json
+jsonschema pins-v1.json stdout
+golden stdout pins/spec-3.json
+
+-- want.txt --
+TOOL        VALUE   DETECTOR    LOCATION
+terraform   1.15.8  dockerfile  Dockerfile:2
+terragrunt  1.2.1   dockerfile  Dockerfile:4
+-- Dockerfile --
+FROM debian
+ARG TERRAFORM_VERSION=1.15.8
+# renovate: datasource=github-releases depName=gruntwork-io/terragrunt
+ARG TG_VERSION=1.2.1
+RUN curl -fsSL "https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform.zip"

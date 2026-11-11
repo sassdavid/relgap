@@ -1,0 +1,44 @@
+{
+  "schema_version": "1",
+  "tool": "relgap",
+  "version": "dev",
+  "generated_at": "2026-11-11T00:00:00Z",
+  "data": {
+    "repos": [
+      "."
+    ],
+    "pins": [
+      {
+        "tool": "tfprovider:hashicorp/aws",
+        "raw_name": "registry.terraform.io/hashicorp/aws",
+        "kind": "tfprovider",
+        "value": "6.12.0",
+        "version": "6.12.0",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": ".",
+          "file": ".terraform.lock.hcl",
+          "line": 5,
+          "detector": "tf-lock"
+        }
+      },
+      {
+        "tool": "tfprovider:integrations/github",
+        "raw_name": "registry.opentofu.org/integrations/github",
+        "kind": "tfprovider",
+        "value": "6.7.0",
+        "version": "6.7.0",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": ".",
+          "file": ".terraform.lock.hcl",
+          "line": 13,
+          "detector": "tf-lock"
+        }
+      }
+    ]
+  },
+  "errors": []
+}

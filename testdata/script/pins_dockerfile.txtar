@@ -1,0 +1,28 @@
+# dockerfile: FROM tags with ARG defaults substituted, ARG and ENV *_VERSION values, renovate
+# comments, continuation lines and heredocs.
+env TEST_NOW=2026-11-11T00:00:00Z
+exec relgap pins --format json
+jsonschema pins-v1.json stdout
+golden stdout pins/dockerfile.json
+
+-- Dockerfile --
+# syntax=docker/dockerfile:1
+ARG GO_VERSION=1.27.3
+FROM --platform=$BUILDPLATFORM golang:${GO_VERSION}-alpine AS build
+ARG KUBECTL_VERSION="1.34.2" \
+    HELM_VERSION=3.19.0
+# renovate: datasource=github-releases depName=gruntwork-io/terragrunt
+ENV TG_VERSION=1.2.1
+ENV NODE_VERSION 24.11.0
+RUN <<SCRIPT
+ARG FAKE_VERSION=9.9.9
+SCRIPT
+ARG UNSET_VERSION
+ARG REF_VERSION=$GO_VERSION
+FROM build AS test
+FROM scratch
+FROM alpine:3.22@sha256:0000000000000000000000000000000000000000000000000000000000000000
+-- docker/app.Dockerfile --
+FROM python:3.14-slim
+-- Containerfile --
+FROM registry.internal:5000/team/base:2026.11

@@ -1,0 +1,74 @@
+{
+  "schema_version": "1",
+  "tool": "relgap",
+  "version": "dev",
+  "generated_at": "2026-11-11T00:00:00Z",
+  "data": {
+    "repos": [
+      "."
+    ],
+    "pins": [
+      {
+        "tool": "terraform",
+        "raw_name": "hashicorp/terraform",
+        "kind": "tool",
+        "value": "v1.15.8",
+        "version": "1.15.8",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": ".",
+          "file": "aqua.yaml",
+          "line": 5,
+          "detector": "aqua"
+        }
+      },
+      {
+        "tool": "github-cli",
+        "raw_name": "cli/cli",
+        "kind": "tool",
+        "value": "v2.83.0",
+        "version": "2.83.0",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": ".",
+          "file": "aqua.yaml",
+          "line": 7,
+          "detector": "aqua"
+        }
+      },
+      {
+        "tool": "kubectl",
+        "raw_name": "kubernetes/kubectl",
+        "kind": "tool",
+        "value": "v1.34.2",
+        "version": "1.34.2",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": ".",
+          "file": "aqua/k8s.yaml",
+          "line": 2,
+          "detector": "aqua"
+        }
+      },
+      {
+        "tool": "k9s",
+        "raw_name": "derailed/k9s",
+        "kind": "tool",
+        "value": "v0.50.16",
+        "version": "0.50.16",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": ".",
+          "file": "aqua/k8s.yaml",
+          "line": 3,
+          "detector": "aqua"
+        }
+      }
+    ]
+  },
+  "errors": []
+}

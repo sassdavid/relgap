@@ -43,12 +43,14 @@
 ## Core data model (sketch)
 
 ```go
-type Pin struct {
-    Tool     string          // canonical name after resolution ("terraform")
+type Pin struct {             // internal/scan; JSON in schemas/pins-v1.json
+    Tool     string          // canonical name after resolution ("terraform", "tfprovider:hashicorp/aws")
     RawName  string          // as found ("TERRAFORM_VERSION", "hashicorp/aws")
-    Kind     ToolKind        // cli | tf-provider | helm-chart | container-image
+    Kind     Kind            // tool | tfprovider | chart | image | action
     Value    string          // "1.15.8", "~> 6.0", "1.15"
+    Version  string          // Value without a leading v
     Exact    bool            // constraint vs exact pin
+    Match    Match           // exact | constraint | prefix | channel
     Location Location        // repo, file, line, detector
 }
 

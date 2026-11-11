@@ -1,0 +1,149 @@
+{
+  "schema_version": "1",
+  "tool": "relgap",
+  "version": "dev",
+  "generated_at": "2026-11-11T00:00:00Z",
+  "data": {
+    "repos": [
+      "."
+    ],
+    "pins": [
+      {
+        "tool": "image:registry.internal:5000/team/base",
+        "raw_name": "registry.internal:5000/team/base",
+        "kind": "image",
+        "value": "2026.11",
+        "version": "2026.11",
+        "exact": false,
+        "match": "prefix",
+        "location": {
+          "repo": ".",
+          "file": "Containerfile",
+          "line": 1,
+          "detector": "dockerfile"
+        }
+      },
+      {
+        "tool": "go",
+        "raw_name": "GO_VERSION",
+        "kind": "tool",
+        "value": "1.27.3",
+        "version": "1.27.3",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": ".",
+          "file": "Dockerfile",
+          "line": 2,
+          "detector": "dockerfile"
+        }
+      },
+      {
+        "tool": "image:golang",
+        "raw_name": "golang",
+        "kind": "image",
+        "value": "1.27.3-alpine",
+        "version": "1.27.3-alpine",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": ".",
+          "file": "Dockerfile",
+          "line": 3,
+          "detector": "dockerfile"
+        }
+      },
+      {
+        "tool": "helm",
+        "raw_name": "HELM_VERSION",
+        "kind": "tool",
+        "value": "3.19.0",
+        "version": "3.19.0",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": ".",
+          "file": "Dockerfile",
+          "line": 4,
+          "detector": "dockerfile"
+        }
+      },
+      {
+        "tool": "kubectl",
+        "raw_name": "KUBECTL_VERSION",
+        "kind": "tool",
+        "value": "1.34.2",
+        "version": "1.34.2",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": ".",
+          "file": "Dockerfile",
+          "line": 4,
+          "detector": "dockerfile"
+        }
+      },
+      {
+        "tool": "terragrunt",
+        "raw_name": "TG_VERSION",
+        "kind": "tool",
+        "value": "1.2.1",
+        "version": "1.2.1",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": ".",
+          "file": "Dockerfile",
+          "line": 7,
+          "detector": "dockerfile"
+        }
+      },
+      {
+        "tool": "node",
+        "raw_name": "NODE_VERSION",
+        "kind": "tool",
+        "value": "24.11.0",
+        "version": "24.11.0",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": ".",
+          "file": "Dockerfile",
+          "line": 8,
+          "detector": "dockerfile"
+        }
+      },
+      {
+        "tool": "image:alpine",
+        "raw_name": "alpine",
+        "kind": "image",
+        "value": "3.22",
+        "version": "3.22",
+        "exact": false,
+        "match": "prefix",
+        "location": {
+          "repo": ".",
+          "file": "Dockerfile",
+          "line": 16,
+          "detector": "dockerfile"
+        }
+      },
+      {
+        "tool": "image:python",
+        "raw_name": "python",
+        "kind": "image",
+        "value": "3.14-slim",
+        "version": "3.14-slim",
+        "exact": false,
+        "match": "prefix",
+        "location": {
+          "repo": ".",
+          "file": "docker/app.Dockerfile",
+          "line": 1,
+          "detector": "dockerfile"
+        }
+      }
+    ]
+  },
+  "errors": []
+}

@@ -42,8 +42,10 @@ const (
 )
 
 const (
-	fieldName = "name" // provenance key
-	byName    = "name" // Match.By for an exact name
+	backendAqua   = "aqua"
+	backendGitHub = "github"
+	fieldName     = "name" // provenance key
+	byName        = "name" // Match.By for an exact name
 )
 
 // Match says how the input was identified.
@@ -260,9 +262,36 @@ func (r *Resolver) Resolve(input string) (*Resolution, error) {
 	}, nil
 }
 
+// Identify returns the name `relgap digest` accepts for input without merging layers: the
+// registry name when a registry knows the tool, otherwise the github: or aqua: form itself.
+func (r *Resolver) Identify(input string) (string, bool) {
+	input = strings.TrimSpace(input)
+	if input == "" {
+		return "", false
+	}
+	prefix, rest, explicit := strings.Cut(input, ":")
+	if !explicit {
+		name, _, err := r.identifyName(input)
+		return name, err == nil
+	}
+	if prefix != backendGitHub && prefix != backendAqua {
+		return "", false
+	}
+	name, match, pkg, repo, err := r.identifyExplicit(prefix, rest)
+	switch {
+	case err != nil:
+		return "", false
+	case repo != "":
+		return "github:" + repo, true
+	case match.Layer == LayerAqua:
+		return "aqua:" + pkg.Name, true
+	}
+	return name, true
+}
+
 func (r *Resolver) identifyExplicit(prefix, rest string) (string, Match, *AquaEntry, string, error) {
 	switch prefix {
-	case "github":
+	case backendGitHub:
 		if !repoRe.MatchString(rest) {
 			return "", Match{}, nil, "", fmt.Errorf("%w: github:%s is not github:owner/repo", ErrUnsupported, rest)
 		}
@@ -272,7 +301,7 @@ func (r *Resolver) identifyExplicit(prefix, rest string) (string, Match, *AquaEn
 			return name, match, nil, "", nil
 		}
 		return "", match, nil, rest, nil
-	case "aqua":
+	case backendAqua:
 		pkg := r.aqua[strings.ToLower(rest)]
 		if pkg == nil {
 			return "", Match{}, nil, "", fmt.Errorf(
@@ -401,11 +430,11 @@ func (r *Resolver) miseRepo(m *misex.RegistryEntry) (string, Layer) {
 	for _, b := range m.Backends {
 		kind, rest, _ := strings.Cut(b, ":")
 		switch kind {
-		case "aqua":
+		case backendAqua:
 			if a := r.aqua[strings.ToLower(rest)]; a != nil && a.Repo != "" {
 				return a.Repo, LayerAqua
 			}
-		case "github", "ubi":
+		case backendGitHub, "ubi":
 			rest, _, _ = strings.Cut(rest, "[") // ubi:owner/repo[exe=x]
 			if repoRe.MatchString(rest) {
 				return rest, LayerMise

@@ -36,7 +36,7 @@ Scope: `httpx` (retry, rate, no cache yet), go-github + githubv4 batch, token di
 - [x] Age-based TTLs are unit-tested with an injected clock. `cache info|clear|prune` are covered.
 
 ### M5: Pin discovery → [pin-discovery](specs/pin-discovery.md)
-- [ ] All pin-discovery.md criteria. `relgap pins` works against a dotfriedrice-shaped fixture.
+- [x] All pin-discovery.md criteria. `relgap pins` works against a dotfriedrice-shaped fixture.
 
 ### M6: `outdated` + `digest --from-mise`
 - [ ] Fixture project with 10 pins: correct table in tty/md/json, with breaking counts matching the full digests.

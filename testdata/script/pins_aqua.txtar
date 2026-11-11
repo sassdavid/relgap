@@ -1,0 +1,20 @@
+# aqua: name@version and name plus version, in aqua.yaml and the aqua directory.
+env TEST_NOW=2026-11-11T00:00:00Z
+exec relgap pins --format json
+jsonschema pins-v1.json stdout
+golden stdout pins/aqua.json
+
+-- aqua.yaml --
+registries:
+  - type: standard
+    ref: v4.420.0
+packages:
+  - name: hashicorp/terraform@v1.15.8
+  - name: cli/cli
+    version: v2.83.0
+  - import: aqua/*.yaml
+  - name: no/version
+-- aqua/k8s.yaml --
+packages:
+  - name: kubernetes/kubectl@v1.34.2
+  - name: derailed/k9s@v0.50.16

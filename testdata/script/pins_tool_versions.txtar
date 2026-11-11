@@ -1,0 +1,14 @@
+# tool-versions: every version on a line is a pin, comments are ignored.
+env TEST_NOW=2026-11-11T00:00:00Z
+exec relgap pins --format json
+jsonschema pins-v1.json stdout
+golden stdout pins/tool-versions.json
+
+-- .tool-versions --
+# asdf plugins
+terraform 1.15.8 1.14.0
+nodejs 24.11.0 # comment
+golang 1.27.3
+python system
+
+kubectl

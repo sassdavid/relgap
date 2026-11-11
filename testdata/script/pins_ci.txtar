@@ -1,0 +1,47 @@
+# ci: image keys, a GitHub job container, *_VERSION and *-version keys. uses: lines count only
+# with scan.detectors.ci_actions.
+env TEST_NOW=2026-11-11T00:00:00Z
+exec relgap pins --format json
+jsonschema pins-v1.json stdout
+golden stdout pins/ci.json
+
+env RELGAP_SCAN_DETECTORS_CI_ACTIONS=true
+exec relgap pins --format json
+jsonschema pins-v1.json stdout
+golden stdout pins/ci-actions.json
+
+-- .github/workflows/ci.yml --
+name: ci
+on: push
+env:
+  TERRAFORM_VERSION: 1.15.8
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    container: node:24.11.0
+    services:
+      db:
+        image: postgres:18
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ./.github/actions/local
+      - uses: docker://hashicorp/terraform:1.15.8
+      - uses: actions/setup-go@v6
+        with:
+          go-version: "1.27"
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+-- .gitlab-ci.yml --
+image:
+  name: hashicorp/terraform:1.15.8
+variables:
+  TG_VERSION: "1.2.1"
+-- bitbucket-pipelines.yml --
+image: python:3.14
+pipelines:
+  default:
+    - step:
+        image: golang:1.27.3
+        script:
+          - make

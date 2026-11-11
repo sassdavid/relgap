@@ -1,0 +1,27 @@
+# idiomatic: single-version files and go.mod. The go line is a minimum (constraint), the
+# toolchain line is exact.
+env TEST_NOW=2026-11-11T00:00:00Z
+exec relgap pins --format json
+jsonschema pins-v1.json stdout
+golden stdout pins/idiomatic.json
+
+-- .terraform-version --
+1.15.8
+-- .terragrunt-version --
+v1.2.1
+-- .node-version --
+24
+-- .nvmrc --
+# comment
+lts/*
+-- .python-version --
+3.14.0
+3.13
+-- .go-version --
+1.27.3
+-- go.mod --
+module demo
+
+go 1.27.0
+
+toolchain go1.27.3
