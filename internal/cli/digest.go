@@ -79,7 +79,13 @@ func runDigest(cmd *cobra.Command, d *app.Deps, g *globals, f digestFlags, tool,
 	if !cmd.Flags().Changed("line") && resolution.Tool.Version.Line != "" {
 		line = version.Level(resolution.Tool.Version.Line)
 	}
-	gh, err := newGitHubClient(cmd, d)
+	cache, err := g.newCache(d)
+	if err != nil {
+		return err
+	}
+	defer cache.Close()
+	defer cache.LogSummary(cmd.Context())
+	gh, err := newGitHubClient(cmd, d, cache)
 	if err != nil {
 		return err
 	}
@@ -117,7 +123,7 @@ func parseRange(s string) (string, string, error) {
 
 // newGitHubClient finds a token and builds the client. Without a token it warns once and
 // lowers the concurrency.
-func newGitHubClient(cmd *cobra.Command, d *app.Deps) (*github.Client, error) {
+func newGitHubClient(cmd *cobra.Command, d *app.Deps, cache *httpx.Cache) (*github.Client, error) {
 	ctx := cmd.Context()
 	token, tokenSource := github.Token(ctx, github.TokenOptions{
 		Lookup:      d.Env.Lookup,
@@ -140,6 +146,7 @@ func newGitHubClient(cmd *cobra.Command, d *app.Deps) (*github.Client, error) {
 		UserAgent: fmt.Sprintf("relgap/%s (+https://github.com/sassdavid/relgap)", buildinfo.Get().Version),
 		Limits:    limits,
 		Default:   def,
+		Cache:     cache,
 	})
 	gh, err := github.New(hc, github.Options{Token: token, Logger: d.Logger, Concurrency: concurrency})
 	if err != nil {

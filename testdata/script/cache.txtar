@@ -1,0 +1,104 @@
+# The HTTP cache. A digest replayed from the M3 terraform cassette warms the cache. The same
+# digest again sends no request: no cassette, and a bogus proxy fails any request that gets out.
+# --offline serves the cache even past the TTLs; a miss fails and names the request.
+env TEST_NOW=2026-11-10T12:00:00Z
+env GH_TOKEN=$TEST_GH_TOKEN
+env TEST_CASSETTE=$CASSETTES/gh-release/terraform-1.15.8..1.17.1.yaml
+exec relgap digest terraform 1.15.8..1.17.1 --format json -vv
+cp stdout warm.json
+stderr 'http summary requests=10 not_modified=0 cache_hits=0 stored=10'
+stderr -count=10 'http cache outcome=stored'
+! stderr 'Authorization|ghp_|gho_|github_pat_'
+
+# The second identical digest: 0 requests, so 0 non-304 requests.
+env TEST_CASSETTE=
+env HTTPS_PROXY=http://127.0.0.1:1
+env HTTP_PROXY=http://127.0.0.1:1
+exec relgap digest terraform 1.15.8..1.17.1 --format json -vv
+cmp stdout warm.json
+stderr 'http summary requests=0 not_modified=0 cache_hits=10 stored=0'
+
+exec relgap cache info
+stdout '^dir +.+[/\\]\.cache[/\\]relgap[/\\]http$'
+stdout '^entries +10$'
+stdout '^fresh +10$'
+stdout '^stale +0$'
+
+# --offline, inside and past the TTLs. Past them it says so once at -v.
+exec relgap digest terraform 1.15.8..1.17.1 --format json --offline
+cmp stdout warm.json
+! stderr .
+exec relgap digest terraform 1.15.8..1.17.1 --format plain --offline
+cp stdout warm.txt
+env TEST_NOW=2026-12-01T12:00:00Z
+exec relgap digest terraform 1.15.8..1.17.1 --format plain --offline -v
+cmp stdout warm.txt
+stderr -count=1 'INF offline: serving cache entries past their TTL'
+exec relgap cache info --format json
+stdout '"entries": 10'
+stdout '"fresh": 0'
+stdout '"stale": 10'
+
+# A miss under --offline fails without touching the network.
+! exec relgap digest helm 3.21.0..3.22.1 --offline
+stderr 'not in the cache: POST https://api.github.com/graphql; run once without --offline'
+! stdout .
+
+# A cache.ttl_override per source replaces the age-based TTL.
+cp ttl.yaml .relgap.yaml
+exec relgap cache info
+stdout '^fresh +10$'
+cp ttl-bad.yaml .relgap.yaml
+exec expect-exit 2 relgap cache info
+stderr 'cache.ttl_override.github: want a positive Go duration such as 24h, got "soon"'
+cp ttl-unknown.yaml .relgap.yaml
+exec expect-exit 2 relgap cache info
+stderr 'cache.ttl_override.gitlab: unknown source; want one of endoflife, github, osv or a host name'
+cp ttl-host.yaml .relgap.yaml
+exec relgap cache info
+stdout '^fresh +10$'
+rm .relgap.yaml
+
+# The cache flags exclude each other.
+exec expect-exit 2 relgap digest terraform 1.15.8..1.17.1 --offline --refresh
+stderr 'if any flags in the group \[offline refresh no-cache\] are set none of the others can be'
+
+# prune keeps entries used in the last 30 days, then drops them.
+exec relgap cache prune
+stdout '^removed +0$'
+env TEST_NOW=2027-01-15T12:00:00Z
+exec relgap cache prune --format json
+stdout '"entries": 10'
+exec relgap cache info
+stdout '^entries +0$'
+exec expect-exit 2 relgap cache prune --older-than 0s
+
+# clear removes everything; --no-cache neither reads nor writes.
+env TEST_NOW=2026-11-10T12:00:00Z
+env TEST_CASSETTE=$CASSETTES/gh-release/terraform-1.15.8..1.17.1.yaml
+exec relgap digest terraform 1.15.8..1.17.1 --format json --no-cache -vv
+stderr 'http summary requests=10 not_modified=0 cache_hits=0 stored=0'
+exec relgap cache info
+stdout '^entries +0$'
+exec relgap digest terraform 1.15.8..1.17.1 --format json
+exec relgap cache clear
+stdout '^removed +10$'
+exec relgap cache info
+stdout '^entries +0$'
+
+-- ttl.yaml --
+cache:
+  ttl_override:
+    github: 1000h
+-- ttl-host.yaml --
+cache:
+  ttl_override:
+    api.github.com: 1000h
+-- ttl-bad.yaml --
+cache:
+  ttl_override:
+    github: soon
+-- ttl-unknown.yaml --
+cache:
+  ttl_override:
+    gitlab: 1h
