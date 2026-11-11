@@ -27,7 +27,11 @@ Contributor and agent rules: [CLAUDE.md](../CLAUDE.md).
 7. Tool ADRs: [0001 goldmark section index](plan/adr/0001-goldmark-section-index.md) ·
    [0002 override registry](plan/adr/0002-override-registry-in-repo.md) ·
    [0003 integrate with mise](plan/adr/0003-integrate-with-mise.md) ·
-   [0004 optional cited LLM](plan/adr/0004-llm-optional-cited.md)
+   [0004 optional cited LLM](plan/adr/0004-llm-optional-cited.md) ·
+   [0005 token lookup](plan/adr/0005-token-lookup-without-go-gh-auth.md) ·
+   [0006 HTTP cache](plan/adr/0006-http-cache.md) ·
+   [0007 pins read mise config files](plan/adr/0007-parse-mise-config-for-pins.md) ·
+   [0008 HCL and Dockerfile parsers](plan/adr/0008-hcl-and-dockerfile-parsers.md)
 8. [reference-repos.md](plan/reference-repos.md): local clones to read (never copy) during implementation
 9. [integration.md](plan/integration.md): how relgap connects to its sibling tool [tfcensus](https://github.com/sassdavid/tfcensus)
 

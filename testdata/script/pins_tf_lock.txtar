@@ -1,0 +1,21 @@
+# tf-lock: .terraform.lock.hcl gives exact provider versions.
+env TEST_NOW=2026-11-11T00:00:00Z
+exec relgap pins --format json
+jsonschema pins-v1.json stdout
+golden stdout pins/tf-lock.json
+
+-- .terraform.lock.hcl --
+# This file is maintained automatically by "terraform init".
+# Manual edits may be lost in future updates.
+
+provider "registry.terraform.io/hashicorp/aws" {
+  version     = "6.12.0"
+  constraints = "~> 6.0"
+  hashes = [
+    "h1:AAAA",
+  ]
+}
+
+provider "registry.opentofu.org/integrations/github" {
+  version = "6.7.0"
+}

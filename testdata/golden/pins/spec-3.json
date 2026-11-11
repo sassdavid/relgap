@@ -1,0 +1,44 @@
+{
+  "schema_version": "1",
+  "tool": "relgap",
+  "version": "dev",
+  "generated_at": "2026-11-11T00:00:00Z",
+  "data": {
+    "repos": [
+      "."
+    ],
+    "pins": [
+      {
+        "tool": "terraform",
+        "raw_name": "TERRAFORM_VERSION",
+        "kind": "tool",
+        "value": "1.15.8",
+        "version": "1.15.8",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": ".",
+          "file": "Dockerfile",
+          "line": 2,
+          "detector": "dockerfile"
+        }
+      },
+      {
+        "tool": "terragrunt",
+        "raw_name": "TG_VERSION",
+        "kind": "tool",
+        "value": "1.2.1",
+        "version": "1.2.1",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": ".",
+          "file": "Dockerfile",
+          "line": 4,
+          "detector": "dockerfile"
+        }
+      }
+    ]
+  },
+  "errors": []
+}

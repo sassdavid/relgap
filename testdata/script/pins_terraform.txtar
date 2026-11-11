@@ -1,0 +1,41 @@
+# terraform: required_version and required_providers in .tf and .tf.json. A bare version is
+# exact; a provider without source is hashicorp/<name>.
+env TEST_NOW=2026-11-11T00:00:00Z
+exec relgap pins --format json
+jsonschema pins-v1.json stdout
+golden stdout pins/terraform.json
+
+-- versions.tf --
+terraform {
+  required_version = ">= 1.5, < 2"
+
+  required_providers {
+    aws = {
+      source                = "hashicorp/aws"
+      version               = "~> 6.0"
+      configuration_aliases = [aws.west]
+    }
+    random = {
+      version = "3.7.2"
+    }
+    google = {
+      source  = "registry.terraform.io/hashicorp/google"
+      version = "7.10.0"
+    }
+    legacy = "~> 1.0"
+    nover = {
+      source = "hashicorp/null"
+    }
+  }
+}
+-- modules/net/main.tf --
+resource "null_resource" "x" {}
+-- modules/json/versions.tf.json --
+{
+  "terraform": {
+    "required_version": "1.15.8",
+    "required_providers": {
+      "azurerm": { "source": "hashicorp/azurerm", "version": "4.50.0" }
+    }
+  }
+}

@@ -11,6 +11,7 @@ import (
 
 	"github.com/sassdavid/relgap/internal/app"
 	"github.com/sassdavid/relgap/internal/buildinfo"
+	"github.com/sassdavid/relgap/internal/config"
 	"github.com/sassdavid/relgap/internal/execx"
 	"github.com/sassdavid/relgap/internal/misex"
 	"github.com/sassdavid/relgap/internal/registry"
@@ -56,15 +57,7 @@ Layers, highest precedence first:
 
 // resolveTool loads the config and the registries and resolves name. Unknown tools are usage errors.
 func (g *globals) resolveTool(cmd *cobra.Command, d *app.Deps, name string) (*registry.Resolution, error) {
-	res, err := g.loadConfig(cmd, d)
-	if err != nil {
-		return nil, err
-	}
-	cfg := registry.ConfigLayer{Tools: map[string]string{}, Aliases: res.Config.Aliases}
-	for tool, t := range res.Config.Tools {
-		cfg.Tools[tool] = t.Repo
-	}
-	r, err := registry.Load(cmd.Context(), d.Logger, misex.New(newRunner(d)), cfg)
+	r, _, err := g.loadResolver(cmd, d)
 	if err != nil {
 		return nil, err
 	}
@@ -77,6 +70,23 @@ func (g *globals) resolveTool(cmd *cobra.Command, d *app.Deps, name string) (*re
 		return nil, fmt.Errorf("resolve %s: %w", name, err)
 	}
 	return resolution, nil
+}
+
+// loadResolver loads the config and the registries.
+func (g *globals) loadResolver(cmd *cobra.Command, d *app.Deps) (*registry.Resolver, *config.Result, error) {
+	res, err := g.loadConfig(cmd, d)
+	if err != nil {
+		return nil, nil, err
+	}
+	cfg := registry.ConfigLayer{Tools: map[string]string{}, Aliases: res.Config.Aliases}
+	for tool, t := range res.Config.Tools {
+		cfg.Tools[tool] = t.Repo
+	}
+	r, err := registry.Load(cmd.Context(), d.Logger, misex.New(newRunner(d)), cfg)
+	if err != nil {
+		return nil, nil, err
+	}
+	return r, res, nil
 }
 
 func newRunner(d *app.Deps) *execx.Runner {

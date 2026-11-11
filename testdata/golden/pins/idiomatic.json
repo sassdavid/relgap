@@ -1,0 +1,134 @@
+{
+  "schema_version": "1",
+  "tool": "relgap",
+  "version": "dev",
+  "generated_at": "2026-11-11T00:00:00Z",
+  "data": {
+    "repos": [
+      "."
+    ],
+    "pins": [
+      {
+        "tool": "go",
+        "raw_name": ".go-version",
+        "kind": "tool",
+        "value": "1.27.3",
+        "version": "1.27.3",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": ".",
+          "file": ".go-version",
+          "line": 1,
+          "detector": "idiomatic"
+        }
+      },
+      {
+        "tool": "node",
+        "raw_name": ".node-version",
+        "kind": "tool",
+        "value": "24",
+        "version": "24",
+        "exact": false,
+        "match": "prefix",
+        "location": {
+          "repo": ".",
+          "file": ".node-version",
+          "line": 1,
+          "detector": "idiomatic"
+        }
+      },
+      {
+        "tool": "node",
+        "raw_name": ".nvmrc",
+        "kind": "tool",
+        "value": "lts/*",
+        "version": "lts/*",
+        "exact": false,
+        "match": "channel",
+        "location": {
+          "repo": ".",
+          "file": ".nvmrc",
+          "line": 2,
+          "detector": "idiomatic"
+        }
+      },
+      {
+        "tool": "python",
+        "raw_name": ".python-version",
+        "kind": "tool",
+        "value": "3.14.0",
+        "version": "3.14.0",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": ".",
+          "file": ".python-version",
+          "line": 1,
+          "detector": "idiomatic"
+        }
+      },
+      {
+        "tool": "terraform",
+        "raw_name": ".terraform-version",
+        "kind": "tool",
+        "value": "1.15.8",
+        "version": "1.15.8",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": ".",
+          "file": ".terraform-version",
+          "line": 1,
+          "detector": "idiomatic"
+        }
+      },
+      {
+        "tool": "terragrunt",
+        "raw_name": ".terragrunt-version",
+        "kind": "tool",
+        "value": "v1.2.1",
+        "version": "1.2.1",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": ".",
+          "file": ".terragrunt-version",
+          "line": 1,
+          "detector": "idiomatic"
+        }
+      },
+      {
+        "tool": "go",
+        "raw_name": "go",
+        "kind": "tool",
+        "value": "1.27.0",
+        "version": "1.27.0",
+        "exact": false,
+        "match": "constraint",
+        "location": {
+          "repo": ".",
+          "file": "go.mod",
+          "line": 3,
+          "detector": "idiomatic"
+        }
+      },
+      {
+        "tool": "go",
+        "raw_name": "toolchain",
+        "kind": "tool",
+        "value": "go1.27.3",
+        "version": "1.27.3",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": ".",
+          "file": "go.mod",
+          "line": 5,
+          "detector": "idiomatic"
+        }
+      }
+    ]
+  },
+  "errors": []
+}

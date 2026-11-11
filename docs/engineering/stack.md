@@ -6,6 +6,10 @@
 - GitHub Actions: their GitHub releases.
 
 **Re-checked on 2026-11-10 at M0** (same method): every pinned version below was still the latest.
+
+**Updated on 2026-11-11** (tfcensus M5, mirrored here): every Go module went to its `@latest`,
+queried one module at a time from the `go.mod` list. The owner waived the 3-day minimum age for
+this update. Modules shared with tfcensus have the same version in both repos.
 Re-run the check right before M0 (script: [§ Refresh](#refresh)). After M0, Renovate keeps everything current,
 with a 3-day minimum release age (matching your mise `minimum_release_age` habit).
 Choices are justified in the [ADRs](adr/). Survey basis: go.mod files of gh, terragrunt, opentofu, trivy, syft, aqua,
@@ -15,7 +19,7 @@ goreleaser, chezmoi, k9s, golangci-lint.
 
 | Item | Version | Note |
 |---|---|---|
-| Go | **1.27.3** toolchain; `go 1.27.0` directive per [version-policy.md](version-policy.md) | same as tfcensus |
+| Go | **1.27.4** toolchain; `go 1.27.0` directive per [version-policy.md](version-policy.md) | same as tfcensus |
 | golangci-lint | **v2.15.0** | + golden config v2.15.0 ([ADR-0008](adr/0008-lint-config.md)) |
 | gofumpt | **v0.12.0** | golines **v0.13.0** + goimports come with the golden config |
 | govulncheck (`golang.org/x/vuln`) | **v1.9.0** | |
@@ -66,12 +70,13 @@ goreleaser, chezmoi, k9s, golangci-lint.
 | GitHub REST | `github.com/google/go-github/v93` | v93.0.0 | no v94 yet |
 | GitHub GraphQL | `github.com/shurcooL/githubv4` | v0.0.0-20260209031235-2402fdf4a9ed | pseudo-versions only (normal for this module) |
 | GitHub auth | `github.com/cli/go-gh/v2` | v2.17.0 | only `pkg/config`, to read the token in gh's `hosts.yml` (it brings `gopkg.in/yaml.v3`). relgap reads `GH_TOKEN`/`GITHUB_TOKEN` from the injected env and runs `gh auth token` through `execx`, because `pkg/auth` reads `os.Getenv` and runs gh without a timeout |
-| Markdown AST | `github.com/yuin/goldmark/v2` | **v2.1.15** | stable since v2.0.0 (2026-08-27); GitHub "Latest" release; 29 v2 releases. Every node carries a start position, which is what mdindex needs. The README's "early stages" note concerns third-party extensions only, and relgap uses none ([relgap ADR-0001](../plan/adr/0001-goldmark-section-index.md)) |
+| Markdown AST | `github.com/yuin/goldmark/v2` | **v2.1.16** (2026-11-11) | stable since v2.0.0 (2026-08-27); GitHub "Latest" release; 29 v2 releases. Every node carries a start position, which is what mdindex needs. The README's "early stages" note concerns third-party extensions only, and relgap uses none ([relgap ADR-0001](../plan/adr/0001-goldmark-section-index.md)) |
 | HTML to Markdown | `github.com/JohannesKaufmann/html-to-markdown/v2` | v2.5.2 | web-doc adapter |
 | Versions | `github.com/Masterminds/semver/v3` + `github.com/hashicorp/go-version` | v3.5.0 + v1.9.0 | go-version only parses the `loose` scheme. relgap compares loose versions itself because go-version's `Compare` isn't transitive (`FuzzCompareProperties` found `"0" <= "0.0.0.0" <= "0A"` but `"0" > "0A"`) |
-| Terraform pins | `github.com/hashicorp/terraform-config-inspect` | v0.0.0-20260904064934-75d64de68c31 | pseudo-versions only |
-| HCL | `github.com/hashicorp/hcl/v2` | v2.25.0 | |
-| Dockerfile | `github.com/moby/buildkit` (`frontend/dockerfile/parser`) | v0.34.2 | **heavy module**. At M5, measure the binary and `go.sum` impact. If it's over 3 MB or pulls in many dependencies, use a ~150-line hand-written parser for FROM/ARG/ENV |
+| Terraform pins | `github.com/hashicorp/terraform-config-inspect` | v0.0.0-20260904064934-75d64de68c31 | **not used** ([relgap ADR-0008](../plan/adr/0008-hcl-and-dockerfile-parsers.md)): no source positions, and it pulls in hcl v1 and `agext/levenshtein` v1.2.2. `internal/scan` reads `*.tf` with hcl/v2 |
+| HCL | `github.com/hashicorp/hcl/v2` | v2.25.0 | released 2026-09-15; `*.tf`, `.terraform.lock.hcl` and terragrunt files at M5. Same version as tfcensus |
+| HCL values | `github.com/zclconf/go-cty` | v1.20.0 | released 2026-11-06; reads the static values hcl/v2 returns. Same version as tfcensus |
+| Dockerfile | `github.com/moby/buildkit` (`frontend/dockerfile/parser`) | v0.34.2 | **not used** ([relgap ADR-0008](../plan/adr/0008-hcl-and-dockerfile-parsers.md)). Measured at M5: +2.9 MB on a stripped binary (4.46 MB against a 1.57 MB baseline) and 4 new modules (protobuf, vtprotobuf, typeurl, pkg/errors). `internal/scan` has its own FROM/ARG/ENV parser |
 | LLM (Bedrock) | `github.com/aws/aws-sdk-go-v2/service/bedrockruntime` | v1.63.12 | only for `--summarize` with the bedrock provider |
 
 **Never import:** `hashicorp/terraform` (BSL 1.1), terragrunt `internal/...`, or OpenTofu `internal/` ([ADR-0010](adr/0010-license-apache2.md); background in [tfcensus ADR-0001](https://github.com/sassdavid/tfcensus/blob/main/docs/plan/adr/0001-shell-out-to-terragrunt.md)).
@@ -94,11 +99,15 @@ goreleaser, chezmoi, k9s, golangci-lint.
 
 Indirect modules are whatever MVS selects, except where govulncheck flags a known (even unreachable)
 vulnerability: at M0, `golang.org/x/text` went from v0.14.0 to v0.43.0 and `golang.org/x/sys` from
-v0.28.0 to v0.49.0 (the newest releases older than the 3-day minimum age).
+v0.28.0 to v0.49.0 (the newest releases older than the 3-day minimum age). On 2026-11-11 every
+indirect module went to its latest: `golang.org/x/text` v0.44.0, `x/mod` v0.43.0, `x/tools`
+v0.52.0, `go.yaml.in/yaml/v3` v3.0.6, `buger/jsonparser` v1.6.1, `agext/levenshtein` v1.2.3,
+`go-viper/mapstructure/v2` v2.5.0, `cpuguy83/go-md2man/v2` v2.0.7, `knadh/koanf/maps` v0.1.3,
+`pb33f/ordered-map/v2` v2.3.2, and `pb33f/go-yaml` v0.1.1 (new, required by ordered-map v2.3.2).
 
 | Concern | Module | Version | Why |
 |---|---|---|---|
-| Windows console colors | `golang.org/x/sys` (`windows`) | v0.49.0 | turns on VT processing so tint's ANSI colors render in conhost; already required by isatty |
+| Windows console colors | `golang.org/x/sys` (`windows`) | v0.50.0 | turns on VT processing so tint's ANSI colors render in conhost; already required by isatty |
 
 ## Refresh
 The checker used for this table is in the session scratchpad. Re-create it in the repo as `scripts/latest-deps.py`

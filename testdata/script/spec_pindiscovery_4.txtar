@@ -1,0 +1,28 @@
+# .terraform.lock.hcl gives exact tfprovider:hashicorp/aws pins; required_providers gives
+# constraint pins for the same provider.
+env TEST_NOW=2026-11-11T00:00:00Z
+exec relgap pins --format plain
+cmp stdout want.txt
+
+exec relgap pins --format json
+jsonschema pins-v1.json stdout
+golden stdout pins/spec-4.json
+
+-- want.txt --
+TOOL                      VALUE    DETECTOR   LOCATION
+tfprovider:hashicorp/aws  6.12.0   tf-lock    .terraform.lock.hcl:2
+tfprovider:hashicorp/aws  ≈~> 6.0  terraform  versions.tf:5
+-- .terraform.lock.hcl --
+provider "registry.terraform.io/hashicorp/aws" {
+  version     = "6.12.0"
+  constraints = "~> 6.0"
+}
+-- versions.tf --
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 6.0"
+    }
+  }
+}

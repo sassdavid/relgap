@@ -1,0 +1,79 @@
+# A dotfiles-shaped mise config (array values, http:, github: and aqua: backends, [tools."http:..."]
+# tables, conf.d) gives the same pins with and without mise on PATH. $FAKEMISE holds a mise whose
+# `ls` would report other versions; the Go test checks that pins never runs it.
+env TEST_NOW=2026-11-11T00:00:00Z
+exec relgap pins --format json
+jsonschema pins-v1.json stdout
+golden stdout pins/dotfiles.json
+cp stdout without-mise.json
+
+exec relgap pins --format plain
+cp stdout without-mise.txt
+
+env PATH=$FAKEMISE${:}$PATH
+exec relgap pins --format json
+cmp stdout without-mise.json
+
+exec relgap pins --format plain
+cmp stdout without-mise.txt
+cmp stdout want.txt
+
+-- want.txt --
+TOOL                              VALUE         DETECTOR  LOCATION
+bat                               ≈latest       mise      dotfiles/_mise/conf.d/debian.toml:2
+fd                                v0.10.2       mise      dotfiles/_mise/conf.d/debian.toml:3
+age                               ≈latest       mise      dotfiles/_mise/config.toml:6
+awscli                            ≈latest       mise      dotfiles/_mise/config.toml:7
+dua                               3.0.0         mise      dotfiles/_mise/config.toml:8
+node                              24.11.0       mise      dotfiles/_mise/config.toml:9
+node                              ≈26           mise      dotfiles/_mise/config.toml:9
+java                              ≈corretto-17  mise      dotfiles/_mise/config.toml:10
+python                            ≈3.14         mise      dotfiles/_mise/config.toml:11
+terraform                         1.15.8        mise      dotfiles/_mise/config.toml:12
+terragrunt                        1.2.1         mise      dotfiles/_mise/config.toml:13
+hk                                ≈latest       mise      dotfiles/_mise/config.toml:14
+-                                 3.9.2         mise      dotfiles/_mise/config.toml:17
+github:mongodb/mongodb-atlas-cli  1.40.0        mise      dotfiles/_mise/config.toml:23
+-                                 ≈latest       mise      dotfiles/_mise/config.toml:27
+-- dotfiles/.git/HEAD --
+ref: refs/heads/main
+-- dotfiles/_mise/config.toml --
+[settings]
+experimental = true
+lockfile = true
+
+[tools]
+age = "latest"
+awscli = { version = "latest", symlink_bins = "true" }
+dua = "3.0.0"
+node = ["26", "24.11.0"]
+java = "corretto-17"
+python = "3.14"
+"aqua:hashicorp/terraform" = "1.15.8"
+terragrunt = { version = "1.2.1" }
+hk = { version = "latest", workflow = "release.yml" }
+
+[tools."http:kafka"]
+version = "3.9.2"
+url = "https://archive.apache.org/dist/kafka/{{ version }}/kafka_2.13-{{ version }}.tgz"
+version_order = "semver"
+bin_path = "bin"
+
+[tools."github:mongodb/mongodb-atlas-cli"]
+version = "1.40.0"
+version_prefix = "atlascli/v"
+
+[tools."http:mongodb-database-tools"]
+version = "latest"
+url = 'https://fastdl.mongodb.org/tools/db/mongodb-database-tools-{{ os(linux="ubuntu2404") }}-{{ version }}.zip'
+strip_components = 1
+
+[tools."http:mongodb-database-tools".platforms]
+windows-x64 = { url = "https://fastdl.mongodb.org/tools/db/x.zip" }
+-- dotfiles/_mise/conf.d/debian.toml --
+[tools]
+bat = "latest"
+"aqua:sharkdp/fd" = "v0.10.2"
+-- dotfiles/_mise/mise.lock --
+[[tools.age]]
+version = "1.3.2"

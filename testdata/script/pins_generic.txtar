@@ -1,0 +1,24 @@
+# generic: NAME_VERSION assignments in scan.extra_files, only with scan.detectors.generic.
+env TEST_NOW=2026-11-11T00:00:00Z
+exec relgap pins --format json
+jsonschema pins-v1.json stdout
+! stdout '"detector": "generic"'
+
+exec relgap pins --format json --config generic.yaml
+jsonschema pins-v1.json stdout
+golden stdout pins/generic.json
+
+-- generic.yaml --
+schema_version: 1
+scan:
+  detectors:
+    generic: true
+  extra_files: ["Makefile", "**/*.env"]
+-- Makefile --
+TERRAFORM_VERSION ?= 1.15.8
+KUBECTL_VERSION := v1.34.2
+export FOO_VERSION=2.1.0
+-- deploy/tools.env --
+HELM_VERSION="3.19.0"
+-- other.txt --
+TERRAFORM_VERSION=0.1.0

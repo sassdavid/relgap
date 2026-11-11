@@ -1,0 +1,194 @@
+{
+  "schema_version": "1",
+  "tool": "relgap",
+  "version": "dev",
+  "generated_at": "2026-11-11T00:00:00Z",
+  "data": {
+    "repos": [
+      "."
+    ],
+    "pins": [
+      {
+        "tool": "terraform",
+        "raw_name": "TERRAFORM_VERSION",
+        "kind": "tool",
+        "value": "1.15.8",
+        "version": "1.15.8",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": ".",
+          "file": ".github/workflows/ci.yml",
+          "line": 4,
+          "detector": "ci"
+        }
+      },
+      {
+        "tool": "image:node",
+        "raw_name": "node",
+        "kind": "image",
+        "value": "24.11.0",
+        "version": "24.11.0",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": ".",
+          "file": ".github/workflows/ci.yml",
+          "line": 8,
+          "detector": "ci"
+        }
+      },
+      {
+        "tool": "image:postgres",
+        "raw_name": "postgres",
+        "kind": "image",
+        "value": "18",
+        "version": "18",
+        "exact": false,
+        "match": "prefix",
+        "location": {
+          "repo": ".",
+          "file": ".github/workflows/ci.yml",
+          "line": 11,
+          "detector": "ci"
+        }
+      },
+      {
+        "tool": "action:actions/checkout",
+        "raw_name": "actions/checkout",
+        "kind": "action",
+        "value": "v5",
+        "version": "5",
+        "exact": false,
+        "match": "prefix",
+        "location": {
+          "repo": ".",
+          "file": ".github/workflows/ci.yml",
+          "line": 13,
+          "detector": "ci"
+        }
+      },
+      {
+        "tool": "image:hashicorp/terraform",
+        "raw_name": "hashicorp/terraform",
+        "kind": "image",
+        "value": "1.15.8",
+        "version": "1.15.8",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": ".",
+          "file": ".github/workflows/ci.yml",
+          "line": 15,
+          "detector": "ci"
+        }
+      },
+      {
+        "tool": "action:actions/setup-go",
+        "raw_name": "actions/setup-go",
+        "kind": "action",
+        "value": "v6",
+        "version": "6",
+        "exact": false,
+        "match": "prefix",
+        "location": {
+          "repo": ".",
+          "file": ".github/workflows/ci.yml",
+          "line": 16,
+          "detector": "ci"
+        }
+      },
+      {
+        "tool": "go",
+        "raw_name": "go-version",
+        "kind": "tool",
+        "value": "1.27",
+        "version": "1.27",
+        "exact": false,
+        "match": "prefix",
+        "location": {
+          "repo": ".",
+          "file": ".github/workflows/ci.yml",
+          "line": 18,
+          "detector": "ci"
+        }
+      },
+      {
+        "tool": "action:hashicorp/setup-terraform",
+        "raw_name": "hashicorp/setup-terraform",
+        "kind": "action",
+        "value": "v3",
+        "version": "3",
+        "exact": false,
+        "match": "prefix",
+        "location": {
+          "repo": ".",
+          "file": ".github/workflows/ci.yml",
+          "line": 19,
+          "detector": "ci"
+        }
+      },
+      {
+        "tool": "image:hashicorp/terraform",
+        "raw_name": "hashicorp/terraform",
+        "kind": "image",
+        "value": "1.15.8",
+        "version": "1.15.8",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": ".",
+          "file": ".gitlab-ci.yml",
+          "line": 2,
+          "detector": "ci"
+        }
+      },
+      {
+        "tool": "",
+        "raw_name": "TG_VERSION",
+        "kind": "tool",
+        "value": "1.2.1",
+        "version": "1.2.1",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": ".",
+          "file": ".gitlab-ci.yml",
+          "line": 4,
+          "detector": "ci"
+        }
+      },
+      {
+        "tool": "image:python",
+        "raw_name": "python",
+        "kind": "image",
+        "value": "3.14",
+        "version": "3.14",
+        "exact": false,
+        "match": "prefix",
+        "location": {
+          "repo": ".",
+          "file": "bitbucket-pipelines.yml",
+          "line": 1,
+          "detector": "ci"
+        }
+      },
+      {
+        "tool": "image:golang",
+        "raw_name": "golang",
+        "kind": "image",
+        "value": "1.27.3",
+        "version": "1.27.3",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": ".",
+          "file": "bitbucket-pipelines.yml",
+          "line": 5,
+          "detector": "ci"
+        }
+      }
+    ]
+  },
+  "errors": []
+}

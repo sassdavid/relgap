@@ -1,0 +1,44 @@
+{
+  "schema_version": "1",
+  "tool": "relgap",
+  "version": "dev",
+  "generated_at": "2026-11-11T00:00:00Z",
+  "data": {
+    "repos": [
+      "."
+    ],
+    "pins": [
+      {
+        "tool": "",
+        "raw_name": "FOO_VERSION",
+        "kind": "tool",
+        "value": "2.1.0",
+        "version": "2.1.0",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": ".",
+          "file": "app/Dockerfile",
+          "line": 2,
+          "detector": "dockerfile"
+        }
+      },
+      {
+        "tool": "",
+        "raw_name": "BAR_VERSION",
+        "kind": "tool",
+        "value": "0.3",
+        "version": "0.3",
+        "exact": false,
+        "match": "prefix",
+        "location": {
+          "repo": ".",
+          "file": "app/Dockerfile",
+          "line": 3,
+          "detector": "dockerfile"
+        }
+      }
+    ]
+  },
+  "errors": []
+}

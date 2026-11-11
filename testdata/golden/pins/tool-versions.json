@@ -1,0 +1,89 @@
+{
+  "schema_version": "1",
+  "tool": "relgap",
+  "version": "dev",
+  "generated_at": "2026-11-11T00:00:00Z",
+  "data": {
+    "repos": [
+      "."
+    ],
+    "pins": [
+      {
+        "tool": "terraform",
+        "raw_name": "terraform",
+        "kind": "tool",
+        "value": "1.14.0",
+        "version": "1.14.0",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": ".",
+          "file": ".tool-versions",
+          "line": 2,
+          "detector": "tool-versions"
+        }
+      },
+      {
+        "tool": "terraform",
+        "raw_name": "terraform",
+        "kind": "tool",
+        "value": "1.15.8",
+        "version": "1.15.8",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": ".",
+          "file": ".tool-versions",
+          "line": 2,
+          "detector": "tool-versions"
+        }
+      },
+      {
+        "tool": "node",
+        "raw_name": "nodejs",
+        "kind": "tool",
+        "value": "24.11.0",
+        "version": "24.11.0",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": ".",
+          "file": ".tool-versions",
+          "line": 3,
+          "detector": "tool-versions"
+        }
+      },
+      {
+        "tool": "go",
+        "raw_name": "golang",
+        "kind": "tool",
+        "value": "1.27.3",
+        "version": "1.27.3",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": ".",
+          "file": ".tool-versions",
+          "line": 4,
+          "detector": "tool-versions"
+        }
+      },
+      {
+        "tool": "python",
+        "raw_name": "python",
+        "kind": "tool",
+        "value": "system",
+        "version": "system",
+        "exact": false,
+        "match": "channel",
+        "location": {
+          "repo": ".",
+          "file": ".tool-versions",
+          "line": 5,
+          "detector": "tool-versions"
+        }
+      }
+    ]
+  },
+  "errors": []
+}
