@@ -22,6 +22,8 @@ func flagKeys() map[string]string {
 	return map[string]string{
 		flagConcurrency:   "github.concurrency",
 		flagMinConfidence: "policy.min_confidence",
+		flagFailOn:        "policy.fail_on",
+		flagMaxBehind:     "policy.max_behind",
 	}
 }
 
@@ -113,6 +115,7 @@ stdout carries data, stderr carries logs. Use --format json for scripting.`,
 		newRegistryCmd(d, g),
 		newCacheCmd(d, g),
 		newPinsCmd(d, g),
+		newOutdatedCmd(d, g),
 	)
 	return root, g
 }

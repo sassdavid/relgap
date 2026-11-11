@@ -41,3 +41,4 @@ Following Renovate and Dependabot:
 - [x] A changelog file is fetched exactly once per digest regardless of how many versions it contains (asserted via the request counter).
 - [ ] The stale-changelog guard is covered by an argocd fixture.
 - [ ] Auto-discovery picks `HISTORY.md` / `CHANGES.rst` / `RELEASE_NOTES.md` in fixtures and rejects `changelog.json`.
+- [x] The "latest version" lookup for 45 tools sends at most 2 GraphQL queries (request counter on a cassette, `TestSpec_source_adapters_6`).

@@ -25,7 +25,7 @@
 |---|---|---|
 | `cli` | cobra commands; flags → options; calls domain; picks renderer | [cli.md](cli.md) |
 | `scan` | walk repos, run file detectors, produce `[]Pin` with `Location` | [specs/pin-discovery.md](specs/pin-discovery.md) |
-| `misex` | exec `mise ls/outdated/registry --json`, parse | [specs/pin-discovery.md](specs/pin-discovery.md) |
+| `misex` | exec `mise registry --json`, parse; pins and `outdated` read config files instead ([ADR-0007](adr/0007-parse-mise-config-for-pins.md), [ADR-0009](adr/0009-outdated-current-and-latest.md)) | [specs/pin-discovery.md](specs/pin-discovery.md) |
 | `registry` | tool name/alias → `ToolSpec` (repo, schemes, sources); embedded + remote override registry | [specs/tool-resolution.md](specs/tool-resolution.md) |
 | `version` | `Scheme` interface (semver, loose, calver, regex-extract), parse/compare/range | [specs/versions-and-ranges.md](specs/versions-and-ranges.md) |
 | `github` | REST + GraphQL batch; tags, releases, file fetch (raw accept) | [specs/source-adapters.md](specs/source-adapters.md) |
@@ -76,7 +76,7 @@ type ToolReport struct {
 
 ## Key flows
 - **digest:** resolve → list versions (GraphQL tags/releases, cached) → select (from, to] → for each adapter, fetch once (file) or per version (release body) → mdindex → classify → enrich → render.
-- **outdated:** collect pins (mise json + scanner for cwd) → group by tool → latest version per tool (batched) → for each outdated tool, a "light digest" that counts breaking entries without rendering bodies → table.
+- **outdated:** scan pins in the project → group by tool → newest 30 releases per tool, 25 tools per GraphQL query → current version per pin ([ADR-0009](adr/0009-outdated-current-and-latest.md)) → for each pin behind latest, the full digest `current..latest` from the same digester as `relgap digest` → table. `digest --from-mise` and `--all` print those digests.
 - **drift:** scan roots (offline) → group pins by tool → matrix; with `--latest` also fetch latest versions.
 
 ## Cross-cutting

@@ -4,8 +4,10 @@ import (
 	"bytes"
 	"cmp"
 	"context"
+	"encoding/json"
 	"fmt"
 	"io/fs"
+	"maps"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -193,9 +195,10 @@ func scriptParams(t *testing.T, files ...string) testscript.Params {
 			return false, fmt.Errorf("unknown condition %q", cond)
 		},
 		Cmds: map[string]func(ts *testscript.TestScript, neg bool, args []string){
-			"golden":     cmdGolden,
-			"jsonschema": cmdJSONSchema,
-			"slowgithub": cmdSlowGitHub,
+			"golden":      cmdGolden,
+			"jsonschema":  cmdJSONSchema,
+			"slowgithub":  cmdSlowGitHub,
+			"countsmatch": cmdCountsMatch,
 		},
 	}
 }
@@ -297,6 +300,93 @@ func validateJSON(schemaName string, data []byte) error {
 		return fmt.Errorf("parse instance: %w", err)
 	}
 	return sch.Validate(inst) //nolint:wrapcheck // the validation error is the message
+}
+
+// cmdCountsMatch checks that every digest in the digest JSON files matches the outdated pins
+// it belongs to: same latest version, as many versions as the pin is behind, the same count per
+// kind. With -every, each outdated pin must have a digest in the files.
+//
+//	countsmatch [-every] outdated.json digest.json...
+func cmdCountsMatch(ts *testscript.TestScript, neg bool, args []string) {
+	every := len(args) > 0 && args[0] == "-every"
+	if every {
+		args = args[1:]
+	}
+	const minArgs = 2
+	if neg || len(args) < minArgs {
+		ts.Fatalf("usage: countsmatch [-every] <outdated.json> <digest.json>...")
+	}
+	var outdated outdatedJSON
+	ts.Check(json.Unmarshal([]byte(ts.ReadFile(args[0])), &outdated))
+	matched := map[int]bool{}
+	for _, file := range args[1:] {
+		var digest digestJSON
+		ts.Check(json.Unmarshal([]byte(ts.ReadFile(file)), &digest))
+		for _, d := range digest.Data.Tools {
+			if err := outdated.match(d, matched); err != nil {
+				ts.Fatalf("%s: %v", file, err)
+			}
+		}
+	}
+	if !every {
+		return
+	}
+	for i, p := range outdated.Data.Pins {
+		if p.Status == "outdated" && !matched[i] {
+			ts.Fatalf("outdated pin %s %s has no digest", p.Tool, p.Current)
+		}
+	}
+}
+
+type outdatedJSON struct {
+	Data struct {
+		Pins []struct {
+			Tool    string         `json:"tool"`
+			Current string         `json:"current"`
+			Latest  string         `json:"latest"`
+			Status  string         `json:"status"`
+			Behind  *behindJSON    `json:"behind"`
+			Counts  map[string]int `json:"counts"`
+		} `json:"pins"`
+	} `json:"data"`
+}
+
+type behindJSON struct {
+	Releases int `json:"releases"`
+}
+
+type digestJSON struct {
+	Data struct {
+		Tools []digestToolJSON `json:"tools"`
+	} `json:"data"`
+}
+
+type digestToolJSON struct {
+	Tool     string            `json:"tool"`
+	From     string            `json:"from"`
+	To       string            `json:"to"`
+	Versions []json.RawMessage `json:"versions"`
+	Counts   map[string]int    `json:"counts"`
+}
+
+// match checks d against every outdated pin with its tool and current version and marks them.
+func (o *outdatedJSON) match(d digestToolJSON, matched map[int]bool) error {
+	found := false
+	for i, p := range o.Data.Pins {
+		if p.Tool != d.Tool || p.Current != d.From || p.Status != "outdated" {
+			continue
+		}
+		found, matched[i] = true, true
+		if p.Latest != d.To || p.Behind == nil || p.Behind.Releases != len(d.Versions) ||
+			!maps.Equal(p.Counts, d.Counts) {
+			return fmt.Errorf("%s %s..%s: digest has %d versions and counts %v; outdated has latest %s, %+v, counts %v",
+				d.Tool, d.From, d.To, len(d.Versions), d.Counts, p.Latest, p.Behind, p.Counts)
+		}
+	}
+	if !found {
+		return fmt.Errorf("%s %s..%s matches no outdated pin", d.Tool, d.From, d.To)
+	}
+	return nil
 }
 
 // TestScripts runs every testdata/script/*.txtar that isn't bound to a spec criterion.
@@ -411,6 +501,13 @@ func TestSpec_pindiscovery_3(t *testing.T) {
 func TestSpec_pindiscovery_4(t *testing.T) {
 	t.Parallel()
 	testscript.Run(t, scriptParams(t, filepath.Join(scriptDir, "spec_pindiscovery_4.txtar")))
+}
+
+// TestSpec_output_and_ci_5: outdated over a 10-pin project matches the goldens in tty, plain, md
+// and json, and its counts equal those of the full digests of the same ranges.
+func TestSpec_output_and_ci_5(t *testing.T) {
+	t.Parallel()
+	testscript.Run(t, scriptParams(t, filepath.Join(scriptDir, "spec_output_and_ci_5.txtar")))
 }
 
 // TestSpec_pindiscovery_6: unknown *_VERSION names appear in --unresolved with file:line.

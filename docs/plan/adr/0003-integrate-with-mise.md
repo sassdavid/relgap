@@ -1,7 +1,8 @@
 # relgap ADR-0003: Integrate with mise by shelling out, not by competing or linking
 
 - Status: accepted (2026-11-09). Amended by [ADR-0007](0007-parse-mise-config-for-pins.md): pin
-  discovery parses mise config files instead of running `mise ls`.
+  discovery parses mise config files instead of running `mise ls`. Amended by
+  [ADR-0009](0009-outdated-current-and-latest.md): `outdated` doesn't run `mise outdated --json`.
 
 ## Context
 - jdx/mise discussion #9708 asked for in-between release notes. mise added only `release_url` (target version only) to `mise outdated --json` (v2026.8.15, #12494) and called the rest "unstarted rather than planned".

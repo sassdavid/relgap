@@ -3,10 +3,10 @@
 ## Renderers
 | Format | digest | outdated | drift | pins |
 |---|---|---|---|---|
-| `tty` | glamour-rendered sections; breaking first; per-version collapse markers; counts header | lipgloss table, colored severity | matrix table, outliers highlighted | table |
+| `tty` | glamour-rendered sections; breaking first; per-version collapse markers; counts header | aligned table with ANSI colors: latest yellow when behind, green when current, breaking counts red | matrix table, outliers highlighted | table |
 | `plain` | same structure, no ANSI | TSV-like aligned | aligned | aligned |
-| `md` | PR-ready: `<details>` per version, Breaking/Security at top, source links | Markdown table | Markdown table | table |
-| `json` | envelope (`schema_version`), `data.tools[]` = `ToolReport` | envelope | envelope | envelope |
+| `md` | PR-ready: `<details>` per version, Breaking/Security at top, source links | Markdown table and a notes list | Markdown table | table |
+| `json` | envelope (`schema_version`), `data.tools[]` = `ToolReport` | envelope, `data.pins[]` (`schemas/outdated-v1.json`) | envelope | envelope |
 | `sarif` | — | one result per finding (eol/vuln/breaking), location = pin file:line | one result per drifted pin | — |
 
 - Markdown output stays under 60 KB by default (GitHub comment limit 65,536). When truncated, a footer says what was cut (`--md-max-bytes`).
@@ -32,3 +32,4 @@
 - [ ] SARIF validates against the 2.1.0 schema and uploads in a CI dry run.
 - [ ] Each `--fail-on` value has a testscript asserting exit 3 and exit 0 counterparts.
 - [ ] The Markdown truncation footer appears exactly at the limit (property test on generated digests).
+- [x] `outdated` over a fixture project with 10 pins matches golden files in tty, plain, md and json, and each pin's counts equal those of the full digest `current..latest` (`TestSpec_output_and_ci_5`).

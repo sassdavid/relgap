@@ -173,3 +173,12 @@ func exactArgs(n int) cobra.PositionalArgs {
 		return nil
 	}
 }
+
+func maxArgs(n int) cobra.PositionalArgs {
+	return func(cmd *cobra.Command, args []string) error {
+		if len(args) > n {
+			return usageError(fmt.Errorf("%s takes at most %d argument(s), got %d", cmd.CommandPath(), n, len(args)))
+		}
+		return nil
+	}
+}

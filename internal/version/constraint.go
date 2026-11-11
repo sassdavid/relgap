@@ -127,3 +127,20 @@ func (u *Universe) ResolveConstraint(c Constraint, known []V) (V, Pick, error) {
 	}
 	return u.versions[i].V, PickLowest, nil
 }
+
+// ResolvePrefix returns the version a prefix pin such as "26" or "1.2" stands for: the highest
+// stable version whose leading release segments equal the prefix, which is what mise installs.
+func (u *Universe) ResolvePrefix(prefix string) (V, error) {
+	p, err := u.Parse(prefix)
+	if err != nil {
+		return V{}, err
+	}
+	release, _, _ := strings.Cut(trimV(strings.TrimPrefix(prefix, u.rules.TagPrefix)), "-")
+	size := len(strings.Split(release, "."))
+	for _, v := range slices.Backward(u.versions) {
+		if !v.Prerelease && samePrefix(v.V.rel, p.rel, size) {
+			return v.V, nil
+		}
+	}
+	return V{}, fmt.Errorf("%w: no stable version starts with %s", ErrNoMatch, prefix)
+}

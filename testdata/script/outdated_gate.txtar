@@ -1,0 +1,80 @@
+# --fail-on and --max-behind on outdated and digest, and the exit codes: 3 for a match, 0
+# without one, 2 for values relgap can't check, and 1 when a tool fails, even if a gate matched.
+env TEST_NOW=2026-11-11T12:00:00Z
+env GH_TOKEN=$TEST_GH_TOKEN
+cd project
+
+# Usage errors exit 2 before any request.
+! exec relgap outdated --fail-on eol
+stderr 'fail-on eol isn''t supported yet: relgap checks outdated and breaking'
+! exec relgap outdated --max-behind weeks:2
+stderr 'policy.max_behind'
+! exec relgap outdated --format sarif
+stderr 'format "sarif" is not supported by this command'
+! exec relgap digest --from-mise --line major
+stderr 'none of the others can be'
+! exec relgap digest --all a b
+stderr 'takes at most 1 argument'
+exec expect-exit 2 relgap outdated --fail-on vuln
+exec expect-exit 2 relgap digest terraform
+
+env TEST_CASSETTE=$CASSETTES/outdated/gate.yaml
+exec relgap outdated --format plain
+cmp stdout ../outdated.txt
+! stderr .
+
+# k9s 0.50.16 is 3 releases (2 patches on its own line) behind 0.51.0, with 1 breaking change.
+exec expect-exit 3 relgap outdated --fail-on outdated --format plain
+stderr '^relgap: --fail-on outdated matched k9s 0.50.16 \(mise.toml:3\)$'
+exec relgap outdated --fail-on outdated --max-behind releases:3 --format plain
+exec expect-exit 3 relgap outdated --fail-on outdated --max-behind patch:1 --format plain
+exec relgap outdated --fail-on outdated --max-behind minor:1 --format plain
+exec expect-exit 3 relgap outdated --fail-on breaking --format plain
+stderr '^relgap: --fail-on breaking matched k9s 0.50.16 \(mise.toml:3\)$'
+exec relgap outdated --fail-on drift --format plain
+
+# policy.fail_on and policy.max_behind in the config work like the flags.
+env RELGAP_POLICY_FAIL_ON=outdated
+env RELGAP_POLICY_MAX_BEHIND=releases:2
+exec expect-exit 3 relgap outdated --format plain
+exec expect-exit 0 relgap outdated --max-behind releases:3 --format plain
+env RELGAP_POLICY_FAIL_ON=
+env RELGAP_POLICY_MAX_BEHIND=
+
+exec expect-exit 3 relgap digest --from-mise --fail-on breaking --format plain
+stderr 'fail-on breaking matched k9s 0.50.16'
+[!recording] exec expect-exit 3 relgap digest k9s 0.50.16.. --fail-on breaking --format plain
+[!recording] stderr '^relgap: --fail-on breaking matched k9s 0.50.16..0.51.0$'
+
+# The second run answers from the HTTP cache.
+[!recording] exec relgap outdated --offline --format plain
+[!recording] cmp stdout ../outdated.txt
+
+# A tool that fails exits 1 after printing the rest, and wins over a matched gate.
+cd ../broken
+env TEST_CASSETTE=$CASSETTES/outdated/gate-error.yaml
+exec expect-exit 1 relgap outdated --fail-on breaking --format json
+jsonschema outdated-v1.json stdout
+stdout '"target": "ghost@mise.toml:2"'
+stdout '"status": "error"'
+stderr '^relgap: 1 pin or file failed; the report is partial$'
+! stderr 'fail-on'
+
+-- outdated.txt --
+TOOL        CURRENT  LATEST   BEHIND  BREAKING  DEPRECATION  PIN
+github-cli  2.103.3  2.103.3  0       0         0            mise.toml:2
+k9s         0.50.16  0.51.0   3       1         0            mise.toml:3
+
+1 of 2 compared pins are behind latest.
+-- project/mise.toml --
+[tools]
+gh = "2.103.3"
+k9s = "0.50.16"
+-- broken/mise.toml --
+[tools]
+ghost = "1.0.0"
+k9s = "0.50.16"
+-- broken/.relgap.yaml --
+schema_version: 1
+tools:
+  ghost: {repo: no-such-owner-relgap/no-such-repo}

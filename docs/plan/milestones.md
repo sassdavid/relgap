@@ -39,8 +39,8 @@ Scope: `httpx` (retry, rate, no cache yet), go-github + githubv4 batch, token di
 - [x] All pin-discovery.md criteria. `relgap pins` works against a dotfriedrice-shaped fixture.
 
 ### M6: `outdated` + `digest --from-mise`
-- [ ] Fixture project with 10 pins: correct table in tty/md/json, with breaking counts matching the full digests.
-- [ ] Uses at most 2 GraphQL queries for "latest version" of 45 tools (counter).
+- [x] Fixture project with 10 pins: correct table in tty/md/json, with breaking counts matching the full digests.
+- [x] Uses at most 2 GraphQL queries for "latest version" of 45 tools (counter).
 
 ### M7: `drift`
 - [ ] A generated tree of 60 repos gives a correct matrix, constraint pins marked `≈`, `--fail-on drift` exits 3.

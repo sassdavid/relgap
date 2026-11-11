@@ -8,6 +8,7 @@ import (
 	"regexp"
 	"slices"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/sassdavid/relgap/internal/classify"
@@ -66,12 +67,48 @@ type Digester struct {
 	logger *slog.Logger
 	gh     GitHub
 	files  *mdindex.Cache
+
+	mu   sync.Mutex
+	refs map[string]*refList // by tool name
+}
+
+// refList is a tool's version universe as listed once per digester.
+type refList struct {
+	once     sync.Once
+	refs     []version.Ref
+	releases map[string]github.Release
+	err      error
 }
 
 // NewDigester returns a digester that reads from gh. Changelog files are fetched and parsed once
-// per digester.
+// per digester, and so is each tool's list of releases or tags.
 func NewDigester(logger *slog.Logger, gh GitHub) *Digester {
-	return &Digester{logger: logger, gh: gh, files: source.NewFileCache(gh)}
+	return &Digester{logger: logger, gh: gh, files: source.NewFileCache(gh), refs: map[string]*refList{}}
+}
+
+// Universe returns every version of the tool, listed once per digester.
+func (d *Digester) Universe(ctx context.Context, t registry.ToolSpec) (*version.Universe, error) {
+	rules, err := t.Version.Rules()
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", t.Name, err)
+	}
+	refs, _, err := d.list(ctx, t)
+	if err != nil {
+		return nil, err
+	}
+	return version.NewUniverse(ctx, d.logger, refs, rules), nil
+}
+
+func (d *Digester) list(ctx context.Context, t registry.ToolSpec) ([]version.Ref, map[string]github.Release, error) {
+	d.mu.Lock()
+	l, ok := d.refs[t.Name]
+	if !ok {
+		l = &refList{}
+		d.refs[t.Name] = l
+	}
+	d.mu.Unlock()
+	l.once.Do(func() { l.refs, l.releases, l.err = d.fetchRefs(ctx, t) })
+	return l.refs, l.releases, l.err
 }
 
 // reader is an adapter with the classifier for its source.
@@ -87,7 +124,7 @@ func (d *Digester) Digest(ctx context.Context, req DigestRequest) (*ToolDigest, 
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", t.Name, err)
 	}
-	refs, releases, err := d.refs(ctx, t)
+	refs, releases, err := d.list(ctx, t)
 	if err != nil {
 		return nil, err
 	}
@@ -172,8 +209,12 @@ func collect(
 	return out, nil
 }
 
-// refs lists the version universe: releases (drafts included, the universe drops them) or tags.
-func (d *Digester) refs(ctx context.Context, t registry.ToolSpec) ([]version.Ref, map[string]github.Release, error) {
+// fetchRefs lists the version universe: releases (drafts included, the universe drops them) or
+// tags.
+func (d *Digester) fetchRefs(
+	ctx context.Context,
+	t registry.ToolSpec,
+) ([]version.Ref, map[string]github.Release, error) {
 	byTag := map[string]github.Release{}
 	if t.Version.Universe == registry.UniverseTags {
 		tags, err := d.gh.Tags(ctx, t.Repo)

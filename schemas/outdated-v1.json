@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/sassdavid/relgap/schemas/outdated-v1.json",
+  "title": "relgap outdated --format json",
+  "description": "The report-v1.json envelope with outdated data: every resolved pin of the project compared with the latest version of its tool, sorted by tool, repo, file and line.",
+  "allOf": [{ "$ref": "report-v1.json" }],
+  "properties": {
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repos", "pins"],
+      "properties": {
+        "repos": {
+          "description": "Scanned repository directories, slash-separated.",
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "pins": { "type": "array", "items": { "$ref": "#/$defs/pin" } }
+      }
+    }
+  },
+  "$defs": {
+    "count": { "type": "integer", "minimum": 0 },
+    "pin": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tool", "pin", "status"],
+      "properties": {
+        "tool": { "description": "The pin's tool, as relgap digest accepts it.", "type": "string", "minLength": 1 },
+        "repo": { "description": "GitHub owner/repo of the tool. Absent when the pin was skipped.", "type": "string", "minLength": 1 },
+        "pin": { "$ref": "pins-v1.json#/$defs/pin" },
+        "current": { "description": "The version the pin stands for.", "type": "string", "minLength": 1 },
+        "via": {
+          "description": "How a non-exact pin became current.",
+          "enum": [
+            "highest installed or locked version",
+            "lowest satisfying version",
+            "highest stable version with this prefix",
+            "latest channel"
+          ]
+        },
+        "latest": { "description": "Newest stable version on the tool's release line.", "type": "string", "minLength": 1 },
+        "behind": {
+          "description": "Distance from current to latest, counted over the versions of the digest current..latest.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["releases", "major", "minor", "patch"],
+          "properties": {
+            "releases": { "description": "Stable versions after current up to latest.", "$ref": "#/$defs/count" },
+            "major": { "description": "Newer major lines among them.", "$ref": "#/$defs/count" },
+            "minor": { "description": "Newer minor lines among them.", "$ref": "#/$defs/count" },
+            "patch": { "description": "Those on current's own minor line.", "$ref": "#/$defs/count" },
+            "since": { "description": "When the first of them was published. Absent for tag-only tools.", "type": "string", "format": "date-time" }
+          }
+        },
+        "counts": {
+          "description": "Entries of the digest current..latest at or above the minimum confidence, per kind. Present when the pin was compared.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["breaking", "deprecation", "security", "feature", "fix", "other"],
+          "properties": {
+            "breaking": { "$ref": "#/$defs/count" },
+            "deprecation": { "$ref": "#/$defs/count" },
+            "security": { "$ref": "#/$defs/count" },
+            "feature": { "$ref": "#/$defs/count" },
+            "fix": { "$ref": "#/$defs/count" },
+            "other": { "$ref": "#/$defs/count" }
+          }
+        },
+        "hidden": { "description": "Entries below the minimum confidence.", "$ref": "#/$defs/count" },
+        "status": {
+          "description": "current, outdated, unknown (a channel other than latest, or a value no version matches), skipped (no GitHub repository relgap can read) or error.",
+          "enum": ["current", "outdated", "unknown", "skipped", "error"]
+        },
+        "note": { "description": "Why the pin is unknown, skipped or failed.", "type": "string", "minLength": 1 },
+        "eol": { "description": "Reserved for end-of-life data of the current version.", "type": "object" },
+        "vulns": { "description": "Reserved for known vulnerabilities of the current version.", "type": "array", "items": { "type": "object" } }
+      }
+    }
+  }
+}
