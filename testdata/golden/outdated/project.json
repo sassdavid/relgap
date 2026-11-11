@@ -1,0 +1,355 @@
+{
+  "schema_version": "1",
+  "tool": "relgap",
+  "version": "dev",
+  "generated_at": "2026-11-11T12:00:00Z",
+  "data": {
+    "repos": [
+      "."
+    ],
+    "pins": [
+      {
+        "tool": "github-cli",
+        "repo": "cli/cli",
+        "pin": {
+          "tool": "github-cli",
+          "raw_name": "gh",
+          "kind": "tool",
+          "value": "2.103.3",
+          "version": "2.103.3",
+          "exact": true,
+          "match": "exact",
+          "location": {
+            "repo": ".",
+            "file": "mise.toml",
+            "line": 4,
+            "detector": "mise"
+          }
+        },
+        "current": "2.103.3",
+        "latest": "2.103.3",
+        "behind": {
+          "releases": 0,
+          "major": 0,
+          "minor": 0,
+          "patch": 0
+        },
+        "counts": {
+          "breaking": 0,
+          "deprecation": 0,
+          "feature": 0,
+          "fix": 0,
+          "other": 0,
+          "security": 0
+        },
+        "status": "current"
+      },
+      {
+        "tool": "go",
+        "repo": "golang/go",
+        "pin": {
+          "tool": "go",
+          "raw_name": "go-version",
+          "kind": "tool",
+          "value": "1.25",
+          "version": "1.25",
+          "exact": false,
+          "match": "prefix",
+          "location": {
+            "repo": ".",
+            "file": ".github/workflows/ci.yml",
+            "line": 9,
+            "detector": "ci"
+          }
+        },
+        "current": "1.25.14",
+        "via": "highest stable version with this prefix",
+        "latest": "1.27.4",
+        "behind": {
+          "releases": 17,
+          "major": 0,
+          "minor": 2,
+          "patch": 0
+        },
+        "counts": {
+          "breaking": 0,
+          "deprecation": 0,
+          "feature": 0,
+          "fix": 0,
+          "other": 0,
+          "security": 0
+        },
+        "status": "outdated"
+      },
+      {
+        "tool": "helm",
+        "repo": "helm/helm",
+        "pin": {
+          "tool": "helm",
+          "raw_name": "helm",
+          "kind": "tool",
+          "value": "3.21.0",
+          "version": "3.21.0",
+          "exact": true,
+          "match": "exact",
+          "location": {
+            "repo": ".",
+            "file": "mise.toml",
+            "line": 3,
+            "detector": "mise"
+          }
+        },
+        "current": "3.21.0",
+        "latest": "3.22.1",
+        "behind": {
+          "releases": 6,
+          "major": 0,
+          "minor": 1,
+          "patch": 4,
+          "since": "2026-06-12T14:51:31Z"
+        },
+        "counts": {
+          "breaking": 0,
+          "deprecation": 0,
+          "feature": 0,
+          "fix": 19,
+          "other": 90,
+          "security": 0
+        },
+        "hidden": 44,
+        "status": "outdated"
+      },
+      {
+        "tool": "image:alpine",
+        "pin": {
+          "tool": "image:alpine",
+          "raw_name": "alpine",
+          "kind": "image",
+          "value": "3.22",
+          "version": "3.22",
+          "exact": false,
+          "match": "prefix",
+          "location": {
+            "repo": ".",
+            "file": "Dockerfile",
+            "line": 1,
+            "detector": "dockerfile"
+          }
+        },
+        "status": "skipped",
+        "note": "unsupported tool syntax: unknown prefix \"image:\" (relgap knows github and aqua)"
+      },
+      {
+        "tool": "k9s",
+        "repo": "derailed/k9s",
+        "pin": {
+          "tool": "k9s",
+          "raw_name": "K9S_VERSION",
+          "kind": "tool",
+          "value": "0.50.16",
+          "version": "0.50.16",
+          "exact": true,
+          "match": "exact",
+          "location": {
+            "repo": ".",
+            "file": "Dockerfile",
+            "line": 2,
+            "detector": "dockerfile"
+          }
+        },
+        "current": "0.50.16",
+        "latest": "0.51.0",
+        "behind": {
+          "releases": 3,
+          "major": 0,
+          "minor": 1,
+          "patch": 2,
+          "since": "2026-01-11T19:44:05Z"
+        },
+        "counts": {
+          "breaking": 1,
+          "deprecation": 0,
+          "feature": 0,
+          "fix": 0,
+          "other": 3,
+          "security": 0
+        },
+        "hidden": 170,
+        "status": "outdated"
+      },
+      {
+        "tool": "node",
+        "repo": "nodejs/node",
+        "pin": {
+          "tool": "node",
+          "raw_name": "node",
+          "kind": "tool",
+          "value": "lts",
+          "version": "lts",
+          "exact": false,
+          "match": "channel",
+          "location": {
+            "repo": ".",
+            "file": "mise.toml",
+            "line": 7,
+            "detector": "mise"
+          }
+        },
+        "status": "unknown",
+        "note": "can't compare: \"lts\" is a channel"
+      },
+      {
+        "tool": "ruff",
+        "repo": "astral-sh/ruff",
+        "pin": {
+          "tool": "ruff",
+          "raw_name": "ruff",
+          "kind": "tool",
+          "value": "latest",
+          "version": "latest",
+          "exact": false,
+          "match": "channel",
+          "location": {
+            "repo": ".",
+            "file": "mise.toml",
+            "line": 6,
+            "detector": "mise"
+          }
+        },
+        "current": "0.17.4",
+        "via": "latest channel",
+        "latest": "0.17.4",
+        "behind": {
+          "releases": 0,
+          "major": 0,
+          "minor": 0,
+          "patch": 0
+        },
+        "counts": {
+          "breaking": 0,
+          "deprecation": 0,
+          "feature": 0,
+          "fix": 0,
+          "other": 0,
+          "security": 0
+        },
+        "status": "current"
+      },
+      {
+        "tool": "terraform",
+        "repo": "hashicorp/terraform",
+        "pin": {
+          "tool": "terraform",
+          "raw_name": "required_version",
+          "kind": "tool",
+          "value": "~> 1.15.0",
+          "version": "~> 1.15.0",
+          "exact": false,
+          "match": "constraint",
+          "location": {
+            "repo": ".",
+            "file": "main.tf",
+            "line": 2,
+            "detector": "terraform"
+          }
+        },
+        "current": "1.15.8",
+        "via": "highest installed or locked version",
+        "latest": "1.17.2",
+        "behind": {
+          "releases": 12,
+          "major": 0,
+          "minor": 2,
+          "patch": 1,
+          "since": "2026-08-19T14:29:32Z"
+        },
+        "counts": {
+          "breaking": 1,
+          "deprecation": 0,
+          "feature": 27,
+          "fix": 43,
+          "other": 0,
+          "security": 0
+        },
+        "hidden": 15,
+        "status": "outdated"
+      },
+      {
+        "tool": "terraform",
+        "repo": "hashicorp/terraform",
+        "pin": {
+          "tool": "terraform",
+          "raw_name": "terraform",
+          "kind": "tool",
+          "value": "1.15.8",
+          "version": "1.15.8",
+          "exact": true,
+          "match": "exact",
+          "location": {
+            "repo": ".",
+            "file": "mise.toml",
+            "line": 2,
+            "detector": "mise"
+          }
+        },
+        "current": "1.15.8",
+        "latest": "1.17.2",
+        "behind": {
+          "releases": 12,
+          "major": 0,
+          "minor": 2,
+          "patch": 1,
+          "since": "2026-08-19T14:29:32Z"
+        },
+        "counts": {
+          "breaking": 1,
+          "deprecation": 0,
+          "feature": 27,
+          "fix": 43,
+          "other": 0,
+          "security": 0
+        },
+        "hidden": 15,
+        "status": "outdated"
+      },
+      {
+        "tool": "uv",
+        "repo": "astral-sh/uv",
+        "pin": {
+          "tool": "uv",
+          "raw_name": "uv",
+          "kind": "tool",
+          "value": "0.13",
+          "version": "0.13",
+          "exact": false,
+          "match": "prefix",
+          "location": {
+            "repo": ".",
+            "file": "mise.toml",
+            "line": 5,
+            "detector": "mise"
+          }
+        },
+        "current": "0.13.7",
+        "via": "highest stable version with this prefix",
+        "latest": "0.13.7",
+        "behind": {
+          "releases": 0,
+          "major": 0,
+          "minor": 0,
+          "patch": 0
+        },
+        "counts": {
+          "breaking": 0,
+          "deprecation": 0,
+          "feature": 0,
+          "fix": 0,
+          "other": 0,
+          "security": 0
+        },
+        "status": "current"
+      }
+    ]
+  },
+  "errors": []
+}

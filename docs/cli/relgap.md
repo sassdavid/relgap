@@ -35,6 +35,7 @@ stdout carries data, stderr carries logs. Use --format json for scripting.
 * [relgap completion](relgap_completion.md)	 - Generate the autocompletion script for the specified shell
 * [relgap config](relgap_config.md)	 - Inspect and validate configuration
 * [relgap digest](relgap_digest.md)	 - Merge the release notes of every version in a range into one digest
+* [relgap outdated](relgap_outdated.md)	 - Compare every pinned tool version in a project with the latest release
 * [relgap pins](relgap_pins.md)	 - List the tool versions pinned in your repositories, with file and line
 * [relgap registry](relgap_registry.md)	 - Check relgap registry entries
 * [relgap resolve](relgap_resolve.md)	 - Show how a tool name resolves to a repository, version rules and changelog sources

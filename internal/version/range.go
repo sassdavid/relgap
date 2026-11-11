@@ -139,3 +139,12 @@ func lineName(l Level) string {
 	}
 	return string(l)
 }
+
+// Latest returns the newest stable version on from's release line. With [LineNone] or a zero
+// from it returns the newest stable version.
+func (u *Universe) Latest(from V, level Level) (Version, bool) {
+	if from.IsZero() {
+		level = LineNone
+	}
+	return latestOnLine(u.rules.Scheme, u.versions, from, level)
+}

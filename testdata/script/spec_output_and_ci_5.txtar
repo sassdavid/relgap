@@ -1,0 +1,100 @@
+# outdated over a project with 10 pins: every match kind, a skipped image pin and an
+# uncompared channel. The table matches the goldens in tty, plain, md and json, and every
+# count equals the count of the full digest of the same range.
+env TEST_NOW=2026-11-11T12:00:00Z
+env GH_TOKEN=$TEST_GH_TOKEN
+env TEST_CASSETTE=$CASSETTES/outdated/project.yaml
+cd project
+
+exec relgap pins --format plain
+cmp stdout ../pins.txt
+
+exec relgap outdated --format json
+jsonschema outdated-v1.json stdout
+golden stdout outdated/project.json
+cp stdout $WORK/outdated.json
+
+exec relgap outdated --format tty --color always
+golden stdout outdated/project.tty
+
+exec relgap outdated --format plain
+golden stdout outdated/project.txt
+
+exec relgap outdated --format md
+golden stdout outdated/project.md
+
+# digest --all digests the same ranges outdated compared.
+exec relgap digest --all --format json
+jsonschema digest-v1.json stdout
+cp stdout $WORK/all.json
+cmp stderr ../all.stderr
+[!recording] countsmatch -every $WORK/outdated.json $WORK/all.json
+
+# digest --from-mise keeps the pins of mise config files.
+env TEST_CASSETTE=$CASSETTES/outdated/from-mise.yaml
+exec relgap digest --from-mise --format json
+jsonschema digest-v1.json stdout
+cp stdout $WORK/from-mise.json
+cmp stderr ../from-mise.stderr
+[!recording] countsmatch $WORK/outdated.json $WORK/from-mise.json
+
+# Each range digested on its own, the way a user would run it, gives the same counts.
+env TEST_CASSETTE=$CASSETTES/outdated/project.yaml
+[!recording] exec relgap digest go 1.25.14.. --format json
+[!recording] cp stdout $WORK/go.json
+[!recording] exec relgap digest helm 3.21.0.. --format json
+[!recording] cp stdout $WORK/helm.json
+[!recording] exec relgap digest k9s 0.50.16.. --format json
+[!recording] cp stdout $WORK/k9s.json
+[!recording] exec relgap digest terraform 1.15.8.. --format json
+[!recording] cp stdout $WORK/terraform.json
+[!recording] countsmatch -every $WORK/outdated.json $WORK/go.json $WORK/helm.json $WORK/k9s.json $WORK/terraform.json
+
+-- pins.txt --
+TOOL          VALUE       DETECTOR    LOCATION
+go            ≈1.25       ci          .github/workflows/ci.yml:9
+image:alpine  ≈3.22       dockerfile  Dockerfile:1
+k9s           0.50.16     dockerfile  Dockerfile:2
+terraform     ≈~> 1.15.0  terraform   main.tf:2
+terraform     1.15.8      mise        mise.toml:2
+helm          3.21.0      mise        mise.toml:3
+github-cli    2.103.3     mise        mise.toml:4
+uv            ≈0.13       mise        mise.toml:5
+ruff          ≈latest     mise        mise.toml:6
+node          ≈lts        mise        mise.toml:7
+-- all.stderr --
+relgap: at the latest version, no digest: github-cli 2.103.3, ruff 0.17.4, uv 0.13.7
+relgap: not digested: node lts (mise.toml:7): can't compare: "lts" is a channel
+relgap: 1 pin skipped; 'relgap outdated --format json' says why
+-- from-mise.stderr --
+relgap: at the latest version, no digest: github-cli 2.103.3, ruff 0.17.4, uv 0.13.7
+relgap: not digested: node lts (mise.toml:7): can't compare: "lts" is a channel
+-- project/mise.toml --
+[tools]
+terraform = "1.15.8"
+helm = "3.21.0"
+gh = "2.103.3"
+uv = "0.13"
+ruff = "latest"
+node = "lts"
+-- project/.relgap.yaml --
+schema_version: 1
+tools:
+  node: {repo: nodejs/node}
+-- project/main.tf --
+terraform {
+  required_version = "~> 1.15.0"
+}
+-- project/.github/workflows/ci.yml --
+name: ci
+on: push
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-go@v6
+        with:
+          go-version: "1.25"
+-- project/Dockerfile --
+FROM alpine:3.22
+ARG K9S_VERSION=0.50.16

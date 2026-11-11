@@ -229,3 +229,55 @@ func TestResolveConstraint(t *testing.T) {
 	_, _, err = u.ResolveConstraint(c, nil)
 	require.ErrorIs(t, err, version.ErrNoMatch)
 }
+
+func TestResolvePrefix(t *testing.T) {
+	t.Parallel()
+	refs := []version.Ref{
+		{Tag: "go1.25.9"},
+		{Tag: "go1.25.10"},
+		{Tag: "go1.26rc1"},
+		{Tag: "go1.26.0"},
+		{Tag: "go1.26.2"},
+		{Tag: "go1.27rc2"},
+	}
+	u := universe(t, refs, version.Rules{Scheme: version.Loose(), TagPrefix: "go"})
+	tests := []struct{ prefix, want, err string }{
+		{prefix: "1.25", want: "1.25.10"},
+		{prefix: "1", want: "1.26.2"},
+		{prefix: "1.26.0", want: "1.26.0"},
+		{prefix: "go1.26", want: "1.26.2"},
+		{prefix: "1.27", err: "no stable version starts with 1.27"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.prefix, func(t *testing.T) {
+			t.Parallel()
+			v, err := u.ResolvePrefix(tt.prefix)
+			if tt.err != "" {
+				require.ErrorIs(t, err, version.ErrNoMatch)
+				require.ErrorContains(t, err, tt.err)
+				return
+			}
+			require.NoError(t, err)
+			assert.Equal(t, tt.want, v.String())
+		})
+	}
+}
+
+func TestLatest(t *testing.T) {
+	t.Parallel()
+	s := version.Semver()
+	refs := []version.Ref{{Tag: "3.21.0"}, {Tag: "3.22.1"}, {Tag: "4.3.1"}, {Tag: "4.4.0-rc.1"}}
+	u := universe(t, refs, version.Rules{Scheme: s})
+	v3, err := s.Parse("3.21.0")
+	require.NoError(t, err)
+
+	got, ok := u.Latest(v3, version.LineMajor)
+	require.True(t, ok)
+	assert.Equal(t, "3.22.1", got.V.String(), "stays on the major line")
+	got, ok = u.Latest(v3, version.LineNone)
+	require.True(t, ok)
+	assert.Equal(t, "4.3.1", got.V.String(), "prereleases are never latest")
+	got, ok = u.Latest(version.V{}, version.LineMajor)
+	require.True(t, ok)
+	assert.Equal(t, "4.3.1", got.V.String(), "a zero version means any line")
+}

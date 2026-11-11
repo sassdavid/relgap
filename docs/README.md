@@ -31,7 +31,8 @@ Contributor and agent rules: [CLAUDE.md](../CLAUDE.md).
    [0005 token lookup](plan/adr/0005-token-lookup-without-go-gh-auth.md) ·
    [0006 HTTP cache](plan/adr/0006-http-cache.md) ·
    [0007 pins read mise config files](plan/adr/0007-parse-mise-config-for-pins.md) ·
-   [0008 HCL and Dockerfile parsers](plan/adr/0008-hcl-and-dockerfile-parsers.md)
+   [0008 HCL and Dockerfile parsers](plan/adr/0008-hcl-and-dockerfile-parsers.md) ·
+   [0009 outdated current and latest](plan/adr/0009-outdated-current-and-latest.md)
 8. [reference-repos.md](plan/reference-repos.md): local clones to read (never copy) during implementation
 9. [integration.md](plan/integration.md): how relgap connects to its sibling tool [tfcensus](https://github.com/sassdavid/tfcensus)
 

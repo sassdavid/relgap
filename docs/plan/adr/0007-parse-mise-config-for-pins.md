@@ -2,7 +2,8 @@
 
 - Status: accepted (2026-11-11)
 - Amends [ADR-0003](0003-integrate-with-mise.md) for pin discovery. ADR-0003 still holds for
-  `mise registry --json` and, from M6, `mise outdated --json`.
+  `mise registry --json`. [ADR-0009](0009-outdated-current-and-latest.md) drops
+  `mise outdated --json` and `mise ls` from `outdated`.
 
 ## Context
 ADR-0003 and the pin-discovery spec preferred `mise ls --json --current` when mise is on PATH.

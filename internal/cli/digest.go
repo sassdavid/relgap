@@ -9,10 +9,12 @@ import (
 
 	"github.com/sassdavid/relgap/internal/app"
 	"github.com/sassdavid/relgap/internal/buildinfo"
+	"github.com/sassdavid/relgap/internal/config"
 	"github.com/sassdavid/relgap/internal/github"
 	"github.com/sassdavid/relgap/internal/httpx"
 	"github.com/sassdavid/relgap/internal/render"
 	"github.com/sassdavid/relgap/internal/report"
+	"github.com/sassdavid/relgap/internal/scan"
 	"github.com/sassdavid/relgap/internal/version"
 )
 
@@ -22,12 +24,20 @@ const unauthenticatedConcurrency = 2
 type digestFlags struct {
 	line               string
 	includePrereleases bool
+	fromMise           bool
+	all                bool
 }
+
+const (
+	flagLine     = "line"
+	flagFromMise = "from-mise"
+	flagAll      = "all"
+)
 
 func newDigestCmd(d *app.Deps, g *globals) *cobra.Command {
 	var f digestFlags
 	cmd := &cobra.Command{
-		Use:   "digest <tool> <from>..[<to>]",
+		Use:   "digest <tool> <from>..[<to>] | --from-mise [path] | --all [path]",
 		Short: "Merge the release notes of every version in a range into one digest",
 		Long: `Lists the versions after <from> up to and including <to>, fetches their release notes and
 groups the entries by kind: breaking changes, deprecations, security, features, fixes, other.
@@ -40,23 +50,54 @@ file fetched and parsed once. A bullet that two sources share is shown once. Eac
 confidence between 0 and 1; entries below --min-confidence (default 0.5) are hidden and counted.
 --format md writes PR-ready Markdown with one <details> block per version.
 
+--from-mise digests every tool pinned in the project's mise config files that is behind
+its latest version, from the pinned version to the latest. --all does the same for every pin
+'relgap outdated' compares. Both use the ranges and digests 'relgap outdated' shows, and
+take the project path as their only argument (default: the current directory).
+
+--fail-on breaking exits 3 when a digest has a breaking entry at or above --min-confidence.
+
 GitHub token: GH_TOKEN, GITHUB_TOKEN, gh's config file, then 'gh auth token'. Without one,
 relgap uses the REST API (60 requests per hour) with 2 concurrent requests.`,
 		Example: `  relgap digest terraform 1.15.8..1.17.1
   relgap digest helm 3.19.0.. --line major
   relgap digest kubectl 1.36.0..1.37.2 --format md > digest.md
   relgap digest terraform 1.15.8..1.17.1 --min-confidence 0
+  relgap digest --from-mise --fail-on breaking
+  relgap digest --all ~/src/infra --format md > upgrade-notes.md
   relgap digest terraform 1.15.8..1.17.1 --format json | jq '.data.tools[].entries[] | select(.kind == "breaking")'`,
-		Args: exactArgs(2), //nolint:mnd // tool and range
+		Args: func(cmd *cobra.Command, args []string) error {
+			if f.fromMise || f.all {
+				return maxArgs(1)(cmd, args)
+			}
+			return exactArgs(2)(cmd, args) //nolint:mnd // tool and range
+		},
 		RunE: func(cmd *cobra.Command, args []string) error {
+			if f.fromMise || f.all {
+				root := "."
+				if len(args) == 1 {
+					root = args[0]
+				}
+				return runDigestProject(cmd, d, g, f, root)
+			}
 			return runDigest(cmd, d, g, f, args[0], args[1])
 		},
 	}
 	fl := cmd.Flags()
-	fl.StringVar(&f.line, "line", string(version.LineNone),
+	fl.StringVar(&f.line, flagLine, string(version.LineNone),
 		"release line the range stays on: none, major or minor")
 	fl.BoolVar(&f.includePrereleases, "include-prereleases", false,
 		"include prereleases (on when <from> or <to> is a prerelease)")
+	fl.BoolVar(&f.fromMise, flagFromMise, false,
+		"digest every outdated tool pinned in the project's mise config, pin to latest")
+	fl.BoolVar(&f.all, flagAll, false, "digest every outdated pin in the project, as 'relgap outdated' lists them")
+	fl.StringSlice(flagFailOn, config.Default().Policy.FailOn,
+		"exit 3 when this matches: breaking; repeatable (config policy.fail_on)")
+	cmd.MarkFlagsMutuallyExclusive(flagFromMise, flagAll)
+	cmd.MarkFlagsMutuallyExclusive(flagFromMise, flagLine)
+	cmd.MarkFlagsMutuallyExclusive(flagAll, flagLine)
+	cmd.MarkFlagsMutuallyExclusive(flagFromMise, "include-prereleases")
+	cmd.MarkFlagsMutuallyExclusive(flagAll, "include-prereleases")
 	return cmd
 }
 
@@ -76,7 +117,11 @@ func runDigest(cmd *cobra.Command, d *app.Deps, g *globals, f digestFlags, tool,
 	if err != nil {
 		return err
 	}
-	if !cmd.Flags().Changed("line") && resolution.Tool.Version.Line != "" {
+	gate, err := newGate(d, false)
+	if err != nil {
+		return err
+	}
+	if !cmd.Flags().Changed(flagLine) && resolution.Tool.Version.Line != "" {
 		line = version.Level(resolution.Tool.Version.Line)
 	}
 	cache, err := g.newCache(d)
@@ -101,8 +146,21 @@ func runDigest(cmd *cobra.Command, d *app.Deps, g *globals, f digestFlags, tool,
 		return digestError(err)
 	}
 	data := &report.Digest{Tools: []report.ToolDigest{*digest}}
+	if err = writeDigest(d, g, data, []render.Error{}); err != nil {
+		return err
+	}
+	if broken := report.BreakingIn(data.Tools); gate.Breaking && len(broken) > 0 {
+		return &exitError{code: ExitFindings, err: fmt.Errorf("--fail-on breaking matched %s %s..%s",
+			digest.Tool, digest.From, digest.To)}
+	}
+	return nil
+}
+
+func writeDigest(d *app.Deps, g *globals, data *report.Digest, errs []render.Error) error {
 	if g.outFormat == render.FormatJSON {
-		return render.JSON(d.Stdout, render.NewEnvelope(buildinfo.Get().Version, d.Clock(), data))
+		env := render.NewEnvelope(buildinfo.Get().Version, d.Clock(), data)
+		env.Errors = errs
+		return render.JSON(d.Stdout, env)
 	}
 	if g.outFormat == render.FormatMD {
 		return render.DigestMarkdown(d.Stdout, data)
@@ -110,6 +168,71 @@ func runDigest(cmd *cobra.Command, d *app.Deps, g *globals, f digestFlags, tool,
 	color := g.outFormat == render.FormatTTY &&
 		render.UseColor(render.ColorMode(g.color), d.Env.Lookup, app.IsTerminal(d.Stdout))
 	return render.DigestText(d.Stdout, data, color)
+}
+
+// runDigestProject digests the outdated pins of the project at root, using the comparison
+// 'relgap outdated' makes, so both commands report the same ranges and counts.
+func runDigestProject(cmd *cobra.Command, d *app.Deps, g *globals, f digestFlags, root string) error {
+	if err := g.outFormat.Check(render.FormatTTY, render.FormatPlain, render.FormatMD, render.FormatJSON); err != nil {
+		return usageError(err)
+	}
+	var keep func(scan.Pin) bool
+	if f.fromMise {
+		keep = func(p scan.Pin) bool { return p.Location.Detector == scan.DetectorMise }
+	}
+	resolver, err := g.loadProject(cmd, d)
+	if err != nil {
+		return err
+	}
+	gate, err := newGate(d, false)
+	if err != nil {
+		return err
+	}
+	run, err := g.compare(cmd, d, resolver, root, keep)
+	if err != nil {
+		return err
+	}
+	if err = writeDigest(d, g, &report.Digest{Tools: run.out.Digests()}, run.errors()); err != nil {
+		return err
+	}
+	run.warn(cmd, d)
+	run.notDigested(d)
+	return run.exit(cmd, d, gate)
+}
+
+// notDigested tells on stderr which compared pins have no digest and why.
+func (c *comparison) notDigested(d *app.Deps) {
+	var latest, other []string
+	skipped := 0
+	for _, p := range c.out.Pins {
+		switch p.Status {
+		case report.StatusCurrent:
+			latest = append(latest, p.Tool+" "+p.Current)
+		case report.StatusUnknown:
+			other = append(
+				other,
+				fmt.Sprintf("%s %s (%s): %s", p.Tool, p.Pin.Value, render.PinLocation(p.Pin.Location), p.Note),
+			)
+		case report.StatusSkipped:
+			skipped++
+		case report.StatusOutdated, report.StatusError:
+		}
+	}
+	if len(latest) > 0 {
+		_, _ = fmt.Fprintf(
+			d.Stderr,
+			"%s: at the latest version, no digest: %s\n",
+			config.AppName,
+			strings.Join(latest, ", "),
+		)
+	}
+	for _, o := range other {
+		_, _ = fmt.Fprintf(d.Stderr, "%s: not digested: %s\n", config.AppName, o)
+	}
+	if skipped > 0 {
+		_, _ = fmt.Fprintf(d.Stderr, "%s: %d %s skipped; 'relgap outdated --format json' says why\n",
+			config.AppName, skipped, plural(skipped, "pin", "pins"))
+	}
 }
 
 // parseRange splits "A..B" or "A.." into from and to.
