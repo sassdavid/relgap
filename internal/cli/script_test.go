@@ -107,6 +107,17 @@ func runRelgap(args []string) int {
 		}
 		d.HTTPTransport = redirect{base: u, rt: http.DefaultTransport}
 	}
+	if os.Getenv(envCassette) != "" && vcr.Recording() {
+		// Recording overwrites the cassette on every exec, so an exec answered from an earlier
+		// exec's cache would save fewer interactions. Each recording exec gets an empty cache.
+		dir, err := os.MkdirTemp("", "relgap-record-cache-")
+		if err != nil {
+			_, _ = fmt.Fprintln(os.Stderr, err)
+			return 1
+		}
+		defer os.RemoveAll(dir)
+		d.Env = append(d.Env, "RELGAP_CACHE_DIR="+dir)
+	}
 	if path := os.Getenv(envCassette); path != "" {
 		rec, err := vcr.New(path, vcr.Options{Record: vcr.Recording(), Scrubber: ghtest.Scrubber(os.Getenv(envToken))})
 		if err != nil {

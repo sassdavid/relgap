@@ -21,13 +21,17 @@ stdout carries data, stderr carries logs. Use --format json for scripting.
       --log-file string         write logs to this file instead of stderr
       --log-format string       log format: text or json (default "text")
       --min-confidence float    hide entries below this confidence, 0..1 (config policy.min_confidence) (default 0.5)
+      --no-cache[=true|false]   neither read nor write the HTTP cache
       --no-input[=true|false]   never prompt for input
+      --offline[=true|false]    answer from the HTTP cache only and fail on a miss
   -q, --quiet[=true|false]      log errors only
+      --refresh[=true|false]    revalidate every cached response, even fresh ones
   -v, --verbose count           more logging: -v info, -vv debug, -vvv trace
 ```
 
 ### SEE ALSO
 
+* [relgap cache](relgap_cache.md)	 - Inspect or clear the HTTP cache
 * [relgap completion](relgap_completion.md)	 - Generate the autocompletion script for the specified shell
 * [relgap config](relgap_config.md)	 - Inspect and validate configuration
 * [relgap digest](relgap_digest.md)	 - Merge the release notes of every version in a range into one digest

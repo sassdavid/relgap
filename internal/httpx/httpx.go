@@ -68,6 +68,7 @@ type Options struct {
 	RetryWaitMin time.Duration
 	RetryWaitMax time.Duration
 	Clock        func() time.Time
+	Cache        *Cache // nil means no cache
 }
 
 // DefaultLimits returns the per-host limits: 8 concurrent requests to the GitHub API, 4 elsewhere.
@@ -76,7 +77,8 @@ func DefaultLimits() (map[string]Limit, Limit) {
 		Limit{Concurrency: otherConcurrency, Rate: otherRate}
 }
 
-// New returns a client that retries, limits and logs every request.
+// New returns a client that retries, limits and logs every request. With o.Cache, fresh cached
+// responses skip all of that.
 func New(o Options) *http.Client {
 	if o.Transport == nil {
 		if t, ok := http.DefaultTransport.(*http.Transport); ok {
@@ -118,7 +120,11 @@ func New(o Options) *http.Client {
 		Backoff:      backoff,
 		ErrorHandler: retryablehttp.PassthroughErrorHandler,
 	}
-	return &http.Client{Transport: &retryablehttp.RoundTripper{Client: rc}}
+	var rt http.RoundTripper = &retryablehttp.RoundTripper{Client: rc}
+	if o.Cache != nil {
+		rt = o.Cache.wrap(rt)
+	}
+	return &http.Client{Transport: rt}
 }
 
 func checkRetry(ctx context.Context, resp *http.Response, err error) (bool, error) {

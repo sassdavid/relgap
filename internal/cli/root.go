@@ -37,6 +37,9 @@ type globals struct {
 	noInput       bool
 	concurrency   int
 	minConfidence float64
+	offline       bool
+	refresh       bool
+	noCache       bool
 
 	outFormat render.Format
 	started   bool
@@ -96,7 +99,11 @@ stdout carries data, stderr carries logs. Use --format json for scripting.`,
 		"maximum concurrent requests per tool (config github.concurrency)")
 	pf.Float64Var(&g.minConfidence, flagMinConfidence, def.Policy.MinConfidence,
 		"hide entries below this confidence, 0..1 (config policy.min_confidence)")
+	pf.BoolVar(&g.offline, "offline", false, "answer from the HTTP cache only and fail on a miss")
+	pf.BoolVar(&g.refresh, "refresh", false, "revalidate every cached response, even fresh ones")
+	pf.BoolVar(&g.noCache, "no-cache", false, "neither read nor write the HTTP cache")
 	root.MarkFlagsMutuallyExclusive("verbose", "quiet")
+	root.MarkFlagsMutuallyExclusive("offline", "refresh", "no-cache")
 
 	root.AddCommand(
 		newVersionCmd(d, g),
@@ -104,6 +111,7 @@ stdout carries data, stderr carries logs. Use --format json for scripting.`,
 		newResolveCmd(d, g),
 		newDigestCmd(d, g),
 		newRegistryCmd(d, g),
+		newCacheCmd(d, g),
 	)
 	return root, g
 }

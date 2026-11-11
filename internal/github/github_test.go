@@ -378,3 +378,25 @@ func ExampleToken() {
 	fmt.Println(len(token), source)
 	// Output: 5 GITHUB_TOKEN
 }
+
+func TestNewestRelease(t *testing.T) {
+	t.Parallel()
+	tests := []struct {
+		name, body string
+		want       time.Time
+	}{
+		{
+			"graphql", `{"data":{"repository":{"releases":{"nodes":[` +
+				`{"publishedAt":"2026-10-01T10:00:00Z"},{"publishedAt":"2026-11-02T09:30:00Z"},{"publishedAt":null}]}}}}`,
+			time.Date(2026, 11, 2, 9, 30, 0, 0, time.UTC),
+		},
+		{
+			"rest", `[{"published_at": "2025-01-05T00:00:00+02:00"},{"published_at":"bad"}]`,
+			time.Date(2025, 1, 4, 22, 0, 0, 0, time.UTC),
+		},
+		{"tags", `{"data":{"repository":{"refs":{"nodes":[{"name":"v1"}]}}}}`, time.Time{}},
+	}
+	for _, tt := range tests {
+		assert.Equal(t, tt.want, github.NewestRelease(nil, []byte(tt.body)), tt.name)
+	}
+}

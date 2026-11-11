@@ -37,7 +37,7 @@ goreleaser, chezmoi, k9s, golangci-lint.
 | Concurrency | `golang.org/x/sync` (errgroup) | **v0.25.0** | |
 | HTTP retry | `github.com/hashicorp/go-retryablehttp` | v0.7.8 | latest; used by terraform, tofu, trivy |
 | Rate limit | `golang.org/x/time` | v0.16.0 | |
-| HTTP cache | own ETag layer (default) / `github.com/bartventer/httpcache` | — / v0.14.0 | decide at relgap M4; `gregjones/httpcache` is archived |
+| HTTP cache | own ETag layer in `internal/httpx` | — | [relgap ADR-0006](../plan/adr/0006-http-cache.md). `bartventer/httpcache` v0.14.0 rejected: RFC 9111 never caches POST and stores `Vary: Authorization` request values; `gregjones/httpcache` is archived |
 | Compression | `github.com/klauspost/compress` (zstd cache files) | v1.20.4 | |
 | Styling | `charm.land/lipgloss/v2` (+ `/table`) | **v2.1.0** (released today) | latest at M0; gh/terragrunt/goreleaser are on v2.0.x |
 | Markdown to terminal | `charm.land/glamour/v2` | v2.0.1 | |

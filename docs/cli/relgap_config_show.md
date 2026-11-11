@@ -31,8 +31,11 @@ relgap config show [flags]
       --log-file string         write logs to this file instead of stderr
       --log-format string       log format: text or json (default "text")
       --min-confidence float    hide entries below this confidence, 0..1 (config policy.min_confidence) (default 0.5)
+      --no-cache[=true|false]   neither read nor write the HTTP cache
       --no-input[=true|false]   never prompt for input
+      --offline[=true|false]    answer from the HTTP cache only and fail on a miss
   -q, --quiet[=true|false]      log errors only
+      --refresh[=true|false]    revalidate every cached response, even fresh ones
   -v, --verbose count           more logging: -v info, -vv debug, -vvv trace
 ```
 

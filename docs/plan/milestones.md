@@ -32,8 +32,8 @@ Scope: `httpx` (retry, rate, no cache yet), go-github + githubv4 batch, token di
 - [x] `md` renderer golden output for 3 tools.
 
 ### M4: Cache, ETag, offline
-- [ ] A second identical digest makes 0 non-304 requests (counter). `--offline` works with the network disabled (testscript sets a bogus proxy).
-- [ ] Age-based TTLs are unit-tested with an injected clock. `cache info|clear|prune` are covered.
+- [x] A second identical digest makes 0 non-304 requests (counter). `--offline` works with the network disabled (testscript sets a bogus proxy).
+- [x] Age-based TTLs are unit-tested with an injected clock. `cache info|clear|prune` are covered.
 
 ### M5: Pin discovery → [pin-discovery](specs/pin-discovery.md)
 - [ ] All pin-discovery.md criteria. `relgap pins` works against a dotfriedrice-shaped fixture.
