@@ -2,12 +2,17 @@ package httpx
 
 import (
 	"context"
+	"crypto/tls"
+	"crypto/x509"
 	"errors"
 	"fmt"
 	"log/slog"
 	"math/rand/v2"
 	"net/http"
+	"os"
+	"slices"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 
@@ -27,6 +32,7 @@ const (
 	attemptTimeout      = 2 * time.Minute
 	lowRemainingDivisor = 10 // slow down below 10% of the rate limit
 	minLowRate          = 0.2
+	nearLimitRate       = 1 // requests per second once a host says it is near its limit
 	githubConcurrency   = 8
 	githubRate          = 20
 	otherConcurrency    = 4
@@ -68,7 +74,11 @@ type Options struct {
 	RetryWaitMin time.Duration
 	RetryWaitMax time.Duration
 	Clock        func() time.Time
-	Cache        *Cache // nil means no cache
+	RetryPOST    bool                                      // POSTs are reads, such as GraphQL queries, and may be resent
+	Wrap         func(http.RoundTripper) http.RoundTripper // outermost layer, such as a cache; nil means none
+	// SecretPathHosts are hosts whose URL path is a secret, such as hooks.slack.com; logs show
+	// their paths as [redacted].
+	SecretPathHosts []string
 }
 
 // DefaultLimits returns the per-host limits: 8 concurrent requests to the GitHub API, 4 elsewhere.
@@ -77,15 +87,11 @@ func DefaultLimits() (map[string]Limit, Limit) {
 		Limit{Concurrency: otherConcurrency, Rate: otherRate}
 }
 
-// New returns a client that retries, limits and logs every request. With o.Cache, fresh cached
-// responses skip all of that.
+// New returns a client that retries, limits and logs every request. Without o.RetryPOST, a POST is
+// retried only when the server refused it with 429 or a Retry-After, so a create is never sent twice.
 func New(o Options) *http.Client {
 	if o.Transport == nil {
-		if t, ok := http.DefaultTransport.(*http.Transport); ok {
-			o.Transport = t.Clone() // keeps ProxyFromEnvironment and the default timeouts
-		} else {
-			o.Transport = http.DefaultTransport
-		}
+		o.Transport = defaultTransport()
 	}
 	if o.Limits == nil {
 		o.Limits, o.Default = DefaultLimits()
@@ -102,7 +108,10 @@ func New(o Options) *http.Client {
 	if o.Clock == nil {
 		o.Clock = time.Now
 	}
-	inner := &logging{logger: o.Logger, userAgent: o.UserAgent, next: o.Transport}
+	inner := &logging{
+		logger: o.Logger, userAgent: o.UserAgent, retryPOST: o.RetryPOST, secretHosts: o.SecretPathHosts,
+		next: o.Transport,
+	}
 	lim := &limiter{
 		logger: o.Logger,
 		limits: o.Limits,
@@ -116,15 +125,62 @@ func New(o Options) *http.Client {
 		RetryWaitMin: o.RetryWaitMin,
 		RetryWaitMax: o.RetryWaitMax,
 		RetryMax:     o.RetryMax,
-		CheckRetry:   checkRetry,
+		CheckRetry:   retryPolicy(o.RetryPOST),
 		Backoff:      backoff,
 		ErrorHandler: retryablehttp.PassthroughErrorHandler,
 	}
 	var rt http.RoundTripper = &retryablehttp.RoundTripper{Client: rc}
-	if o.Cache != nil {
-		rt = o.Cache.wrap(rt)
+	if o.Wrap != nil {
+		rt = o.Wrap(rt)
 	}
 	return &http.Client{Transport: rt}
+}
+
+// defaultTransport clones the default transport, which keeps ProxyFromEnvironment and the default
+// timeouts.
+func defaultTransport() http.RoundTripper {
+	if t, ok := http.DefaultTransport.(*http.Transport); ok {
+		return t.Clone()
+	}
+	return http.DefaultTransport
+}
+
+// CATransport returns the default transport trusting the PEM certificates in caFile on top of the
+// system pool, for [Options.Transport]. SSL_CERT_FILE works this way on macOS and Windows too.
+func CATransport(caFile string) (http.RoundTripper, error) {
+	t, ok := defaultTransport().(*http.Transport)
+	if !ok {
+		return nil, errors.New("default transport is not an *http.Transport")
+	}
+	pem, err := os.ReadFile(caFile)
+	if err != nil {
+		return nil, fmt.Errorf("read CA bundle: %w", err)
+	}
+	pool, err := x509.SystemCertPool()
+	if err != nil {
+		pool = x509.NewCertPool()
+	}
+	if !pool.AppendCertsFromPEM(pem) {
+		return nil, fmt.Errorf("read CA bundle %s: no PEM certificates", caFile)
+	}
+	t.TLSClientConfig = &tls.Config{RootCAs: pool, MinVersion: tls.VersionTLS12}
+	return t, nil
+}
+
+// noRetryError marks a failed POST: the server may have acted on it, so it isn't sent again.
+type noRetryError struct{ err error }
+
+func (e *noRetryError) Error() string { return e.err.Error() }
+func (e *noRetryError) Unwrap() error { return e.err }
+
+func retryPolicy(retryPOST bool) retryablehttp.CheckRetry {
+	return func(ctx context.Context, resp *http.Response, err error) (bool, error) {
+		if !retryPOST && err == nil && resp.Request != nil && resp.Request.Method == http.MethodPost &&
+			resp.StatusCode != http.StatusTooManyRequests && resp.Header.Get("Retry-After") == "" {
+			return false, nil
+		}
+		return checkRetry(ctx, resp, err)
+	}
 }
 
 func checkRetry(ctx context.Context, resp *http.Response, err error) (bool, error) {
@@ -134,9 +190,12 @@ func checkRetry(ctx context.Context, resp *http.Response, err error) (bool, erro
 	if errors.Is(err, ErrRateLimited) {
 		return false, err
 	}
-	// GitHub answers a secondary rate limit with 403 and Retry-After.
-	if err == nil && resp.StatusCode == http.StatusForbidden && resp.Header.Get("Retry-After") != "" {
-		return true, nil
+	if _, ok := errors.AsType[*noRetryError](err); ok {
+		return false, err
+	}
+	if err == nil && resp.Header.Get("Retry-After") != "" &&
+		(resp.StatusCode == http.StatusForbidden || resp.StatusCode == http.StatusTooManyRequests) {
+		return true, nil // GitHub answers a secondary rate limit with 403 and Retry-After
 	}
 	return retryablehttp.DefaultRetryPolicy(ctx, resp, err) //nolint:wrapcheck // passes the policy's verdict through
 }
@@ -217,9 +276,15 @@ func (l *limiter) RoundTrip(req *http.Request) (*http.Response, error) {
 	return resp, nil
 }
 
-// watch reads GitHub's x-ratelimit headers. It turns an exhausted limit into a [RateLimitError]
+// watch reads the x-ratelimit headers of GitHub and Bitbucket Cloud. It turns an exhausted limit into a [RateLimitError]
 // and spreads the remaining requests until the reset when less than 10% is left.
 func (l *limiter) watch(ctx context.Context, host string, h *hostLimit, resp *http.Response) error {
+	if resp.Header.Get("X-Ratelimit-Nearlimit") == "true" && h.rate != nil {
+		// Bitbucket Cloud sends no remaining count, only this flag below 20% left.
+		h.rate.SetLimit(rate.Limit(min(nearLimitRate, float64(h.rate.Limit()))))
+		l.warnLow(ctx, h, "host", host, "limit", resp.Header.Get("X-Ratelimit-Limit"))
+		return nil
+	}
 	remaining, limit, reset, ok := rateLimitHeaders(resp.Header)
 	if !ok {
 		return nil
@@ -236,15 +301,19 @@ func (l *limiter) watch(ctx context.Context, host string, h *hostLimit, resp *ht
 		perSecond = max(float64(remaining)/until, minLowRate)
 	}
 	h.rate.SetLimit(rate.Limit(min(perSecond, float64(h.rate.Limit()))))
+	l.warnLow(ctx, h, "host", host, "remaining", remaining, "limit", limit, "reset", reset.UTC().Format(time.RFC3339))
+	return nil
+}
+
+// warnLow logs once per host that the rate limit is almost used up.
+func (l *limiter) warnLow(ctx context.Context, h *hostLimit, attrs ...any) {
 	l.mu.Lock()
 	first := !h.low
 	h.low = true
 	l.mu.Unlock()
 	if first {
-		l.logger.WarnContext(ctx, "rate limit almost used up; slowing down",
-			"host", host, "remaining", remaining, "limit", limit, "reset", reset.UTC().Format(time.RFC3339))
+		l.logger.WarnContext(ctx, "rate limit almost used up; slowing down", attrs...)
 	}
-	return nil
 }
 
 // rateLimitHeaders parses x-ratelimit-remaining, -limit and -reset; ok is false when any is missing.
@@ -266,9 +335,11 @@ func rateLimitHeaders(h http.Header) (int, int, time.Time, bool) {
 
 // logging sets the User-Agent and logs each attempt: a line at debug, headers at trace.
 type logging struct {
-	logger    *slog.Logger
-	userAgent string
-	next      http.RoundTripper
+	logger      *slog.Logger
+	userAgent   string
+	retryPOST   bool
+	secretHosts []string
+	next        http.RoundTripper
 }
 
 func (l *logging) RoundTrip(req *http.Request) (*http.Response, error) {
@@ -279,9 +350,20 @@ func (l *logging) RoundTrip(req *http.Request) (*http.Response, error) {
 	}
 	start := time.Now()
 	resp, err := l.next.RoundTrip(out)
-	attrs := []any{"method", req.Method, "url", req.URL.String(), "duration", time.Since(start).Round(time.Millisecond)}
+	shown := req.URL.String()
+	if slices.Contains(l.secretHosts, req.URL.Hostname()) {
+		shown = req.URL.Scheme + "://" + req.URL.Host + "/[redacted]"
+	}
+	attrs := []any{"method", req.Method, "url", shown, "duration", time.Since(start).Round(time.Millisecond)}
 	if err != nil {
-		l.logger.DebugContext(ctx, "http request failed", append(attrs, "error", err)...)
+		errText := err.Error()
+		if shown != req.URL.String() {
+			errText = strings.ReplaceAll(errText, req.URL.String(), shown)
+		}
+		l.logger.DebugContext(ctx, "http request failed", append(attrs, "error", errText)...)
+		if req.Method == http.MethodPost && !l.retryPOST {
+			return nil, &noRetryError{err: err}
+		}
 		return nil, err //nolint:wrapcheck // a transport passes errors through unchanged
 	}
 	l.logger.DebugContext(ctx, "http request", append(attrs, "status", resp.StatusCode)...)

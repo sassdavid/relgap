@@ -284,7 +284,8 @@ func newGitHubClient(
 		UserAgent: fmt.Sprintf("relgap/%s (+https://github.com/sassdavid/relgap)", buildinfo.Get().Version),
 		Limits:    limits,
 		Default:   def,
-		Cache:     cache,
+		RetryPOST: true, // GraphQL queries
+		Wrap:      cache.Wrap,
 	})
 	gh, err := github.New(hc, github.Options{Token: token, Logger: d.Logger, Concurrency: concurrency})
 	if err != nil {
