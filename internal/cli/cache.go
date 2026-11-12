@@ -26,7 +26,7 @@ func ttlSources() map[string]string {
 	return map[string]string{
 		"github":    httpx.GitHubAPIHost,
 		"endoflife": "endoflife.date",
-		"osv":       "api.osv.dev",
+		"osv":       httpx.OSVHost,
 	}
 }
 
@@ -39,9 +39,10 @@ env RELGAP_CACHE_DIR). Each entry holds the response body and a few response hea
 type, ETag, Last-Modified, Link); request headers and tokens are never stored.
 
 An entry is fresh for a time that depends on the age of the newest release it describes:
-1 hour under 7 days, 1 day under 6 months, 10 days when older. cache.ttl_override sets a fixed
-TTL per source (github, endoflife, osv) or host. A stale GET is revalidated with If-None-Match,
-and an authenticated 304 from GitHub doesn't count against the rate limit.
+1 hour under 7 days, 1 day under 6 months, 10 days when older. endoflife.date and OSV answers
+stay fresh for 1 day, and a 404 for 1 hour. cache.ttl_override sets a fixed TTL per source
+(github, endoflife, osv) or host. A stale GET is revalidated with If-None-Match, and an
+authenticated 304 from GitHub doesn't count against the rate limit.
 
 --offline answers from the cache only, --refresh revalidates everything, --no-cache skips it.`,
 		Args: noArgs,
@@ -196,10 +197,15 @@ func (g *globals) newCache(d *app.Deps) (*httpx.Cache, error) {
 	}), nil
 }
 
-// parseTTLOverride turns cache.ttl_override into TTLs by host. Keys are source names or hosts.
+// enrichmentTTL is how long endoflife.date and OSV answers stay fresh unless the config says
+// otherwise. Neither tells relgap how old its data is.
+const enrichmentTTL = 24 * time.Hour
+
+// parseTTLOverride turns cache.ttl_override into TTLs by host, on top of the 1-day default for
+// endoflife.date and OSV. Keys are source names or hosts.
 func parseTTLOverride(in map[string]string) (map[string]time.Duration, error) {
 	sources := ttlSources()
-	out := make(map[string]time.Duration, len(in))
+	out := map[string]time.Duration{sources["endoflife"]: enrichmentTTL, sources["osv"]: enrichmentTTL}
 	for key, val := range in {
 		ttl, err := time.ParseDuration(val)
 		if err != nil || ttl <= 0 {

@@ -35,4 +35,5 @@ changelogs need rules that auto-discovery gets wrong. The schema is schemas/regi
 
 * [relgap](relgap.md)	 - Release-notes digests and toolchain drift for the tools you pin
 * [relgap registry lint](relgap_registry_lint.md)	 - Validate registry entries against the schema
+* [relgap registry test](relgap_registry_test.md)	 - Run each source of a registry entry live and show what it produced
 

@@ -36,6 +36,7 @@ const (
 	youngAge = 7 * 24 * time.Hour
 	midAge   = 182 * 24 * time.Hour
 	youngTTL = time.Hour
+	missTTL  = time.Hour // a remembered 404
 	midTTL   = 24 * time.Hour
 	oldTTL   = 10 * 24 * time.Hour
 )
@@ -160,19 +161,14 @@ func (t *cacheTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 
 	out := req.Clone(ctx)
 	out.Body, out.GetBody = bodyFuncs(body)
-	if hit && req.Method == http.MethodGet {
-		if e.meta.ETag != "" {
-			out.Header.Set("If-None-Match", e.meta.ETag)
-		}
-		if e.meta.LastModified != "" {
-			out.Header.Set("If-Modified-Since", e.meta.LastModified)
-		}
+	if hit {
+		conditional(out, e)
 	}
 	resp, err := t.send(out)
 	if err != nil {
 		return nil, err
 	}
-	if resp.StatusCode == http.StatusNotModified && hit {
+	if resp.StatusCode == http.StatusNotModified && hit && e.meta.Status == 0 {
 		c.notModified.Add(1)
 		_, _ = io.Copy(io.Discard, resp.Body)
 		_ = resp.Body.Close()
@@ -180,10 +176,46 @@ func (t *cacheTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 		c.save(ctx, key, e)
 		return c.serve(ctx, req, key, e, now, "revalidated")
 	}
+	if resp.StatusCode == http.StatusNotFound && req.Method == http.MethodGet && !noStore(resp.Header) {
+		return c.keepMiss(ctx, req, key, resp, now)
+	}
 	if resp.StatusCode != http.StatusOK || noStore(resp.Header) {
 		return resp, nil
 	}
 	return c.keep(ctx, req, key, resp, now)
+}
+
+// keepMiss remembers a 404 for an hour, so a per-version file that doesn't exist (k9s's
+// change_logs/release_v<version>.md) costs no request in the next run and works offline.
+func (c *Cache) keepMiss(ctx context.Context, req *http.Request, key string, resp *http.Response,
+	now time.Time,
+) (*http.Response, error) {
+	body, err := io.ReadAll(resp.Body)
+	_ = resp.Body.Close()
+	if err != nil {
+		return nil, fmt.Errorf("read %s: %w", req.URL.Redacted(), err)
+	}
+	resp.Body = io.NopCloser(bytes.NewReader(body))
+	m := newMeta(req, resp, now)
+	m.Status = http.StatusNotFound
+	m.Newest = time.Time{}
+	c.save(ctx, key, &entry{meta: m, body: body})
+	c.opts.Logger.DebugContext(ctx, "http cache", "outcome", "stored miss", "url", req.URL.Redacted())
+	return resp, nil
+}
+
+// conditional makes a GET of a stored 200 revalidate it. A remembered 404 has nothing to
+// revalidate and is asked for again.
+func conditional(req *http.Request, e *entry) {
+	if req.Method != http.MethodGet || e.meta.Status != 0 {
+		return
+	}
+	if e.meta.ETag != "" {
+		req.Header.Set("If-None-Match", e.meta.ETag)
+	}
+	if e.meta.LastModified != "" {
+		req.Header.Set("If-Modified-Since", e.meta.LastModified)
+	}
 }
 
 func (t *cacheTransport) send(req *http.Request) (*http.Response, error) {
@@ -238,9 +270,13 @@ func (c *Cache) serve(ctx context.Context, req *http.Request, key string, e *ent
 	}
 	c.store.touch(key, now)
 	c.opts.Logger.DebugContext(ctx, "http cache", "outcome", outcome, "url", req.URL.Redacted())
+	code := http.StatusOK
+	if e.meta.Status != 0 {
+		code = e.meta.Status
+	}
 	return &http.Response{
-		Status:        "200 OK",
-		StatusCode:    http.StatusOK,
+		Status:        fmt.Sprintf("%d %s", code, http.StatusText(code)),
+		StatusCode:    code,
 		Proto:         "HTTP/1.1",
 		ProtoMajor:    1,
 		ProtoMinor:    1,
@@ -257,6 +293,9 @@ func (c *Cache) fresh(m meta, now time.Time) bool {
 }
 
 func (c *Cache) ttl(m meta, now time.Time) time.Duration {
+	if m.Status == http.StatusNotFound {
+		return missTTL
+	}
 	if d, ok := c.opts.TTLOverride[m.Host]; ok {
 		return d
 	}
@@ -266,7 +305,11 @@ func (c *Cache) ttl(m meta, now time.Time) time.Duration {
 	return TTL(now.Sub(m.Newest))
 }
 
-// cacheable reports whether req is a GET or a GraphQL POST without its own conditional headers.
+// OSVHost is the host of the OSV API, whose batch query is a read-only POST.
+const OSVHost = "api.osv.dev"
+
+// cacheable reports whether req is a GET, a GraphQL POST or an OSV batch query, without its own
+// conditional headers. The POSTs only read, and the body is part of the key.
 func cacheable(req *http.Request) bool {
 	if req.Header.Get("If-None-Match") != "" || req.Header.Get("If-Modified-Since") != "" ||
 		req.Header.Get("Range") != "" {
@@ -276,7 +319,8 @@ func cacheable(req *http.Request) bool {
 	case http.MethodGet:
 		return true
 	case http.MethodPost:
-		return strings.HasSuffix(req.URL.Path, "/graphql")
+		return strings.HasSuffix(req.URL.Path, "/graphql") ||
+			(req.URL.Host == OSVHost && req.URL.Path == "/v1/querybatch")
 	default:
 		return false
 	}

@@ -12,6 +12,7 @@ import (
 
 	"go.yaml.in/yaml/v4"
 
+	"github.com/sassdavid/relgap/internal/htmlmd"
 	"github.com/sassdavid/relgap/internal/version"
 	"github.com/sassdavid/relgap/internal/yamlschema"
 	"github.com/sassdavid/relgap/schemas"
@@ -89,7 +90,18 @@ func (l *Linter) Lint(origin string, b []byte) (*Entry, []yamlschema.Problem, er
 
 // templateSample replaces heading placeholders so the expression can be compiled.
 func templateSample() *strings.Replacer {
-	return strings.NewReplacer(`{version}`, `1\.2\.3`, `{major}`, `1`, `{minor}`, `2`, `{prev_minor}`, `1`)
+	return strings.NewReplacer(
+		`{version}`,
+		`1\.2\.3`,
+		`{major}`,
+		`1`,
+		`{minor}`,
+		`2`,
+		`{prev_minor}`,
+		`1`,
+		`{tag}`,
+		`v1\.2\.3`,
+	)
 }
 
 // Keys used in problem locations.
@@ -107,10 +119,9 @@ func checkEntry(origin string, root *yaml.Node, e *Entry) []yamlschema.Problem {
 		}
 		problems = append(problems, p)
 	}
-	sample := templateSample()
 	checkRegex := func(loc []string, expr string) {
-		if _, err := regexp.Compile(sample.Replace(expr)); err != nil {
-			add(loc, false, "bad regular expression: "+strings.TrimPrefix(err.Error(), "error parsing regexp: "))
+		if msg := regexProblem(expr); msg != "" {
+			add(loc, false, msg)
 		}
 	}
 
@@ -128,13 +139,61 @@ func checkEntry(origin string, root *yaml.Node, e *Entry) []yamlschema.Problem {
 	case e.Version.Extract != "":
 		checkRegex([]string{keyVersion, "extract"}, e.Version.Extract)
 	}
-	for i, s := range e.Sources {
-		if s.Heading != "" {
-			checkRegex([]string{"sources", strconv.Itoa(i), "heading"}, s.Heading)
+	for i, src := range e.Sources {
+		for _, p := range checkSource(src) {
+			add(append([]string{"sources", strconv.Itoa(i)}, p.key...), false, p.msg)
 		}
 	}
 	yamlschema.SortProblems(problems)
 	return problems
+}
+
+// regexProblem describes why a registry regular expression doesn't compile, or returns "".
+func regexProblem(expr string) string {
+	if _, err := regexp.Compile(templateSample().Replace(expr)); err != nil {
+		return "bad regular expression: " + strings.TrimPrefix(err.Error(), "error parsing regexp: ")
+	}
+	return ""
+}
+
+// sourceProblem is a problem at a key of one source.
+type sourceProblem struct {
+	key []string
+	msg string
+}
+
+// checkSource checks what the schema can't in one source: its heading expression, template
+// placeholders, URL host and selectors.
+func checkSource(s Source) []sourceProblem {
+	var out []sourceProblem
+	if s.Heading != "" {
+		if msg := regexProblem(s.Heading); msg != "" {
+			out = append(out, sourceProblem{[]string{"heading"}, msg})
+		}
+	}
+	for key, tmpl := range map[string]string{
+		"path_template": s.PathTemplate, "url_template": s.URLTemplate, "ref": s.Ref, "anchor": s.Anchor,
+	} {
+		if err := checkTemplate(s.Kind, tmpl); err != nil {
+			out = append(out, sourceProblem{[]string{key}, err.Error()})
+		}
+	}
+	if s.URLTemplate != "" {
+		if err := CheckURL(sampleURL(s.URLTemplate)); err != nil {
+			out = append(out, sourceProblem{[]string{"url_template"}, err.Error()})
+		}
+	}
+	if s.Content != "" {
+		if _, err := htmlmd.ParseSelector(s.Content); err != nil {
+			out = append(out, sourceProblem{[]string{"content"}, err.Error()})
+		}
+	}
+	for j, sel := range s.Strip {
+		if _, err := htmlmd.ParseSelector(sel); err != nil {
+			out = append(out, sourceProblem{[]string{"strip", strconv.Itoa(j)}, err.Error()})
+		}
+	}
+	return out
 }
 
 func filepathToSlash(p string) string { return strings.ReplaceAll(p, `\`, "/") }

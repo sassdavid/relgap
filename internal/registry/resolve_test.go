@@ -151,13 +151,27 @@ func TestResolve(t *testing.T) {
 			in:       "TG_VERSION",
 			name:     "terragrunt",
 			repo:     "gruntwork-io/terragrunt",
+			prefix:   "v",
 			universe: "releases",
 			match: registry.Match{
 				By:    "config alias",
 				Value: "TG_VERSION",
 				Layer: registry.LayerConfig,
 			},
-			repoLayer: registry.LayerAqua,
+			repoLayer: registry.LayerRelgap,
+		},
+		{
+			in:       "tfprovider:hashicorp/aws",
+			name:     "terraform-provider-aws",
+			repo:     "hashicorp/terraform-provider-aws",
+			prefix:   "v",
+			universe: "releases",
+			match: registry.Match{
+				By:    "terraform provider",
+				Value: "hashicorp/aws",
+				Layer: registry.LayerRelgap,
+			},
+			repoLayer: registry.LayerRelgap,
 		},
 		{
 			in:       "KUBECTL_VERSION",
@@ -287,12 +301,12 @@ func TestResolveErrors(t *testing.T) {
 		{"", registry.ErrUnknownTool, "empty name"},
 		{"no-such-tool-anywhere", registry.ErrUnknownTool, "use github:owner/repo or aqua:package"},
 		{"X_VERSION", registry.ErrUnknownTool, "which no registry knows"},
-		{"tfprovider:hashicorp/aws", registry.ErrUnsupported, "tfprovider"},
+		{"tfprovider:hashicorp/random", registry.ErrUnsupported, "only curated providers resolve"},
 		{"chart:argo/argo-cd", registry.ErrUnsupported, "chart"},
 		{"core:node", registry.ErrUnsupported, `unknown prefix "core:" (relgap knows github and aqua)`},
 		{"github:not-a-repo", registry.ErrUnsupported, "github:owner/repo"},
 		{"aqua:nope/nope", registry.ErrUnknownTool, "aqua registry snapshot"},
-		{"node", registry.ErrNoRepo, "core:node"},
+		{"java", registry.ErrNoRepo, "core:java"},
 	}
 	for _, tt := range tests {
 		_, err := r.Resolve(tt.in)

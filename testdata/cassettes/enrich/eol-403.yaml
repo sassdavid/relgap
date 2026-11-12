@@ -1,0 +1,29 @@
+---
+# Written by hand: endoflife.date refusing requests (HTTP 403), as when a CDN blocks a runner.
+# Not a recording. 403 isn't retried, so the outage shows at once.
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: endoflife.date
+        headers:
+            Accept:
+                - application/json
+        url: https://endoflife.date/api/v1/products/kubernetes
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 9
+        body: Forbidden
+        headers:
+            Content-Type:
+                - text/plain
+        status: 403 Forbidden
+        code: 403
+        duration: 0s

@@ -1,0 +1,877 @@
+{
+  "schema_version": "1",
+  "tool": "relgap",
+  "version": "dev",
+  "generated_at": "2026-11-12T12:00:00Z",
+  "data": {
+    "tools": [
+      {
+        "tool": "awscli",
+        "repo": "aws/aws-cli",
+        "from": "2.31.0",
+        "to": "2.31.10",
+        "versions": [
+          {
+            "version": "2.31.1",
+            "tag": "2.31.1"
+          },
+          {
+            "version": "2.31.2",
+            "tag": "2.31.2"
+          },
+          {
+            "version": "2.31.3",
+            "tag": "2.31.3"
+          },
+          {
+            "version": "2.31.4",
+            "tag": "2.31.4"
+          },
+          {
+            "version": "2.31.5",
+            "tag": "2.31.5"
+          },
+          {
+            "version": "2.31.6",
+            "tag": "2.31.6"
+          },
+          {
+            "version": "2.31.7",
+            "tag": "2.31.7"
+          },
+          {
+            "version": "2.31.8",
+            "tag": "2.31.8"
+          },
+          {
+            "version": "2.31.9",
+            "tag": "2.31.9"
+          },
+          {
+            "version": "2.31.10",
+            "tag": "2.31.10"
+          }
+        ],
+        "entries": [
+          {
+            "version": "2.31.1",
+            "kind": "other",
+            "confidence": 0.9,
+            "text": "`appstream`: G6f instance support for AppStream 2.0",
+            "source": {
+              "adapter": "structured-json",
+              "url": "https://github.com/aws/aws-cli/blob/v2/.changes/2.31.1.json",
+              "heading": [
+                "api-change"
+              ]
+            }
+          },
+          {
+            "version": "2.31.1",
+            "kind": "other",
+            "confidence": 0.9,
+            "text": "`neptune`: Doc-only update to address customer use.",
+            "source": {
+              "adapter": "structured-json",
+              "url": "https://github.com/aws/aws-cli/blob/v2/.changes/2.31.1.json",
+              "heading": [
+                "api-change"
+              ]
+            }
+          },
+          {
+            "version": "2.31.1",
+            "kind": "other",
+            "confidence": 0.9,
+            "text": "`dax`: This release adds support for IPv6-only, DUAL_STACK DAX instances",
+            "source": {
+              "adapter": "structured-json",
+              "url": "https://github.com/aws/aws-cli/blob/v2/.changes/2.31.1.json",
+              "heading": [
+                "api-change"
+              ]
+            }
+          },
+          {
+            "version": "2.31.1",
+            "kind": "other",
+            "confidence": 0.9,
+            "text": "`cloudwatch`: Fix default dualstack FIPS endpoints in AWS GovCloud(US) regions",
+            "source": {
+              "adapter": "structured-json",
+              "url": "https://github.com/aws/aws-cli/blob/v2/.changes/2.31.1.json",
+              "heading": [
+                "api-change"
+              ]
+            }
+          },
+          {
+            "version": "2.31.1",
+            "kind": "other",
+            "confidence": 0.9,
+            "text": "`kms`: Documentation only updates for KMS.",
+            "source": {
+              "adapter": "structured-json",
+              "url": "https://github.com/aws/aws-cli/blob/v2/.changes/2.31.1.json",
+              "heading": [
+                "api-change"
+              ]
+            }
+          },
+          {
+            "version": "2.31.2",
+            "kind": "other",
+            "confidence": 0.9,
+            "text": "`lightsail`: Attribute HTTP binding update for Get/Delete operations",
+            "source": {
+              "adapter": "structured-json",
+              "url": "https://github.com/aws/aws-cli/blob/v2/.changes/2.31.2.json",
+              "heading": [
+                "api-change"
+              ]
+            }
+          },
+          {
+            "version": "2.31.2",
+            "kind": "other",
+            "confidence": 0.9,
+            "text": "`glue`: Update GetConnection(s) API to return KmsKeyArn & Add 63 missing connection types",
+            "source": {
+              "adapter": "structured-json",
+              "url": "https://github.com/aws/aws-cli/blob/v2/.changes/2.31.2.json",
+              "heading": [
+                "api-change"
+              ]
+            }
+          },
+          {
+            "version": "2.31.2",
+            "kind": "other",
+            "confidence": 0.9,
+            "text": "`network-firewall`: Network Firewall now introduces Reject and Alert action support for stateful domain list rule groups, providing customers with more granular control over their network traffic.",
+            "source": {
+              "adapter": "structured-json",
+              "url": "https://github.com/aws/aws-cli/blob/v2/.changes/2.31.2.json",
+              "heading": [
+                "api-change"
+              ]
+            }
+          },
+          {
+            "version": "2.31.3",
+            "kind": "other",
+            "confidence": 0.9,
+            "text": "`billing`: Add ability to combine custom billing views to create new consolidated views.",
+            "source": {
+              "adapter": "structured-json",
+              "url": "https://github.com/aws/aws-cli/blob/v2/.changes/2.31.3.json",
+              "heading": [
+                "api-change"
+              ]
+            }
+          },
+          {
+            "version": "2.31.3",
+            "kind": "other",
+            "confidence": 0.9,
+            "text": "`bedrock-data-automation`: Added support for configurable Speaker Labeling and Channel Labeling features for Audio modality.",
+            "source": {
+              "adapter": "structured-json",
+              "url": "https://github.com/aws/aws-cli/blob/v2/.changes/2.31.3.json",
+              "heading": [
+                "api-change"
+              ]
+            }
+          },
+          {
+            "version": "2.31.3",
+            "kind": "other",
+            "confidence": 0.9,
+            "text": "`bedrock-agent-runtime`: This release enhances the information provided through Flow Traces. New information includes source/next node tracking, execution chains for complex nodes, dependency action (operation) details, and dependency traces.",
+            "source": {
+              "adapter": "structured-json",
+              "url": "https://github.com/aws/aws-cli/blob/v2/.changes/2.31.3.json",
+              "heading": [
+                "api-change"
+              ]
+            }
+          },
+          {
+            "version": "2.31.3",
+            "kind": "other",
+            "confidence": 0.9,
+            "text": "`ec2`: This release includes documentation updates for Amazon EBS General Purpose SSD (gp3) volumes with larger size and higher IOPS and throughput.",
+            "source": {
+              "adapter": "structured-json",
+              "url": "https://github.com/aws/aws-cli/blob/v2/.changes/2.31.3.json",
+              "heading": [
+                "api-change"
+              ]
+            }
+          },
+          {
+            "version": "2.31.3",
+            "kind": "other",
+            "confidence": 0.9,
+            "text": "`connect`: Adds supports for manual contact picking (WorkList) operations on Routing Profiles, Agent Management and SearchContacts APIs.",
+            "source": {
+              "adapter": "structured-json",
+              "url": "https://github.com/aws/aws-cli/blob/v2/.changes/2.31.3.json",
+              "heading": [
+                "api-change"
+              ]
+            }
+          },
+          {
+            "version": "2.31.3",
+            "kind": "other",
+            "confidence": 0.9,
+            "text": "`dynamodbstreams`: Added support for IPv6 compatible endpoints for DynamoDB Streams.",
+            "source": {
+              "adapter": "structured-json",
+              "url": "https://github.com/aws/aws-cli/blob/v2/.changes/2.31.3.json",
+              "heading": [
+                "api-change"
+              ]
+            }
+          },
+          {
+            "version": "2.31.3",
+            "kind": "other",
+            "confidence": 0.9,
+            "text": "`ce`: Support for payer account dimension and billing view health status.",
+            "source": {
+              "adapter": "structured-json",
+              "url": "https://github.com/aws/aws-cli/blob/v2/.changes/2.31.3.json",
+              "heading": [
+                "api-change"
+              ]
+            }
+          },
+          {
+            "version": "2.31.3",
+            "kind": "other",
+            "confidence": 0.9,
+            "text": "`redshift`: Support tagging and tag propagation to IAM Identity Center for Redshift Idc Applications",
+            "source": {
+              "adapter": "structured-json",
+              "url": "https://github.com/aws/aws-cli/blob/v2/.changes/2.31.3.json",
+              "heading": [
+                "api-change"
+              ]
+            }
+          },
+          {
+            "version": "2.31.4",
+            "kind": "other",
+            "confidence": 0.9,
+            "text": "`vpc-lattice`: Adds support for specifying the number of IPv4 addresses in each ENI for the resource gateway for VPC Lattice.",
+            "source": {
+              "adapter": "structured-json",
+              "url": "https://github.com/aws/aws-cli/blob/v2/.changes/2.31.4.json",
+              "heading": [
+                "api-change"
+              ]
+            }
+          },
+          {
+            "version": "2.31.4",
+            "kind": "other",
+            "confidence": 0.9,
+            "text": "`bedrock`: Release for fixing GetFoundationModel API behavior. Imported and custom models have their own exclusive API and GetFM should not accept those ARNS as input",
+            "source": {
+              "adapter": "structured-json",
+              "url": "https://github.com/aws/aws-cli/blob/v2/.changes/2.31.4.json",
+              "heading": [
+                "api-change"
+              ]
+            }
+          },
+          {
+            "version": "2.31.4",
+            "kind": "other",
+            "confidence": 0.9,
+            "text": "`bedrock-runtime`: New stop reason for Converse and ConverseStream",
+            "source": {
+              "adapter": "structured-json",
+              "url": "https://github.com/aws/aws-cli/blob/v2/.changes/2.31.4.json",
+              "heading": [
+                "api-change"
+              ]
+            }
+          },
+          {
+            "version": "2.31.4",
+            "kind": "other",
+            "confidence": 0.9,
+            "text": "`imagebuilder`: This release introduces several new features and improvements to enhance pipeline management, logging, and resource configuration.",
+            "source": {
+              "adapter": "structured-json",
+              "url": "https://github.com/aws/aws-cli/blob/v2/.changes/2.31.4.json",
+              "heading": [
+                "api-change"
+              ]
+            }
+          },
+          {
+            "version": "2.31.5",
+            "kind": "other",
+            "confidence": 0.9,
+            "text": "`fsx`: Add Dual-Stack support for Amazon FSx for NetApp ONTAP and Windows File Server",
+            "source": {
+              "adapter": "structured-json",
+              "url": "https://github.com/aws/aws-cli/blob/v2/.changes/2.31.5.json",
+              "heading": [
+                "api-change"
+              ]
+            }
+          },
+          {
+            "version": "2.31.5",
+            "kind": "other",
+            "confidence": 0.9,
+            "text": "`datasync`: Added support for FIPS VPC endpoints in FIPS-enabled AWS Regions.",
+            "source": {
+              "adapter": "structured-json",
+              "url": "https://github.com/aws/aws-cli/blob/v2/.changes/2.31.5.json",
+              "heading": [
+                "api-change"
+              ]
+            }
+          },
+          {
+            "version": "2.31.5",
+            "kind": "other",
+            "confidence": 0.9,
+            "text": "`bedrock-agentcore-control`: Tagging support for AgentCore Gateway",
+            "source": {
+              "adapter": "structured-json",
+              "url": "https://github.com/aws/aws-cli/blob/v2/.changes/2.31.5.json",
+              "heading": [
+                "api-change"
+              ]
+            }
+          },
+          {
+            "version": "2.31.5",
+            "kind": "other",
+            "confidence": 0.9,
+            "text": "`connectcases`: This release adds support for two new related item types: ConnectCase for linking Amazon Connect cases and Custom for user-defined related items with configurable fields.",
+            "source": {
+              "adapter": "structured-json",
+              "url": "https://github.com/aws/aws-cli/blob/v2/.changes/2.31.5.json",
+              "heading": [
+                "api-change"
+              ]
+            }
+          },
+          {
+            "version": "2.31.5",
+            "kind": "other",
+            "confidence": 0.9,
+            "text": "`rds`: Enhanced RDS error handling: Added DBProxyEndpointNotFoundFault, DBShardGroupNotFoundFault, KMSKeyNotAccessibleFault for snapshots/restores/backups, NetworkTypeNotSupported, StorageTypeNotSupportedFault for restores, and granular state validation faults. Changed DBInstanceNotReadyFault to HTTP 400.",
+            "source": {
+              "adapter": "structured-json",
+              "url": "https://github.com/aws/aws-cli/blob/v2/.changes/2.31.5.json",
+              "heading": [
+                "api-change"
+              ]
+            }
+          },
+          {
+            "version": "2.31.5",
+            "kind": "other",
+            "confidence": 0.9,
+            "text": "`transfer`: Add support for updating server identity provider type",
+            "source": {
+              "adapter": "structured-json",
+              "url": "https://github.com/aws/aws-cli/blob/v2/.changes/2.31.5.json",
+              "heading": [
+                "api-change"
+              ]
+            }
+          },
+          {
+            "version": "2.31.5",
+            "kind": "other",
+            "confidence": 0.9,
+            "text": "`datazone`: This release adds support for creation of EMR on EKS Connections in Amazon DataZone.",
+            "source": {
+              "adapter": "structured-json",
+              "url": "https://github.com/aws/aws-cli/blob/v2/.changes/2.31.5.json",
+              "heading": [
+                "api-change"
+              ]
+            }
+          },
+          {
+            "version": "2.31.5",
+            "kind": "other",
+            "confidence": 0.9,
+            "text": "`ds`: AWS Directory service now supports IPv6-native and dual-stack configurations for AWS Managed Microsoft AD, AD Connector, and Simple AD (dual-stack only). Additionally, AWS Managed Microsoft AD Standard Edition directories can be upgraded to Enterprise Edition directories through a single API call.",
+            "source": {
+              "adapter": "structured-json",
+              "url": "https://github.com/aws/aws-cli/blob/v2/.changes/2.31.5.json",
+              "heading": [
+                "api-change"
+              ]
+            }
+          },
+          {
+            "version": "2.31.5",
+            "kind": "other",
+            "confidence": 0.9,
+            "text": "`ecs`: This release adds support for Managed Instances on Amazon ECS.",
+            "source": {
+              "adapter": "structured-json",
+              "url": "https://github.com/aws/aws-cli/blob/v2/.changes/2.31.5.json",
+              "heading": [
+                "api-change"
+              ]
+            }
+          },
+          {
+            "version": "2.31.5",
+            "kind": "other",
+            "confidence": 0.9,
+            "text": "`customer-profiles`: This release introduces ListProfileHistoryRecords and GetProfileHistoryRecord APIs for comprehensive profile history tracking with complete audit trails of creation, updates, merges, deletions, and data ingestion events.",
+            "source": {
+              "adapter": "structured-json",
+              "url": "https://github.com/aws/aws-cli/blob/v2/.changes/2.31.5.json",
+              "heading": [
+                "api-change"
+              ]
+            }
+          },
+          {
+            "version": "2.31.5",
+            "kind": "other",
+            "confidence": 0.9,
+            "text": "`quicksight`: added warnings to a few CLI pages",
+            "source": {
+              "adapter": "structured-json",
+              "url": "https://github.com/aws/aws-cli/blob/v2/.changes/2.31.5.json",
+              "heading": [
+                "api-change"
+              ]
+            }
+          },
+          {
+            "version": "2.31.5",
+            "kind": "other",
+            "confidence": 0.9,
+            "text": "`chime-sdk-voice`: Added support for IPv4-only and dual-stack network configurations for VoiceConnector and CreateVoiceConnector API.",
+            "source": {
+              "adapter": "structured-json",
+              "url": "https://github.com/aws/aws-cli/blob/v2/.changes/2.31.5.json",
+              "heading": [
+                "api-change"
+              ]
+            }
+          },
+          {
+            "version": "2.31.5",
+            "kind": "other",
+            "confidence": 0.9,
+            "text": "`application-signals`: Amazon CloudWatch Application Signals is introducing the Application Map to give users a more comprehensive view of their service health. Users will now be able to group services, track their latest deployments, and view automated audit findings concerning service performance.",
+            "source": {
+              "adapter": "structured-json",
+              "url": "https://github.com/aws/aws-cli/blob/v2/.changes/2.31.5.json",
+              "heading": [
+                "api-change"
+              ]
+            }
+          },
+          {
+            "version": "2.31.5",
+            "kind": "other",
+            "confidence": 0.9,
+            "text": "`mediatailor`: Adding TPS Traffic Shaping to Prefetch Schedules",
+            "source": {
+              "adapter": "structured-json",
+              "url": "https://github.com/aws/aws-cli/blob/v2/.changes/2.31.5.json",
+              "heading": [
+                "api-change"
+              ]
+            }
+          },
+          {
+            "version": "2.31.6",
+            "kind": "other",
+            "confidence": 0.9,
+            "text": "`dms`: This is a doc-only update, revising text for kms-key-arns.",
+            "source": {
+              "adapter": "structured-json",
+              "url": "https://github.com/aws/aws-cli/blob/v2/.changes/2.31.6.json",
+              "heading": [
+                "api-change"
+              ]
+            }
+          },
+          {
+            "version": "2.31.6",
+            "kind": "other",
+            "confidence": 0.9,
+            "text": "`ecs`: This is a documentation only Amazon ECS release that adds additional information for health checks.",
+            "source": {
+              "adapter": "structured-json",
+              "url": "https://github.com/aws/aws-cli/blob/v2/.changes/2.31.6.json",
+              "heading": [
+                "api-change"
+              ]
+            }
+          },
+          {
+            "version": "2.31.6",
+            "kind": "other",
+            "confidence": 0.9,
+            "text": "`cleanrooms`: This release introduces data access budgets to control how many times a table can be used for queries and jobs in a collaboration.",
+            "source": {
+              "adapter": "structured-json",
+              "url": "https://github.com/aws/aws-cli/blob/v2/.changes/2.31.6.json",
+              "heading": [
+                "api-change"
+              ]
+            }
+          },
+          {
+            "version": "2.31.6",
+            "kind": "other",
+            "confidence": 0.9,
+            "text": "`chime-sdk-meetings`: Add support to receive dual stack MediaPlacement URLs in Chime Meetings SDK",
+            "source": {
+              "adapter": "structured-json",
+              "url": "https://github.com/aws/aws-cli/blob/v2/.changes/2.31.6.json",
+              "heading": [
+                "api-change"
+              ]
+            }
+          },
+          {
+            "version": "2.31.6",
+            "kind": "other",
+            "confidence": 0.9,
+            "text": "`cleanroomsml`: This release introduces data access budgets to view how many times an input channel can be used for ML jobs in a collaboration.",
+            "source": {
+              "adapter": "structured-json",
+              "url": "https://github.com/aws/aws-cli/blob/v2/.changes/2.31.6.json",
+              "heading": [
+                "api-change"
+              ]
+            }
+          },
+          {
+            "version": "2.31.6",
+            "kind": "other",
+            "confidence": 0.9,
+            "text": "`pcs`: Added the UpdateCluster API action to modify cluster configurations, and Slurm custom settings for queues.",
+            "source": {
+              "adapter": "structured-json",
+              "url": "https://github.com/aws/aws-cli/blob/v2/.changes/2.31.6.json",
+              "heading": [
+                "api-change"
+              ]
+            }
+          },
+          {
+            "version": "2.31.6",
+            "kind": "fix",
+            "confidence": 0.9,
+            "text": "`botocore`: Fix HTTP 100 Continue parsing to accept optional reason phrase",
+            "source": {
+              "adapter": "structured-json",
+              "url": "https://github.com/aws/aws-cli/blob/v2/.changes/2.31.6.json",
+              "heading": [
+                "bugfix"
+              ]
+            }
+          },
+          {
+            "version": "2.31.6",
+            "kind": "fix",
+            "confidence": 0.9,
+            "text": "`s3`: Fix CancelledError retry loops to enable immediate S3 upload cancellation",
+            "source": {
+              "adapter": "structured-json",
+              "url": "https://github.com/aws/aws-cli/blob/v2/.changes/2.31.6.json",
+              "heading": [
+                "bugfix"
+              ]
+            }
+          },
+          {
+            "version": "2.31.7",
+            "kind": "other",
+            "confidence": 0.9,
+            "text": "`dynamodb`: Add support for dual-stack account endpoint generation",
+            "source": {
+              "adapter": "structured-json",
+              "url": "https://github.com/aws/aws-cli/blob/v2/.changes/2.31.7.json",
+              "heading": [
+                "api-change"
+              ]
+            }
+          },
+          {
+            "version": "2.31.7",
+            "kind": "other",
+            "confidence": 0.9,
+            "text": "`cloudformation`: Add new warning type 'EXCLUDED_RESOURCES'",
+            "source": {
+              "adapter": "structured-json",
+              "url": "https://github.com/aws/aws-cli/blob/v2/.changes/2.31.7.json",
+              "heading": [
+                "api-change"
+              ]
+            }
+          },
+          {
+            "version": "2.31.7",
+            "kind": "other",
+            "confidence": 0.9,
+            "text": "`guardduty`: Updated descriptions for the Location parameter in CreateTrustedEntitySet and CreateThreatEntitySet.",
+            "source": {
+              "adapter": "structured-json",
+              "url": "https://github.com/aws/aws-cli/blob/v2/.changes/2.31.7.json",
+              "heading": [
+                "api-change"
+              ]
+            }
+          },
+          {
+            "version": "2.31.7",
+            "kind": "other",
+            "confidence": 0.9,
+            "text": "`synthetics`: Adds support to configure canaries with pre-configured blueprint code on supported runtime versions. This behavior can be controlled via the new BlueprintTypes property exposed in the CreateCanary and UpdateCanary APIs.",
+            "source": {
+              "adapter": "structured-json",
+              "url": "https://github.com/aws/aws-cli/blob/v2/.changes/2.31.7.json",
+              "heading": [
+                "api-change"
+              ]
+            }
+          },
+          {
+            "version": "2.31.7",
+            "kind": "other",
+            "confidence": 0.9,
+            "text": "`connectcases`: New Search All Related Items API enables searching related items across cases",
+            "source": {
+              "adapter": "structured-json",
+              "url": "https://github.com/aws/aws-cli/blob/v2/.changes/2.31.7.json",
+              "heading": [
+                "api-change"
+              ]
+            }
+          },
+          {
+            "version": "2.31.7",
+            "kind": "feature",
+            "confidence": 0.9,
+            "text": "`eks`: Add `proxy-url` to `aws eks update-kubeconfig`",
+            "source": {
+              "adapter": "structured-json",
+              "url": "https://github.com/aws/aws-cli/blob/v2/.changes/2.31.7.json",
+              "heading": [
+                "enhancement"
+              ]
+            }
+          },
+          {
+            "version": "2.31.8",
+            "kind": "other",
+            "confidence": 0.9,
+            "text": "`qconnect`: Updated Amazon Q in Connect APIs to support Email Contact Recommendations.",
+            "source": {
+              "adapter": "structured-json",
+              "url": "https://github.com/aws/aws-cli/blob/v2/.changes/2.31.8.json",
+              "heading": [
+                "api-change"
+              ]
+            }
+          },
+          {
+            "version": "2.31.8",
+            "kind": "other",
+            "confidence": 0.9,
+            "text": "`payment-cryptography-data`: Added a new API - translateKeyMaterial; allows keys wrapped by ECDH derived keys to be rewrapped under a static AES keyblock without first importing the key into the service.",
+            "source": {
+              "adapter": "structured-json",
+              "url": "https://github.com/aws/aws-cli/blob/v2/.changes/2.31.8.json",
+              "heading": [
+                "api-change"
+              ]
+            }
+          },
+          {
+            "version": "2.31.8",
+            "kind": "other",
+            "confidence": 0.9,
+            "text": "`medialive`: AWS Elemental MediaLive enables Mediapackage V2 users to configure ID3, KLV, Nielsen ID3, and Segment Length related parameters through the Mediapackage output group.",
+            "source": {
+              "adapter": "structured-json",
+              "url": "https://github.com/aws/aws-cli/blob/v2/.changes/2.31.8.json",
+              "heading": [
+                "api-change"
+              ]
+            }
+          },
+          {
+            "version": "2.31.8",
+            "kind": "other",
+            "confidence": 0.9,
+            "text": "`cleanrooms`: Added support for reading data sources across regions, and results delivery to allowedlisted regions.",
+            "source": {
+              "adapter": "structured-json",
+              "url": "https://github.com/aws/aws-cli/blob/v2/.changes/2.31.8.json",
+              "heading": [
+                "api-change"
+              ]
+            }
+          },
+          {
+            "version": "2.31.9",
+            "kind": "other",
+            "confidence": 0.9,
+            "text": "`rds`: Documentation updates to the CreateDBClusterMessage$PubliclyAccessible and CreateDBInstanceMessage$PubliclyAccessible properties.",
+            "source": {
+              "adapter": "structured-json",
+              "url": "https://github.com/aws/aws-cli/blob/v2/.changes/2.31.9.json",
+              "heading": [
+                "api-change"
+              ]
+            }
+          },
+          {
+            "version": "2.31.9",
+            "kind": "other",
+            "confidence": 0.9,
+            "text": "`bedrock-agentcore-control`: Add support for VM lifecycle configuration parameters and A2A protocol",
+            "source": {
+              "adapter": "structured-json",
+              "url": "https://github.com/aws/aws-cli/blob/v2/.changes/2.31.9.json",
+              "heading": [
+                "api-change"
+              ]
+            }
+          },
+          {
+            "version": "2.31.9",
+            "kind": "other",
+            "confidence": 0.9,
+            "text": "`mediaconnect`: Enabling Tag-on-Create for AWS Elemental MediaConnect flow-based resource types",
+            "source": {
+              "adapter": "structured-json",
+              "url": "https://github.com/aws/aws-cli/blob/v2/.changes/2.31.9.json",
+              "heading": [
+                "api-change"
+              ]
+            }
+          },
+          {
+            "version": "2.31.9",
+            "kind": "other",
+            "confidence": 0.9,
+            "text": "`backup`: Adds optional MaxScheduledRunsPreview input to GetBackupPlan API to provide a preview of up to 10 next scheduled backup plan runs in the GetBackupPlan response.",
+            "source": {
+              "adapter": "structured-json",
+              "url": "https://github.com/aws/aws-cli/blob/v2/.changes/2.31.9.json",
+              "heading": [
+                "api-change"
+              ]
+            }
+          },
+          {
+            "version": "2.31.9",
+            "kind": "other",
+            "confidence": 0.9,
+            "text": "`quicksight`: Documentation improvements for QuickSight API documentation to clarify that delete operation APIs are global.",
+            "source": {
+              "adapter": "structured-json",
+              "url": "https://github.com/aws/aws-cli/blob/v2/.changes/2.31.9.json",
+              "heading": [
+                "api-change"
+              ]
+            }
+          },
+          {
+            "version": "2.31.9",
+            "kind": "other",
+            "confidence": 0.9,
+            "text": "`glue`: Adds labeling for DataQualityRuleResult for GetDataQualityResult and PublishDataQualityResult APIs",
+            "source": {
+              "adapter": "structured-json",
+              "url": "https://github.com/aws/aws-cli/blob/v2/.changes/2.31.9.json",
+              "heading": [
+                "api-change"
+              ]
+            }
+          },
+          {
+            "version": "2.31.9",
+            "kind": "other",
+            "confidence": 0.9,
+            "text": "`resource-explorer-2`: Add new AWS Resource Explorer APIs",
+            "source": {
+              "adapter": "structured-json",
+              "url": "https://github.com/aws/aws-cli/blob/v2/.changes/2.31.9.json",
+              "heading": [
+                "api-change"
+              ]
+            }
+          },
+          {
+            "version": "2.31.9",
+            "kind": "other",
+            "confidence": 0.9,
+            "text": "`memorydb`: Support for DescribeMultiRegionParameterGroups and DescribeMultiRegionParameters API.",
+            "source": {
+              "adapter": "structured-json",
+              "url": "https://github.com/aws/aws-cli/blob/v2/.changes/2.31.9.json",
+              "heading": [
+                "api-change"
+              ]
+            }
+          },
+          {
+            "version": "2.31.9",
+            "kind": "other",
+            "confidence": 0.9,
+            "text": "`bedrock-agentcore`: Add support for batch memory management, agent card retrieval and session termination",
+            "source": {
+              "adapter": "structured-json",
+              "url": "https://github.com/aws/aws-cli/blob/v2/.changes/2.31.9.json",
+              "heading": [
+                "api-change"
+              ]
+            }
+          },
+          {
+            "version": "2.31.10",
+            "kind": "other",
+            "confidence": 0.9,
+            "text": "`proton`: Deprecating APIs in AWS Proton namespace.",
+            "source": {
+              "adapter": "structured-json",
+              "url": "https://github.com/aws/aws-cli/blob/v2/.changes/2.31.10.json",
+              "heading": [
+                "api-change"
+              ]
+            }
+          }
+        ],
+        "counts": {
+          "breaking": 0,
+          "deprecation": 0,
+          "feature": 1,
+          "fix": 2,
+          "other": 59,
+          "security": 0
+        },
+        "hidden": 0,
+        "warnings": []
+      }
+    ]
+  },
+  "errors": []
+}

@@ -47,6 +47,42 @@ These are the tools whose GitHub release body is *not* the real changelog, or th
 mise, node, python, go, temurin/java, gh, k9s, uv, ruff, plus the Terraform providers `hashicorp/aws` and
 `hashicorp/kubernetes`. Other tools fall back to auto-discovery ([source-adapters.md](source-adapters.md)).
 
+The 20 entries in `registry/` (checked live on 2026-11-12 with `relgap registry test`):
+
+| Entry | Sources, in order | EOL | OSV | Why curated |
+|---|---|---|---|---|
+| terraform | changelog-file `CHANGELOG.md` at `v{major}.{minor}`, gh-release | terraform | Go `github.com/hashicorp/terraform` | notes on release branches |
+| opentofu | changelog-file `CHANGELOG.md` at `v{major}.{minor}` (`^{version}$`), gh-release | opentofu | Go `github.com/opentofu/opentofu` | same, with bare headings |
+| terragrunt | gh-release | | Go `github.com/gruntwork-io/terragrunt` | OSV |
+| kubectl | changelog-file `CHANGELOG/CHANGELOG-{major}.{minor}.md`, upgrade-notes | kubernetes | Go `k8s.io/kubernetes` | boilerplate releases |
+| helm | gh-release, line major | | Go `helm.sh/helm/v3`, `/v4` | two lines share the `v` prefix |
+| argocd | gh-release (install steps ignored), upgrade-guide `docs/operator-manual/upgrading/{prev_minor}-{major}.{minor}.md` | argo-cd | Go `argo-cd/v3`, `/v2`, bare | stale CHANGELOG.md |
+| awscli | structured-json `.changes/{version}.json` on `v2` | | | no releases |
+| claude-code | changelog-file `CHANGELOG.md`, gh-release | | npm `@anthropic-ai/claude-code` | 1.2 MB file, one-line bodies |
+| mise | gh-release, changelog-file `CHANGELOG.md` | | crates.io `mise` | 1 MB file; `vfox-v*` tags |
+| node | changelog-file `doc/changelogs/CHANGELOG_V{major}.md` | nodejs `{major}` | GIT `nodejs/node` | per-major files |
+| python | web-doc `docs.python.org/3/whatsnew/{major}.{minor}.html` | python | GIT `python/cpython` | no releases |
+| go | web-doc `go.dev/doc/go{major}.{minor}`, web-doc `go.dev/doc/devel/release` (anchor `go{version}`) | go | Go `stdlib` | no releases |
+| temurin | structured-json `api.adoptium.net/v3/info/release_notes/{tag}`, repo `adoptium/temurin21-binaries` | eclipse-temurin `{major}` | | one-line bodies |
+| gh | gh-release | | Go `github.com/cli/cli/v2` | OSV module path |
+| k9s | changelog-file `change_logs/release_v{version}.md`, gh-release (Notes ignored) | | | sponsor preamble |
+| uv | changelog-file `CHANGELOG.md`, `changelogs/{major}.{minor}.x.md`, gh-release | | PyPI `uv` | per-line files |
+| ruff | same as uv | | | per-line files |
+| terraform-provider-aws | changelog-file `CHANGELOG.md` on main, gh-release, upgrade-guide `website/docs/guides/version-{major}-upgrade.html.markdown` | | Go `github.com/hashicorp/terraform-provider-aws` | per-major guides |
+| terraform-provider-kubernetes | gh-release, changelog-file `CHANGELOG.md`, upgrade-guide `docs/guides/v{major}-upgrade-guide.md` | | | per-major guides |
+| golangci-lint | changelog-file `CHANGELOG.md` (`^v{version}$`) | | | release bodies are a commit list |
+
+`tfprovider:<namespace>/<name>` resolves to the curated entry whose repo is
+`<namespace>/terraform-provider-<name>`. Other providers still need the Terraform registry lookup.
+1password-cli has no public repository and stays unresolved; atlascli's notes are one mongodb.com
+page for all versions, which web-doc doesn't split yet.
+
+Entries also take `bin` (executable names for `outdated --binaries`), and sources take `content`,
+`strip`, `anchor` and `json` (schema `schemas/registry-v1.json`, details in
+[source-adapters.md](source-adapters.md)). `relgap registry test <tool|file.yaml> <range>` digests
+the range once per source and once merged, and prints the versions, entry counts and documents of
+each.
+
 ## Acceptance criteria
 - [ ] `relgap resolve tf`, `terraform`, `TERRAFORM_VERSION` and `aqua:hashicorp/terraform` all print the same ToolSpec, and the output shows which layer supplied each field.
 - [ ] Works with mise absent (embedded snapshot) and present (live `mise registry --json`), with the same results for the 30-tool corpus.

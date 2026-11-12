@@ -1,0 +1,54 @@
+# outdated --fail-on eol exits 3 for a pin on an end-of-life kubernetes minor (1.34 reached its
+# end on 2026-10-27) and 0 for a pin on a supported one. An endoflife.date outage is a warning,
+# and exit 1 under --fail-on eol, since the gate can't decide. The kubectl digest cassette
+# answers the 1.36 and 1.37 changelogs; outdated-eol.yaml holds the rest.
+env TEST_NOW=2026-11-12T12:00:00Z
+env GH_TOKEN=$TEST_GH_TOKEN
+env TEST_CASSETTE=$CASSETTES/digest/kubectl-1.36.0..1.37.2.yaml,$CASSETTES/enrich/outdated-eol.yaml
+
+cd eol
+exec expect-exit 3 relgap outdated --fail-on eol --format plain
+cmp stdout ../eol.txt
+stderr '^relgap: --fail-on eol matched kubectl 1\.34\.13 \(mise\.toml:2\)$'
+
+exec relgap outdated --format json
+jsonschema outdated-v1.json stdout
+stdout '"cycle": "1\.34",\s+"is_eol": true,\s+"eol_from": "2026-10-27"'
+stdout '"cycle": "1\.37",\s+"is_eol": false'
+
+# --binaries finds no kubectl executable here and says so.
+exec relgap outdated --binaries --format plain
+stdout '^Binaries \(matched by Go version and module version only'
+stdout '^  no Go executables of the pinned tools found$'
+exec relgap outdated --binaries --format json
+jsonschema outdated-v1.json stdout
+stdout '"binaries": \[\]'
+
+cd ../supported
+exec relgap outdated --fail-on eol --format plain
+stdout '^kubectl +1\.37\.2 +1\.37\.2 +0 +0 +0 +no '
+
+# endoflife.date refusing requests: the report continues without the EOL column, with a warning,
+# and --fail-on eol can't pass on that.
+[!recording] cd ../eol
+[!recording] env TEST_CASSETTE=$CASSETTES/enrich/eol-403.yaml,$CASSETTES/digest/kubectl-1.36.0..1.37.2.yaml,$CASSETTES/enrich/outdated-eol.yaml
+[!recording] exec relgap outdated --no-cache --format plain
+[!recording] stdout '^kubectl +1\.34\.13 +1\.37\.2 .* - +\d+.* +mise\.toml:2$'
+[!recording] stderr 'enrichment source failed; the report continues without it'
+[!recording] stderr 'source=endoflife.date tool=kubectl'
+[!recording] exec expect-exit 1 relgap outdated --fail-on eol --no-cache --format json
+[!recording] jsonschema outdated-v1.json stdout
+[!recording] stdout '"target": "endoflife.date: kubectl"'
+[!recording] stderr '^relgap: --fail-on eol can''t decide: endoflife.date failed for kubectl; the report is partial$'
+
+-- eol.txt --
+TOOL     CURRENT  LATEST  BEHIND  BREAKING  DEPRECATION  EOL               VULNS  PIN
+kubectl  1.34.13  1.37.2  21      15        9            yes (2026-10-27)  2      mise.toml:2
+
+1 of 1 compared pin is behind latest.
+-- eol/mise.toml --
+[tools]
+kubectl = "1.34.13"
+-- supported/mise.toml --
+[tools]
+kubectl = "1.37.2"

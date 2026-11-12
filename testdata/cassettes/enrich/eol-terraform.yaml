@@ -1,0 +1,65 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: endoflife.date
+        headers:
+            Accept:
+                - application/json
+        url: https://endoflife.date/api/v1/products/terraform
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: |
+            {"schema_version":"1.2.1","generated_at":"2026-11-12T00:09:12+00:00","last_modified":"2026-11-12T00:08:23+00:00","result":{"name":"terraform","aliases":[],"label":"Hashicorp Terraform","category":"app","tags":["app","hashicorp"],"versionCommand":"terraform --version","identifiers":[{"type":"repology","id":"terraform"},{"type":"purl","id":"pkg:github/hashicorp/terraform"},{"type":"purl","id":"pkg:generic/terraform"},{"type":"cpe","id":"cpe:2.3:a:hashicorp:terraform"}],"labels":{"eoas":null,"discontinued":null,"eol":"Security Support","eoes":null},"links":{"icon":"https://cdn.jsdelivr.net/npm/simple-icons/icons/terraform.svg","html":"https://endoflife.date/terraform","releasePolicy":"https://support.hashicorp.com/hc/en-us/articles/360021185113-Support-Period-and-End-of-Life-EOL-Policy"},"releases":[{"name":"1.17","codename":null,"label":"1.17","releaseDate":"2026-10-21","isLts":false,"ltsFrom":null,"isEol":false,"eolFrom":null,"isMaintained":true,"latest":{"name":"1.17.2","date":"2026-11-11","link":"https://github.com/hashicorp/terraform/blob/v1.17.2/CHANGELOG.md"},"custom":null},{"name":"1.16","codename":null,"label":"1.16","releaseDate":"2026-08-26","isLts":false,"ltsFrom":null,"isEol":false,"eolFrom":null,"isMaintained":true,"latest":{"name":"1.16.7","date":"2026-10-22","link":"https://github.com/hashicorp/terraform/blob/v1.16.7/CHANGELOG.md"},"custom":null},{"name":"1.15","codename":null,"label":"1.15","releaseDate":"2026-04-29","isLts":false,"ltsFrom":null,"isEol":true,"eolFrom":"2026-10-21","isMaintained":false,"latest":{"name":"1.15.9","date":"2026-08-19","link":"https://github.com/hashicorp/terraform/blob/v1.15.9/CHANGELOG.md"},"custom":null},{"name":"1.14","codename":null,"label":"1.14","releaseDate":"2025-11-19","isLts":false,"ltsFrom":null,"isEol":true,"eolFrom":"2026-08-26","isMaintained":false,"latest":{"name":"1.14.9","date":"2026-04-20","link":"https://github.com/hashicorp/terraform/blob/v1.14.9/CHANGELOG.md"},"custom":null},{"name":"1.13","codename":null,"label":"1.13","releaseDate":"2025-08-20","isLts":false,"ltsFrom":null,"isEol":true,"eolFrom":"2026-04-29","isMaintained":false,"latest":{"name":"1.13.5","date":"2025-11-05","link":"https://github.com/hashicorp/terraform/blob/v1.13.5/CHANGELOG.md"},"custom":null},{"name":"1.12","codename":null,"label":"1.12","releaseDate":"2025-05-14","isLts":false,"ltsFrom":null,"isEol":true,"eolFrom":"2025-11-19","isMaintained":false,"latest":{"name":"1.12.2","date":"2025-06-11","link":"https://github.com/hashicorp/terraform/blob/v1.12.2/CHANGELOG.md"},"custom":null},{"name":"1.11","codename":null,"label":"1.11","releaseDate":"2025-02-27","isLts":false,"ltsFrom":null,"isEol":true,"eolFrom":"2025-08-20","isMaintained":false,"latest":{"name":"1.11.4","date":"2025-04-09","link":"https://github.com/hashicorp/terraform/blob/v1.11.4/CHANGELOG.md"},"custom":null},{"name":"1.10","codename":null,"label":"1.10","releaseDate":"2024-11-26","isLts":false,"ltsFrom":null,"isEol":true,"eolFrom":"2025-05-14","isMaintained":false,"latest":{"name":"1.10.5","date":"2025-01-22","link":"https://github.com/hashicorp/terraform/blob/v1.10.5/CHANGELOG.md"},"custom":null},{"name":"1.9","codename":null,"label":"1.9","releaseDate":"2024-06-26","isLts":false,"ltsFrom":null,"isEol":true,"eolFrom":"2025-02-27","isMaintained":false,"latest":{"name":"1.9.8","date":"2024-10-16","link":"https://github.com/hashicorp/terraform/blob/v1.9.8/CHANGELOG.md"},"custom":null},{"name":"1.8","codename":null,"label":"1.8","releaseDate":"2024-04-10","isLts":false,"ltsFrom":null,"isEol":true,"eolFrom":"2024-11-26","isMaintained":false,"latest":{"name":"1.8.5","date":"2024-06-05","link":"https://github.com/hashicorp/terraform/blob/v1.8.5/CHANGELOG.md"},"custom":null},{"name":"1.7","codename":null,"label":"1.7","releaseDate":"2024-01-17","isLts":false,"ltsFrom":null,"isEol":true,"eolFrom":"2024-06-26","isMaintained":false,"latest":{"name":"1.7.5","date":"2024-03-13","link":"https://github.com/hashicorp/terraform/blob/v1.7.5/CHANGELOG.md"},"custom":null},{"name":"1.6","codename":null,"label":"1.6","releaseDate":"2023-10-04","isLts":false,"ltsFrom":null,"isEol":true,"eolFrom":"2024-04-10","isMaintained":false,"latest":{"name":"1.6.6","date":"2023-12-13","link":"https://github.com/hashicorp/terraform/blob/v1.6.6/CHANGELOG.md"},"custom":null},{"name":"1.5","codename":null,"label":"1.5","releaseDate":"2023-06-12","isLts":false,"ltsFrom":null,"isEol":true,"eolFrom":"2024-01-17","isMaintained":false,"latest":{"name":"1.5.7","date":"2023-09-07","link":"https://github.com/hashicorp/terraform/blob/v1.5.7/CHANGELOG.md"},"custom":null},{"name":"1.4","codename":null,"label":"1.4","releaseDate":"2023-03-08","isLts":false,"ltsFrom":null,"isEol":true,"eolFrom":"2023-10-04","isMaintained":false,"latest":{"name":"1.4.7","date":"2023-09-13","link":"https://github.com/hashicorp/terraform/blob/v1.4.7/CHANGELOG.md"},"custom":null},{"name":"1.3","codename":null,"label":"1.3","releaseDate":"2022-09-21","isLts":false,"ltsFrom":null,"isEol":true,"eolFrom":"2023-06-12","isMaintained":false,"latest":{"name":"1.3.10","date":"2023-09-13","link":"https://github.com/hashicorp/terraform/blob/v1.3.10/CHANGELOG.md"},"custom":null},{"name":"1.2","codename":null,"label":"1.2","releaseDate":"2022-05-18","isLts":false,"ltsFrom":null,"isEol":true,"eolFrom":"2023-03-08","isMaintained":false,"latest":{"name":"1.2.9","date":"2022-09-07","link":"https://github.com/hashicorp/terraform/blob/v1.2.9/CHANGELOG.md"},"custom":null},{"name":"1.1","codename":null,"label":"1.1","releaseDate":"2021-12-08","isLts":false,"ltsFrom":null,"isEol":true,"eolFrom":"2022-09-21","isMaintained":false,"latest":{"name":"1.1.9","date":"2022-04-20","link":"https://github.com/hashicorp/terraform/blob/v1.1.9/CHANGELOG.md"},"custom":null},{"name":"1.0","codename":null,"label":"1.0","releaseDate":"2021-06-08","isLts":false,"ltsFrom":null,"isEol":true,"eolFrom":"2022-05-18","isMaintained":false,"latest":{"name":"1.0.11","date":"2021-11-10","link":"https://github.com/hashicorp/terraform/blob/v1.0.11/CHANGELOG.md"},"custom":null}]}}
+        headers:
+            Accept-Ranges:
+                - bytes
+            Access-Control-Allow-Methods:
+                - GET
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Max-Age:
+                - "86400"
+            Age:
+                - "2"
+            Cache-Control:
+                - public,max-age=0,must-revalidate
+            Cache-Status:
+                - '"Netlify Edge"; fwd=miss; fwd-status=200; stored'
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 12 Nov 2026 09:30:14 GMT
+            Etag:
+                - W/"8fe640d9685fae79fa2067445744f660-ssl"
+            Permissions-Policy:
+                - accelerometer=(), ambient-light-sensor=(), autoplay=(), battery=(), camera=(), cross-origin-isolated=(), display-capture=(), document-domain=(), encrypted-media=(), execution-while-not-rendered=(), execution-while-out-of-viewport=(), fullscreen=(), geolocation=(), gyroscope=(), keyboard-map=(), magnetometer=(), microphone=(), midi=(), navigation-override=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), sync-xhr=(), usb=(), web-share=(), xr-spatial-tracking=(), clipboard-read=(), clipboard-write=(), gamepad=(), speaker-selection=(), conversion-measurement=(), focus-without-user-activation=(), hid=(), idle-detection=(), interest-cohort=(), serial=(), sync-script=(), trust-token-redemption=(), unload=(), window-placement=(), vertical-scroll=()
+            Referrer-Policy:
+                - strict-origin
+            Server:
+                - Netlify
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubDomains; preload
+            Vary:
+                - Accept-Encoding
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - DENY
+            X-Nf-Request-Id:
+                - 01M77HFTTW0ASBPYQGE1MJR66H
+            X-Xss-Protection:
+                - 1; mode=block
+        status: 200 OK
+        code: 200
+        duration: 524.416959ms

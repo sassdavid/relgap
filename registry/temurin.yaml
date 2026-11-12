@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=../schemas/registry-v1.json
+# Release bodies are one line. Adoptium's API has the notes of each build as JSON. This entry
+# follows the 21 LTS line; other majors live in adoptium/temurin<major>-binaries.
+name: temurin
+aliases: [eclipse-temurin, temurin-21]
+repo: adoptium/temurin21-binaries
+version:
+  scheme: loose
+  tag_prefix: "jdk-"
+  exclude: "-(ea|beta)"
+  universe: releases
+sources:
+  - kind: structured-json
+    url_template: "https://api.adoptium.net/v3/info/release_notes/{tag}"
+    json: { items: release_notes, heading: type, text: "{title} ({component})", link: link }
+eol: { product: eclipse-temurin, cycle: "{major}" }
+bin: [java]

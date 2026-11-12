@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=../schemas/registry-v1.json
+# CHANGELOG.md stopped at 2.4.8. Release bodies open with install steps; upgrade notes are one
+# document per minor transition on master, named after the real previous minor (2.14-3.0).
+name: argocd
+aliases: [argo-cd]
+repo: argoproj/argo-cd
+version:
+  scheme: semver
+  tag_prefix: "v"
+  universe: releases
+sources:
+  - kind: gh-release
+    ignore_sections: ["Quick Start", "Release Signatures and Provenance", "Release Notes Blog Post", "Upgrading"]
+  - kind: upgrade-guide
+    path_template: "docs/operator-manual/upgrading/{prev_minor}-{major}.{minor}.md"
+    ref: master
+eol: { product: argo-cd, cycle: "{major}.{minor}" }
+osv:
+  - { ecosystem: Go, name: github.com/argoproj/argo-cd/v3 }
+  - { ecosystem: Go, name: github.com/argoproj/argo-cd/v2 }
+  - { ecosystem: Go, name: github.com/argoproj/argo-cd }

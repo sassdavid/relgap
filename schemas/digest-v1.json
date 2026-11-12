@@ -58,7 +58,7 @@
                 "additionalProperties": false,
                 "required": ["adapter", "url"],
                 "properties": {
-                  "adapter": { "description": "The source adapter; version-jump marks the synthetic entry for a major version jump.", "enum": ["gh-release", "changelog-file", "structured-json", "web-doc", "upgrade-guide", "version-jump"] },
+                  "adapter": { "description": "The source adapter; version-jump marks the synthetic entry for a major version jump.", "enum": ["gh-release", "changelog-file", "structured-json", "web-doc", "upgrade-guide", "upgrade-notes", "version-jump"] },
                   "url": { "type": "string" },
                   "heading": { "description": "Heading path inside the source document.", "type": "array", "items": { "type": "string" } }
                 }

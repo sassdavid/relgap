@@ -277,3 +277,21 @@ func lineEnd(src []byte, off int) int {
 	}
 	return len(src)
 }
+
+// Whole returns the entire document the way [Index.Markdown] returns a section.
+func (x *Index) Whole() string {
+	md, _ := x.Markdown(Section{Start: 0, End: len(x.src), Line: 1})
+	return md
+}
+
+// Newest returns the highest version among the sections. The second result is false when the
+// document has no version section.
+func (x *Index) Newest() (version.V, bool) {
+	var newest version.V
+	for _, s := range x.sections {
+		if newest.IsZero() || x.scheme.Compare(s.Version, newest) > 0 {
+			newest = s.Version
+		}
+	}
+	return newest, !newest.IsZero()
+}

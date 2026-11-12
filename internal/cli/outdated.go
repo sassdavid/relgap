@@ -3,6 +3,7 @@ package cli
 import (
 	"errors"
 	"fmt"
+	"net/http"
 	"path"
 	"slices"
 	"strings"
@@ -12,15 +13,19 @@ import (
 	"github.com/sassdavid/relgap/internal/app"
 	"github.com/sassdavid/relgap/internal/buildinfo"
 	"github.com/sassdavid/relgap/internal/config"
+	"github.com/sassdavid/relgap/internal/enrich"
+	"github.com/sassdavid/relgap/internal/misex"
 	"github.com/sassdavid/relgap/internal/registry"
 	"github.com/sassdavid/relgap/internal/render"
 	"github.com/sassdavid/relgap/internal/report"
 	"github.com/sassdavid/relgap/internal/scan"
+	"github.com/sassdavid/relgap/internal/source"
 )
 
 const (
 	flagFailOn    = "fail-on"
 	flagMaxBehind = "max-behind"
+	flagBinaries  = "binaries"
 )
 
 func newOutdatedCmd(d *app.Deps, g *globals) *cobra.Command {
@@ -46,14 +51,29 @@ behind, and constraint and prefix pins, need a tool's full release list.
 Pins of tools without a GitHub repository, and tfprovider, chart and image pins, are
 skipped; --format json lists them with the reason.
 
+EOL shows whether CURRENT's release cycle has reached its end on endoflife.date (yes, no, or
+? when endoflife.date doesn't list the cycle), for tools whose registry entry names a
+product. --format json also has the state of LATEST's cycle. VULNS counts the OSV
+vulnerabilities of CURRENT, and how many of them upgrading to LATEST fixes. Both sources
+are cached for a day. When one is down, relgap warns and prints the rest.
+
+--binaries also reads the Go build info of each pinned tool's installed executables (on
+PATH and in mise's installs directory) and lists the OSV vulnerabilities of the Go version
+and main module they were built with. Like govulncheck's binary mode, minus the check that
+the binary calls the vulnerable code.
+
 --fail-on outdated exits 3 when a pin is further behind than --max-behind (major:N,
 minor:N, patch:N, releases:N or days:N; empty means any pin behind latest). --fail-on
-breaking exits 3 when a digest has a breaking entry. A tool that fails exits 1 instead,
-after printing the rest. The eol, vuln and deprecation values exit 2 until relgap can
-check them.`,
+breaking exits 3 when a digest has a breaking entry. --fail-on eol exits 3 when CURRENT's
+cycle has reached its end. A tool that fails exits 1 instead, after printing the rest, and
+so does an endoflife.date outage under --fail-on eol. The vuln and deprecation values exit 2
+until relgap can check them.`,
 		Example: `  relgap outdated
   relgap outdated ~/src/infra --format md
   relgap outdated --fail-on outdated --max-behind minor:2
+  relgap outdated --fail-on eol
+  relgap outdated --binaries --format json | jq '.data.binaries[]'
+
   relgap outdated --format json | jq '.data.pins[] | select(.status == "outdated")'`,
 		Args: maxArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -65,6 +85,8 @@ check them.`,
 		},
 	}
 	addGateFlags(cmd)
+	cmd.Flags().Bool(flagBinaries, false,
+		"also check the Go version and main module of the pinned tools' installed executables against OSV")
 	return cmd
 }
 
@@ -72,7 +94,7 @@ func addGateFlags(cmd *cobra.Command) {
 	def := config.Default().Policy
 	fl := cmd.Flags()
 	fl.StringSlice(flagFailOn, def.FailOn,
-		"exit 3 when this matches: outdated or breaking; repeatable (config policy.fail_on)")
+		"exit 3 when this matches: outdated, breaking or eol; repeatable (config policy.fail_on)")
 	fl.String(flagMaxBehind, def.MaxBehind,
 		"how far behind --fail-on outdated allows, such as minor:2, releases:10 or days:90 (config policy.max_behind)")
 }
@@ -90,7 +112,11 @@ func runOutdated(cmd *cobra.Command, d *app.Deps, g *globals, root string) error
 	if err != nil {
 		return err
 	}
-	run, err := g.compare(cmd, d, resolver, root, nil)
+	binaries, err := cmd.Flags().GetBool(flagBinaries)
+	if err != nil {
+		return fmt.Errorf("read --%s: %w", flagBinaries, err)
+	}
+	run, err := g.compare(cmd, d, resolver, root, nil, compareOptions{enrich: true, binaries: binaries})
 	if err != nil {
 		return err
 	}
@@ -103,8 +129,15 @@ func runOutdated(cmd *cobra.Command, d *app.Deps, g *globals, root string) error
 
 // comparison is the outcome of scanning a project and comparing its pins.
 type comparison struct {
-	scan *scan.Result
-	out  *report.Outdated
+	scan     *scan.Result
+	out      *report.Outdated
+	problems []enrich.Problem
+}
+
+// compareOptions says what a comparison adds to the pins.
+type compareOptions struct {
+	enrich   bool // EOL and OSV for each compared pin
+	binaries bool // the Go build info of installed executables
 }
 
 // loadProject loads the config and the tool resolver; d.Config is set afterwards.
@@ -116,7 +149,12 @@ func (g *globals) loadProject(cmd *cobra.Command, d *app.Deps) (*registry.Resolv
 // compare scans root, keeps the resolved pins that keep accepts (all when nil) and compares
 // them with the latest versions.
 func (g *globals) compare(
-	cmd *cobra.Command, d *app.Deps, resolver *registry.Resolver, root string, keep func(scan.Pin) bool,
+	cmd *cobra.Command,
+	d *app.Deps,
+	resolver *registry.Resolver,
+	root string,
+	keep func(scan.Pin) bool,
+	with compareOptions,
 ) (*comparison, error) {
 	cfg := d.Config
 	opts, err := pinsOptions(cfg.Config.Scan, pinsFlags{})
@@ -140,21 +178,83 @@ func (g *globals) compare(
 	}
 	defer cache.Close()
 	defer cache.LogSummary(cmd.Context())
-	gh, err := newGitHubClient(cmd, d, cache)
+	gh, hc, err := newGitHubClient(cmd, d, cache)
 	if err != nil {
 		return nil, err
 	}
-	out, err := report.NewOutdater(report.NewDigester(d.Logger, gh), gh).Outdated(cmd.Context(), report.OutdatedRequest{
-		Repos:         res.Repos,
-		Pins:          pins,
-		Resolve:       resolveFunc(resolver),
-		MinConfidence: cfg.Config.Policy.MinConfidence,
-		Concurrency:   cfg.Config.GitHub.Concurrency,
-	})
+	out, err := report.NewOutdater(report.NewDigester(d.Logger, gh, source.NewWeb(hc)), gh).
+		Outdated(cmd.Context(), report.OutdatedRequest{
+			Repos:         res.Repos,
+			Pins:          pins,
+			Resolve:       resolveFunc(resolver),
+			MinConfidence: cfg.Config.Policy.MinConfidence,
+			Concurrency:   cfg.Config.GitHub.Concurrency,
+		})
 	if err != nil {
 		return nil, digestError(err)
 	}
-	return &comparison{scan: res, out: out}, nil
+	run := &comparison{scan: res, out: out}
+	if with.enrich {
+		if err = run.enrich(cmd, d, hc, resolver, pins, with.binaries); err != nil {
+			return nil, err
+		}
+	}
+	return run, nil
+}
+
+// enrich adds EOL states and vulnerabilities to the compared pins and, with binaries, the
+// vulnerabilities of installed executables. Failed sources become problems, not errors.
+func (c *comparison) enrich(
+	cmd *cobra.Command,
+	d *app.Deps,
+	hc *http.Client,
+	resolver *registry.Resolver,
+	pins []scan.Pin,
+	binaries bool,
+) error {
+	ctx := cmd.Context()
+	en := enrich.NewEnricher(d.Logger, enrich.NewEOLClient(hc, ""), enrich.NewOSVClient(hc, ""),
+		d.Config.Config.GitHub.Concurrency)
+	results, problems, err := en.Enrich(ctx, c.out.EnrichRequests(resolveFunc(resolver)))
+	if err != nil {
+		return err //nolint:wrapcheck // only a canceled context
+	}
+	c.out.ApplyEnrichment(results)
+	c.problems = problems
+	if !binaries {
+		return nil
+	}
+	finder := enrich.BinaryFinder{
+		Lookup: d.Env.Lookup,
+		Which:  misex.New(newRunner(d)).Which,
+	}
+	seen := map[string]bool{}
+	c.out.Binaries = []*enrich.Binary{}
+	for _, p := range pins {
+		if seen[p.Tool] {
+			continue
+		}
+		seen[p.Tool] = true
+		spec, resolveErr := resolveFunc(resolver)(p.Tool)
+		if resolveErr != nil {
+			continue
+		}
+		for _, path := range finder.Find(ctx, spec) {
+			b, readErr := enrich.ReadBinary(spec.Name, path)
+			if readErr != nil {
+				d.Logger.DebugContext(ctx, "skipping an executable", "tool", spec.Name, "error", readErr)
+				continue
+			}
+			c.out.Binaries = append(c.out.Binaries, b)
+		}
+	}
+	if err = en.BinaryVulns(ctx, c.out.Binaries); err != nil {
+		if ctx.Err() != nil {
+			return ctx.Err() //nolint:wrapcheck // the caller matches context errors
+		}
+		c.problems = append(c.problems, enrich.Problem{Source: enrich.SourceOSV, Tool: "binaries", Err: err})
+	}
+	return nil
 }
 
 // resolveFunc turns a pin's tool name into its spec through resolver.
@@ -199,9 +299,11 @@ func newGate(d *app.Deps, outdated bool) (report.Gate, error) {
 		case report.FailOnOutdated:
 			gate.Outdated = outdated
 		case report.FailOnDrift:
-		case report.FailOnEOL, report.FailOnVuln, report.FailOnDeprecation:
+		case report.FailOnEOL:
+			gate.EOL = outdated
+		case report.FailOnVuln, report.FailOnDeprecation:
 			return gate, usageError(
-				fmt.Errorf("--fail-on %s isn't supported yet: relgap checks outdated and breaking", v),
+				fmt.Errorf("--fail-on %s isn't supported yet: relgap checks outdated, breaking and eol", v),
 			)
 		default:
 			return gate, usageError(fmt.Errorf("invalid --fail-on value %q", v))
@@ -213,7 +315,7 @@ func newGate(d *app.Deps, outdated bool) (report.Gate, error) {
 func writeOutdated(d *app.Deps, g *globals, c *comparison) error {
 	if g.outFormat == render.FormatJSON {
 		env := render.NewEnvelope(buildinfo.Get().Version, d.Clock(), c.out)
-		env.Errors = c.errors()
+		env.Errors = append(c.errors(), c.sourceErrors()...)
 		return render.JSON(d.Stdout, env)
 	}
 	if g.outFormat == render.FormatMD {
@@ -238,9 +340,22 @@ func (c *comparison) errors() []render.Error {
 	return out
 }
 
+// sourceErrors lists the enrichment sources that failed, as JSON envelope errors.
+func (c *comparison) sourceErrors() []render.Error {
+	out := make([]render.Error, 0, len(c.problems))
+	for _, p := range c.problems {
+		out = append(out, render.Error{Target: p.Source + ": " + p.Tool, Message: p.Err.Error()})
+	}
+	return out
+}
+
 func (c *comparison) warn(cmd *cobra.Command, d *app.Deps) {
 	for _, p := range c.scan.Problems {
 		d.Logger.WarnContext(cmd.Context(), "can't read pins", "repo", p.Repo, "file", p.File, "error", p.Message)
+	}
+	for _, p := range c.problems {
+		d.Logger.WarnContext(cmd.Context(), "enrichment source failed; the report continues without it",
+			"source", p.Source, "tool", p.Tool, "error", p.Err)
 	}
 	if n := countUnresolved(c.scan.Pins); n > 0 {
 		_, _ = fmt.Fprintf(d.Stderr, "%s: %d %s no known tool; list them with 'relgap pins --unresolved'\n",
@@ -257,6 +372,18 @@ func (c *comparison) exit(cmd *cobra.Command, d *app.Deps, gate report.Gate) err
 			len(errs),
 			plural(len(errs), "pin or file", "pins or files"),
 		)
+	}
+	if gate.EOL {
+		var down []string
+		for _, p := range c.problems {
+			if p.Source == enrich.SourceEOL {
+				down = append(down, p.Tool)
+			}
+		}
+		if len(down) > 0 {
+			return fmt.Errorf("--fail-on eol can't decide: endoflife.date failed for %s; the report is partial",
+				strings.Join(down, ", "))
+		}
 	}
 	findings, unmeasured := gate.Check(c.out)
 	for _, p := range unmeasured {

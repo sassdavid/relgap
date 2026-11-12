@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../schemas/registry-v1.json
+# CHANGELOG.md holds the current minor line; older lines are in changelogs/<major>.<minor>.x.md.
+name: ruff
+repo: astral-sh/ruff
+version:
+  scheme: semver
+  universe: releases
+sources:
+  - kind: changelog-file
+    path_template: CHANGELOG.md
+    heading: "^{version}$"
+  - kind: changelog-file
+    path_template: "changelogs/{major}.{minor}.x.md"
+    heading: "^{version}$"
+  - kind: gh-release
+

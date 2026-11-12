@@ -5,7 +5,9 @@ import (
 	"cmp"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
+	"io"
 	"io/fs"
 	"maps"
 	"net/http"
@@ -22,6 +24,8 @@ import (
 
 	"github.com/rogpeppe/go-internal/testscript"
 	"github.com/santhosh-tekuri/jsonschema/v6"
+	"gopkg.in/dnaeon/go-vcr.v4/pkg/cassette"
+	"gopkg.in/dnaeon/go-vcr.v4/pkg/recorder"
 
 	"github.com/sassdavid/relgap/internal/app"
 	"github.com/sassdavid/relgap/internal/cli"
@@ -125,24 +129,85 @@ func runRelgap(args []string) int {
 		defer os.RemoveAll(dir)
 		d.Env = append(d.Env, "RELGAP_CACHE_DIR="+dir)
 	}
-	if path := os.Getenv(envCassette); path != "" {
-		rec, err := vcr.New(path, vcr.Options{Record: vcr.Recording(), Scrubber: ghtest.Scrubber(os.Getenv(envToken))})
+	if paths := os.Getenv(envCassette); paths != "" {
+		chain, err := openCassettes(strings.Split(paths, ","))
 		if err != nil {
 			_, _ = fmt.Fprintln(os.Stderr, err)
 			return 1
 		}
-		d.HTTPTransport = rec
-		defer func() {
-			if stopErr := rec.Stop(); stopErr != nil {
-				_, _ = fmt.Fprintf(os.Stderr, "save cassette: %v\n", stopErr)
-				os.Exit(1)
-			}
-		}()
+		d.HTTPTransport = chain
+		defer chain.stop()
 	}
 	if file := os.Getenv(envRequests); file != "" {
 		d.HTTPTransport = requestLog{file: file, rt: cmp.Or[http.RoundTripper](d.HTTPTransport, http.DefaultTransport)}
 	}
 	return cli.Execute(ctx, d, args)
+}
+
+// openCassettes opens the cassettes TEST_CASSETTE lists. Only the last one records, and only the
+// requests the others don't answer, so adding an endpoint leaves the earlier recordings as they
+// are. In a list it keeps what earlier execs of the script recorded into it.
+func openCassettes(paths []string) (cassetteChain, error) {
+	scrub := ghtest.Scrubber(os.Getenv(envToken))
+	chain := make(cassetteChain, 0, len(paths))
+	for i, path := range paths {
+		last := i == len(paths)-1
+		var (
+			rec *recorder.Recorder
+			err error
+		)
+		if vcr.Recording() && last && len(paths) > 1 {
+			rec, err = recorder.New(strings.TrimSuffix(path, ".yaml"),
+				recorder.WithMode(recorder.ModeReplayWithNewEpisodes),
+				recorder.WithMatcher(scrub.Matcher()),
+				recorder.WithSkipRequestLatency(true),
+				recorder.WithHook(scrub.Scrub, recorder.BeforeSaveHook))
+		} else {
+			rec, err = vcr.New(path, vcr.Options{Record: vcr.Recording() && last, Scrubber: scrub})
+		}
+		if err != nil {
+			return nil, fmt.Errorf("open cassette %s: %w", path, err)
+		}
+		chain = append(chain, rec)
+	}
+	return chain, nil
+}
+
+// cassetteChain answers each request from the first cassette that has it. TEST_CASSETTE lists
+// the cassettes, separated by commas.
+type cassetteChain []*recorder.Recorder
+
+// stop saves the recording cassette and exits the process when that fails.
+func (c cassetteChain) stop() {
+	for _, rec := range c {
+		if err := rec.Stop(); err != nil {
+			_, _ = fmt.Fprintf(os.Stderr, "save cassette: %v\n", err)
+			os.Exit(1)
+		}
+	}
+}
+
+func (c cassetteChain) RoundTrip(req *http.Request) (*http.Response, error) {
+	var body []byte
+	if req.Body != nil && req.Body != http.NoBody {
+		b, err := io.ReadAll(req.Body)
+		if err != nil {
+			return nil, fmt.Errorf("read request body: %w", err)
+		}
+		body = b
+	}
+	for i, rec := range c {
+		out := req.Clone(req.Context())
+		if body != nil {
+			out.Body = io.NopCloser(bytes.NewReader(body))
+		}
+		resp, err := rec.RoundTrip(out)
+		if i < len(c)-1 && errors.Is(err, cassette.ErrInteractionNotFound) {
+			continue
+		}
+		return resp, err //nolint:wrapcheck // the recorder's error is the result
+	}
+	return nil, errors.New("no cassette")
 }
 
 // requestLog appends "METHOD URL" to a file for every request before sending it.
@@ -537,6 +602,20 @@ func TestSpec_pindiscovery_4(t *testing.T) {
 func TestSpec_output_and_ci_5(t *testing.T) {
 	t.Parallel()
 	testscript.Run(t, scriptParams(t, filepath.Join(scriptDir, "spec_output_and_ci_5.txtar")))
+}
+
+// TestSpec_source_adapters_2: the corpus subset (terraform, kubectl, awscli, argocd and
+// claude-code) produces golden digests.
+func TestSpec_source_adapters_2(t *testing.T) {
+	t.Parallel()
+	testscript.Run(t, scriptParams(t, filepath.Join(scriptDir, "spec_source_adapters_2.txtar")))
+}
+
+// TestSpec_enrichment_2: outdated --fail-on eol exits 3 on a fixture pinned to an EOL
+// kubernetes minor, 0 on a supported one, and 1 when endoflife.date is down.
+func TestSpec_enrichment_2(t *testing.T) {
+	t.Parallel()
+	testscript.Run(t, scriptParams(t, filepath.Join(scriptDir, "spec_enrichment_2.txtar")))
 }
 
 // TestSpec_pindiscovery_6: unknown *_VERSION names appear in --unresolved with file:line.

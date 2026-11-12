@@ -1,0 +1,429 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 90
+        host: api.osv.dev
+        body: '{"queries":[{"package":{"ecosystem":"Go","name":"k8s.io/kubernetes"},"version":"1.33.0"}]}'
+        headers:
+            Accept:
+                - application/json
+            Content-Type:
+                - application/json
+        url: https://api.osv.dev/v1/querybatch
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 550
+        body: '{"results":[{"vulns":[{"id":"GHSA-4x4m-3c2p-qppc","modified":"2026-09-10T03:50:26.670712Z"},{"id":"GHSA-hj2p-8wj8-pfq4","modified":"2026-09-10T03:50:25.286875Z"},{"id":"GHSA-r6j8-c6r2-37rr","modified":"2026-09-10T03:50:58.823452Z"},{"id":"GO-2025-3521","modified":"2026-02-04T02:44:22.558147Z"},{"id":"GO-2025-3547","modified":"2026-08-07T08:11:51.376790Z"},{"id":"GO-2025-3774","modified":"2026-02-04T02:37:40.807397Z"},{"id":"GO-2025-3915","modified":"2026-02-04T03:55:32.336755Z"},{"id":"GO-2025-4240","modified":"2026-02-04T03:00:49.298548Z"}]}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "550"
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 12 Nov 2026 09:30:13 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-afa49e9cbb6ad12aa81a9d02b3b47db9-31e4c3f38cdbfb2b-00
+            X-Cloud-Trace-Context:
+                - afa49e9cbb6ad12aa81a9d02b3b47db9/3595213853356194603
+            X-Envoy-Decorator-Operation:
+                - ingress QueryAffectedBatch
+        status: 200 OK
+        code: 200
+        duration: 389.228667ms
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/GHSA-4x4m-3c2p-qppc
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 2447
+        body: '{"id":"GHSA-4x4m-3c2p-qppc","summary":"Kubernetes Nodes can delete themselves by adding an OwnerReference","details":"A vulnerability exists in the NodeRestriction admission controller in Kubernetes clusters where node users can delete their corresponding node object by patching themselves with an OwnerReference to a cluster-scoped resource. If the OwnerReference resource does not exist or is subsequently deleted, the given node object will be deleted via garbage collection.","aliases":["CVE-2025-5187","GO-2025-3915"],"modified":"2026-09-10T03:50:26.670712042Z","published":"2025-08-27T18:31:55Z","database_specific":{"severity":"MODERATE","github_reviewed":true,"github_reviewed_at":"2025-08-27T19:20:29Z","nvd_published_at":"2025-08-27T17:15:48Z","cwe_ids":["CWE-863"]},"references":[{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2025-5187"},{"type":"WEB","url":"https://github.com/kubernetes/kubernetes/issues/133471"},{"type":"WEB","url":"https://github.com/kubernetes/kubernetes/commit/a2d98cac56a0c5cb2d8abc4d087fc00846b3bc0f"},{"type":"PACKAGE","url":"https://github.com/kubernetes/kubernetes"},{"type":"WEB","url":"https://groups.google.com/g/kubernetes-security-announce/c/znSNY7XCztE"}],"affected":[{"package":{"name":"k8s.io/kubernetes","ecosystem":"Go","purl":"pkg:golang/k8s.io/kubernetes"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"1.31.12"}]}],"database_specific":{"source":"https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2025/08/GHSA-4x4m-3c2p-qppc/GHSA-4x4m-3c2p-qppc.json"}},{"package":{"name":"k8s.io/kubernetes","ecosystem":"Go","purl":"pkg:golang/k8s.io/kubernetes"},"ranges":[{"type":"SEMVER","events":[{"introduced":"1.32.0-alpha.0"},{"fixed":"1.32.8"}]}],"database_specific":{"last_known_affected_version_range":"\u003c 1.32.7","source":"https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2025/08/GHSA-4x4m-3c2p-qppc/GHSA-4x4m-3c2p-qppc.json"}},{"package":{"name":"k8s.io/kubernetes","ecosystem":"Go","purl":"pkg:golang/k8s.io/kubernetes"},"ranges":[{"type":"SEMVER","events":[{"introduced":"1.33.0-alpha.0"},{"fixed":"1.33.4"}]}],"database_specific":{"source":"https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2025/08/GHSA-4x4m-3c2p-qppc/GHSA-4x4m-3c2p-qppc.json"}}],"schema_version":"1.9.0","severity":[{"type":"CVSS_V3","score":"CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:L"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "2447"
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 12 Nov 2026 09:30:14 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-5795fc5dc09fe745a81a9d02b3b47fcd-40eadb6e72b62d0c-00
+            X-Cloud-Trace-Context:
+                - 5795fc5dc09fe745a81a9d02b3b47fcd/4677792430395108620
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 177.41575ms
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/GHSA-hj2p-8wj8-pfq4
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 2458
+        body: '{"id":"GHSA-hj2p-8wj8-pfq4","summary":"kubernetes allows nodes to bypass dynamic resource allocation authorization checks","details":"A vulnerability exists in the NodeRestriction admission controller where nodes can bypass dynamic resource allocation authorization checks. When the DynamicResourceAllocation feature gate is enabled, the controller properly validates resource claim statuses during pod status updates but fails to perform equivalent validation during pod creation. This allows a compromised node to create mirror pods that access unauthorized dynamic resources, potentially leading to privilege escalation.","aliases":["CVE-2025-4563","GO-2025-3774"],"modified":"2026-09-10T03:50:25.286875551Z","published":"2025-06-23T18:30:26Z","database_specific":{"github_reviewed_at":"2025-06-23T22:41:38Z","nvd_published_at":"2025-06-23T16:15:27Z","cwe_ids":["CWE-863"],"severity":"LOW","github_reviewed":true},"references":[{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2025-4563"},{"type":"WEB","url":"https://github.com/kubernetes/kubernetes/issues/132151"},{"type":"WEB","url":"https://github.com/kubernetes/kubernetes/pull/131844"},{"type":"WEB","url":"https://github.com/kubernetes/kubernetes/pull/131875"},{"type":"WEB","url":"https://github.com/kubernetes/kubernetes/pull/131876"},{"type":"PACKAGE","url":"https://github.com/kubernetes/kubernetes"},{"type":"WEB","url":"https://groups.google.com/g/kubernetes-security-announce/c/Zv84LMRuvMQ"},{"type":"WEB","url":"https://pkg.go.dev/vuln/GO-2025-3774"}],"affected":[{"package":{"name":"k8s.io/kubernetes","ecosystem":"Go","purl":"pkg:golang/k8s.io/kubernetes"},"ranges":[{"type":"SEMVER","events":[{"introduced":"1.32.0"},{"fixed":"1.32.6"}]}],"database_specific":{"last_known_affected_version_range":"\u003c= 1.32.5","source":"https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2025/06/GHSA-hj2p-8wj8-pfq4/GHSA-hj2p-8wj8-pfq4.json"}},{"package":{"name":"k8s.io/kubernetes","ecosystem":"Go","purl":"pkg:golang/k8s.io/kubernetes"},"ranges":[{"type":"SEMVER","events":[{"introduced":"1.33.0"},{"fixed":"1.33.2"}]}],"database_specific":{"last_known_affected_version_range":"\u003c= 1.33.1","source":"https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2025/06/GHSA-hj2p-8wj8-pfq4/GHSA-hj2p-8wj8-pfq4.json"}}],"schema_version":"1.9.0","severity":[{"type":"CVSS_V3","score":"CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:N/I:N/A:L"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "2458"
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 12 Nov 2026 09:30:14 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-8f95d810976b4ca1a81a9d02b3b47267-7d2110a7a6e9fb15-00
+            X-Cloud-Trace-Context:
+                - 8f95d810976b4ca1a81a9d02b3b47267/9016506241218378517
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 181.657791ms
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/GHSA-r6j8-c6r2-37rr
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 2807
+        body: '{"id":"GHSA-r6j8-c6r2-37rr","summary":"kube-controller-manager is vulnerable to half-blind Server Side Request Forgery through in-tree Portworx StorageClass","details":"A half-blind Server Side Request Forgery (SSRF) vulnerability exists in kube-controller-manager when using the in-tree Portworx StorageClass. This vulnerability allows authorized users to leak arbitrary information from unprotected endpoints in the control plane’s host network (including link-local or loopback services).","aliases":["CVE-2025-13281","GO-2025-4240"],"modified":"2026-09-10T03:50:58.823452441Z","published":"2025-12-15T00:30:25Z","database_specific":{"nvd_published_at":"2025-12-14T22:15:36Z","cwe_ids":["CWE-918"],"severity":"MODERATE","github_reviewed":true,"github_reviewed_at":"2025-12-16T00:48:30Z"},"references":[{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2025-13281"},{"type":"WEB","url":"https://github.com/kubernetes/kubernetes/issues/135525"},{"type":"WEB","url":"https://github.com/kubernetes/kubernetes/commit/7506ce804c20696ba32cdb72126270ceaed06e24"},{"type":"WEB","url":"https://github.com/kubernetes/kubernetes/commit/97650c1c4fe15cbb7756ba95b3edc8a8665063ca"},{"type":"WEB","url":"https://github.com/kubernetes/kubernetes/commit/dbe17dfe7773563eac95534040f413ada6d2b421"},{"type":"ADVISORY","url":"https://github.com/advisories/GHSA-r6j8-c6r2-37rr"},{"type":"PACKAGE","url":"https://github.com/kubernetes/kubernetes"},{"type":"WEB","url":"https://groups.google.com/g/kubernetes-security-announce/c/EORqZg0k1l4/m/TtD-q0v7AgAJ"},{"type":"WEB","url":"http://www.openwall.com/lists/oss-security/2025/12/01/4"}],"affected":[{"package":{"name":"k8s.io/kubernetes","ecosystem":"Go","purl":"pkg:golang/k8s.io/kubernetes"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"1.32.10"}]}],"database_specific":{"source":"https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2025/12/GHSA-r6j8-c6r2-37rr/GHSA-r6j8-c6r2-37rr.json"}},{"package":{"name":"k8s.io/kubernetes","ecosystem":"Go","purl":"pkg:golang/k8s.io/kubernetes"},"ranges":[{"type":"SEMVER","events":[{"introduced":"1.33.0-alpha.0"},{"fixed":"1.33.6"}]}],"database_specific":{"source":"https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2025/12/GHSA-r6j8-c6r2-37rr/GHSA-r6j8-c6r2-37rr.json"}},{"package":{"name":"k8s.io/kubernetes","ecosystem":"Go","purl":"pkg:golang/k8s.io/kubernetes"},"ranges":[{"type":"SEMVER","events":[{"introduced":"1.34.0-alpha.0"},{"fixed":"1.34.2"}]}],"database_specific":{"source":"https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2025/12/GHSA-r6j8-c6r2-37rr/GHSA-r6j8-c6r2-37rr.json"}}],"schema_version":"1.9.0","severity":[{"type":"CVSS_V3","score":"CVSS:3.1/AV:N/AC:H/PR:H/UI:N/S:C/C:H/I:N/A:N"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "2807"
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 12 Nov 2026 09:30:14 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-cfcf81d4e2190794a81a9d02b3b4700f-46474c4ab31475a6-00
+            X-Cloud-Trace-Context:
+                - cfcf81d4e2190794a81a9d02b3b4700f/5064100189717165478
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 170.82975ms
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/GO-2025-3521
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1097
+        body: '{"id":"GO-2025-3521","summary":"Kubernetes GitRepo Volume Inadvertent Local Repository Access in k8s.io/kubernetes","details":"Kubernetes GitRepo Volume Inadvertent Local Repository Access in k8s.io/kubernetes","aliases":["CVE-2025-1767","GHSA-3wgm-2gw2-vh5m"],"modified":"2026-02-04T02:44:22.558147Z","published":"2025-03-25T19:38:11Z","related":["CGA-6r94-fg49-6632"],"database_specific":{"review_status":"REVIEWED","url":"https://pkg.go.dev/vuln/GO-2025-3521"},"references":[{"type":"ADVISORY","url":"https://github.com/advisories/GHSA-3wgm-2gw2-vh5m"},{"type":"WEB","url":"http://www.openwall.com/lists/oss-security/2025/03/13/9"},{"type":"WEB","url":"https://github.com/kubernetes/kubernetes/pull/130786"},{"type":"WEB","url":"https://groups.google.com/g/kubernetes-security-announce/c/19irihsKg7s"}],"affected":[{"package":{"name":"k8s.io/kubernetes","ecosystem":"Go","purl":"pkg:golang/k8s.io/kubernetes"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"}]}],"ecosystem_specific":{},"database_specific":{"source":"https://vuln.go.dev/ID/GO-2025-3521.json"}}],"schema_version":"1.7.3"}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "1097"
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 12 Nov 2026 09:30:14 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-1b55c501b95880bca81a9d02b3b47543-c6e7169582f099b0-00
+            X-Cloud-Trace-Context:
+                - 1b55c501b95880bca81a9d02b3b47543/14332449170532637104
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 228.287334ms
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/GO-2025-3547
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1092
+        body: '{"id":"GO-2025-3547","summary":"Kubernetes kube-apiserver Vulnerable to Race Condition in k8s.io/kubernetes","details":"Kubernetes kube-apiserver Vulnerable to Race Condition in k8s.io/kubernetes","aliases":["CVE-2024-7598","GHSA-r56h-j38w-hrqq"],"modified":"2026-08-07T08:11:51.376790494Z","published":"2025-03-25T19:38:11Z","related":["CGA-6f5p-j9x4-9hfv"],"database_specific":{"review_status":"REVIEWED","url":"https://pkg.go.dev/vuln/GO-2025-3547"},"references":[{"type":"ADVISORY","url":"https://github.com/advisories/GHSA-r56h-j38w-hrqq"},{"type":"WEB","url":"http://www.openwall.com/lists/oss-security/2025/03/20/2"},{"type":"WEB","url":"https://github.com/kubernetes/kubernetes/issues/126587"},{"type":"WEB","url":"https://groups.google.com/g/kubernetes-security-announce/c/67D7UFqiPRc"}],"affected":[{"package":{"name":"k8s.io/kubernetes","ecosystem":"Go","purl":"pkg:golang/k8s.io/kubernetes"},"ranges":[{"type":"SEMVER","events":[{"introduced":"1.3.0"}]}],"ecosystem_specific":{},"database_specific":{"source":"https://vuln.go.dev/ID/GO-2025-3547.json"}}],"schema_version":"1.7.3"}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "1092"
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 12 Nov 2026 09:30:14 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-da437c01c73eb13ca81a9d02b3b478e7-88a024e1dd1e43bf-00
+            X-Cloud-Trace-Context:
+                - da437c01c73eb13ca81a9d02b3b478e7/9844909337927893951
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 190.831416ms
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/GO-2025-3774
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1357
+        body: '{"id":"GO-2025-3774","summary":"Kubernetes allows nodes to bypass dynamic resource allocation authorization checks in k8s.io/kubernetes","details":"Kubernetes allows nodes to bypass dynamic resource allocation authorization checks in k8s.io/kubernetes","aliases":["CVE-2025-4563","GHSA-hj2p-8wj8-pfq4"],"modified":"2026-02-04T02:37:40.807397Z","published":"2025-07-28T19:57:13Z","related":["CGA-hv4c-jfm9-gqhv"],"database_specific":{"review_status":"REVIEWED","url":"https://pkg.go.dev/vuln/GO-2025-3774"},"references":[{"type":"ADVISORY","url":"https://github.com/advisories/GHSA-hj2p-8wj8-pfq4"},{"type":"WEB","url":"https://github.com/kubernetes/kubernetes/issues/132151"},{"type":"WEB","url":"https://github.com/kubernetes/kubernetes/pull/131844"},{"type":"WEB","url":"https://github.com/kubernetes/kubernetes/pull/131875"},{"type":"WEB","url":"https://github.com/kubernetes/kubernetes/pull/131876"},{"type":"WEB","url":"https://groups.google.com/g/kubernetes-security-announce/c/Zv84LMRuvMQ"}],"affected":[{"package":{"name":"k8s.io/kubernetes","ecosystem":"Go","purl":"pkg:golang/k8s.io/kubernetes"},"ranges":[{"type":"SEMVER","events":[{"introduced":"1.32.0"},{"fixed":"1.32.6"},{"introduced":"1.33.0"},{"fixed":"1.33.2"}]}],"ecosystem_specific":{},"database_specific":{"source":"https://vuln.go.dev/ID/GO-2025-3774.json"}}],"schema_version":"1.7.3"}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "1357"
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 12 Nov 2026 09:30:14 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-78bf7c3ceae10cc6a81a9d02b3b477aa-d6de954f657d1f11-00
+            X-Cloud-Trace-Context:
+                - 78bf7c3ceae10cc6a81a9d02b3b477aa/15482976737183997713
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 211.501708ms
+    - id: 7
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/GO-2025-3915
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1264
+        body: '{"id":"GO-2025-3915","summary":"Kubernetes Nodes can delete themselves by adding an OwnerReference in k8s.io/kubernetes","details":"Kubernetes Nodes can delete themselves by adding an OwnerReference in k8s.io/kubernetes","aliases":["CVE-2025-5187","GHSA-4x4m-3c2p-qppc"],"modified":"2026-02-04T03:55:32.336755Z","published":"2025-09-18T17:26:15Z","related":["CGA-27qc-3f8h-hx6p"],"database_specific":{"review_status":"REVIEWED","url":"https://pkg.go.dev/vuln/GO-2025-3915"},"references":[{"type":"ADVISORY","url":"https://github.com/advisories/GHSA-4x4m-3c2p-qppc"},{"type":"FIX","url":"https://github.com/kubernetes/kubernetes/commit/a2d98cac56a0c5cb2d8abc4d087fc00846b3bc0f"},{"type":"WEB","url":"https://github.com/kubernetes/kubernetes/issues/133471"},{"type":"WEB","url":"https://groups.google.com/g/kubernetes-security-announce/c/znSNY7XCztE"}],"affected":[{"package":{"name":"k8s.io/kubernetes","ecosystem":"Go","purl":"pkg:golang/k8s.io/kubernetes"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"1.31.12"},{"introduced":"1.32.0-alpha.0"},{"fixed":"1.32.8"},{"introduced":"1.33.0-alpha.0"},{"fixed":"1.33.4"}]}],"ecosystem_specific":{},"database_specific":{"source":"https://vuln.go.dev/ID/GO-2025-3915.json"}}],"schema_version":"1.7.3"}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "1264"
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 12 Nov 2026 09:30:14 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-b6f9620480eb2506a81a9d02b3b47082-bd4bf38c801df1e2-00
+            X-Cloud-Trace-Context:
+                - b6f9620480eb2506a81a9d02b3b47082/13640263681192096226
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 221.389292ms
+    - id: 8
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/GO-2025-4240
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1657
+        body: '{"id":"GO-2025-4240","summary":"Half-blind Server Side Request Forgery in kube-controller-manager through in-tree Portworx StorageClass in k8s.io/kubernetes","details":"Half-blind Server Side Request Forgery in kube-controller-manager through in-tree Portworx StorageClass in k8s.io/kubernetes","aliases":["CVE-2025-13281","GHSA-r6j8-c6r2-37rr"],"modified":"2026-02-04T03:00:49.298548Z","published":"2025-12-16T19:39:14Z","related":["CGA-qpfv-qmrf-52w5"],"database_specific":{"review_status":"REVIEWED","url":"https://pkg.go.dev/vuln/GO-2025-4240"},"references":[{"type":"ADVISORY","url":"https://github.com/advisories/GHSA-r6j8-c6r2-37rr"},{"type":"WEB","url":"http://www.openwall.com/lists/oss-security/2025/12/01/4"},{"type":"WEB","url":"https://github.com/kubernetes/kubernetes/commit/7506ce804c20696ba32cdb72126270ceaed06e24"},{"type":"WEB","url":"https://github.com/kubernetes/kubernetes/commit/97650c1c4fe15cbb7756ba95b3edc8a8665063ca"},{"type":"WEB","url":"https://github.com/kubernetes/kubernetes/commit/dbe17dfe7773563eac95534040f413ada6d2b421"},{"type":"WEB","url":"https://github.com/kubernetes/kubernetes/issues/135525"},{"type":"WEB","url":"https://groups.google.com/g/kubernetes-security-announce/c/EORqZg0k1l4/m/TtD-q0v7AgAJ"}],"affected":[{"package":{"name":"k8s.io/kubernetes","ecosystem":"Go","purl":"pkg:golang/k8s.io/kubernetes"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"1.32.10"},{"introduced":"1.33.0-alpha.0"},{"fixed":"1.33.6"},{"introduced":"1.34.0-alpha.0"},{"fixed":"1.34.2"}]}],"ecosystem_specific":{},"database_specific":{"source":"https://vuln.go.dev/ID/GO-2025-4240.json"}}],"schema_version":"1.7.3"}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "1657"
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 12 Nov 2026 09:30:14 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-ae37a1909045dff2a81a9d02b3b474ee-51c9bc414fb33e2a-00
+            X-Cloud-Trace-Context:
+                - ae37a1909045dff2a81a9d02b3b474ee/5893448576087047722
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 221.031125ms
+    - id: 9
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 90
+        host: api.osv.dev
+        body: '{"queries":[{"package":{"ecosystem":"Go","name":"k8s.io/kubernetes"},"version":"1.37.2"}]}'
+        headers:
+            Accept:
+                - application/json
+            Content-Type:
+                - application/json
+        url: https://api.osv.dev/v1/querybatch
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 151
+        body: '{"results":[{"vulns":[{"id":"GO-2025-3521","modified":"2026-02-04T02:44:22.558147Z"},{"id":"GO-2025-3547","modified":"2026-08-07T08:11:51.376790Z"}]}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "151"
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 12 Nov 2026 09:30:14 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-1c8fea106085992da81a9d02b3b471ce-d6ea6ebadf153514-00
+            X-Cloud-Trace-Context:
+                - 1c8fea106085992da81a9d02b3b471ce/15486312017552553236
+            X-Envoy-Decorator-Operation:
+                - ingress QueryAffectedBatch
+        status: 200 OK
+        code: 200
+        duration: 290.550708ms

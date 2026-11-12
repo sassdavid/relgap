@@ -1,6 +1,6 @@
 # relgap ADR-0006: Own HTTP cache with release-age TTLs
 
-- Status: accepted (2026-11-11)
+- Status: accepted (2026-11-11); amended by [ADR-0011](0011-enrichment-and-web-sources.md), which adds OSV batch queries, remembered 404s and 1-day TTLs for endoflife.date and OSV
 
 ## Context
 Engineering ADR-0005 asks for an ETag/Last-Modified disk cache with TTLs that depend on release

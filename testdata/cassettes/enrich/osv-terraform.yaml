@@ -1,0 +1,177 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 102
+        host: api.osv.dev
+        body: '{"queries":[{"package":{"ecosystem":"Go","name":"github.com/hashicorp/terraform"},"version":"1.5.0"}]}'
+        headers:
+            Accept:
+                - application/json
+            Content-Type:
+                - application/json
+        url: https://api.osv.dev/v1/querybatch
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 158
+        body: '{"results":[{"vulns":[{"id":"GHSA-h626-pv66-hhm7","modified":"2024-08-21T14:56:52.851383Z"},{"id":"GO-2023-2055","modified":"2026-03-03T04:54:09.394727Z"}]}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "158"
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 12 Nov 2026 09:30:13 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-4e65afbb4b5de1b0a81a9d02b3b4746c-09876036bc3a47b4-00
+            X-Cloud-Trace-Context:
+                - 4e65afbb4b5de1b0a81a9d02b3b4746c/686623256399726516
+            X-Envoy-Decorator-Operation:
+                - ingress QueryAffectedBatch
+        status: 200 OK
+        code: 200
+        duration: 428.764209ms
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/GO-2023-2055
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1374
+        body: '{"id":"GO-2023-2055","summary":"Terraform allows arbitrary file write during the `init` operation in github.com/hashicorp/terraform","details":"Terraform allows arbitrary file write during the `init` operation in github.com/hashicorp/terraform","aliases":["CVE-2023-4782","GHSA-h626-pv66-hhm7"],"modified":"2026-03-03T04:54:09.394727Z","published":"2024-08-21T14:30:18Z","database_specific":{"url":"https://pkg.go.dev/vuln/GO-2023-2055","review_status":"UNREVIEWED"},"references":[{"type":"ADVISORY","url":"https://github.com/advisories/GHSA-h626-pv66-hhm7"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2023-4782"},{"type":"FIX","url":"https://github.com/hashicorp/terraform/commit/0f2314fb62193c4be94328cc026fcb7ec1e9b893"},{"type":"FIX","url":"https://github.com/hashicorp/terraform/pull/33745"},{"type":"WEB","url":"https://discuss.hashicorp.com/t/hcsec-2023-27-terraform-allows-arbitrary-file-write-during-init-operation/58082"},{"type":"WEB","url":"https://github.com/hashicorp/terraform/releases/tag/v1.5.7"}],"affected":[{"package":{"name":"github.com/hashicorp/terraform","ecosystem":"Go","purl":"pkg:golang/github.com/hashicorp/terraform"},"ranges":[{"type":"SEMVER","events":[{"introduced":"1.0.8"},{"fixed":"1.5.7"}]}],"ecosystem_specific":{},"database_specific":{"source":"https://vuln.go.dev/ID/GO-2023-2055.json"}}],"schema_version":"1.7.3"}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "1374"
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 12 Nov 2026 09:30:14 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-70d72a625366fe15a81a9d02b3b47203-bd9c16f02a166cf9-00
+            X-Cloud-Trace-Context:
+                - 70d72a625366fe15a81a9d02b3b47203/13662820590289317113
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 204.369958ms
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/GHSA-h626-pv66-hhm7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1659
+        body: '{"id":"GHSA-h626-pv66-hhm7","summary":"Terraform allows arbitrary file write during the `init` operation","details":"Terraform version 1.0.8 through 1.5.6 allows arbitrary file write during the `init` operation if run on maliciously crafted Terraform configuration. This vulnerability is fixed in Terraform 1.5.7.","aliases":["CVE-2023-4782","GO-2023-2055"],"modified":"2024-08-21T14:56:52.851383Z","published":"2023-09-08T18:30:29Z","database_specific":{"cwe_ids":["CWE-22"],"severity":"MODERATE","github_reviewed":true,"github_reviewed_at":"2023-09-08T19:43:48Z","nvd_published_at":"2023-09-08T18:15:07Z"},"references":[{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2023-4782"},{"type":"WEB","url":"https://github.com/hashicorp/terraform/pull/33745"},{"type":"WEB","url":"https://github.com/hashicorp/terraform/commit/0f2314fb62193c4be94328cc026fcb7ec1e9b893"},{"type":"WEB","url":"https://discuss.hashicorp.com/t/hcsec-2023-27-terraform-allows-arbitrary-file-write-during-init-operation/58082"},{"type":"PACKAGE","url":"https://github.com/hashicorp/terraform"},{"type":"WEB","url":"https://github.com/hashicorp/terraform/releases/tag/v1.5.7"}],"affected":[{"package":{"name":"github.com/hashicorp/terraform","ecosystem":"Go","purl":"pkg:golang/github.com/hashicorp/terraform"},"ranges":[{"type":"SEMVER","events":[{"introduced":"1.0.8"},{"fixed":"1.5.7"}]}],"database_specific":{"source":"https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2023/09/GHSA-h626-pv66-hhm7/GHSA-h626-pv66-hhm7.json"}}],"schema_version":"1.9.0","severity":[{"type":"CVSS_V3","score":"CVSS:3.1/AV:L/AC:L/PR:H/UI:R/S:C/C:L/I:H/A:N"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "1659"
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 12 Nov 2026 09:30:14 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-8de56b36d7cabf14a81a9d02b3b47b50-abaa42cf7a27b2a2-00
+            X-Cloud-Trace-Context:
+                - 8de56b36d7cabf14a81a9d02b3b47b50/12369772785401574050
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 205.553042ms
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 103
+        host: api.osv.dev
+        body: '{"queries":[{"package":{"ecosystem":"Go","name":"github.com/hashicorp/terraform"},"version":"1.17.2"}]}'
+        headers:
+            Accept:
+                - application/json
+            Content-Type:
+                - application/json
+        url: https://api.osv.dev/v1/querybatch
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 16
+        body: '{"results":[{}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "16"
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 12 Nov 2026 09:30:14 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-420745f90a4287c6a81a9d02b3b47360-c46f2dd2621a09d6-00
+            X-Cloud-Trace-Context:
+                - 420745f90a4287c6a81a9d02b3b47360/14154582535461013974
+            X-Envoy-Decorator-Operation:
+                - ingress QueryAffectedBatch
+        status: 200 OK
+        code: 200
+        duration: 224.379208ms

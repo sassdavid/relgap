@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=../schemas/registry-v1.json
+# Release bodies repeat CHANGELOG.md (1.2 MB), and some are one line. The file is read once.
+name: claude-code
+aliases: [claude]
+repo: anthropics/claude-code
+version:
+  scheme: semver
+  tag_prefix: "v"
+  universe: releases
+sources:
+  - kind: changelog-file
+    path_template: CHANGELOG.md
+    heading: "^{version}$"
+  - kind: gh-release
+osv:
+  - { ecosystem: npm, name: "@anthropic-ai/claude-code" }
+bin: [claude]

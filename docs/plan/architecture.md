@@ -31,6 +31,7 @@
 | `github` | REST + GraphQL batch; tags, releases, file fetch (raw accept) | [specs/source-adapters.md](specs/source-adapters.md) |
 | `source` | `Adapter` interface + 5 adapter kinds; composite per tool | [specs/source-adapters.md](specs/source-adapters.md) |
 | `mdindex` | goldmark AST → version-keyed section index (parse once per file) | [adr/0001](adr/0001-goldmark-section-index.md) |
+| `htmlmd` | part of an HTML page → Markdown, picked and cleaned with simple selectors (web-doc) | [adr/0011](adr/0011-enrichment-and-web-sources.md) |
 | `classify` | entry kind + confidence from headings, markers, context | [specs/classification.md](specs/classification.md) |
 | `enrich` | endoflife.date, OSV (+ Go buildinfo of installed binaries) | [specs/enrichment.md](specs/enrichment.md) |
 | `report` | report model, `--fail-on` evaluation | [specs/output-and-ci.md](specs/output-and-ci.md) |

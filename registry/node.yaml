@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=../schemas/registry-v1.json
+# One changelog file per major in doc/changelogs; headings carry the date and the version.
+name: node
+aliases: [nodejs]
+repo: nodejs/node
+version:
+  scheme: semver
+  tag_prefix: "v"
+  universe: releases
+sources:
+  - kind: changelog-file
+    path_template: "doc/changelogs/CHANGELOG_V{major}.md"
+    ref: main
+    heading: "^\\d{4}-\\d{2}-\\d{2}, Version {version} "
+eol: { product: nodejs, cycle: "{major}" }
+osv:
+  - { ecosystem: GIT, name: "https://github.com/nodejs/node" }

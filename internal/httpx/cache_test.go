@@ -209,14 +209,9 @@ func TestCacheSkipsErrorsAndKeysOnToken(t *testing.T) {
 	clk := &clock{now: t0}
 	c, cache := cachedClient(t, o.srv.Client().Transport, t.TempDir(), httpx.ModeDefault, clk, nil)
 
-	o.status.Store(http.StatusNotFound)
-	req, err := http.NewRequestWithContext(t.Context(), http.MethodGet, o.srv.URL, http.NoBody)
-	require.NoError(t, err)
-	resp, err := c.Do(req)
-	require.NoError(t, err)
-	_ = resp.Body.Close()
-	assert.Equal(t, http.StatusNotFound, resp.StatusCode)
-	assert.Equal(t, int64(0), cache.Stats().Stored, "only 200 responses are stored")
+	o.status.Store(http.StatusForbidden)
+	assert.Equal(t, http.StatusForbidden, status(t, c, o.srv.URL))
+	assert.Equal(t, int64(0), cache.Stats().Stored, "only 200 and 404 responses are stored")
 
 	o.status.Store(http.StatusOK)
 	body(t, c, o.srv.URL)
@@ -224,6 +219,40 @@ func TestCacheSkipsErrorsAndKeysOnToken(t *testing.T) {
 	body(t, c, o.srv.URL, "Authorization", "Bearer y")
 	assert.Equal(t, int32(3), o.requests.Load(), "with and without a token are separate entries")
 	assert.Equal(t, int64(2), cache.Stats().Stored)
+}
+
+// TestCacheRemembersMisses: a 404 is answered from the cache for an hour, then asked again, and
+// --offline serves it too.
+func TestCacheRemembersMisses(t *testing.T) {
+	t.Parallel()
+	o := newOrigin(t, t0.Add(-400*day))
+	o.status.Store(http.StatusNotFound)
+	clk := &clock{now: t0}
+	dir := t.TempDir()
+	c, cache := cachedClient(t, o.srv.Client().Transport, dir, httpx.ModeDefault, clk, nil)
+	assert.Equal(t, http.StatusNotFound, status(t, c, o.srv.URL))
+	assert.Equal(t, http.StatusNotFound, status(t, c, o.srv.URL))
+	assert.Equal(t, int32(1), o.requests.Load(), "the second miss comes from the cache")
+	assert.Equal(t, int64(1), cache.Stats().Stored)
+
+	offline, _ := cachedClient(t, o.srv.Client().Transport, dir, httpx.ModeOffline, clk, nil)
+	assert.Equal(t, http.StatusNotFound, status(t, offline, o.srv.URL))
+	assert.Equal(t, int32(1), o.requests.Load(), "--offline sends nothing")
+
+	clk.now = t0.Add(time.Hour)
+	o.status.Store(http.StatusOK)
+	assert.NotEmpty(t, body(t, c, o.srv.URL), "after an hour the file is asked for again")
+	assert.Equal(t, int32(2), o.requests.Load())
+}
+
+func status(t *testing.T, c *http.Client, url string) int {
+	t.Helper()
+	req, err := http.NewRequestWithContext(t.Context(), http.MethodGet, url, http.NoBody)
+	require.NoError(t, err)
+	resp, err := c.Do(req)
+	require.NoError(t, err)
+	_ = resp.Body.Close()
+	return resp.StatusCode
 }
 
 func TestCacheGraphQL(t *testing.T) {

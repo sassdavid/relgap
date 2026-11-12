@@ -74,12 +74,12 @@
           "path_template": {
             "type": "string",
             "minLength": 1,
-            "description": "File path in the repo; supports {version}, {major}, {minor} and {prev_minor}."
+            "description": "File path in the repo. Placeholders: {version}, {major}, {minor} (the minor number alone) and {tag}; upgrade-guide also has {prev_minor} (such as 3.5) and {prev_major}."
           },
           "url_template": {
             "type": "string",
             "pattern": "^https://",
-            "description": "Allow-listed URL; same placeholders as path_template."
+            "description": "https URL on a host relgap allows (go.dev, docs.python.org, api.adoptium.net); same placeholders as path_template."
           },
           "ref": {
             "type": "string",
@@ -100,12 +100,43 @@
             "type": "string",
             "minLength": 1,
             "description": "Heading whose section holds the upgrade notes."
+          },
+          "content": {
+            "type": "string",
+            "minLength": 1,
+            "description": "web-doc: selector (tag, #id and .class without spaces) of the element to convert. Default main, else body."
+          },
+          "strip": {
+            "description": "web-doc: selectors of elements dropped before converting, such as a.headerlink.",
+            "type": "array",
+            "items": { "type": "string", "minLength": 1 }
+          },
+          "anchor": {
+            "type": "string",
+            "minLength": 1,
+            "description": "web-doc: id of a version's element on the page, with the path_template placeholders, such as go{version}."
+          },
+          "json": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["text"],
+            "description": "structured-json: how each JSON document becomes entries.",
+            "properties": {
+              "items": { "type": "string", "description": "Dotted path to the array of entries; empty means the document is the array." },
+              "heading": { "type": "string", "minLength": 1, "description": "Field whose value groups entries under a heading, such as type." },
+              "text": { "type": "string", "minLength": 1, "description": "Entry text with {field} placeholders, such as {category}: {description}." },
+              "link": { "type": "string", "minLength": 1, "description": "Field holding a URL for the entry." }
+            }
           }
         },
         "allOf": [
           {
-            "if": { "properties": { "kind": { "enum": ["changelog-file", "structured-json"] } } },
+            "if": { "properties": { "kind": { "const": "changelog-file" } } },
             "then": { "required": ["path_template"] }
+          },
+          {
+            "if": { "properties": { "kind": { "const": "structured-json" } } },
+            "then": { "required": ["json"], "anyOf": [{ "required": ["path_template"] }, { "required": ["url_template"] }] }
           },
           {
             "if": { "properties": { "kind": { "const": "web-doc" } } },
@@ -138,10 +169,20 @@
         "additionalProperties": false,
         "required": ["ecosystem", "name"],
         "properties": {
-          "ecosystem": { "type": "string", "minLength": 1 },
+          "ecosystem": {
+            "type": "string",
+            "minLength": 1,
+            "description": "OSV ecosystem such as Go, npm, PyPI or crates.io. GIT takes the repository URL as name and queries the version's tag."
+          },
           "name": { "type": "string", "minLength": 1 }
         }
       }
+    },
+    "bin": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "pattern": "^[A-Za-z0-9._-]+$" },
+      "description": "Executable names that outdated --binaries looks for. Empty means the tool name."
     },
     "breaking_markers": {
       "type": "array",

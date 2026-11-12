@@ -48,9 +48,9 @@ Scope: `httpx` (retry, rate, no cache yet), go-github + githubv4 batch, token di
 
 ### M8: Remaining adapters, enrichment, curated registry → v0.1.0
 Scope: `structured-json`, `web-doc`, `upgrade-guide` adapters, EOL + OSV, all 20 curated registry entries, `registry lint|test`, live corpus job.
-- [ ] Every enrichment.md criterion, plus source-adapters criteria 2, 4 and 5.
-- [ ] The nightly live corpus (30 tools) passes once on main.
-- [ ] First tagged release v0.1.0: Homebrew cask installs, `mise use github:sassdavid/relgap` works, `cosign verify-blob` passes.
+- [x] Every enrichment.md criterion, plus source-adapters criteria 2, 4 and 5. (`TestSpec_enrichment_1` to `_4`, `TestSpec_source_adapters_2`, `_4`, `_5`; `mise run check` passes. Decisions: [ADR-0011](adr/0011-enrichment-and-web-sources.md).)
+- [ ] The nightly live corpus (30 tools) passes once on main. Open until `live.yml` runs on main after the merge. A local run of `mise run test:live` on 2026-11-12 passed 28 tools; chart:argo/argo-cd and 1password-cli are skipped with the reason in `testdata/corpus.yaml`.
+- [ ] First tagged release v0.1.0: Homebrew cask installs, `mise use github:sassdavid/relgap` works, `cosign verify-blob` passes. Open until the release-please PR after the merge.
 
 ### M9: SARIF + `--fail-on` matrix → [output-and-ci](specs/output-and-ci.md)
 - [ ] output-and-ci.md criteria 1–3.

@@ -112,3 +112,27 @@ func escapePath(p string) string {
 	}
 	return strings.Join(parts, "/")
 }
+
+// File is an entry of a repository directory listing.
+type File struct {
+	Name string `json:"name"`
+	Size int    `json:"size"`
+	Dir  bool   `json:"dir"`
+}
+
+// RootFiles lists the top directory of repo on its default branch through the contents API.
+func (c *Client) RootFiles(ctx context.Context, repo string) ([]File, error) {
+	owner, name, err := splitRepo(repo)
+	if err != nil {
+		return nil, err
+	}
+	_, dir, _, err := c.rest.Repositories.GetContents(ctx, owner, name, "", nil)
+	if err != nil {
+		return nil, fmt.Errorf("list files of %s: %w", repo, mapRESTError(err))
+	}
+	out := make([]File, 0, len(dir))
+	for _, f := range dir {
+		out = append(out, File{Name: f.GetName(), Size: f.GetSize(), Dir: f.GetType() == "dir"})
+	}
+	return out, nil
+}

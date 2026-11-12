@@ -15,7 +15,12 @@
           "type": "array",
           "items": { "type": "string", "minLength": 1 }
         },
-        "pins": { "type": "array", "items": { "$ref": "#/$defs/pin" } }
+        "pins": { "type": "array", "items": { "$ref": "#/$defs/pin" } },
+        "binaries": {
+          "description": "With --binaries: the Go executables of the pinned tools and the OSV vulnerabilities of the Go version and main module they were built with. Matched by version only, without symbol reachability.",
+          "type": "array",
+          "items": { "$ref": "#/$defs/binary" }
+        }
       }
     }
   },
@@ -73,8 +78,94 @@
           "enum": ["current", "outdated", "unknown", "skipped", "error"]
         },
         "note": { "description": "Why the pin is unknown, skipped or failed.", "type": "string", "minLength": 1 },
-        "eol": { "description": "Reserved for end-of-life data of the current version.", "type": "object" },
-        "vulns": { "description": "Reserved for known vulnerabilities of the current version.", "type": "array", "items": { "type": "object" } }
+        "eol": {
+          "description": "End-of-life state on endoflife.date of the current version's cycle and of the latest version's. Absent when the tool has no endoflife.date product or endoflife.date failed.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["product", "current"],
+          "properties": {
+            "product": { "type": "string", "minLength": 1 },
+            "current": { "$ref": "#/$defs/eolStatus" },
+            "target": { "$ref": "#/$defs/eolStatus" }
+          }
+        },
+        "vulns": {
+          "description": "OSV vulnerabilities of the current version. Absent when the tool has no OSV package or OSV failed.",
+          "type": "array",
+          "items": { "$ref": "#/$defs/vuln" }
+        }
+      }
+    },
+    "eolStatus": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["version", "cycle"],
+      "properties": {
+        "version": { "type": "string", "minLength": 1 },
+        "cycle": { "description": "The release cycle, from the registry's cycle template.", "type": "string", "minLength": 1 },
+        "is_eol": { "description": "Absent when endoflife.date doesn't list the cycle.", "type": "boolean" },
+        "eol_from": { "description": "Date the cycle reaches or reached its end.", "type": "string", "format": "date" },
+        "latest_in_cycle": { "type": "string", "minLength": 1 },
+        "note": { "type": "string", "minLength": 1 }
+      }
+    },
+    "osvPackage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ecosystem", "name"],
+      "properties": {
+        "ecosystem": { "type": "string", "minLength": 1 },
+        "name": { "type": "string", "minLength": 1 }
+      }
+    },
+    "vuln": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "package", "affects_current"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "aliases": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "summary": { "type": "string" },
+        "package": { "$ref": "#/$defs/osvPackage" },
+        "severity": {
+          "description": "The highest CVSS base score among the record's vectors, or only the advisory's own rating.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["rating"],
+          "properties": {
+            "score": { "type": "number", "minimum": 0, "maximum": 10 },
+            "rating": { "enum": ["none", "low", "medium", "high", "critical"] },
+            "vector": { "type": "string", "minLength": 1 }
+          }
+        },
+        "fixed_in": { "description": "Lowest fixed version above the current one.", "type": "string", "minLength": 1 },
+        "affects_current": { "type": "boolean" },
+        "fixed_by_target": { "description": "Whether the latest version is outside every affected range. Absent without a target or when the ranges can't be compared locally.", "type": "boolean" }
+      }
+    },
+    "binary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tool", "path", "go_version", "queries", "vulns"],
+      "properties": {
+        "tool": { "type": "string", "minLength": 1 },
+        "path": { "type": "string", "minLength": 1 },
+        "go_version": { "type": "string", "minLength": 1 },
+        "module": { "type": "string", "minLength": 1 },
+        "module_version": { "description": "Absent for (devel) builds.", "type": "string", "minLength": 1 },
+        "queries": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["package", "version"],
+            "properties": {
+              "package": { "$ref": "#/$defs/osvPackage" },
+              "version": { "type": "string", "minLength": 1 }
+            }
+          }
+        },
+        "vulns": { "type": "array", "items": { "$ref": "#/$defs/vuln" } }
       }
     }
   }

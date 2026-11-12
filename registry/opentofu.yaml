@@ -1,0 +1,20 @@
+# yaml-language-server: $schema=../schemas/registry-v1.json
+# Like terraform: each v<major>.<minor> branch has that minor's CHANGELOG.md, with bare version headings.
+name: opentofu
+aliases: [tofu]
+repo: opentofu/opentofu
+version:
+  scheme: semver
+  tag_prefix: "v"
+  universe: releases
+sources:
+  - kind: changelog-file
+    path_template: CHANGELOG.md
+    ref: "v{major}.{minor}"
+    heading: "^{version}$"
+  - kind: gh-release
+    ignore_sections: ["Previous Releases"]
+eol: { product: opentofu, cycle: "{major}.{minor}" }
+osv:
+  - { ecosystem: Go, name: github.com/opentofu/opentofu }
+bin: [tofu]

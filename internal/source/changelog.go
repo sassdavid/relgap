@@ -2,12 +2,10 @@ package source
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"log/slog"
 	"strings"
 
-	"github.com/sassdavid/relgap/internal/github"
 	"github.com/sassdavid/relgap/internal/mdindex"
 	"github.com/sassdavid/relgap/internal/registry"
 	"github.com/sassdavid/relgap/internal/version"
@@ -18,10 +16,18 @@ type FileFetcher interface {
 	File(ctx context.Context, repo, ref, path string) ([]byte, error)
 }
 
-// NewFileCache returns an [mdindex.Cache] that reads files through gh.
+// NewFileCache returns an [mdindex.Cache] that reads files through gh. reStructuredText files
+// get Markdown headings first.
 func NewFileCache(gh FileFetcher) *mdindex.Cache {
 	return mdindex.NewCache(func(ctx context.Context, k mdindex.Key) ([]byte, error) {
-		return gh.File(ctx, k.Repo, k.Ref, k.Path) //nolint:wrapcheck // File names the file in its errors
+		b, err := gh.File(ctx, k.Repo, k.Ref, k.Path)
+		if err != nil {
+			return nil, err //nolint:wrapcheck // File names the file in its errors
+		}
+		if strings.HasSuffix(strings.ToLower(k.Path), ".rst") {
+			b = mdindex.FromRST(b)
+		}
+		return b, nil
 	})
 }
 
@@ -66,7 +72,7 @@ func (a *ChangelogFile) Fetch(
 			Path: Expand(a.src.PathTemplate, rules.Scheme, v),
 		}
 		idx, getErr := a.cache.Get(ctx, k, opts)
-		if errors.Is(getErr, github.ErrNotFound) {
+		if missing(getErr) {
 			a.logger.DebugContext(ctx, "changelog file not found", "repo", k.Repo, "ref", k.Ref, "path", k.Path)
 			continue
 		}
@@ -100,8 +106,15 @@ func FileURL(k mdindex.Key) string {
 	return fmt.Sprintf("https://github.com/%s/blob/%s/%s", k.Repo, ref, strings.TrimPrefix(k.Path, "/"))
 }
 
-// Expand fills a path or ref template: {version}, {major}, {minor} and {tag}.
+// Expand fills a path or ref template: {version}, {major}, {minor} (the minor number alone)
+// and {tag}.
 func Expand(tmpl string, s version.Scheme, v version.Version) string {
+	return ExpandPrev(tmpl, s, v, version.V{})
+}
+
+// ExpandPrev is [Expand] with {prev_minor} (the line, such as 3.5) and {prev_major} taken from
+// prev, the version before v.
+func ExpandPrev(tmpl string, s version.Scheme, v version.Version, prev version.V) string {
 	if !strings.Contains(tmpl, "{") {
 		return tmpl
 	}
@@ -109,10 +122,16 @@ func Expand(tmpl string, s version.Scheme, v version.Version) string {
 	if i := strings.LastIndexByte(minor, '.'); i >= 0 {
 		minor = minor[i+1:]
 	}
-	return strings.NewReplacer(
+	pairs := []string{
 		"{version}", v.V.String(),
 		"{major}", s.Line(v.V, version.LineMajor),
 		"{minor}", minor,
 		"{tag}", v.Tag,
-	).Replace(tmpl)
+	}
+	if !prev.IsZero() {
+		pairs = append(pairs,
+			"{prev_minor}", s.Line(prev, version.LineMinor),
+			"{prev_major}", s.Line(prev, version.LineMajor))
+	}
+	return strings.NewReplacer(pairs...).Replace(tmpl)
 }

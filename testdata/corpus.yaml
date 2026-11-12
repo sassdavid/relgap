@@ -1,33 +1,134 @@
-# The 30-tool corpus from docs/plan/testing.md, written the way a user types each tool. Fields for
-# digests (range, adapters, expected breaking count, golden path) are added when digests exist.
+# The 30-tool corpus from docs/plan/testing.md, written the way a user types each tool. The nightly
+# live test (internal/cli/live_test.go, `mise run test:live`) digests each range against GitHub:
+#   range     digested as in `relgap digest <tool> <range>`
+#   adapters  source adapters that must produce entries (at --min-confidence 0)
+#   breaking  breaking entries at the default --min-confidence; a change by more than tolerance
+#             (default 2) is drift
+#   golden    a digest golden under testdata/golden whose data must match exactly
+#   skip      why the tool isn't digested yet
+# Ranges and counts were checked live on 2026-11-12. The live test never rewrites this file or a
+# golden; a person updates both after reviewing the drift issue.
 tools:
   - tool: terraform
+    range: 1.15.8..1.17.1
+    adapters: [changelog-file]
+    breaking: 1
+    golden: corpus/terraform.json
   - tool: opentofu
+    range: 1.12.3..1.13.2
+    adapters: [changelog-file, gh-release]
+    breaking: 8
   - tool: terragrunt
+    range: 1.2.0..1.2.2
+    adapters: [gh-release]
+    breaking: 0
   - tool: tflint
+    range: 0.64.0..0.66.0
+    adapters: [gh-release]
+    breaking: 2
   - tool: terraform-docs
+    range: 0.22.0..0.24.0
+    adapters: [gh-release]
+    breaking: 2
   - tool: tfprovider:hashicorp/aws
+    range: 5.99.0..6.0.0
+    adapters: [changelog-file, gh-release, upgrade-guide]
+    breaking: 317
+    tolerance: 30
   - tool: tfprovider:hashicorp/kubernetes
+    range: 2.38.0..3.0.0
+    adapters: [gh-release, upgrade-guide]
+    breaking: 8
   - tool: kubectl
+    range: 1.36.0..1.37.2
+    adapters: [changelog-file, upgrade-notes]
+    breaking: 4
+    golden: corpus/kubectl.json
   - tool: helm
+    range: 3.21.0..3.22.1
+    adapters: [gh-release]
+    breaking: 0
   - tool: argocd
+    range: 3.5.0..3.6.1
+    adapters: [gh-release, upgrade-guide]
+    breaking: 18
+    golden: corpus/argocd.json
   - tool: k9s
+    range: 0.50.7..0.50.9
+    adapters: [changelog-file]
+    breaking: 0
   - tool: kubeconform
+    range: 0.6.7..0.8.0
+    adapters: [gh-release]
+    breaking: 2
   - tool: chart:argo/argo-cd
+    skip: "chart: names need a lookup in Artifact Hub, which relgap doesn't do yet"
   - tool: awscli
+    range: 2.31.0..2.31.10
+    adapters: [structured-json]
+    breaking: 0
+    golden: corpus/awscli.json
   - tool: gh
+    range: 2.102.0..2.103.3
+    adapters: [gh-release]
+    breaking: 0
   - tool: 1password-cli
+    skip: "no public GitHub repository; its notes are only on app-updates.agilebits.com"
   - tool: aqua:mongodb/mongodb-atlas-cli/atlascli
+    range: 1.58.0..1.59.0
+    adapters: [gh-release]
+    breaking: 0
   - tool: node
+    range: 24.21.0..24.22.3
+    adapters: [changelog-file]
+    breaking: 0
   - tool: python
+    range: 3.13.9..3.14.2
+    adapters: [web-doc]
+    breaking: 101
+    tolerance: 10
   - tool: go
+    range: 1.26.9..1.27.4
+    adapters: [web-doc]
+    breaking: 0
   - tool: temurin
+    range: 21.0.8+9..21.0.9+10
+    adapters: [structured-json]
+    breaking: 0
   - tool: mise
+    range: 2026.11.4..2026.11.7
+    adapters: [changelog-file, gh-release]
+    breaking: 0
   - tool: uv
+    range: 0.12.20..0.13.2
+    adapters: [changelog-file, gh-release]
+    breaking: 8
   - tool: ruff
+    range: 0.16.5..0.17.1
+    adapters: [changelog-file, gh-release]
+    breaking: 9
   - tool: claude-code
+    range: 2.1.300..2.1.319
+    adapters: [changelog-file]
+    breaking: 1
+    golden: corpus/claude-code.json
   - tool: golangci-lint
+    range: 2.13.0..2.15.0
+    adapters: [changelog-file]
+    breaking: 7
   - tool: gitleaks
+    range: 8.29.0..8.30.1
+    adapters: [gh-release]
+    breaking: 0
   - tool: hk
+    range: 2.10.0..2.12.0
+    adapters: [gh-release]
+    breaking: 0
   - tool: usage
+    range: 7.1.5..7.3.0
+    adapters: [gh-release]
+    breaking: 0
   - tool: fnox
+    range: 1.46.0..1.48.0
+    adapters: [gh-release]
+    breaking: 0

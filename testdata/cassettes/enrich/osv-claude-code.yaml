@@ -1,0 +1,1185 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 98
+        host: api.osv.dev
+        body: '{"queries":[{"package":{"ecosystem":"npm","name":"@anthropic-ai/claude-code"},"version":"1.0.0"}]}'
+        headers:
+            Accept:
+                - application/json
+            Content-Type:
+                - application/json
+        url: https://api.osv.dev/v1/querybatch
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1800
+        body: '{"results":[{"vulns":[{"id":"GHSA-2jjv-qf24-vfm4","modified":"2025-12-22T16:44:46.745927Z"},{"id":"GHSA-4fgq-fpq9-mr3g","modified":"2025-10-03T14:57:25.457969Z"},{"id":"GHSA-4q92-rfm6-2cqx","modified":"2026-04-12T05:17:45.956376Z"},{"id":"GHSA-5cwg-9f6j-9jvx","modified":"2026-05-05T16:04:01.752628Z"},{"id":"GHSA-5hhx-v7f6-x7gv","modified":"2025-12-22T16:45:06.468644Z"},{"id":"GHSA-5xjx-9qx6-jcrv","modified":"2026-11-09T23:00:03.851745Z"},{"id":"GHSA-66m2-gx93-v996","modified":"2025-10-13T15:10:14Z"},{"id":"GHSA-66q4-vfjg-2qhh","modified":"2026-02-06T19:56:44.198671Z"},{"id":"GHSA-7mv8-j34q-vp7q","modified":"2025-11-21T15:32:13Z"},{"id":"GHSA-9f65-56v6-gxw7","modified":"2025-06-27T23:29:44.115529Z"},{"id":"GHSA-ff64-7w26-62rf","modified":"2026-02-06T22:11:17.245533Z"},{"id":"GHSA-fg94-h982-f3mm","modified":"2026-07-20T21:15:27.462388Z"},{"id":"GHSA-j4h9-wv2m-wrf7","modified":"2025-09-25T23:42:37Z"},{"id":"GHSA-jh7p-qr78-84p7","modified":"2026-02-03T03:11:19.470547Z"},{"id":"GHSA-mhg7-666j-cqg4","modified":"2026-02-06T20:11:41.330395Z"},{"id":"GHSA-mmgp-wc2j-qcv7","modified":"2026-03-20T21:33:50.318924Z"},{"id":"GHSA-ph6w-f82w-28w6","modified":"2025-09-03T18:06:59Z"},{"id":"GHSA-pq7j-f95f-qfcv","modified":"2026-10-15T20:30:08.558907Z"},{"id":"GHSA-q728-gf8j-w49r","modified":"2026-02-04T22:42:25.762Z"},{"id":"GHSA-qgqw-h4xq-7w8w","modified":"2026-02-03T22:34:25.261494Z"},{"id":"GHSA-qxfv-fcpc-w36x","modified":"2025-09-10T21:14:12Z"},{"id":"GHSA-vhw5-3g5m-8ggf","modified":"2026-02-03T22:34:25.409039Z"},{"id":"GHSA-vp62-r36r-9xqp","modified":"2026-05-05T16:11:17.173956Z"},{"id":"GHSA-x56v-x2h6-7j34","modified":"2025-08-05T17:10:38Z"},{"id":"GHSA-x5gv-jw7f-j6xj","modified":"2025-08-18T20:27:29.564350Z"},{"id":"GHSA-xq4m-mc3c-vvg3","modified":"2025-12-05T12:27:53.035426Z"}]}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "1800"
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 12 Nov 2026 09:30:13 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-fd76984bb6f123f4a81a9d02b3b47885-77dd9aa032a0a278-00
+            X-Cloud-Trace-Context:
+                - fd76984bb6f123f4a81a9d02b3b47885/8637229673201312376
+            X-Envoy-Decorator-Operation:
+                - ingress QueryAffectedBatch
+        status: 200 OK
+        code: 200
+        duration: 443.729875ms
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/GHSA-4fgq-fpq9-mr3g
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1656
+        body: '{"id":"GHSA-4fgq-fpq9-mr3g","summary":"Claude Code can execute commands prior to the startup trust dialog ","details":"Due to a bug in the startup trust dialog implementation, Claude Code could be tricked to execute code contained in a project before the user accepted the startup trust dialog. Exploiting this requires a user to start Claude Code in an untrusted directory. \n\nUsers on standard Claude Code auto-update will have received this fix automatically. Users performing manual updates are advised to update to the latest version.\n\nThank you to https://hackerone.com/avivdon for reporting this issue!","aliases":["CVE-2025-59536"],"modified":"2025-10-03T14:57:25.457969Z","published":"2025-10-03T14:16:34Z","database_specific":{"github_reviewed":true,"github_reviewed_at":"2025-10-03T14:16:34Z","nvd_published_at":"2025-10-03T07:15:44Z","cwe_ids":["CWE-94"],"severity":"HIGH"},"references":[{"type":"WEB","url":"https://github.com/anthropics/claude-code/security/advisories/GHSA-4fgq-fpq9-mr3g"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2025-59536"},{"type":"PACKAGE","url":"https://github.com/anthropics/claude-code"}],"affected":[{"package":{"name":"@anthropic-ai/claude-code","ecosystem":"npm","purl":"pkg:npm/%40anthropic-ai/claude-code"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"1.0.111"}]}],"database_specific":{"source":"https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2025/10/GHSA-4fgq-fpq9-mr3g/GHSA-4fgq-fpq9-mr3g.json"}}],"schema_version":"1.9.0","severity":[{"type":"CVSS_V4","score":"CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:P/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "1656"
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 12 Nov 2026 09:30:13 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-5807b49d44ed95b7a81a9d02b3b4719f-0f842439b48e2550-00
+            X-Cloud-Trace-Context:
+                - 5807b49d44ed95b7a81a9d02b3b4719f/1118058437755675984
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 180.8815ms
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/GHSA-2jjv-qf24-vfm4
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1982
+        body: '{"id":"GHSA-2jjv-qf24-vfm4","summary":"Claude Code Vulnerable to Arbitrary Code Execution via Plugin Autoloading with Specific Yarn Versions","details":"When using Claude Code with Yarn installed, Yarn config files can trigger code execution when running `yarn --version`. This could lead to a bypass of the directory trust dialog in Claude Code, as plugins and `yarnPath` could be executed prior to the user accepting the risks of working in an untrusted directory. Users on standard Claude Code auto-update will have received this fix automatically. Users performing manual updates are advised to update to the latest version.\n\nThank you to Benjamin Faller, Redguard AG and Michael Hess for reporting this issue!","aliases":["CVE-2025-59828"],"modified":"2025-12-22T16:44:46.745927Z","published":"2025-09-24T18:57:44Z","database_specific":{"cwe_ids":["CWE-829","CWE-862"],"severity":"HIGH","github_reviewed":true,"github_reviewed_at":"2025-09-24T18:57:44Z","nvd_published_at":"2025-09-24T20:15:33Z"},"references":[{"type":"WEB","url":"https://github.com/anthropics/claude-code/security/advisories/GHSA-2jjv-qf24-vfm4"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2025-59828"},{"type":"PACKAGE","url":"https://github.com/anthropics/claude-code"},{"type":"WEB","url":"https://osv.dev/vulnerability/GHSA-2jjv-qf24-vfm4"},{"type":"WEB","url":"https://www.cve.org/CVERecord?id=CVE-2025-59828"},{"type":"WEB","url":"https://yarnpkg.com/advanced/plugin-tutorial"}],"affected":[{"package":{"name":"@anthropic-ai/claude-code","ecosystem":"npm","purl":"pkg:npm/%40anthropic-ai/claude-code"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"1.0.39"}]}],"database_specific":{"source":"https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2025/09/GHSA-2jjv-qf24-vfm4/GHSA-2jjv-qf24-vfm4.json"}}],"schema_version":"1.9.0","severity":[{"type":"CVSS_V4","score":"CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:P/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "1982"
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 12 Nov 2026 09:30:14 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-2a5531074c8ab515a81a9d02b3b47439-1f594be2d3f3c56a-00
+            X-Cloud-Trace-Context:
+                - 2a5531074c8ab515a81a9d02b3b47439/2258920125693674858
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 202.220708ms
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/GHSA-5cwg-9f6j-9jvx
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 2182
+        body: '{"id":"GHSA-5cwg-9f6j-9jvx","summary":"Claude Code: Insecure System-Wide Configuration Loading Enables Local Privilege Escalation on Windows","details":"On Windows, Claude Code loaded system-wide default configuration from `C:\\ProgramData\\ClaudeCode\\managed-settings.json` without validating directory ownership or access permissions. Because the `ProgramData` directory is writable by non-administrative users by default and the `ClaudeCode` subdirectory was not pre-created or access-restricted, a low-privileged local user could create this directory and place a malicious configuration file that would be automatically loaded for any user launching Claude Code on the same machine. Exploiting this would have required a shared multi-user Windows system and a victim user to launch Claude Code after the malicious configuration was placed.\n\nUsers on standard Claude Code auto-update have received this fix already. Users performing manual updates are advised to update to the latest version.\n\nThank you to hackerone.com/edbr for reporting this issue.","aliases":["CVE-2026-35603"],"modified":"2026-05-05T16:04:01.752628Z","published":"2026-04-17T22:19:38Z","database_specific":{"nvd_published_at":"2026-04-17T21:16:33Z","cwe_ids":["CWE-426"],"severity":"MODERATE","github_reviewed":true,"github_reviewed_at":"2026-04-17T22:19:38Z"},"references":[{"type":"WEB","url":"https://github.com/anthropics/claude-code/security/advisories/GHSA-5cwg-9f6j-9jvx"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2026-35603"},{"type":"PACKAGE","url":"https://github.com/anthropics/claude-code"}],"affected":[{"package":{"name":"@anthropic-ai/claude-code","ecosystem":"npm","purl":"pkg:npm/%40anthropic-ai/claude-code"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"2.1.75"}]}],"database_specific":{"source":"https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2026/04/GHSA-5cwg-9f6j-9jvx/GHSA-5cwg-9f6j-9jvx.json"}}],"schema_version":"1.9.0","severity":[{"type":"CVSS_V3","score":"CVSS:3.1/AV:L/AC:L/PR:L/UI:R/S:U/C:H/I:H/A:H"},{"type":"CVSS_V4","score":"CVSS:4.0/AV:L/AC:L/AT:P/PR:L/UI:P/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "2182"
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 12 Nov 2026 09:30:13 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-d36c4079219c4b30a81a9d02b3b47dc8-d62dc888f2cdb3ea-00
+            X-Cloud-Trace-Context:
+                - d36c4079219c4b30a81a9d02b3b47dc8/15433211988583232490
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 199.5775ms
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/GHSA-4q92-rfm6-2cqx
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1918
+        body: '{"id":"GHSA-4q92-rfm6-2cqx","summary":"Claude Code has Permission Deny Bypass Through Symbolic Links","details":"Claude Code failed to strictly enforce deny rules configured in settings.json when accessing files through symbolic links. If a user explicitly denied Claude Code access to a file (such as /etc/passwd) and Claude Code had access to a symbolic link pointing to that file, it was possible for Claude Code to read the restricted file through the symlink without triggering deny rule enforcement. \n\nUsers on standard Claude Code auto-update received this fix automatically. Users performing manual updates are advised to update to the latest version.\n\nClaude Code thanks https://hackerone.com/ofirh for reporting this issue.","aliases":["CVE-2026-25724"],"modified":"2026-04-12T05:17:45.956376Z","published":"2026-02-06T19:08:04Z","database_specific":{"severity":"LOW","github_reviewed":true,"github_reviewed_at":"2026-02-06T19:08:04Z","nvd_published_at":"2026-02-06T18:16:00Z","cwe_ids":["CWE-285","CWE-61"]},"references":[{"type":"WEB","url":"https://github.com/anthropics/claude-code/security/advisories/GHSA-4q92-rfm6-2cqx"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2026-25724"},{"type":"PACKAGE","url":"https://github.com/anthropics/claude-code"},{"type":"WEB","url":"https://www.terra.security/blog/when-ai-becomes-the-attack-surface-lessons-from-discovering-cve-2026-25724"}],"affected":[{"package":{"name":"@anthropic-ai/claude-code","ecosystem":"npm","purl":"pkg:npm/%40anthropic-ai/claude-code"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"2.1.7"}]}],"database_specific":{"source":"https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2026/02/GHSA-4q92-rfm6-2cqx/GHSA-4q92-rfm6-2cqx.json"}}],"schema_version":"1.9.0","severity":[{"type":"CVSS_V4","score":"CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:P/VC:L/VI:L/VA:L/SC:N/SI:N/SA:N"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "1918"
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 12 Nov 2026 09:30:14 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-b8589a32061010aba81a9d02b3b47779-96434be7e1963214-00
+            X-Cloud-Trace-Context:
+                - b8589a32061010aba81a9d02b3b47779/10827581388423049748
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 222.810583ms
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/GHSA-5hhx-v7f6-x7gv
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1727
+        body: '{"id":"GHSA-5hhx-v7f6-x7gv","summary":"Claude Code vulnerable to command execution prior to startup trust dialog","details":"When using Claude Code with Yarn installed, Yarn config files can trigger code execution when running yarn --version. This could lead to a bypass of the directory trust dialog in Claude Code, as plugins and yarnPath could be executed prior to the user accepting the risks of working in an untrusted directory. Users on standard Claude Code auto-update will have received this fix automatically. Users performing manual updates are advised to update to the latest version.\n\nThank you to Benjamin Faller, Redguard AG and Michael Hess for reporting this issue!","aliases":["CVE-2025-65099"],"modified":"2025-12-22T16:45:06.468644Z","published":"2025-11-19T20:33:10Z","database_specific":{"github_reviewed":true,"github_reviewed_at":"2025-11-19T20:33:10Z","nvd_published_at":"2025-11-19T18:15:51Z","cwe_ids":["CWE-94"],"severity":"HIGH"},"references":[{"type":"WEB","url":"https://github.com/anthropics/claude-code/security/advisories/GHSA-5hhx-v7f6-x7gv"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2025-65099"},{"type":"PACKAGE","url":"https://github.com/anthropics/claude-code"}],"affected":[{"package":{"name":"@anthropic-ai/claude-code","ecosystem":"npm","purl":"pkg:npm/%40anthropic-ai/claude-code"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"1.0.39"}]}],"database_specific":{"source":"https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2025/11/GHSA-5hhx-v7f6-x7gv/GHSA-5hhx-v7f6-x7gv.json"}}],"schema_version":"1.9.0","severity":[{"type":"CVSS_V4","score":"CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:P/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "1727"
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 12 Nov 2026 09:30:14 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-03761ccc44f30c9ea81a9d02b3b472c9-795532171ac87976-00
+            X-Cloud-Trace-Context:
+                - 03761ccc44f30c9ea81a9d02b3b472c9/8742949326424668534
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 178.070958ms
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/GHSA-5xjx-9qx6-jcrv
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 2184
+        body: '{"id":"GHSA-5xjx-9qx6-jcrv","summary":"Claude Code: TOCTOU Race in Edit Tool Allows File Writes Outside the Workspace","details":"Claude Code validated Edit tool targets using point-in-time pathname and symlink resolution that was not bound to the underlying directory inodes or file descriptors. On macOS, a process running inside Claude Code''s Bash sandbox could exploit the resulting time-of-check to time-of-use window by atomically swapping an in-workspace parent directory with a symlink after validation completed, causing the unsandboxed Edit implementation to overwrite an attacker-selected user-writable file outside the workspace. Exploiting this required the ability to run attacker-controlled code inside the sandbox, such as through a malicious repository or dependency script.\n\nUsers on standard Claude Code auto-update have received this fix automatically. Users performing manual updates are advised to update to the latest version.\n\nClaude Code thanks hackerone.com/mahoraga007 (Sunder Singh) for reporting this issue.","aliases":["CVE-2026-88968"],"modified":"2026-11-09T23:00:03.851745985Z","published":"2026-11-09T22:42:03Z","database_specific":{"nvd_published_at":"2026-11-03T20:18:19Z","cwe_ids":["CWE-367","CWE-59"],"severity":"HIGH","github_reviewed":true,"github_reviewed_at":"2026-11-09T22:42:03Z"},"references":[{"type":"WEB","url":"https://github.com/anthropics/claude-code/security/advisories/GHSA-5xjx-9qx6-jcrv"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2026-88968"},{"type":"PACKAGE","url":"https://github.com/anthropics/claude-code"},{"type":"WEB","url":"https://github.com/anthropics/claude-code/releases/tag/v2.1.251"}],"affected":[{"package":{"name":"@anthropic-ai/claude-code","ecosystem":"npm","purl":"pkg:npm/%40anthropic-ai/claude-code"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"2.1.251"}]}],"database_specific":{"source":"https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2026/11/GHSA-5xjx-9qx6-jcrv/GHSA-5xjx-9qx6-jcrv.json"}}],"schema_version":"1.9.2","severity":[{"type":"CVSS_V4","score":"CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:P/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "2184"
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 12 Nov 2026 09:30:14 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-d3a9f0ee1aff5121a81a9d02b3b47563-d46b86e28e2ea4d5-00
+            X-Cloud-Trace-Context:
+                - d3a9f0ee1aff5121a81a9d02b3b47563/15306476066154915029
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 185.793625ms
+    - id: 7
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/GHSA-66q4-vfjg-2qhh
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1825
+        body: '{"id":"GHSA-66q4-vfjg-2qhh","summary":"Claude Code Vulnerable to Command Injection via Directory Change Bypasses Write Protection","details":"Claude Code failed to properly validate directory changes when combined with write operations to protected folders. By using the `cd` command to navigate into sensitive directories like `.claude`, it was possible to bypass write protection and create or modify files without user confirmation. Reliably exploiting this required the ability to add untrusted content into a Claude Code context window. \n\nUsers on standard Claude Code auto-update received this fix automatically. Users performing manual updates are advised to update to the latest version.\n\nAbout\nClaude Code thanks hackerone.com/nil221 for reporting this issue!","aliases":["CVE-2026-25722"],"modified":"2026-02-06T19:56:44.198671Z","published":"2026-02-06T19:02:41Z","database_specific":{"github_reviewed":true,"github_reviewed_at":"2026-02-06T19:02:41Z","nvd_published_at":"2026-02-06T18:15:59Z","cwe_ids":["CWE-20","CWE-78"],"severity":"HIGH"},"references":[{"type":"WEB","url":"https://github.com/anthropics/claude-code/security/advisories/GHSA-66q4-vfjg-2qhh"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2026-25722"},{"type":"PACKAGE","url":"https://github.com/anthropics/claude-code"}],"affected":[{"package":{"name":"@anthropic-ai/claude-code","ecosystem":"npm","purl":"pkg:npm/%40anthropic-ai/claude-code"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"2.0.57"}]}],"database_specific":{"source":"https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2026/02/GHSA-66q4-vfjg-2qhh/GHSA-66q4-vfjg-2qhh.json"}}],"schema_version":"1.9.0","severity":[{"type":"CVSS_V4","score":"CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:P/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "1825"
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 12 Nov 2026 09:30:14 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-e91802c754f95fd5a81a9d02b3b478a3-be40084a9d47a19c-00
+            X-Cloud-Trace-Context:
+                - e91802c754f95fd5a81a9d02b3b478a3/13708966382275109276
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 176.316667ms
+    - id: 8
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/GHSA-66m2-gx93-v996
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1625
+        body: '{"id":"GHSA-66m2-gx93-v996","summary":"Claude Code permission deny bypass through symlink","details":"Claude Code failed to account for symlinks when checking permission deny rules. If a user explicitly denied Claude Code access to a file and Claude Code had access to a symlink pointing to that file, it was possible for Claude Code to access the file. \n\nUsers on standard Claude Code auto-update will have received this fix automatically. Users performing manual updates are advised to update to the latest version.\n\nThank you to https://hackerone.com/vinai for reporting this issue!","aliases":["CVE-2025-59829"],"modified":"2025-10-13T15:10:14Z","published":"2025-10-03T14:17:58Z","database_specific":{"nvd_published_at":"2025-10-03T20:15:33Z","cwe_ids":["CWE-61"],"severity":"LOW","github_reviewed":true,"github_reviewed_at":"2025-10-03T14:17:58Z"},"references":[{"type":"WEB","url":"https://github.com/anthropics/claude-code/security/advisories/GHSA-66m2-gx93-v996"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2025-59829"},{"type":"PACKAGE","url":"https://github.com/anthropics/claude-code"}],"affected":[{"package":{"name":"@anthropic-ai/claude-code","ecosystem":"npm","purl":"pkg:npm/%40anthropic-ai/claude-code"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"1.0.120"}]}],"database_specific":{"source":"https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2025/10/GHSA-66m2-gx93-v996/GHSA-66m2-gx93-v996.json"}}],"schema_version":"1.9.0","severity":[{"type":"CVSS_V4","score":"CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:P/VC:L/VI:L/VA:N/SC:N/SI:N/SA:N"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "1625"
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 12 Nov 2026 09:30:14 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-021bf2c133165e2ca81a9d02b3b47a22-143639d182586783-00
+            X-Cloud-Trace-Context:
+                - 021bf2c133165e2ca81a9d02b3b47a22/1456415101498713987
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 193.089625ms
+    - id: 9
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/GHSA-7mv8-j34q-vp7q
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1566
+        body: '{"id":"GHSA-7mv8-j34q-vp7q","summary":"@anthropic-ai/claude-code has Sed Command Validation Bypass that Allows Arbitrary File Writes","details":"Due to an error in sed command parsing, it was possible to bypass the Claude Code read-only validation and write to arbitrary files on the host system. \n\nUsers on standard Claude Code auto-update will have received this fix automatically. Users performing manual updates are advised to update to the latest version.\n\nThank you to Adam Chester - SpecterOps for reporting this issue!","aliases":["CVE-2025-64755"],"modified":"2025-11-21T15:32:13Z","published":"2025-11-20T21:28:08Z","database_specific":{"severity":"HIGH","github_reviewed":true,"github_reviewed_at":"2025-11-20T21:28:08Z","nvd_published_at":"2025-11-21T02:15:43Z","cwe_ids":["CWE-78"]},"references":[{"type":"WEB","url":"https://github.com/anthropics/claude-code/security/advisories/GHSA-7mv8-j34q-vp7q"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2025-64755"},{"type":"PACKAGE","url":"https://github.com/anthropics/claude-code"}],"affected":[{"package":{"name":"@anthropic-ai/claude-code","ecosystem":"npm","purl":"pkg:npm/%40anthropic-ai/claude-code"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"2.0.31"}]}],"database_specific":{"source":"https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2025/11/GHSA-7mv8-j34q-vp7q/GHSA-7mv8-j34q-vp7q.json"}}],"schema_version":"1.9.0","severity":[{"type":"CVSS_V4","score":"CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:P/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "1566"
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 12 Nov 2026 09:30:14 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-d4bdf3571de81eeaa81a9d02b3b47232-46b672a5e55f2c8e-00
+            X-Cloud-Trace-Context:
+                - d4bdf3571de81eeaa81a9d02b3b47232/5095386085259685006
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 192.42525ms
+    - id: 10
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/GHSA-9f65-56v6-gxw7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 2917
+        body: '{"id":"GHSA-9f65-56v6-gxw7","summary":"Claude Code Improper Authorization via websocket connections from arbitrary origins","details":"Claude Code extensions in VSCode and forks (e.g., Cursor, Windsurf, and VSCodium) and JetBrains IDEs (e.g., IntelliJ, Pycharm, and Android Studio) are vulnerable to unauthorized websocket connections from an attacker when visiting attacker-controlled webpages. Claude Code for VSCode IDE extensions versions 0.2.116 through 1.0.23 are vulnerable. For Jetbrains IDE plugins, Claude Code [beta] versions 0.1.1 through 0.1.8 are vulnerable.  \n\nIn VSCode (and forks), exploitation would allow an attacker to read arbitrary files, see the list of files open in the IDE, get selection and diagnostics events from the IDE, or execute code in limited situations where a user has an open Jupyter Notebook and accepts a malicious prompt. In JetBrains IDEs, an attacker could get selection events, a list of open files, and a list of syntax errors.\n\n**Remediation**\n\nWe released a patch for this issue on June 13th, 2025. Although Claude Code auto-updates when you launch it and auto-updates the extensions, you should take the following steps (the exact steps depend on your IDE).\n\n**VSCode, Cursor, Windsurf, VSCodium, and other VSCode forks**\nExtension Name: Claude Code for VSCode\n\nInstructions:\n\n1. Open the list of Extensions (View-\u003eExtensions)\n2. Look for Claude Code for VSCode among installed extensions\n3. If you have a version \u003c 1.0.24, click “Update” (or “Uninstall”)\n4. Restart the IDE \n\n**All JetBrains IDEs including IntelliJ, PyCharm, and Android Studio**\nPlugin name: Claude Code [Beta]\n\nInstructions:\n\n1. Open the Plugins list\n2. Look for Claude Code [Beta] among installed extensions\n3. Update (or Uninstall) the plugin if the version is \u003c 0.1.9\n4. Restart the IDE","aliases":["CVE-2025-52882"],"modified":"2025-06-27T23:29:44.115529Z","published":"2025-06-23T21:22:22Z","database_specific":{"github_reviewed_at":"2025-06-23T21:22:22Z","nvd_published_at":"2025-06-24T20:15:26Z","cwe_ids":["CWE-1385","CWE-285"],"severity":"HIGH","github_reviewed":true},"references":[{"type":"WEB","url":"https://github.com/anthropics/claude-code/security/advisories/GHSA-9f65-56v6-gxw7"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2025-52882"},{"type":"PACKAGE","url":"https://github.com/anthropics/claude-code"}],"affected":[{"package":{"name":"@anthropic-ai/claude-code","ecosystem":"npm","purl":"pkg:npm/%40anthropic-ai/claude-code"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0.2.116"},{"fixed":"1.0.24"}]}],"database_specific":{"source":"https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2025/06/GHSA-9f65-56v6-gxw7/GHSA-9f65-56v6-gxw7.json"}}],"schema_version":"1.9.0","severity":[{"type":"CVSS_V4","score":"CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:P/VC:H/VI:H/VA:N/SC:H/SI:H/SA:N"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "2917"
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 12 Nov 2026 09:30:14 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-144c358ccb919d10a81a9d02b3b47e19-7e4449df0f19428f-00
+            X-Cloud-Trace-Context:
+                - 144c358ccb919d10a81a9d02b3b47e19/9098478369575092879
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 189.744667ms
+    - id: 11
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/GHSA-ff64-7w26-62rf
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1959
+        body: '{"id":"GHSA-ff64-7w26-62rf","summary":"Claude Code has Sandbox Escape via Persistent Configuration Injection in settings.json","details":"Claude Code''s bubblewrap sandboxing mechanism failed to properly protect the .claude/settings.json configuration file when it did not exist at startup. While the parent directory was mounted as writable and .claude/settings.local.json was explicitly protected with read-only constraints, settings.json was not protected if it was missing. This allowed malicious code running inside the sandbox to create this file and inject persistent hooks (such as SessionStart commands) that would execute with host privileges when Claude Code was restarted. \n\nUsers on standard Claude Code auto-update received this fix automatically. Users performing manual updates are advised to update to the latest version.\n\nClaude Code thanks hackerone.com/edbr for reporting this issue!","aliases":["CVE-2026-25725"],"modified":"2026-02-06T22:11:17.245533Z","published":"2026-02-06T19:14:33Z","database_specific":{"github_reviewed_at":"2026-02-06T19:14:33Z","nvd_published_at":"2026-02-06T18:16:00Z","cwe_ids":["CWE-501","CWE-668"],"severity":"HIGH","github_reviewed":true},"references":[{"type":"WEB","url":"https://github.com/anthropics/claude-code/security/advisories/GHSA-ff64-7w26-62rf"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2026-25725"},{"type":"PACKAGE","url":"https://github.com/anthropics/claude-code"}],"affected":[{"package":{"name":"@anthropic-ai/claude-code","ecosystem":"npm","purl":"pkg:npm/%40anthropic-ai/claude-code"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"2.1.2"}]}],"database_specific":{"source":"https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2026/02/GHSA-ff64-7w26-62rf/GHSA-ff64-7w26-62rf.json"}}],"schema_version":"1.9.0","severity":[{"type":"CVSS_V4","score":"CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:P/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "1959"
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 12 Nov 2026 09:30:14 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-88777d1f11cebcc6a81a9d02b3b47a42-33432ed2e372c59b-00
+            X-Cloud-Trace-Context:
+                - 88777d1f11cebcc6a81a9d02b3b47a42/3693847602667898267
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 204.937333ms
+    - id: 12
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/GHSA-fg94-h982-f3mm
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 2271
+        body: '{"id":"GHSA-fg94-h982-f3mm","summary":"Claude Code: Out-of-Band Data Exfiltration via Pre-Approved HuggingFace Domain in WebFetch","details":"Because the hostname huggingface.co was pre-approved as a bare hostname for the WebFetch tool, any path on that domain—including attacker-controlled model repositories—was auto-approved without a permission prompt or being subject to --allowedTools restrictions. An attacker able to inject untrusted content into a Claude Code context could direct it to issue WebFetch requests against attacker-controlled repository files (e.g. /resolve/main/config.json), which HuggingFace counts as downloads server-side, creating a covert out-of-band channel for encoding and exfiltrating data Claude can access such as files, environment variables, or command output. Reliably exploiting this required the ability to add untrusted content into a Claude Code context window. Users on standard Claude Code auto-update have received this fix already; users performing manual updates are advised to update to the latest version.\n\nThank you to hackerone.com/novee for reporting this issue.","aliases":["CVE-2026-54316"],"modified":"2026-07-20T21:15:27.462388438Z","published":"2026-06-17T18:06:06Z","database_specific":{"github_reviewed":true,"github_reviewed_at":"2026-06-17T18:06:06Z","nvd_published_at":"2026-06-23T18:18:08Z","cwe_ids":["CWE-183","CWE-200","CWE-515"],"severity":"MODERATE"},"references":[{"type":"WEB","url":"https://github.com/anthropics/claude-code/security/advisories/GHSA-fg94-h982-f3mm"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2026-54316"},{"type":"PACKAGE","url":"https://github.com/anthropics/claude-code"}],"affected":[{"package":{"name":"@anthropic-ai/claude-code","ecosystem":"npm","purl":"pkg:npm/%40anthropic-ai/claude-code"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0.2.54"},{"fixed":"2.1.163"}]}],"database_specific":{"source":"https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2026/06/GHSA-fg94-h982-f3mm/GHSA-fg94-h982-f3mm.json"}}],"schema_version":"1.9.0","severity":[{"type":"CVSS_V3","score":"CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N"},{"type":"CVSS_V4","score":"CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:P/VC:H/VI:N/VA:N/SC:N/SI:N/SA:N"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "2271"
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 12 Nov 2026 09:30:14 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-48344e730baadb1ea81a9d02b3b47f76-cf709c015f4a224c-00
+            X-Cloud-Trace-Context:
+                - 48344e730baadb1ea81a9d02b3b47f76/14947618692950270540
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 240.626541ms
+    - id: 13
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/GHSA-j4h9-wv2m-wrf7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 2153
+        body: '{"id":"GHSA-j4h9-wv2m-wrf7","summary":"Claude Code vulnerable to arbitrary code execution caused by maliciously configured git email ","details":"At startup, Claude Code constructed a shell command that interpolated the value of `git config user.email` from the current workspace. If an attacker controlled the repository’s Git config (e.g., via a malicious `.git/config`) and set `user.email` to a crafted payload, the unescaped interpolation could trigger arbitrary command execution **before** the user accepted the workspace-trust dialog. The issue affects versions prior to `1.0.105`. The fix in `1.0.105` avoids executing commands built from untrusted configuration and properly validates/escapes inputs.\n\n*   **Patches:** Update to `@anthropic-ai/claude-code` `1.0.105` or later.\n*   **Workarounds:** Open only trusted workspaces and inspect repository `.git/config` before launch; avoid inheriting untrusted Git configuration values.\n\n\u003e Thank you to the NVIDIA AI Red Team for reporting this issue!","aliases":["CVE-2025-59041"],"modified":"2025-09-25T23:42:37Z","published":"2025-09-10T20:29:04Z","database_specific":{"github_reviewed_at":"2025-09-10T20:29:04Z","nvd_published_at":"2025-09-10T16:15:41Z","cwe_ids":["CWE-78","CWE-94"],"severity":"HIGH","github_reviewed":true},"references":[{"type":"WEB","url":"https://github.com/anthropics/claude-code/security/advisories/GHSA-j4h9-wv2m-wrf7"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2025-59041"},{"type":"PACKAGE","url":"https://github.com/anthropics/claude-code"},{"type":"WEB","url":"https://www.npmjs.com/package/@anthropic-ai/claude-code/v/1.0.105"}],"affected":[{"package":{"name":"@anthropic-ai/claude-code","ecosystem":"npm","purl":"pkg:npm/%40anthropic-ai/claude-code"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"1.0.105"}]}],"database_specific":{"source":"https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2025/09/GHSA-j4h9-wv2m-wrf7/GHSA-j4h9-wv2m-wrf7.json"}}],"schema_version":"1.9.0","severity":[{"type":"CVSS_V4","score":"CVSS:4.0/AV:L/AC:L/AT:N/PR:N/UI:P/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "2153"
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 12 Nov 2026 09:30:15 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-9d4d4f74a3f66ddba81a9d02b3b47e39-f936ac6034a763e4-00
+            X-Cloud-Trace-Context:
+                - 9d4d4f74a3f66ddba81a9d02b3b47e39/17957730093386654692
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 180.661333ms
+    - id: 14
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/GHSA-jh7p-qr78-84p7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1798
+        body: '{"id":"GHSA-jh7p-qr78-84p7","summary":"Claude Code Leaks Data via Malicious Environment Configuration Before Trust Confirmation","details":"A vulnerability in Claude Code''s project-load flow allowed malicious repositories to exfiltrate data including Anthropic API keys before users confirmed trust. If a user started Claude Code in an attacker-controller repository, and the repository included a settings file that set ANTHROPIC_BASE_URL to an attacker-controlled endpoint, Claude Code would issue API requests before showing the trust prompt, including potentially leaking the user''s API keys.\n\nUsers on standard Claude Code auto-update have received this fix already. Users performing manual updates are advised to update to the latest version.","aliases":["CVE-2026-21852"],"modified":"2026-02-03T03:11:19.470547Z","published":"2026-01-21T01:00:31Z","database_specific":{"cwe_ids":["CWE-522"],"severity":"MODERATE","github_reviewed":true,"github_reviewed_at":"2026-01-21T01:00:31Z","nvd_published_at":"2026-01-21T21:16:08Z"},"references":[{"type":"WEB","url":"https://github.com/anthropics/claude-code/security/advisories/GHSA-jh7p-qr78-84p7"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2026-21852"},{"type":"PACKAGE","url":"https://github.com/anthropics/claude-code"}],"affected":[{"package":{"name":"@anthropic-ai/claude-code","ecosystem":"npm","purl":"pkg:npm/%40anthropic-ai/claude-code"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"2.0.65"}]}],"database_specific":{"source":"https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2026/01/GHSA-jh7p-qr78-84p7/GHSA-jh7p-qr78-84p7.json"}}],"schema_version":"1.9.0","severity":[{"type":"CVSS_V4","score":"CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:P/VC:L/VI:L/VA:L/SC:N/SI:N/SA:N"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "1798"
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 12 Nov 2026 09:30:15 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-988bae8fcaa139e7a81a9d02b3b47d71-dfca4716dc738b0d-00
+            X-Cloud-Trace-Context:
+                - 988bae8fcaa139e7a81a9d02b3b47d71/16125779579266894605
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 198.346416ms
+    - id: 15
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/GHSA-mhg7-666j-cqg4
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1820
+        body: '{"id":"GHSA-mhg7-666j-cqg4","summary":"Claude Code Vulnerable to Command Injection via Piped sed Command Bypasses File Write Restrictions","details":"Claude Code failed to properly validate commands using piped sed operations with the echo command, allowing attackers to bypass file write restrictions. This vulnerability enabled writing to sensitive directories like the .claude folder and paths outside the project scope. Exploiting this required the ability to execute commands through Claude Code with the \"accept edits\" feature enabled. \n\nUsers on standard Claude Code auto-update received this fix automatically. Users performing manual updates are advised to update to the latest version.\n\nClaude Code thanks hackerone.com/nil221 for reporting this issue!","aliases":["CVE-2026-25723"],"modified":"2026-02-06T20:11:41.330395Z","published":"2026-02-06T19:04:51Z","database_specific":{"github_reviewed_at":"2026-02-06T19:04:51Z","nvd_published_at":"2026-02-06T18:15:59Z","cwe_ids":["CWE-20","CWE-78"],"severity":"HIGH","github_reviewed":true},"references":[{"type":"WEB","url":"https://github.com/anthropics/claude-code/security/advisories/GHSA-mhg7-666j-cqg4"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2026-25723"},{"type":"PACKAGE","url":"https://github.com/anthropics/claude-code"}],"affected":[{"package":{"name":"@anthropic-ai/claude-code","ecosystem":"npm","purl":"pkg:npm/%40anthropic-ai/claude-code"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"2.0.55"}]}],"database_specific":{"source":"https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2026/02/GHSA-mhg7-666j-cqg4/GHSA-mhg7-666j-cqg4.json"}}],"schema_version":"1.9.0","severity":[{"type":"CVSS_V4","score":"CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:P/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "1820"
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 12 Nov 2026 09:30:15 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-846ee1a2b3540ad6a81a9d02b3b47179-6726e95cbb94b77b-00
+            X-Cloud-Trace-Context:
+                - 846ee1a2b3540ad6a81a9d02b3b47179/7432884819514931067
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 398.718417ms
+    - id: 16
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/GHSA-ph6w-f82w-28w6
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1673
+        body: '{"id":"GHSA-ph6w-f82w-28w6","summary":"Claude Code Vulnerable to Arbitrary Code Execution Due to Insufficient Startup Warning","details":"When Claude Code was started in a new directory, it displayed a warning asking, \"Do you trust the files in this folder?\". This warning did not properly document that selecting \"Yes, proceed\" would allow Claude Code to execute files in the folder without additional confirmation. This may not have been clear to a user so we have updated the warning to clarify this functionality. \n\nUsers on standard Claude Code auto-update will have received this fix automatically. Users performing manual updates are advised to update to the latest version.\n\nThank you to https://hackerone.com/avivdon for reporting this issue!","modified":"2025-09-03T18:06:59Z","published":"2025-09-03T18:06:31Z","database_specific":{"github_reviewed":true,"github_reviewed_at":"2025-09-03T18:06:31Z","nvd_published_at":null,"cwe_ids":["CWE-94"],"severity":"HIGH"},"references":[{"type":"WEB","url":"https://github.com/anthropics/claude-code/security/advisories/GHSA-ph6w-f82w-28w6"},{"type":"PACKAGE","url":"https://github.com/anthropics/claude-code"}],"affected":[{"package":{"name":"@anthropic-ai/claude-code","ecosystem":"npm","purl":"pkg:npm/%40anthropic-ai/claude-code"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"1.0.87"}]}],"database_specific":{"source":"https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2025/09/GHSA-ph6w-f82w-28w6/GHSA-ph6w-f82w-28w6.json"}}],"schema_version":"1.9.0","severity":[{"type":"CVSS_V4","score":"CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:P/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "1673"
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 12 Nov 2026 09:30:15 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-3146f9dbd3017decc51856882d25856c-69e0a9a4e3cc6f29-00
+            X-Cloud-Trace-Context:
+                - 3146f9dbd3017decc51856882d25856c/7629284294427176745
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 185.35825ms
+    - id: 17
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/GHSA-pq7j-f95f-qfcv
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 2166
+        body: '{"id":"GHSA-pq7j-f95f-qfcv","summary":"Claude Code: Plugin Hash Pin Bypass Allows Bypass of Hash Pinning","details":"The plugin install flow in Claude Code and Claude Desktop checked out a marketplace''s pinned commit SHA using `git checkout` without verifying that the resulting HEAD matched the pinned SHA. An attacker controlling a plugin''s upstream repository could create a branch named identically to the pinned 40-character SHA, causing the checkout to silently resolve to the attacker''s branch tip instead of the reviewed commit, resulting in attacker-controlled code being installed bypassing the pinned hash. Exploitation required a user to install a malicious plugin, pin to a safe hash, and for the plugin source to be hosted on a git host that permitted SHA-shaped branch names.\n\nUsers on standard Claude Code auto-update have received this fix already. Users performing manual updates are advised to update to the latest version.\n\nThank you to Or Nevo Michrowski of Air Security for reporting this issue.","aliases":["CVE-2026-86063"],"modified":"2026-10-15T20:30:08.558907946Z","published":"2026-10-15T20:22:07Z","database_specific":{"nvd_published_at":"2026-10-13T19:21:21Z","cwe_ids":["CWE-494","CWE-829"],"severity":"HIGH","github_reviewed":true,"github_reviewed_at":"2026-10-15T20:22:07Z"},"references":[{"type":"WEB","url":"https://github.com/anthropics/claude-code/security/advisories/GHSA-pq7j-f95f-qfcv"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2026-86063"},{"type":"PACKAGE","url":"https://github.com/anthropics/claude-code"},{"type":"WEB","url":"https://github.com/anthropics/claude-code/releases/tag/v2.1.179"}],"affected":[{"package":{"name":"@anthropic-ai/claude-code","ecosystem":"npm","purl":"pkg:npm/%40anthropic-ai/claude-code"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"2.1.179"}]}],"database_specific":{"source":"https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2026/10/GHSA-pq7j-f95f-qfcv/GHSA-pq7j-f95f-qfcv.json"}}],"schema_version":"1.9.0","severity":[{"type":"CVSS_V4","score":"CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:A/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "2166"
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 12 Nov 2026 09:30:15 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-35cce4e43069bdffc51856882d258a27-d0a6e7e2f90fd0fe-00
+            X-Cloud-Trace-Context:
+                - 35cce4e43069bdffc51856882d258a27/15034959368050168062
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 190.558333ms
+    - id: 18
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/GHSA-q728-gf8j-w49r
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1755
+        body: '{"id":"GHSA-q728-gf8j-w49r","summary":"Claude Code has a Path Restriction Bypass via ZSH Clobber which Allows Arbitrary File Writes","details":"Due to a Bash command validation flaw in parsing ZSH clobber syntax, it was possible to bypass directory restrictions and write files outside the current working directory without user permission prompts. Exploiting this required the user to use ZSH and the ability to add untrusted content into a Claude Code context window. \n\nUsers on standard Claude Code auto-update have received this fix already. Users performing manual updates are advised to update to the latest version.\n\nClaude Code thanks https://hackerone.com/alexbernier for reporting this issue!","aliases":["CVE-2026-24053"],"modified":"2026-02-04T22:42:25.762Z","published":"2026-02-03T19:32:01Z","database_specific":{"nvd_published_at":"2026-02-03T21:16:13Z","cwe_ids":["CWE-22","CWE-78"],"severity":"HIGH","github_reviewed":true,"github_reviewed_at":"2026-02-03T19:32:01Z"},"references":[{"type":"WEB","url":"https://github.com/anthropics/claude-code/security/advisories/GHSA-q728-gf8j-w49r"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2026-24053"},{"type":"PACKAGE","url":"https://github.com/anthropics/claude-code"}],"affected":[{"package":{"name":"@anthropic-ai/claude-code","ecosystem":"npm","purl":"pkg:npm/%40anthropic-ai/claude-code"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"2.0.74"}]}],"database_specific":{"source":"https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2026/02/GHSA-q728-gf8j-w49r/GHSA-q728-gf8j-w49r.json"}}],"schema_version":"1.9.0","severity":[{"type":"CVSS_V4","score":"CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:P/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "1755"
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 12 Nov 2026 09:30:15 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-60eaf4711b470d6ac51856882d2584f6-9cf319e908bf7966-00
+            X-Cloud-Trace-Context:
+                - 60eaf4711b470d6ac51856882d2584f6/11309411577922287974
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 172.771334ms
+    - id: 19
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/GHSA-qgqw-h4xq-7w8w
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1694
+        body: '{"id":"GHSA-qgqw-h4xq-7w8w","summary":"Claude Code has a Command Injection in find Command Bypasses User Approval Prompt","details":"Due to an error in command parsing, it was possible to bypass the Claude Code confirmation prompt to trigger execution of untrusted commands through the find command. Reliably exploiting this required the ability to add untrusted content into a Claude Code context window. \n\nUsers on standard Claude Code auto-update have received this fix already. Users performing manual updates are advised to update to the latest version.\n\nClaude Code thanks https://hackerone.com/alexbernier for reporting this issue!","aliases":["CVE-2026-24887"],"modified":"2026-02-03T22:34:25.261494Z","published":"2026-02-03T19:33:32Z","database_specific":{"severity":"HIGH","github_reviewed":true,"github_reviewed_at":"2026-02-03T19:33:32Z","nvd_published_at":"2026-02-03T21:16:13Z","cwe_ids":["CWE-78","CWE-94"]},"references":[{"type":"WEB","url":"https://github.com/anthropics/claude-code/security/advisories/GHSA-qgqw-h4xq-7w8w"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2026-24887"},{"type":"PACKAGE","url":"https://github.com/anthropics/claude-code"}],"affected":[{"package":{"name":"@anthropic-ai/claude-code","ecosystem":"npm","purl":"pkg:npm/%40anthropic-ai/claude-code"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"2.0.72"}]}],"database_specific":{"source":"https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2026/02/GHSA-qgqw-h4xq-7w8w/GHSA-qgqw-h4xq-7w8w.json"}}],"schema_version":"1.9.0","severity":[{"type":"CVSS_V4","score":"CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:P/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "1694"
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 12 Nov 2026 09:30:16 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-10e7e69fc7650550c51856882d258893-44548f1ce5fa42e4-00
+            X-Cloud-Trace-Context:
+                - 10e7e69fc7650550c51856882d258893/4923717646903034596
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 471.530709ms
+    - id: 20
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/GHSA-qxfv-fcpc-w36x
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1644
+        body: '{"id":"GHSA-qxfv-fcpc-w36x","summary":"Claude Code rg vulnerability does not protect against approval prompt bypass","details":"Due to an error in command parsing, it was possible to bypass the Claude Code confirmation prompt to trigger execution of an untrusted command. Reliably exploiting this requires the ability to add untrusted content into a Claude Code context window.\n\nUsers on standard Claude Code auto-update will have received this fix automatically. Users performing manual updates are advised to update to the latest version.\n\nThank you to the NVIDIA AI Red Team for reporting this issue!","aliases":["CVE-2025-58764"],"modified":"2025-09-10T21:14:12Z","published":"2025-09-10T17:10:42Z","database_specific":{"nvd_published_at":"2025-09-10T16:15:40Z","cwe_ids":["CWE-94"],"severity":"HIGH","github_reviewed":true,"github_reviewed_at":"2025-09-10T17:10:42Z"},"references":[{"type":"WEB","url":"https://github.com/anthropics/claude-code/security/advisories/GHSA-qxfv-fcpc-w36x"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2025-58764"},{"type":"PACKAGE","url":"https://github.com/anthropics/claude-code"}],"affected":[{"package":{"name":"@anthropic-ai/claude-code","ecosystem":"npm","purl":"pkg:npm/%40anthropic-ai/claude-code"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"1.0.105"}]}],"database_specific":{"source":"https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2025/09/GHSA-qxfv-fcpc-w36x/GHSA-qxfv-fcpc-w36x.json"}}],"schema_version":"1.9.0","severity":[{"type":"CVSS_V4","score":"CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:P/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "1644"
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 12 Nov 2026 09:30:16 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-3e7785c81f1f3da7c51856882d2580b0-ee53f46d27cd4035-00
+            X-Cloud-Trace-Context:
+                - 3e7785c81f1f3da7c51856882d2580b0/17173338553750208565
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 191.556ms
+    - id: 21
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/GHSA-mmgp-wc2j-qcv7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1992
+        body: '{"id":"GHSA-mmgp-wc2j-qcv7","summary":"Claude Code has a Workspace Trust Dialog Bypass via Repo-Controlled Settings File","details":"Claude Code resolved the permission mode from settings files, including the repo-controlled `.claude/settings.json`, before determining whether to display the workspace trust confirmation dialog. A malicious repository could set `permissions.defaultMode` to `bypassPermissions` in its committed `.claude/settings.json`, causing the trust dialog to be silently skipped on first open. This allowed a user to be placed into a permissive mode without seeing the trust confirmation prompt, making it easier for an attacker-controlled repository to gain tool execution without explicit user consent.\n\nUsers on standard Claude Code auto-update have received this fix already. Users performing manual updates are advised to update to the latest version.\n\nThank you to hackerone.com/cantina_xyz for reporting this issue.","aliases":["CVE-2026-33068"],"modified":"2026-03-20T21:33:50.318924Z","published":"2026-03-19T12:42:09Z","database_specific":{"nvd_published_at":"2026-03-20T09:16:15Z","cwe_ids":["CWE-807"],"severity":"HIGH","github_reviewed":true,"github_reviewed_at":"2026-03-19T12:42:09Z"},"references":[{"type":"WEB","url":"https://github.com/anthropics/claude-code/security/advisories/GHSA-mmgp-wc2j-qcv7"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2026-33068"},{"type":"PACKAGE","url":"https://github.com/anthropics/claude-code"}],"affected":[{"package":{"name":"@anthropic-ai/claude-code","ecosystem":"npm","purl":"pkg:npm/%40anthropic-ai/claude-code"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"2.1.53"}]}],"database_specific":{"source":"https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2026/03/GHSA-mmgp-wc2j-qcv7/GHSA-mmgp-wc2j-qcv7.json"}}],"schema_version":"1.9.0","severity":[{"type":"CVSS_V4","score":"CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:P/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "1992"
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 12 Nov 2026 09:30:16 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-0a643138cdd2cdd4a81a9d02b3b475e5-e45848e45207445d-00
+            X-Cloud-Trace-Context:
+                - 0a643138cdd2cdd4a81a9d02b3b475e5/16453981384064058461
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 1.874630334s
+    - id: 22
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/GHSA-vhw5-3g5m-8ggf
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1933
+        body: '{"id":"GHSA-vhw5-3g5m-8ggf","summary":"Claude Code has a Domain Validation Bypass which Allows Automatic Requests to Attacker-Controlled Domains","details":"Claude Code contained insufficient URL validation in its trusted domain verification mechanism for WebFetch requests. The application used a `startsWith()` function to validate trusted domains (e.g., `docs.python.org`, `modelcontextprotocol.io`), this could have enabled attackers to register domains like `modelcontextprotocol.io.example.com` that would pass validation. This could enable automatic requests to attacker-controlled domains without user consent, potentially leading to data exfiltration. \n\nUsers on standard Claude Code auto-update have received this fix already. Users performing manual updates are advised to update to the latest version.\n\nThank you to hackerone.com/47sid-praetorian for reporting this issue!","aliases":["CVE-2026-24052"],"modified":"2026-02-03T22:34:25.409039Z","published":"2026-02-03T19:15:59Z","database_specific":{"severity":"HIGH","github_reviewed":true,"github_reviewed_at":"2026-02-03T19:15:59Z","nvd_published_at":"2026-02-03T21:16:13Z","cwe_ids":["CWE-601"]},"references":[{"type":"WEB","url":"https://github.com/anthropics/claude-code/security/advisories/GHSA-vhw5-3g5m-8ggf"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2026-24052"},{"type":"PACKAGE","url":"https://github.com/anthropics/claude-code"}],"affected":[{"package":{"name":"@anthropic-ai/claude-code","ecosystem":"npm","purl":"pkg:npm/%40anthropic-ai/claude-code"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"1.0.111"}]}],"database_specific":{"source":"https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2026/02/GHSA-vhw5-3g5m-8ggf/GHSA-vhw5-3g5m-8ggf.json"}}],"schema_version":"1.9.0","severity":[{"type":"CVSS_V4","score":"CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:P/VC:H/VI:N/VA:N/SC:N/SI:N/SA:N"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "1933"
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 12 Nov 2026 09:30:17 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-cbc3854aa6f2f54dc51856882d258cf1-0ddd11b8fd836641-00
+            X-Cloud-Trace-Context:
+                - cbc3854aa6f2f54dc51856882d258cf1/998974178571019841
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 319.180625ms
+    - id: 23
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/GHSA-vp62-r36r-9xqp
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 2260
+        body: '{"id":"GHSA-vp62-r36r-9xqp","summary":"Claude Code: Sandbox Escape via Symlink Following Allows Arbitrary File Write Outside Workspace","details":"Claude Code''s sandbox did not prevent sandboxed processes from creating symlinks pointing to locations outside the workspace. When Claude Code subsequently wrote to a path within such a symlink, its unsandboxed process followed the symlink and wrote to the target location outside the workspace without prompting the user for confirmation. This allowed a sandbox escape where neither the sandboxed command nor the unsandboxed app could independently write outside the workspace, but their combination could write to arbitrary locations, potentially leading to code execution outside the sandbox. Reliably exploiting this required the ability to add untrusted content into a Claude Code context window to trigger sandboxed code execution via prompt injection.\n\nUsers on standard Claude Code auto-update have received this fix automatically. Users performing manual updates are advised to update to the latest version.\n\nClaude Code thanks hackerone.com/philts for reporting this issue.","aliases":["CVE-2026-39861"],"modified":"2026-05-05T16:11:17.173956Z","published":"2026-04-21T18:51:21Z","database_specific":{"github_reviewed_at":"2026-04-21T18:51:21Z","nvd_published_at":"2026-04-21T01:16:06Z","cwe_ids":["CWE-22","CWE-61"],"severity":"HIGH","github_reviewed":true},"references":[{"type":"WEB","url":"https://github.com/anthropics/claude-code/security/advisories/GHSA-vp62-r36r-9xqp"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2026-39861"},{"type":"PACKAGE","url":"https://github.com/anthropics/claude-code"}],"affected":[{"package":{"name":"@anthropic-ai/claude-code","ecosystem":"npm","purl":"pkg:npm/%40anthropic-ai/claude-code"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"2.1.64"}]}],"database_specific":{"source":"https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2026/04/GHSA-vp62-r36r-9xqp/GHSA-vp62-r36r-9xqp.json"}}],"schema_version":"1.9.0","severity":[{"type":"CVSS_V3","score":"CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H"},{"type":"CVSS_V4","score":"CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:P/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "2260"
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 12 Nov 2026 09:30:17 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-569f806d8c658636c51856882d25828f-7977787f430ad730-00
+            X-Cloud-Trace-Context:
+                - 569f806d8c658636c51856882d25828f/8752596888798811952
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 182.972084ms
+    - id: 24
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/GHSA-x56v-x2h6-7j34
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1699
+        body: '{"id":"GHSA-x56v-x2h6-7j34","summary":"Claude Code echo command allowed bypass of user approval prompt for command execution","details":"Due to an error in command parsing, it was possible to bypass the Claude Code confirmation prompt to trigger execution of an untrusted command. Reliably exploiting this requires the ability to add untrusted content into a Claude Code context window. \n\nUsers on standard Claude Code auto-update received this fix automatically after release. Current users of Claude Code are unaffected, as versions prior to 1.0.24 are deprecated and have been forced to update.\n\nThank you to Elad Beber (Cymulate) for reporting this issue!","aliases":["CVE-2025-54795"],"modified":"2025-08-05T17:10:38Z","published":"2025-08-04T15:18:03Z","database_specific":{"cwe_ids":["CWE-78"],"severity":"HIGH","github_reviewed":true,"github_reviewed_at":"2025-08-04T15:18:03Z","nvd_published_at":"2025-08-05T01:15:42Z"},"references":[{"type":"WEB","url":"https://github.com/anthropics/claude-code/security/advisories/GHSA-x56v-x2h6-7j34"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2025-54795"},{"type":"PACKAGE","url":"https://github.com/anthropics/claude-code"}],"affected":[{"package":{"name":"@anthropic-ai/claude-code","ecosystem":"npm","purl":"pkg:npm/%40anthropic-ai/claude-code"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"1.0.20"}]}],"database_specific":{"source":"https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2025/08/GHSA-x56v-x2h6-7j34/GHSA-x56v-x2h6-7j34.json"}}],"schema_version":"1.9.0","severity":[{"type":"CVSS_V4","score":"CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:P/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "1699"
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 12 Nov 2026 09:30:16 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-f8a6ea36bc8d84c1c51856882d258b33-41900d321787a79c-00
+            X-Cloud-Trace-Context:
+                - f8a6ea36bc8d84c1c51856882d258b33/4724290517905942428
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 196.902084ms
+    - id: 25
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/GHSA-x5gv-jw7f-j6xj
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1804
+        body: '{"id":"GHSA-x5gv-jw7f-j6xj","summary":"Claude Code''s Permissive Default Allowlist Enables Unauthorized File Read and Network Exfiltration in Claude Code","details":"Due to an overly broad allowlist of safe commands, it was possible to bypass the Claude Code confirmation prompts to read a file and then send file contents over the network without user confirmation. Reliably exploiting this requires the ability to add untrusted content into a Claude Code context window. \n\nUsers on standard Claude Code auto-update received this fix automatically after release. Current users of Claude Code are unaffected, as versions prior to 1.0.24 are deprecated and have been forced to update.\n\nThank you to https://hackerone.com/wunderwuzzi23 for reporting this issue!","aliases":["CVE-2025-55284"],"modified":"2025-08-18T20:27:29.564350Z","published":"2025-08-18T18:46:52Z","database_specific":{"severity":"HIGH","github_reviewed":true,"github_reviewed_at":"2025-08-18T18:46:52Z","nvd_published_at":"2025-08-16T02:15:24Z","cwe_ids":["CWE-78"]},"references":[{"type":"WEB","url":"https://github.com/anthropics/claude-code/security/advisories/GHSA-x5gv-jw7f-j6xj"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2025-55284"},{"type":"PACKAGE","url":"https://github.com/anthropics/claude-code"}],"affected":[{"package":{"name":"@anthropic-ai/claude-code","ecosystem":"npm","purl":"pkg:npm/%40anthropic-ai/claude-code"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"1.0.4"}]}],"database_specific":{"source":"https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2025/08/GHSA-x5gv-jw7f-j6xj/GHSA-x5gv-jw7f-j6xj.json"}}],"schema_version":"1.9.0","severity":[{"type":"CVSS_V4","score":"CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:P/VC:H/VI:N/VA:N/SC:N/SI:N/SA:N"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "1804"
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 12 Nov 2026 09:30:17 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-3fb8b1711dc3ffa1c51856882d258921-95aca53c9193965b-00
+            X-Cloud-Trace-Context:
+                - 3fb8b1711dc3ffa1c51856882d258921/10785176887204484699
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 188.575125ms
+    - id: 26
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/GHSA-xq4m-mc3c-vvg3
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1736
+        body: '{"id":"GHSA-xq4m-mc3c-vvg3","summary":"Claude Code Command Validation Bypass Allows Arbitrary Code Execution","details":"Due to errors in parsing shell commands related to $IFS and short CLI flags, it was possible to bypass the Claude Code read-only validation and trigger arbitrary code execution. Reliably exploiting this requires the ability to add untrusted content into a Claude Code context window.\n\nUsers on standard Claude Code auto-update have received this fix already. Users performing manual updates are advised to update to the latest version.\n\nThank you to [RyotaK](hxxps://ryotak.net) from [GMO Flatt Security Inc.](hxxps://flatt.tech/en/) for reporting this issue!","aliases":["CVE-2025-66032"],"modified":"2025-12-05T12:27:53.035426Z","published":"2025-12-03T16:27:19Z","database_specific":{"cwe_ids":["CWE-20","CWE-77"],"severity":"HIGH","github_reviewed":true,"github_reviewed_at":"2025-12-03T16:27:19Z","nvd_published_at":"2025-12-03T19:15:57Z"},"references":[{"type":"WEB","url":"https://github.com/anthropics/claude-code/security/advisories/GHSA-xq4m-mc3c-vvg3"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2025-66032"},{"type":"PACKAGE","url":"https://github.com/anthropics/claude-code"}],"affected":[{"package":{"name":"@anthropic-ai/claude-code","ecosystem":"npm","purl":"pkg:npm/%40anthropic-ai/claude-code"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"1.0.93"}]}],"database_specific":{"source":"https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2025/12/GHSA-xq4m-mc3c-vvg3/GHSA-xq4m-mc3c-vvg3.json"}}],"schema_version":"1.9.0","severity":[{"type":"CVSS_V4","score":"CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:P/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "1736"
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 12 Nov 2026 09:30:17 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-ec0efd97779edc42c51856882d258e17-b735965ba4e151f2-00
+            X-Cloud-Trace-Context:
+                - ec0efd97779edc42c51856882d258e17/13201623203058897394
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 184.039625ms
+    - id: 27
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 100
+        host: api.osv.dev
+        body: '{"queries":[{"package":{"ecosystem":"npm","name":"@anthropic-ai/claude-code"},"version":"2.1.322"}]}'
+        headers:
+            Accept:
+                - application/json
+            Content-Type:
+                - application/json
+        url: https://api.osv.dev/v1/querybatch
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 16
+        body: '{"results":[{}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "16"
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 12 Nov 2026 09:30:17 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-4294dc1e32660d96c51856882d258096-bfd4b1a372e50715-00
+            X-Cloud-Trace-Context:
+                - 4294dc1e32660d96c51856882d258096/13822868471872292629
+            X-Envoy-Decorator-Operation:
+                - ingress QueryAffectedBatch
+        status: 200 OK
+        code: 200
+        duration: 330.312375ms

@@ -1,0 +1,69 @@
+name: live
+
+# Nightly live corpus (docs/plan/testing.md): digests the 30 tools of testdata/corpus.yaml against
+# GitHub and the web, then opens or updates a "corpus drift: <tool>" issue for each difference and
+# closes the issues of tools that are clean again. It never updates goldens or corpus.yaml: the
+# corpus job can only read the repository.
+on:
+  schedule:
+    - cron: "41 4 * * *"
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+jobs:
+  corpus:
+    name: live corpus
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: jdx/mise-action@b44d12e7d0d8ee7461bb893e1b1993500433185b # v5.2.7
+        with:
+          version: 2026.11.5
+      - name: digest the corpus live
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELGAP_LIVE_OUT: ${{ runner.temp }}/corpus
+        run: mise run test:live
+      - name: keep the results for the issues job
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: corpus
+          path: ${{ runner.temp }}/corpus
+          if-no-files-found: error
+          retention-days: 14
+
+  issues:
+    name: drift issues
+    needs: corpus
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read # the script in scripts/
+      issues: write # open, comment on and close "corpus drift" issues
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: corpus
+          path: corpus
+      - name: open, update or close corpus drift issues
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          COMMIT: ${{ github.sha }}
+        run: bash scripts/corpus-issues.sh corpus

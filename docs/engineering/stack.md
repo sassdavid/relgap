@@ -71,7 +71,9 @@ goreleaser, chezmoi, k9s, golangci-lint.
 | GitHub GraphQL | `github.com/shurcooL/githubv4` | v0.0.0-20260209031235-2402fdf4a9ed | pseudo-versions only (normal for this module) |
 | GitHub auth | `github.com/cli/go-gh/v2` | v2.17.0 | only `pkg/config`, to read the token in gh's `hosts.yml` (it brings `gopkg.in/yaml.v3`). relgap reads `GH_TOKEN`/`GITHUB_TOKEN` from the injected env and runs `gh auth token` through `execx`, because `pkg/auth` reads `os.Getenv` and runs gh without a timeout |
 | Markdown AST | `github.com/yuin/goldmark/v2` | **v2.1.16** (2026-11-11) | stable since v2.0.0 (2026-08-27); GitHub "Latest" release; 29 v2 releases. Every node carries a start position, which is what mdindex needs. The README's "early stages" note concerns third-party extensions only, and relgap uses none ([relgap ADR-0001](../plan/adr/0001-goldmark-section-index.md)) |
-| HTML to Markdown | `github.com/JohannesKaufmann/html-to-markdown/v2` | v2.5.2 | web-doc adapter |
+| HTML to Markdown | `github.com/JohannesKaufmann/html-to-markdown/v2` | v2.5.2 | web-doc adapter (`internal/htmlmd`). MIT, released 2026-06-07; its library packages need only `github.com/JohannesKaufmann/dom` v0.3.1 (MIT) and `golang.org/x/net/html`. Checked 2026-11-12: latest, no v3 ([relgap ADR-0011](../plan/adr/0011-enrichment-and-web-sources.md)) |
+| HTML parsing | `golang.org/x/net` | v0.62.0 | `html` package, for the web-doc selectors; latest on 2026-11-12 (released 2026-10-27). Its requirements (`x/sys` v0.49.0, `x/text` v0.43.0) are older than the ones relgap and tfcensus use, so nothing else moves |
+| CVSS scores | `github.com/pandatix/go-cvss` | v0.6.4 | OSV severity: base scores of CVSS v2, v3.0, v3.1 and v4.0 vectors. MIT, released 2026-08-20, no dependencies outside the standard library; osv-scanner v2.7.1 uses the same version. `goark/go-cvss` v1.6.7 (2024) has no v4.0 ([relgap ADR-0011](../plan/adr/0011-enrichment-and-web-sources.md)) |
 | Versions | `github.com/Masterminds/semver/v3` + `github.com/hashicorp/go-version` | v3.5.0 + v1.9.0 | go-version only parses the `loose` scheme. relgap compares loose versions itself because go-version's `Compare` isn't transitive (`FuzzCompareProperties` found `"0" <= "0.0.0.0" <= "0A"` but `"0" > "0A"`) |
 | Terraform pins | `github.com/hashicorp/terraform-config-inspect` | v0.0.0-20260904064934-75d64de68c31 | **not used** ([relgap ADR-0008](../plan/adr/0008-hcl-and-dockerfile-parsers.md)): no source positions, and it pulls in hcl v1 and `agext/levenshtein` v1.2.2. `internal/scan` reads `*.tf` with hcl/v2 |
 | HCL | `github.com/hashicorp/hcl/v2` | v2.25.0 | released 2026-09-15; `*.tf`, `.terraform.lock.hcl` and terragrunt files at M5. Same version as tfcensus |
@@ -94,6 +96,8 @@ goreleaser, chezmoi, k9s, golangci-lint.
 | anchore/sbom-action | v0.24.3 |
 | googleapis/release-please-action | v5.0.0 |
 | github/codeql-action (SARIF upload) | v4.39.3 (bundle v2.27.4) |
+| actions/upload-artifact | v7.0.2 (released 2026-10-07; relgap `live.yml`) |
+| actions/download-artifact | v8.0.2 (released 2026-10-07; relgap `live.yml`) |
 | actions/dependency-review-action | v5.0.0 |
 | zizmorcore/zizmor-action | v0.8.1 |
 

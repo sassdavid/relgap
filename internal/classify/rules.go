@@ -40,7 +40,7 @@ func headingRules() []rule {
 		{regexp.MustCompile(`(?i)\bsecurity\b|\bCVE-\d`), KindSecurity, confidenceMarker},
 		{
 			regexp.MustCompile(`(?i)\bdependenc(y|ies)\b|\bdeps\b|\bother\b|\bmisc(ellaneous)?\b|\bchores?\b|` +
-				`\bdocumentation\b|\binternal\b|\bmaintenance\b|\bfailing tests?\b|\bapi changes?\b`),
+				`\bdocumentation\b|\binternal\b|\bmaintenance\b|\bfailing tests?\b|\bapi[ -]changes?\b`),
 			KindOther, confidenceHeading,
 		},
 		{

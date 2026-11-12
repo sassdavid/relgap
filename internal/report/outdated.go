@@ -14,6 +14,7 @@ import (
 	"golang.org/x/sync/errgroup"
 
 	"github.com/sassdavid/relgap/internal/classify"
+	"github.com/sassdavid/relgap/internal/enrich"
 	"github.com/sassdavid/relgap/internal/github"
 	"github.com/sassdavid/relgap/internal/registry"
 	"github.com/sassdavid/relgap/internal/scan"
@@ -41,8 +42,9 @@ const (
 
 // Outdated is the data of `relgap outdated --format json`.
 type Outdated struct {
-	Repos []string      `json:"repos"`
-	Pins  []OutdatedPin `json:"pins"`
+	Repos    []string         `json:"repos"`
+	Pins     []OutdatedPin    `json:"pins"`
+	Binaries []*enrich.Binary `json:"binaries,omitzero"` // with --binaries; empty when none found
 }
 
 // OutdatedPin compares one pin with the latest version of its tool.
@@ -58,6 +60,8 @@ type OutdatedPin struct {
 	Hidden  int                   `json:"hidden,omitempty"` // entries below the minimum confidence
 	Status  Status                `json:"status"`
 	Note    string                `json:"note,omitempty"`
+	EOL     *enrich.EOL           `json:"eol,omitempty"`   // absent without an endoflife.date product
+	Vulns   []enrich.Vuln         `json:"vulns,omitempty"` // known vulnerabilities of Current
 
 	// Digest is the digest Counts come from; pins with the same tool and Current share it.
 	Digest *ToolDigest `json:"-"`

@@ -43,6 +43,8 @@ func (f *fakeGitHub) Releases(context.Context, string) ([]github.Release, error)
 
 func (f *fakeGitHub) Tags(context.Context, string) ([]string, error) { return f.tags, nil }
 
+func (f *fakeGitHub) RootFiles(context.Context, string) ([]github.File, error) { return nil, nil }
+
 func (f *fakeGitHub) ReleaseBodies(_ context.Context, _ string, tags []string) (map[string]github.Release, error) {
 	f.fetched = append(f.fetched, tags)
 	out := map[string]github.Release{}
@@ -85,7 +87,7 @@ func TestDigestReleases(t *testing.T) {
 			"v1.2:CHANGELOG.md": "# Changelog\n\n## 1.2.0\n\n### Breaking\n\n- Gone [#1](https://x.test/pull/1)\n\n### Added\n\n- new thing\n",
 		},
 	}
-	got, err := report.NewDigester(slog.New(slog.DiscardHandler), gh).Digest(t.Context(), report.DigestRequest{
+	got, err := report.NewDigester(slog.New(slog.DiscardHandler), gh, nil).Digest(t.Context(), report.DigestRequest{
 		Tool: spec(
 			registry.UniverseReleases,
 			registry.Source{Kind: "changelog-file", PathTemplate: "CHANGELOG.md", Ref: "v{major}.{minor}"},
@@ -137,7 +139,7 @@ func TestDigestMajorJump(t *testing.T) {
 		{Tag: "v2.0.0", URL: "https://x.test/v2.0.0", Body: "- x\n"},
 		{Tag: "v1.9.0"},
 	}}
-	got, err := report.NewDigester(slog.New(slog.DiscardHandler), gh).Digest(t.Context(), report.DigestRequest{
+	got, err := report.NewDigester(slog.New(slog.DiscardHandler), gh, nil).Digest(t.Context(), report.DigestRequest{
 		Tool: spec(registry.UniverseReleases), From: "1.9.0", MinConfidence: 0.5,
 	})
 	require.NoError(t, err)
@@ -156,7 +158,7 @@ func TestDigestBadMarker(t *testing.T) {
 	gh := &fakeGitHub{releases: []github.Release{{Tag: "v1.0.0"}, {Tag: "v1.1.0"}}}
 	tool := spec(registry.UniverseReleases)
 	tool.BreakingMarkers = []string{"("}
-	_, err := report.NewDigester(slog.New(slog.DiscardHandler), gh).Digest(t.Context(), report.DigestRequest{
+	_, err := report.NewDigester(slog.New(slog.DiscardHandler), gh, nil).Digest(t.Context(), report.DigestRequest{
 		Tool: tool, From: "1.0.0",
 	})
 	require.ErrorContains(t, err, "breaking marker")
@@ -167,7 +169,7 @@ func TestDigestTagsUniverseWithoutSources(t *testing.T) {
 	gh := &fakeGitHub{tags: []string{"v1.0.0", "v1.0.1", "v1.1.0", "junk"}, releases: []github.Release{
 		{Tag: "v1.0.1", Body: "- x\n"},
 	}}
-	got, err := report.NewDigester(slog.New(slog.DiscardHandler), gh).Digest(t.Context(), report.DigestRequest{
+	got, err := report.NewDigester(slog.New(slog.DiscardHandler), gh, nil).Digest(t.Context(), report.DigestRequest{
 		Tool: spec(registry.UniverseTags),
 		From: "0.9.0",
 		To:   "1.0.1",
@@ -186,7 +188,7 @@ func TestDigestTagsUniverseWithoutSources(t *testing.T) {
 func TestDigestRangeErrors(t *testing.T) {
 	t.Parallel()
 	gh := &fakeGitHub{releases: []github.Release{{Tag: "v1.0.0"}, {Tag: "v1.1.0"}}}
-	d := report.NewDigester(slog.New(slog.DiscardHandler), gh)
+	d := report.NewDigester(slog.New(slog.DiscardHandler), gh, nil)
 	_, err := d.Digest(
 		t.Context(),
 		report.DigestRequest{Tool: spec(registry.UniverseReleases), From: "1.1.0", To: "1.0.0"},
