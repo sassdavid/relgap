@@ -34,8 +34,11 @@ digested. mise also needs trusted config files, which a scanned project may not 
   Both print the digests of the `outdated` comparison.
 - Exit codes: a tool that fails, or a file that doesn't parse, exits 1 after printing the rest.
   That wins over a `--fail-on` match (exit 3), so a CI gate never decides on partial data.
+  Superseded by [ADR-0012](0012-fail-on-gate-and-sarif.md): a match exits 3 on a partial report,
+  and only a pass on partial data exits 1.
 - `--fail-on outdated` (with `--max-behind`) and `--fail-on breaking` are checked. `eol`, `vuln`
-  and `deprecation` exit 2 until relgap can check them; `drift` belongs to `relgap drift`.
+  and `deprecation` exit 2 until relgap can check them; `drift` belongs to `relgap drift`. M9
+  checks all of them (ADR-0012).
 
 ## Consequences
 - The newest version can fall outside the 30-release window when a project ships more than 30

@@ -34,7 +34,8 @@ library choices: [ADR-0011](../adr/0011-enrichment-and-web-sources.md).
   it, and `--fail-on eol` doesn't match it.
 - An outage (any failed request, such as a 503 or a 403) is a warning on stderr and an entry in
   the JSON envelope's `errors`, and the report continues without `eol` for the tools that need
-  it. Under `--fail-on eol` the run exits 1, since the gate can't decide on partial data.
+  it. Under `--fail-on eol` the run exits 1, since the gate can't pass on partial data. An eol
+  match on another pin still exits 3 ([ADR-0012](../adr/0012-fail-on-gate-and-sarif.md)).
 
 ## Vulnerabilities: OSV
 - `POST https://api.osv.dev/v1/querybatch` with `{package:{ecosystem,name}, version}` for each
@@ -86,7 +87,9 @@ library choices: [ADR-0011](../adr/0011-enrichment-and-web-sources.md).
     absent without a target or when a range that could hold the target can't be compared and no
     `versions` list covers it.
   - `fixed_in` is the lowest `fixed` event above the current version.
-- `--fail-on vuln` stays a usage error until M9, which adds the severity threshold.
+- `--fail-on vuln` counts the advisories with `affects_current` at or above `--vuln-severity`
+  (config `policy.vuln_severity`; empty counts every advisory, and an advisory without a
+  rating counts only then). An OSV outage under `--fail-on vuln` exits 1 when nothing matched.
 
 ## Acceptance criteria
 - [x] Cassette tests: terraform cycle EOL, a tool with no EOL product (field absent, no error), and an endoflife.date outage (warning, report continues). (`TestSpec_enrichment_1`: cassettes `enrich/eol-terraform.yaml` and the hand-written `enrich/eol-outage.yaml`, a 503.)

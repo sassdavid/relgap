@@ -345,6 +345,20 @@ func (t *DriftTool) Cell(repo string) Cell {
 	return c
 }
 
+// Outliers returns the compared pins of a drifting tool whose version differs from Reference.
+func (t *DriftTool) Outliers() []DriftPin {
+	if !t.Drift {
+		return nil
+	}
+	var out []DriftPin
+	for _, p := range t.Pins {
+		if p.Version != "" && p.Version != t.Reference {
+			out = append(out, p)
+		}
+	}
+	return out
+}
+
 // Drifting returns the tools whose pins stand for more than one version.
 func (d *Drift) Drifting() []DriftTool {
 	var out []DriftTool

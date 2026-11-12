@@ -19,7 +19,7 @@
 
 | Workflow | Trigger | Jobs |
 |---|---|---|
-| `ci.yml` | PR, push main | lint; test matrix (ubuntu, macos, windows); fuzz (`mise run fuzz`); docs-up-to-date; schema tests; goreleaser snapshot (6 archives, checksums, SBOMs, third-party notices in every archive) |
+| `ci.yml` | PR, push main | lint; test matrix (ubuntu, macos, windows); fuzz (`mise run fuzz`); docs-up-to-date; schema tests; SARIF dry run (upload-sarif with `CODEQL_ACTION_TEST_MODE` on each SARIF golden, so nothing is uploaded); goreleaser snapshot (6 archives, checksums, SBOMs, third-party notices in every archive) |
 | `security.yml` | PR, weekly | govulncheck (SARIF), zizmor, dependency review |
 | `live.yml` | nightly (04:41 UTC), manual | live corpus against GitHub and the web with `GITHUB_TOKEN` (read-only job), then a job with `issues: write` that opens, updates or closes "corpus drift: <tool>" issues. Never writes goldens ([testing.md](../plan/testing.md)) |
 | `release-please.yml` | push main | opens or updates the release PR (version bump + CHANGELOG.md from Conventional Commits). On merge it creates the tag and a draft release (`draft` + `force-tag-creation`) |

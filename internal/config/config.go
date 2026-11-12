@@ -64,6 +64,7 @@ type Policy struct {
 	FailOn        []string `json:"fail_on"        jsonschema:"enum=breaking,enum=deprecation,enum=eol,enum=vuln,enum=drift,enum=outdated"`
 	MaxBehind     string   `json:"max_behind"     jsonschema:"pattern=^((major|minor|patch|releases|days):[0-9]+)?$"                      jsonschema_description:"e.g. minor:2, releases:10, days:90."`
 	MinConfidence float64  `json:"min_confidence" jsonschema:"minimum=0,maximum=1"                                                        jsonschema_description:"Entries below this confidence are hidden."`
+	VulnSeverity  string   `json:"vuln_severity"  jsonschema:"enum=,enum=low,enum=medium,enum=high,enum=critical"                         jsonschema_description:"Lowest OSV rating --fail-on vuln counts; empty counts every advisory."`
 }
 
 // LLM configures the optional, off-by-default summarizer.
@@ -102,6 +103,7 @@ func Default() Config {
 			FailOn:        []string{},
 			MaxBehind:     "",
 			MinConfidence: defaultMinConfidence,
+			VulnSeverity:  "",
 		},
 		LLM: LLM{MaxInputTokens: defaultMaxInputTokens},
 	}

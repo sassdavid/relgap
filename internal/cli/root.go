@@ -24,6 +24,7 @@ func flagKeys() map[string]string {
 		flagMinConfidence: "policy.min_confidence",
 		flagFailOn:        "policy.fail_on",
 		flagMaxBehind:     "policy.max_behind",
+		flagVulnSeverity:  "policy.vuln_severity",
 	}
 }
 

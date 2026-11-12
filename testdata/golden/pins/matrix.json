@@ -1,0 +1,89 @@
+{
+  "schema_version": "1",
+  "tool": "relgap",
+  "version": "dev",
+  "generated_at": "2026-11-10T12:00:00Z",
+  "data": {
+    "repos": [
+      "project"
+    ],
+    "pins": [
+      {
+        "tool": "image:golang",
+        "raw_name": "golang",
+        "kind": "image",
+        "value": "1.27.3",
+        "version": "1.27.3",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": "project",
+          "file": "Dockerfile",
+          "line": 1,
+          "detector": "dockerfile"
+        }
+      },
+      {
+        "tool": "kubectl",
+        "raw_name": "KUBECTL_VERSION",
+        "kind": "tool",
+        "value": "1.34.2",
+        "version": "1.34.2",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": "project",
+          "file": "Dockerfile",
+          "line": 2,
+          "detector": "dockerfile"
+        }
+      },
+      {
+        "tool": "terraform",
+        "raw_name": "terraform",
+        "kind": "tool",
+        "value": "1.15.8",
+        "version": "1.15.8",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": "project",
+          "file": "mise.toml",
+          "line": 2,
+          "detector": "mise"
+        }
+      },
+      {
+        "tool": "helm",
+        "raw_name": "helm",
+        "kind": "tool",
+        "value": "3.21.0",
+        "version": "3.21.0",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": "project",
+          "file": "mise.toml",
+          "line": 3,
+          "detector": "mise"
+        }
+      },
+      {
+        "tool": "terraform",
+        "raw_name": "required_version",
+        "kind": "tool",
+        "value": "~> 1.15",
+        "version": "~> 1.15",
+        "exact": false,
+        "match": "constraint",
+        "location": {
+          "repo": "project",
+          "file": "versions.tf",
+          "line": 2,
+          "detector": "terraform"
+        }
+      }
+    ]
+  },
+  "errors": []
+}

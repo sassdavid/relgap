@@ -1,7 +1,6 @@
 package cli
 
 import (
-	"errors"
 	"fmt"
 	"net/http"
 	"path"
@@ -18,15 +17,12 @@ import (
 	"github.com/sassdavid/relgap/internal/registry"
 	"github.com/sassdavid/relgap/internal/render"
 	"github.com/sassdavid/relgap/internal/report"
+	"github.com/sassdavid/relgap/internal/sarif"
 	"github.com/sassdavid/relgap/internal/scan"
 	"github.com/sassdavid/relgap/internal/source"
 )
 
-const (
-	flagFailOn    = "fail-on"
-	flagMaxBehind = "max-behind"
-	flagBinaries  = "binaries"
-)
+const flagBinaries = "binaries"
 
 func newOutdatedCmd(d *app.Deps, g *globals) *cobra.Command {
 	cmd := &cobra.Command{
@@ -62,16 +58,25 @@ PATH and in mise's installs directory) and lists the OSV vulnerabilities of the 
 and main module they were built with. Like govulncheck's binary mode, minus the check that
 the binary calls the vulnerable code.
 
---fail-on outdated exits 3 when a pin is further behind than --max-behind (major:N,
-minor:N, patch:N, releases:N or days:N; empty means any pin behind latest). --fail-on
-breaking exits 3 when a digest has a breaking entry. --fail-on eol exits 3 when CURRENT's
-cycle has reached its end. A tool that fails exits 1 instead, after printing the rest, and
-so does an endoflife.date outage under --fail-on eol. The vuln and deprecation values exit 2
-until relgap can check them.`,
+--format sarif writes a SARIF 2.1.0 log for GitHub code scanning, located at each pin's
+file and line: a result per pin behind latest (outdated), per pin on an EOL cycle (eol), per
+upgrade with breaking changes or deprecations (breaking, deprecation), per advisory that
+affects a pin (one rule per OSV ID), and per pin or file that failed (failed). The results
+don't depend on --fail-on.
+
+--fail-on takes breaking, deprecation, eol, vuln and outdated. Each value counts findings:
+outdated counts the pins further behind than --max-behind (major:N, minor:N, patch:N,
+releases:N or days:N; empty means any pin behind latest), breaking and deprecation count
+the pins whose digest has such an entry, eol counts the pins on an EOL cycle, and vuln
+counts the advisories that affect a pin at or above --vuln-severity. A value whose count
+reaches --min-count (default 1) exits 3. Otherwise a tool or file that failed exits 1, and
+so does an endoflife.date outage under --fail-on eol or an OSV outage under --fail-on vuln,
+since a pass on partial data proves nothing.`,
 		Example: `  relgap outdated
   relgap outdated ~/src/infra --format md
   relgap outdated --fail-on outdated --max-behind minor:2
-  relgap outdated --fail-on eol
+  relgap outdated --fail-on eol --fail-on vuln --vuln-severity high
+  relgap outdated --fail-on outdated --min-count 5 --format sarif > relgap.sarif
   relgap outdated --binaries --format json | jq '.data.binaries[]'
 
   relgap outdated --format json | jq '.data.pins[] | select(.status == "outdated")'`,
@@ -84,23 +89,15 @@ until relgap can check them.`,
 			return runOutdated(cmd, d, g, root)
 		},
 	}
-	addGateFlags(cmd)
+	addGateFlags(cmd, outdatedValues())
 	cmd.Flags().Bool(flagBinaries, false,
 		"also check the Go version and main module of the pinned tools' installed executables against OSV")
 	return cmd
 }
 
-func addGateFlags(cmd *cobra.Command) {
-	def := config.Default().Policy
-	fl := cmd.Flags()
-	fl.StringSlice(flagFailOn, def.FailOn,
-		"exit 3 when this matches: outdated, breaking or eol; repeatable (config policy.fail_on)")
-	fl.String(flagMaxBehind, def.MaxBehind,
-		"how far behind --fail-on outdated allows, such as minor:2, releases:10 or days:90 (config policy.max_behind)")
-}
-
 func runOutdated(cmd *cobra.Command, d *app.Deps, g *globals, root string) error {
-	err := g.outFormat.Check(render.FormatTTY, render.FormatPlain, render.FormatMD, render.FormatJSON)
+	err := g.outFormat.Check(render.FormatTTY, render.FormatPlain, render.FormatMD, render.FormatJSON,
+		render.FormatSARIF)
 	if err != nil {
 		return usageError(err)
 	}
@@ -108,7 +105,7 @@ func runOutdated(cmd *cobra.Command, d *app.Deps, g *globals, root string) error
 	if err != nil {
 		return err
 	}
-	gate, err := newGate(d, true)
+	gate, err := newGate(cmd, d, outdatedValues())
 	if err != nil {
 		return err
 	}
@@ -282,36 +279,6 @@ func ignoreRules(resolver *registry.Resolver, rules []config.IgnoreRule) []scan.
 	return out
 }
 
-// newGate builds the --fail-on checks from the flags and config. Values that belong to another
-// command are left to it; values relgap can't check yet are a usage error, since a CI gate that
-// silently passes is worse than one that fails to start.
-func newGate(d *app.Deps, outdated bool) (report.Gate, error) {
-	p := d.Config.Config.Policy
-	gate := report.Gate{Now: d.Clock()}
-	var err error
-	if gate.MaxBehind, err = report.ParseMaxBehind(p.MaxBehind); err != nil {
-		return gate, usageError(err)
-	}
-	for _, v := range p.FailOn {
-		switch v {
-		case report.FailOnBreaking:
-			gate.Breaking = true
-		case report.FailOnOutdated:
-			gate.Outdated = outdated
-		case report.FailOnDrift:
-		case report.FailOnEOL:
-			gate.EOL = outdated
-		case report.FailOnVuln, report.FailOnDeprecation:
-			return gate, usageError(
-				fmt.Errorf("--fail-on %s isn't supported yet: relgap checks outdated, breaking and eol", v),
-			)
-		default:
-			return gate, usageError(fmt.Errorf("invalid --fail-on value %q", v))
-		}
-	}
-	return gate, nil
-}
-
 func writeOutdated(d *app.Deps, g *globals, c *comparison) error {
 	if g.outFormat == render.FormatJSON {
 		env := render.NewEnvelope(buildinfo.Get().Version, d.Clock(), c.out)
@@ -320,6 +287,9 @@ func writeOutdated(d *app.Deps, g *globals, c *comparison) error {
 	}
 	if g.outFormat == render.FormatMD {
 		return render.OutdatedMarkdown(d.Stdout, c.out)
+	}
+	if g.outFormat == render.FormatSARIF {
+		return sarif.Write(d.Stdout, render.OutdatedSARIF(c.out, c.scan.Problems, buildinfo.Get().Version))
 	}
 	color := g.outFormat == render.FormatTTY &&
 		render.UseColor(render.ColorMode(g.color), d.Env.Lookup, app.IsTerminal(d.Stdout))
@@ -363,9 +333,19 @@ func (c *comparison) warn(cmd *cobra.Command, d *app.Deps) {
 	}
 }
 
-// exit turns errors and gate findings into the exit code: a failed tool or file wins over a
-// --fail-on match, so a gate never passes or fails on partial data.
+// exit turns gate findings and errors into the exit code; see [gateExit].
 func (c *comparison) exit(cmd *cobra.Command, d *app.Deps, gate report.Gate) error {
+	findings, unmeasured := gate.Check(c.out)
+	for _, p := range unmeasured {
+		d.Logger.WarnContext(cmd.Context(), "can't measure days behind: the tool's versions have no publish dates",
+			"tool", p.Tool, "pin", render.PinLocation(p.Pin.Location))
+	}
+	return gateExit(cmd, d, gate.Matches(findings), c.partial(gate))
+}
+
+// partial returns why the gate can't pass: a pin or file failed, or a source that a --fail-on
+// value needs was down.
+func (c *comparison) partial(gate report.Gate) error {
 	if errs := c.errors(); len(errs) > 0 {
 		return fmt.Errorf(
 			"%d %s failed; the report is partial",
@@ -373,43 +353,23 @@ func (c *comparison) exit(cmd *cobra.Command, d *app.Deps, gate report.Gate) err
 			plural(len(errs), "pin or file", "pins or files"),
 		)
 	}
-	if gate.EOL {
+	for _, need := range []struct{ value, source string }{
+		{report.FailOnEOL, enrich.SourceEOL},
+		{report.FailOnVuln, enrich.SourceOSV},
+	} {
+		if !gate.Has(need.value) {
+			continue
+		}
 		var down []string
 		for _, p := range c.problems {
-			if p.Source == enrich.SourceEOL {
+			if p.Source == need.source && !slices.Contains(down, p.Tool) {
 				down = append(down, p.Tool)
 			}
 		}
 		if len(down) > 0 {
-			return fmt.Errorf("--fail-on eol can't decide: endoflife.date failed for %s; the report is partial",
-				strings.Join(down, ", "))
+			return fmt.Errorf("--%s %s can't decide: %s failed for %s; the report is partial",
+				flagFailOn, need.value, need.source, strings.Join(down, ", "))
 		}
 	}
-	findings, unmeasured := gate.Check(c.out)
-	for _, p := range unmeasured {
-		d.Logger.WarnContext(cmd.Context(), "can't measure days behind: the tool's versions have no publish dates",
-			"tool", p.Tool, "pin", render.PinLocation(p.Pin.Location))
-	}
-	if len(findings) == 0 {
-		return nil
-	}
-	return &exitError{code: ExitFindings, err: findingsError(findings)}
-}
-
-func findingsError(fs []report.Finding) error {
-	byValue := map[string][]string{}
-	var values []string
-	for _, f := range fs {
-		if _, ok := byValue[f.FailOn]; !ok {
-			values = append(values, f.FailOn)
-		}
-		desc := fmt.Sprintf("%s %s (%s)", f.Pin.Tool, f.Pin.Current, render.PinLocation(f.Pin.Pin.Location))
-		byValue[f.FailOn] = append(byValue[f.FailOn], desc)
-	}
-	slices.Sort(values)
-	parts := make([]string, len(values))
-	for i, v := range values {
-		parts[i] = fmt.Sprintf("--fail-on %s matched %s", v, strings.Join(byValue[v], ", "))
-	}
-	return errors.New(strings.Join(parts, "; "))
+	return nil
 }

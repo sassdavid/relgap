@@ -1,0 +1,509 @@
+{
+  "$schema": "https://docs.oasis-open.org/sarif/sarif/v2.1.0/errata01/os/schemas/sarif-schema-2.1.0.json",
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "relgap",
+          "version": "dev",
+          "informationUri": "https://github.com/sassdavid/relgap",
+          "rules": [
+            {
+              "id": "drift",
+              "shortDescription": {
+                "text": "The pin differs from the version most repositories pin"
+              },
+              "fullDescription": {
+                "text": "The scanned repositories pin more than one version of the tool, and this pin stands for a version other than the one most of them pin."
+              },
+              "help": {
+                "text": "Pin the version most repositories use, or add an ignore rule for this path in .relgap.yaml."
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              }
+            },
+            {
+              "id": "failed",
+              "shortDescription": {
+                "text": "relgap couldn't check this pin or file"
+              },
+              "fullDescription": {
+                "text": "A file didn't parse, or looking up the tool's versions failed."
+              },
+              "help": {
+                "text": "Fix the file, or run relgap again with -v to see the failing request."
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              }
+            }
+          ]
+        }
+      },
+      "results": [
+        {
+          "ruleId": "drift",
+          "ruleIndex": 0,
+          "level": "warning",
+          "message": {
+            "text": "image:golang 1.26.1 differs from 1.27.3, which 55 of 60 repositories pin"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-00/repo-00/Dockerfile"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "drift|image:golang|tree/team-00/repo-00/Dockerfile|1.26.1"
+          }
+        },
+        {
+          "ruleId": "drift",
+          "ruleIndex": 0,
+          "level": "warning",
+          "message": {
+            "text": "image:golang 1.26.1 differs from 1.27.3, which 55 of 60 repositories pin"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-01/repo-12/Dockerfile"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "drift|image:golang|tree/team-01/repo-12/Dockerfile|1.26.1"
+          }
+        },
+        {
+          "ruleId": "drift",
+          "ruleIndex": 0,
+          "level": "warning",
+          "message": {
+            "text": "image:golang 1.26.1 differs from 1.27.3, which 55 of 60 repositories pin"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-02/repo-24/Dockerfile"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "drift|image:golang|tree/team-02/repo-24/Dockerfile|1.26.1"
+          }
+        },
+        {
+          "ruleId": "drift",
+          "ruleIndex": 0,
+          "level": "warning",
+          "message": {
+            "text": "image:golang 1.26.1 differs from 1.27.3, which 55 of 60 repositories pin"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-03/repo-36/Dockerfile"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "drift|image:golang|tree/team-03/repo-36/Dockerfile|1.26.1"
+          }
+        },
+        {
+          "ruleId": "drift",
+          "ruleIndex": 0,
+          "level": "warning",
+          "message": {
+            "text": "image:golang 1.26.1 differs from 1.27.3, which 55 of 60 repositories pin"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-04/repo-48/Dockerfile"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "drift|image:golang|tree/team-04/repo-48/Dockerfile|1.26.1"
+          }
+        },
+        {
+          "ruleId": "drift",
+          "ruleIndex": 0,
+          "level": "warning",
+          "message": {
+            "text": "kubectl 1.33.5 differs from 1.34.2, which 56 of 60 repositories pin"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-00/repo-04/.tool-versions"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "drift|kubectl|tree/team-00/repo-04/.tool-versions|1.33.5"
+          }
+        },
+        {
+          "ruleId": "drift",
+          "ruleIndex": 0,
+          "level": "warning",
+          "message": {
+            "text": "kubectl 1.33.5 differs from 1.34.2, which 56 of 60 repositories pin"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-01/repo-19/.tool-versions"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "drift|kubectl|tree/team-01/repo-19/.tool-versions|1.33.5"
+          }
+        },
+        {
+          "ruleId": "drift",
+          "ruleIndex": 0,
+          "level": "warning",
+          "message": {
+            "text": "kubectl 1.33.5 differs from 1.34.2, which 56 of 60 repositories pin"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-03/repo-34/.tool-versions"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "drift|kubectl|tree/team-03/repo-34/.tool-versions|1.33.5"
+          }
+        },
+        {
+          "ruleId": "drift",
+          "ruleIndex": 0,
+          "level": "warning",
+          "message": {
+            "text": "kubectl 1.33.5 differs from 1.34.2, which 56 of 60 repositories pin"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-04/repo-49/.tool-versions"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "drift|kubectl|tree/team-04/repo-49/.tool-versions|1.33.5"
+          }
+        },
+        {
+          "ruleId": "drift",
+          "ruleIndex": 0,
+          "level": "warning",
+          "message": {
+            "text": "node 24.10.0 differs from 24.11.0, which 59 of 60 repositories pin"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-01/repo-13/mise.toml"
+                },
+                "region": {
+                  "startLine": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "drift|node|tree/team-01/repo-13/mise.toml|24.10.0"
+          }
+        },
+        {
+          "ruleId": "drift",
+          "ruleIndex": 0,
+          "level": "warning",
+          "message": {
+            "text": "terraform 1.14.2 differs from 1.15.8, which 55 of 60 repositories pin"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-00/repo-07/mise.toml"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "drift|terraform|tree/team-00/repo-07/mise.toml|1.14.2"
+          }
+        },
+        {
+          "ruleId": "drift",
+          "ruleIndex": 0,
+          "level": "warning",
+          "message": {
+            "text": "terraform 1.14.2 differs from 1.15.8, which 55 of 60 repositories pin (~> 1.14 counts as 1.14.2: highest installed or locked version)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-00/repo-07/versions.tf"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "drift|terraform|tree/team-00/repo-07/versions.tf|1.14.2"
+          }
+        },
+        {
+          "ruleId": "drift",
+          "ruleIndex": 0,
+          "level": "warning",
+          "message": {
+            "text": "terraform 1.15.0 differs from 1.15.8, which 55 of 60 repositories pin (~> 1.15 counts as 1.15.0: lower bound of the constraint)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-02/repo-24/versions.tf"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "drift|terraform|tree/team-02/repo-24/versions.tf|1.15.0"
+          }
+        },
+        {
+          "ruleId": "drift",
+          "ruleIndex": 0,
+          "level": "warning",
+          "message": {
+            "text": "terraform 1.14.2 differs from 1.15.8, which 55 of 60 repositories pin"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-02/repo-27/mise.toml"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "drift|terraform|tree/team-02/repo-27/mise.toml|1.14.2"
+          }
+        },
+        {
+          "ruleId": "drift",
+          "ruleIndex": 0,
+          "level": "warning",
+          "message": {
+            "text": "terraform 1.14.2 differs from 1.15.8, which 55 of 60 repositories pin (~> 1.14 counts as 1.14.2: highest installed or locked version)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-02/repo-27/versions.tf"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "drift|terraform|tree/team-02/repo-27/versions.tf|1.14.2"
+          }
+        },
+        {
+          "ruleId": "drift",
+          "ruleIndex": 0,
+          "level": "warning",
+          "message": {
+            "text": "terraform 1.14.2 differs from 1.15.8, which 55 of 60 repositories pin"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-04/repo-47/mise.toml"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "drift|terraform|tree/team-04/repo-47/mise.toml|1.14.2"
+          }
+        },
+        {
+          "ruleId": "drift",
+          "ruleIndex": 0,
+          "level": "warning",
+          "message": {
+            "text": "terraform 1.14.2 differs from 1.15.8, which 55 of 60 repositories pin (~> 1.14 counts as 1.14.2: highest installed or locked version)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-04/repo-47/versions.tf"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "drift|terraform|tree/team-04/repo-47/versions.tf|1.14.2"
+          }
+        },
+        {
+          "ruleId": "drift",
+          "ruleIndex": 0,
+          "level": "warning",
+          "message": {
+            "text": "terraform 1.15.0 differs from 1.15.8, which 55 of 60 repositories pin (~> 1.15 counts as 1.15.0: lower bound of the constraint)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-04/repo-49/versions.tf"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "drift|terraform|tree/team-04/repo-49/versions.tf|1.15.0"
+          }
+        },
+        {
+          "ruleId": "drift",
+          "ruleIndex": 0,
+          "level": "warning",
+          "message": {
+            "text": "tfprovider:hashicorp/aws 6.10.0 differs from 6.12.0, which 58 of 60 repositories pin"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-01/repo-11/.terraform.lock.hcl"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "drift|tfprovider:hashicorp/aws|tree/team-01/repo-11/.terraform.lock.hcl|6.10.0"
+          }
+        },
+        {
+          "ruleId": "drift",
+          "ruleIndex": 0,
+          "level": "warning",
+          "message": {
+            "text": "tfprovider:hashicorp/aws 6.10.0 differs from 6.12.0, which 58 of 60 repositories pin"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-04/repo-41/.terraform.lock.hcl"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "drift|tfprovider:hashicorp/aws|tree/team-04/repo-41/.terraform.lock.hcl|6.10.0"
+          }
+        }
+      ]
+    }
+  ]
+}

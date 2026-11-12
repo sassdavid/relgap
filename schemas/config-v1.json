@@ -156,6 +156,17 @@
           "maximum": 1,
           "minimum": 0,
           "description": "Entries below this confidence are hidden."
+        },
+        "vuln_severity": {
+          "type": "string",
+          "enum": [
+            "",
+            "low",
+            "medium",
+            "high",
+            "critical"
+          ],
+          "description": "Lowest OSV rating --fail-on vuln counts; empty counts every advisory."
         }
       },
       "additionalProperties": false,

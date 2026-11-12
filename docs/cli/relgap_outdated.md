@@ -34,12 +34,20 @@ PATH and in mise's installs directory) and lists the OSV vulnerabilities of the 
 and main module they were built with. Like govulncheck's binary mode, minus the check that
 the binary calls the vulnerable code.
 
---fail-on outdated exits 3 when a pin is further behind than --max-behind (major:N,
-minor:N, patch:N, releases:N or days:N; empty means any pin behind latest). --fail-on
-breaking exits 3 when a digest has a breaking entry. --fail-on eol exits 3 when CURRENT's
-cycle has reached its end. A tool that fails exits 1 instead, after printing the rest, and
-so does an endoflife.date outage under --fail-on eol. The vuln and deprecation values exit 2
-until relgap can check them.
+--format sarif writes a SARIF 2.1.0 log for GitHub code scanning, located at each pin's
+file and line: a result per pin behind latest (outdated), per pin on an EOL cycle (eol), per
+upgrade with breaking changes or deprecations (breaking, deprecation), per advisory that
+affects a pin (one rule per OSV ID), and per pin or file that failed (failed). The results
+don't depend on --fail-on.
+
+--fail-on takes breaking, deprecation, eol, vuln and outdated. Each value counts findings:
+outdated counts the pins further behind than --max-behind (major:N, minor:N, patch:N,
+releases:N or days:N; empty means any pin behind latest), breaking and deprecation count
+the pins whose digest has such an entry, eol counts the pins on an EOL cycle, and vuln
+counts the advisories that affect a pin at or above --vuln-severity. A value whose count
+reaches --min-count (default 1) exits 3. Otherwise a tool or file that failed exits 1, and
+so does an endoflife.date outage under --fail-on eol or an OSV outage under --fail-on vuln,
+since a pass on partial data proves nothing.
 
 ```
 relgap outdated [path] [flags]
@@ -51,7 +59,8 @@ relgap outdated [path] [flags]
   relgap outdated
   relgap outdated ~/src/infra --format md
   relgap outdated --fail-on outdated --max-behind minor:2
-  relgap outdated --fail-on eol
+  relgap outdated --fail-on eol --fail-on vuln --vuln-severity high
+  relgap outdated --fail-on outdated --min-count 5 --format sarif > relgap.sarif
   relgap outdated --binaries --format json | jq '.data.binaries[]'
 
   relgap outdated --format json | jq '.data.pins[] | select(.status == "outdated")'
@@ -61,9 +70,11 @@ relgap outdated [path] [flags]
 
 ```
       --binaries[=true|false]   also check the Go version and main module of the pinned tools' installed executables against OSV
-      --fail-on strings         exit 3 when this matches: outdated, breaking or eol; repeatable (config policy.fail_on)
+      --fail-on strings         exit 3 when this matches: breaking, deprecation, eol, vuln or outdated; repeatable (config policy.fail_on)
   -h, --help[=true|false]       help for outdated
       --max-behind string       how far behind --fail-on outdated allows, such as minor:2, releases:10 or days:90 (config policy.max_behind)
+      --min-count int           findings a --fail-on value needs before it exits 3 (default 1)
+      --vuln-severity string    lowest rating --fail-on vuln counts: low, medium, high or critical; empty counts all (config policy.vuln_severity)
 ```
 
 ### Options inherited from parent commands
