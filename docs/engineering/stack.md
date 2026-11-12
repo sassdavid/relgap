@@ -51,7 +51,7 @@ goreleaser, chezmoi, k9s, golangci-lint.
 | JSON Schema generate | `github.com/invopop/jsonschema` | v0.14.0 | config struct → schema; test-only (the schema sync test generates `schemas/config-v1.json`) |
 | YAML | `go.yaml.in/yaml/v4` | **v4.0.0** (2026-11-04) | YAML org's maintained successor of `gopkg.in/yaml.v3`. If v4.0.0 shows early bugs at M0, fall back to `go.yaml.in/yaml/v3` v3.0.6 |
 | TOML | `github.com/pelletier/go-toml/v2` | v2.4.3 | reads mise's `registry/*.toml` in `scripts/regsnapshot` |
-| MCP | `github.com/modelcontextprotocol/go-sdk` | v1.8.0 | [ADR-0011](adr/0011-mcp-go-sdk.md) |
+| MCP | `github.com/modelcontextprotocol/go-sdk` | v1.8.0 | [ADR-0011](adr/0011-mcp-go-sdk.md). Checked 2026-11-12: still `@latest` on the module proxy (tagged 2026-09-04, GitHub release 2026-09-14), no `/v2`; terragrunt main pins the same version. Used by `internal/mcpkit` and `internal/testutil/mcptest`, shared with tfcensus. It links four new modules, all at their latest except one: `google/jsonschema-go` v0.4.3 (MIT; mcpkit imports it to build input schemas), `segmentio/encoding` v0.5.4 (MIT), `yosida95/uritemplate/v3` v3.0.2 (BSD-3-Clause) and `segmentio/asm` v1.1.3 (MIT). `segmentio/asm` v1.2.1 is newer but changed its license to MIT-0, which go-licenses doesn't recognize, so `mise run lint:licenses` fails on it |
 
 ## Testing
 

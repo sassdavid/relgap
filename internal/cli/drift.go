@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"context"
 	"fmt"
 	"path"
 	"slices"
@@ -87,31 +88,57 @@ func runDrift(cmd *cobra.Command, d *app.Deps, g *globals, f driftFlags, args []
 	if err != nil {
 		return usageError(err)
 	}
-	resolver, cfg, err := g.loadResolver(cmd, d)
+	s, err := g.newSession(cmd, d)
 	if err != nil {
 		return err
 	}
+	defer s.close(cmd.Context())
 	gate, err := newGate(cmd, d, driftValues())
-	if err != nil {
-		return err
-	}
-	opts, err := pinsOptions(cfg.Config.Scan, pinsFlags{submodules: f.submodules})
 	if err != nil {
 		return err
 	}
 	roots := args
 	if len(roots) == 0 {
-		roots = cfg.Config.Scan.Roots
+		roots = d.Config.Config.Scan.Roots
 	}
 	if len(roots) == 0 {
 		roots = []string{"."}
 	}
-	res, err := scan.New(d.Logger, newRunner(d), resolver, opts).Scan(cmd.Context(), roots)
+	res, out, tools, err := s.drift(cmd.Context(), driftArgs{
+		roots:             roots,
+		tools:             f.tools,
+		latest:            f.latest,
+		ignoreConstraints: f.ignoreConstraints,
+		submodules:        f.submodules,
+	})
 	if err != nil {
-		return usageError(err)
+		return err
 	}
-	tools := toolNames(resolver, f.tools)
-	ignore := ignoreRules(resolver, cfg.Config.Ignore)
+	if err = writeDrift(d, g, res, out, len(tools) > 0); err != nil {
+		return err
+	}
+	warnDrift(cmd, d, res, out, tools)
+	return gateExit(cmd, d, gate.Matches(gate.CheckDrift(out)), driftPartial(res, out))
+}
+
+// driftArgs says what a drift report covers.
+type driftArgs struct {
+	roots, tools      []string
+	latest            bool
+	ignoreConstraints bool
+	submodules        bool
+	base              string // name repositories relative to this directory
+}
+
+// drift scans the roots and compares the pins of each tool across repositories. It returns
+// the tools named as pins name them.
+func (s *session) drift(ctx context.Context, a driftArgs) (*scan.Result, *report.Drift, []string, error) {
+	res, err := s.scan(ctx, a.roots, a.submodules, a.base)
+	if err != nil {
+		return nil, nil, nil, err
+	}
+	tools := toolNames(s.resolver, a.tools)
+	ignore := ignoreRules(s.resolver, s.d.Config.Config.Ignore)
 	var pins []scan.Pin
 	for _, p := range res.Pins {
 		if p.Resolved() && !scan.Ignored(ignore, &p) && (len(tools) == 0 || slices.Contains(tools, p.Tool)) {
@@ -119,34 +146,24 @@ func runDrift(cmd *cobra.Command, d *app.Deps, g *globals, f driftFlags, args []
 		}
 	}
 	var recent report.RecentLister
-	if f.latest {
-		cache, cacheErr := g.newCache(d)
-		if cacheErr != nil {
-			return cacheErr
-		}
-		defer cache.Close()
-		defer cache.LogSummary(cmd.Context())
-		gh, _, ghErr := newGitHubClient(cmd, d, cache)
+	if a.latest {
+		gh, _, ghErr := s.clients(ctx)
 		if ghErr != nil {
-			return ghErr
+			return nil, nil, nil, ghErr
 		}
 		recent = gh
 	}
-	out, err := report.NewDrifter(d.Logger, recent).Drift(cmd.Context(), report.DriftRequest{
+	out, err := report.NewDrifter(s.d.Logger, recent).Drift(ctx, report.DriftRequest{
 		Repos:             res.Repos,
 		Pins:              pins,
-		Resolve:           resolveFunc(resolver),
-		IgnoreConstraints: f.ignoreConstraints,
-		Latest:            f.latest,
+		Resolve:           resolveFunc(s.resolver),
+		IgnoreConstraints: a.ignoreConstraints,
+		Latest:            a.latest,
 	})
 	if err != nil {
-		return digestError(err)
+		return nil, nil, nil, digestError(err)
 	}
-	if err = writeDrift(d, g, res, out, len(tools) > 0); err != nil {
-		return err
-	}
-	warnDrift(cmd, d, res, out, tools)
-	return gateExit(cmd, d, gate.Matches(gate.CheckDrift(out)), driftPartial(res, out))
+	return res, out, tools, nil
 }
 
 // toolNames names each --tool value the way pins do, so --tool tf selects terraform pins.

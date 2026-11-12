@@ -1,3 +1,9 @@
+# --format json is the envelope the MCP resolve tool returns.
+env TEST_NOW=2026-11-12T12:00:00Z
+exec relgap resolve terraform --format json
+golden stdout resolve/terraform.json
+! stderr .
+
 # A tool known only to mise and aqua resolves from the snapshots.
 exec relgap resolve hk
 cmp stdout hk.txt

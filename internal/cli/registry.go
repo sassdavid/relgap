@@ -72,7 +72,7 @@ func runRegistryTest(cmd *cobra.Command, d *app.Deps, g *globals, tool, rangeArg
 	}
 	defer cache.Close()
 	defer cache.LogSummary(cmd.Context())
-	gh, hc, err := newGitHubClient(cmd, d, cache)
+	gh, hc, err := newGitHubClient(cmd.Context(), d, cache, newRunner(d))
 	if err != nil {
 		return err
 	}

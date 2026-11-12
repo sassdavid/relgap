@@ -1,0 +1,191 @@
+{
+  "schema_version": "1",
+  "tool": "relgap",
+  "version": "dev",
+  "generated_at": "2026-11-10T12:00:00Z",
+  "data": {
+    "tools": [
+      {
+        "tool": "kubectl",
+        "repo": "kubernetes/kubernetes",
+        "from": "1.36.0",
+        "to": "1.37.2",
+        "versions": [
+          {
+            "version": "1.36.1",
+            "tag": "v1.36.1"
+          },
+          {
+            "version": "1.36.2",
+            "tag": "v1.36.2"
+          },
+          {
+            "version": "1.36.3",
+            "tag": "v1.36.3"
+          },
+          {
+            "version": "1.36.4",
+            "tag": "v1.36.4"
+          },
+          {
+            "version": "1.36.5",
+            "tag": "v1.36.5"
+          },
+          {
+            "version": "1.36.6",
+            "tag": "v1.36.6"
+          },
+          {
+            "version": "1.37.0",
+            "tag": "v1.37.0"
+          },
+          {
+            "version": "1.37.1",
+            "tag": "v1.37.1"
+          },
+          {
+            "version": "1.37.2",
+            "tag": "v1.37.2"
+          }
+        ],
+        "entries": [
+          {
+            "version": "1.37.0",
+            "kind": "breaking",
+            "confidence": 0.95,
+            "text": "ACTION REQUIRED: Graduated the `SELinuxMount` feature gate to GA. The feature is enabled by default in `v1.37`, which may break existing workloads in clusters with SELinux enabled. Please see [the Kubernetes blog post](https://kubernetes.io/blog/2026/04/22/breaking-changes-in-selinux-volume-labeling/) to identify potentially problematic workloads in a `v1.36` cluster and how to fix them or opt out of `SELinuxMount` changes before upgrading to `v1.37`. Admins of clusters without SELinux enabled can ignore this release note. ([#139956](https://github.com/kubernetes/kubernetes/pull/139956), [@jsafrane](https://github.com/jsafrane)) [SIG API Machinery, Apps and Node]",
+            "source": {
+              "adapter": "upgrade-notes",
+              "url": "https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.37.md#L440",
+              "heading": [
+                "v1.37.0",
+                "Upgrade notes",
+                "Urgent Upgrade Notes",
+                "(No, really, you MUST read this before you upgrade)"
+              ]
+            }
+          },
+          {
+            "version": "1.37.0",
+            "kind": "breaking",
+            "confidence": 0.95,
+            "text": "ACTION REQUIRED: Converted the `DisruptionMode` enum field to a struct to support future extensibility. Promoted the `scheduling.k8s.io` API group from `v1alpha2` to `v1alpha3` and dropped `v1alpha2` entirely.\nRemove all `v1alpha2` objects from the `kube-apiserver` before performing the cluster update. ([#138572](https://github.com/kubernetes/kubernetes/pull/138572), [@dom4ha](https://github.com/dom4ha)) [SIG API Machinery, Apps, CLI, Etcd, Node, Scheduling and Testing]",
+            "source": {
+              "adapter": "upgrade-notes",
+              "url": "https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.37.md#L441",
+              "heading": [
+                "v1.37.0",
+                "Upgrade notes",
+                "Urgent Upgrade Notes",
+                "(No, really, you MUST read this before you upgrade)"
+              ]
+            }
+          },
+          {
+            "version": "1.37.0",
+            "kind": "breaking",
+            "confidence": 0.95,
+            "text": "ACTION REQUIRED: Fixed `eventRecordQPS` handling in `kubelet` configuration to treat 0 as unlimited (no rate limit), aligning behavior with the documentation. Users relying on the previous default behavior should explicitly set a non-zero value (for example, 50). ([#117119](https://github.com/kubernetes/kubernetes/pull/117119), [@HirazawaUi](https://github.com/HirazawaUi)) [SIG API Machinery, Auth and Node]",
+            "source": {
+              "adapter": "upgrade-notes",
+              "url": "https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.37.md#L443",
+              "heading": [
+                "v1.37.0",
+                "Upgrade notes",
+                "Urgent Upgrade Notes",
+                "(No, really, you MUST read this before you upgrade)"
+              ]
+            }
+          },
+          {
+            "version": "1.37.0",
+            "kind": "breaking",
+            "confidence": 0.95,
+            "text": "ACTION REQUIRED: Updated the `kubelet` to log its effective configuration at startup. Because these logs can expose configuration details, cluster administrators should restrict the `nodes/logs` ClusterRole to trusted users. This is largely a reminder of an existing best practice, since most effective configuration values can already be inferred from other log messages or `kubelet` behavior. ([#139837](https://github.com/kubernetes/kubernetes/pull/139837), [@SergeyKanzhelev](https://github.com/SergeyKanzhelev)) [SIG Node]",
+            "source": {
+              "adapter": "upgrade-notes",
+              "url": "https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.37.md#L444",
+              "heading": [
+                "v1.37.0",
+                "Upgrade notes",
+                "Urgent Upgrade Notes",
+                "(No, really, you MUST read this before you upgrade)"
+              ]
+            }
+          },
+          {
+            "version": "1.37.0",
+            "kind": "deprecation",
+            "confidence": 0.9,
+            "text": "Changed `kubeadm` to explicitly set `KubeProxyConfiguration.mode` to iptables when `KubeProxyConfiguration` is not provided or when the `mode` field is empty. In `v1.37`, `kube-proxy` will warn if the field is not explicitly set as part of the planned transition to nftables as the default mode in a future release. ([#139777](https://github.com/kubernetes/kubernetes/pull/139777), [@neolit123](https://github.com/neolit123)) [SIG Cluster Lifecycle]",
+            "source": {
+              "adapter": "changelog-file",
+              "url": "https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.37.md#L461",
+              "heading": [
+                "v1.37.0",
+                "Changes by Kind",
+                "Deprecation"
+              ]
+            }
+          },
+          {
+            "version": "1.37.0",
+            "kind": "deprecation",
+            "confidence": 0.9,
+            "text": "Deprecated the ignored `--filename`/`-f` flag on `kubectl run`. ([#138671](https://github.com/kubernetes/kubernetes/pull/138671), [@Suknna](https://github.com/Suknna)) [SIG CLI]",
+            "source": {
+              "adapter": "changelog-file",
+              "url": "https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.37.md#L462",
+              "heading": [
+                "v1.37.0",
+                "Changes by Kind",
+                "Deprecation"
+              ]
+            }
+          },
+          {
+            "version": "1.37.0",
+            "kind": "deprecation",
+            "confidence": 0.9,
+            "text": "Locked the deprecated `DeclarativeValidationTakeover` feature gate to its default value; it can no longer be set. ([#139212](https://github.com/kubernetes/kubernetes/pull/139212), [@yongruilin](https://github.com/yongruilin)) [SIG API Machinery]",
+            "source": {
+              "adapter": "changelog-file",
+              "url": "https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.37.md#L463",
+              "heading": [
+                "v1.37.0",
+                "Changes by Kind",
+                "Deprecation"
+              ]
+            }
+          },
+          {
+            "version": "1.37.0",
+            "kind": "deprecation",
+            "confidence": 0.9,
+            "text": "`kubeadm`: Added a (delayed) warning that `kube-proxy`'s ipvs mode is deprecated since `v1.35` and users on newer Linux kernels should be using the nftables mode instead, which became GA in `v1.33`. For older kernel versions, users can use iptables, which is still the default. ([#139067](https://github.com/kubernetes/kubernetes/pull/139067), [@neolit123](https://github.com/neolit123)) [SIG Cluster Lifecycle]",
+            "source": {
+              "adapter": "changelog-file",
+              "url": "https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.37.md#L464",
+              "heading": [
+                "v1.37.0",
+                "Changes by Kind",
+                "Deprecation"
+              ]
+            }
+          }
+        ],
+        "counts": {
+          "breaking": 4,
+          "deprecation": 4,
+          "feature": 122,
+          "fix": 193,
+          "other": 125,
+          "security": 0
+        },
+        "hidden": 1,
+        "warnings": []
+      }
+    ]
+  },
+  "errors": []
+}

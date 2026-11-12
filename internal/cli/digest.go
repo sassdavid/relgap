@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"net/http"
@@ -10,13 +11,13 @@ import (
 
 	"github.com/sassdavid/relgap/internal/app"
 	"github.com/sassdavid/relgap/internal/buildinfo"
+	"github.com/sassdavid/relgap/internal/classify"
 	"github.com/sassdavid/relgap/internal/config"
 	"github.com/sassdavid/relgap/internal/github"
 	"github.com/sassdavid/relgap/internal/httpx"
 	"github.com/sassdavid/relgap/internal/render"
 	"github.com/sassdavid/relgap/internal/report"
 	"github.com/sassdavid/relgap/internal/scan"
-	"github.com/sassdavid/relgap/internal/source"
 	"github.com/sassdavid/relgap/internal/version"
 )
 
@@ -28,12 +29,14 @@ type digestFlags struct {
 	includePrereleases bool
 	fromMise           bool
 	all                bool
+	only               []string
 }
 
 const (
 	flagLine     = "line"
 	flagFromMise = "from-mise"
 	flagAll      = "all"
+	flagOnly     = "only"
 )
 
 func newDigestCmd(d *app.Deps, g *globals) *cobra.Command {
@@ -50,7 +53,8 @@ version on the release line (--line).
 Notes come from the tool's registry sources: GitHub release bodies and changelog files, each
 file fetched and parsed once. A bullet that two sources share is shown once. Each entry has a
 confidence between 0 and 1; entries below --min-confidence (default 0.5) are hidden and counted.
---format md writes PR-ready Markdown with one <details> block per version.
+--format md writes PR-ready Markdown with one <details> block per version. --only lists
+the entries of the named kinds; the counts still cover every kind.
 
 --from-mise digests every tool pinned in the project's mise config files that is behind
 its latest version, from the pinned version to the latest. --all does the same for every pin
@@ -69,6 +73,7 @@ relgap uses the REST API (60 requests per hour) with 2 concurrent requests.`,
   relgap digest helm 3.19.0.. --line major
   relgap digest kubectl 1.36.0..1.37.2 --format md > digest.md
   relgap digest terraform 1.15.8..1.17.1 --min-confidence 0
+  relgap digest argo-cd 3.2.0..3.4.1 --only breaking --only deprecation
   relgap digest --from-mise --fail-on breaking
   relgap digest --all ~/src/infra --format md > upgrade-notes.md
   relgap digest terraform 1.15.8..1.17.1 --format json | jq '.data.tools[].entries[] | select(.kind == "breaking")'`,
@@ -97,12 +102,16 @@ relgap uses the REST API (60 requests per hour) with 2 concurrent requests.`,
 	fl.BoolVar(&f.fromMise, flagFromMise, false,
 		"digest every outdated tool pinned in the project's mise config, pin to latest")
 	fl.BoolVar(&f.all, flagAll, false, "digest every outdated pin in the project, as 'relgap outdated' lists them")
+	fl.StringSliceVar(&f.only, flagOnly, nil,
+		"list only entries of this kind: breaking, deprecation, security, feature, fix or other; repeatable")
 	addGateFlags(cmd, digestValues())
 	cmd.MarkFlagsMutuallyExclusive(flagFromMise, flagAll)
 	cmd.MarkFlagsMutuallyExclusive(flagFromMise, flagLine)
 	cmd.MarkFlagsMutuallyExclusive(flagAll, flagLine)
 	cmd.MarkFlagsMutuallyExclusive(flagFromMise, "include-prereleases")
 	cmd.MarkFlagsMutuallyExclusive(flagAll, "include-prereleases")
+	cmd.MarkFlagsMutuallyExclusive(flagFromMise, flagOnly)
+	cmd.MarkFlagsMutuallyExclusive(flagAll, flagOnly)
 	return cmd
 }
 
@@ -114,41 +123,39 @@ func runDigest(cmd *cobra.Command, d *app.Deps, g *globals, f digestFlags, tool,
 	if err != nil {
 		return usageError(err)
 	}
-	line, err := version.ParseLevel(f.line)
-	if err != nil {
+	if _, err = version.ParseLevel(f.line); err != nil {
 		return usageError(err)
 	}
-	resolution, err := g.resolveTool(cmd, d, tool)
+	kinds := make([]classify.Kind, len(f.only))
+	for i, k := range f.only {
+		kinds[i] = classify.Kind(k)
+	}
+	if err = checkKinds(kinds); err != nil {
+		return err
+	}
+	s, err := g.newSession(cmd, d)
 	if err != nil {
 		return err
 	}
+	defer s.close(cmd.Context())
 	gate, err := newGate(cmd, d, digestValues())
 	if err != nil {
 		return err
 	}
-	if !cmd.Flags().Changed(flagLine) && resolution.Tool.Version.Line != "" {
-		line = version.Level(resolution.Tool.Version.Line)
+	a := digestArgs{
+		tool:               tool,
+		from:               from,
+		to:                 to,
+		includePrereleases: f.includePrereleases,
+		minConfidence:      d.Config.Config.Policy.MinConfidence,
+		kinds:              kinds,
 	}
-	cache, err := g.newCache(d)
+	if cmd.Flags().Changed(flagLine) {
+		a.line = f.line
+	}
+	digest, err := s.digest(cmd.Context(), a)
 	if err != nil {
 		return err
-	}
-	defer cache.Close()
-	defer cache.LogSummary(cmd.Context())
-	gh, hc, err := newGitHubClient(cmd, d, cache)
-	if err != nil {
-		return err
-	}
-	digest, err := report.NewDigester(d.Logger, gh, source.NewWeb(hc)).Digest(cmd.Context(), report.DigestRequest{
-		Tool:               resolution.Tool,
-		From:               from,
-		To:                 to,
-		Line:               line,
-		IncludePrereleases: f.includePrereleases,
-		MinConfidence:      d.Config.Config.Policy.MinConfidence,
-	})
-	if err != nil {
-		return digestError(err)
 	}
 	data := &report.Digest{Tools: []report.ToolDigest{*digest}}
 	if err = writeDigest(d, g, data, []render.Error{}); err != nil {
@@ -181,15 +188,16 @@ func runDigestProject(cmd *cobra.Command, d *app.Deps, g *globals, f digestFlags
 	if f.fromMise {
 		keep = func(p scan.Pin) bool { return p.Location.Detector == scan.DetectorMise }
 	}
-	resolver, err := g.loadProject(cmd, d)
+	s, err := g.newSession(cmd, d)
 	if err != nil {
 		return err
 	}
+	defer s.close(cmd.Context())
 	gate, err := newGate(cmd, d, digestValues())
 	if err != nil {
 		return err
 	}
-	run, err := g.compare(cmd, d, resolver, root, keep, compareOptions{})
+	run, err := s.compare(cmd.Context(), root, keep, compareOptions{})
 	if err != nil {
 		return err
 	}
@@ -247,13 +255,18 @@ func parseRange(s string) (string, string, error) {
 
 // newGitHubClient finds a token and builds the client. Without a token it warns once and
 // lowers the concurrency. The plain HTTP client it returns has the same retries, limits and
-// cache, never sends the token, and serves web pages, endoflife.date and OSV.
-func newGitHubClient(cmd *cobra.Command, d *app.Deps, cache *httpx.Cache) (*github.Client, *http.Client, error) {
-	ctx := cmd.Context()
+// cache, never sends the token, and serves web pages, endoflife.date and OSV. tokenRunner runs
+// `gh auth token`; nil skips it.
+func newGitHubClient(
+	ctx context.Context,
+	d *app.Deps,
+	cache *httpx.Cache,
+	tokenRunner github.Runner,
+) (*github.Client, *http.Client, error) {
 	token, tokenSource := github.Token(ctx, github.TokenOptions{
 		Lookup:      d.Env.Lookup,
 		ConfigToken: github.GHConfigToken,
-		Runner:      newRunner(d),
+		Runner:      tokenRunner,
 	})
 	concurrency := d.Config.Config.GitHub.Concurrency
 	if token == "" {

@@ -47,6 +47,7 @@ type globals struct {
 	outFormat render.Format
 	started   bool
 	closers   []io.Closer
+	mcpServe  serveFunc // set by [ServeMCP]; nil serves stdio
 }
 
 func (g *globals) close() {
@@ -118,6 +119,7 @@ stdout carries data, stderr carries logs. Use --format json for scripting.`,
 		newPinsCmd(d, g),
 		newOutdatedCmd(d, g),
 		newDriftCmd(d, g),
+		newMCPCmd(d, g),
 	)
 	return root, g
 }

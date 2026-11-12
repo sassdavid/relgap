@@ -1,0 +1,87 @@
+{
+  "schema_version": "1",
+  "tool": "relgap",
+  "version": "dev",
+  "generated_at": "2026-11-12T12:00:00Z",
+  "data": {
+    "input": "terraform",
+    "match": {
+      "by": "name",
+      "value": "terraform",
+      "layer": "relgap registry"
+    },
+    "tool": {
+      "name": "terraform",
+      "aliases": [
+        "tf"
+      ],
+      "repo": "hashicorp/terraform",
+      "version": {
+        "scheme": "semver",
+        "tag_prefix": "v",
+        "universe": "releases",
+        "line": "none"
+      },
+      "sources": [
+        {
+          "kind": "changelog-file",
+          "path_template": "CHANGELOG.md",
+          "ref": "v{major}.{minor}",
+          "heading": "^{version} \\("
+        },
+        {
+          "kind": "gh-release",
+          "ignore_sections": [
+            "Previous Releases"
+          ]
+        }
+      ],
+      "eol": {
+        "product": "terraform",
+        "cycle": "{major}.{minor}"
+      },
+      "osv": [
+        {
+          "ecosystem": "Go",
+          "name": "github.com/hashicorp/terraform"
+        }
+      ],
+      "breaking_markers": [],
+      "bin": []
+    },
+    "provenance": {
+      "aliases": [
+        "relgap registry"
+      ],
+      "eol": [
+        "relgap registry"
+      ],
+      "name": [
+        "relgap registry"
+      ],
+      "osv": [
+        "relgap registry"
+      ],
+      "repo": [
+        "relgap registry"
+      ],
+      "sources": [
+        "relgap registry"
+      ],
+      "version.line": [
+        "default"
+      ],
+      "version.scheme": [
+        "relgap registry"
+      ],
+      "version.tag_prefix": [
+        "relgap registry"
+      ],
+      "version.universe": [
+        "relgap registry"
+      ]
+    },
+    "mise_source": "snapshot"
+  },
+  "errors": []
+}

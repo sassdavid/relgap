@@ -57,6 +57,10 @@ Scope: `structured-json`, `web-doc`, `upgrade-guide` adapters, EOL + OSV, all 20
 
 ### M10: MCP server → [mcp-and-llm](specs/mcp-and-llm.md)
 - [ ] MCP criteria 1–2. Registered in the author's Claude Code config and used for a real upgrade (terraform or argocd), notes recorded in `docs/dogfood.md`.
+  Open until the Claude Code part is done. Criteria 1-2 pass (`TestSpec_mcp_and_llm_1`, `_2`;
+  `mise run check` passes on 2026-11-12; decisions in the spec). The server answered real
+  argocd and terraform questions over stdio, with notes in [dogfood.md](../dogfood.md), but it
+  isn't registered in Claude Code yet.
 
 ### M11: GitHub Action (Renovate PR enricher)
 - [ ] The action posts or updates one sticky comment on a test repo's Renovate PR. A SARIF upload job works.

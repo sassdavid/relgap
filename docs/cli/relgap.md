@@ -36,6 +36,7 @@ stdout carries data, stderr carries logs. Use --format json for scripting.
 * [relgap config](relgap_config.md)	 - Inspect and validate configuration
 * [relgap digest](relgap_digest.md)	 - Merge the release notes of every version in a range into one digest
 * [relgap drift](relgap_drift.md)	 - Show which repositories pin different versions of the same tool
+* [relgap mcp](relgap_mcp.md)	 - Serve digest, breaking_changes, outdated, drift and resolve to an MCP client over stdio
 * [relgap outdated](relgap_outdated.md)	 - Compare every pinned tool version in a project with the latest release
 * [relgap pins](relgap_pins.md)	 - List the tool versions pinned in your repositories, with file and line
 * [relgap registry](relgap_registry.md)	 - Check relgap registry entries
