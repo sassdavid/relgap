@@ -1,0 +1,272 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.github.com
+        headers:
+            Accept:
+                - application/vnd.github.raw
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+            X-Github-Api-Version:
+                - "2022-11-28"
+        url: https://api.github.com/repos/derailed/k9s/contents/change_logs/release_v0.50.17.md
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 7248
+        body: "<img src=\"https://raw.githubusercontent.com/derailed/k9s/master/assets/k9s.png\" align=\"center\" width=\"800\" height=\"auto\"/>\n\n# Release v0.50.18\n\n## Notes\n\n\U0001F973\U0001F389 Happy new year fellow k9ers!\U0001F38A\U0001F37E Hoping 2026 will bring good health and great success to you and yours...\n\nThank you to all that contributed with flushing out issues and enhancements for K9s!\nI'll try to mark some of these issues as fixed. But if you don't mind grab the latest rev\nand see if we're happier with some of the fixes!\nIf you've filed an issue please help me verify and close.\n\nYour support, kindness and awesome suggestions to make K9s better are, as ever, very much noted and appreciated!\nAlso big thanks to all that have allocated their own time to help others on both slack and on this repo!!\n\nAs you may know, K9s is not pimped out by big corporations with deep pockets, thus if you feel K9s is helping in your Kubernetes journey, please consider joining our [sponsorship program](https://github.com/sponsors/derailed) and/or make some noise on social! [@kitesurfer](https://twitter.com/kitesurfer)\n\nOn Slack? Please join us [K9slackers](https://join.slack.com/t/k9sers/shared_invite/zt-3360a389v-ElLHrb0Dp1kAXqYUItSAFA)\n\n---\n\n## ♫ Sounds Behind The Release ♭\n\n* [A cool new way - Joe Satriani](https://www.youtube.com/watch?v=4apA948yOF0)\n* [Song for you - Ray Charles](https://www.youtube.com/watch?v=CzAkTrDiXxg)\n* [Kill the pain - SYZGYX](https://www.youtube.com/watch?v=5XuvMhHZorw&list=RD5XuvMhHZorw&start_radio=1)\n\n---\n\n## Maintenance Release!\n\nSponsorships are dropping at an alarming rate which puts this project in the red. This is becoming a concern and sad not to mention unsustainable ;( If you dig `k9s` and want to help the project, please consider `paying it forward!` and don't become just another `satisfied, non paying customer!`. K9s does take a lot of my `free` time to maintain, enhance and keep the light on. Many cool ideas are making it straight to the `freezer` as I just can't budget them in.\nI know many of you work for big corporations, so please put in the word/work and have them help us out via sponsorships or other means.\n\nThank you!\n\n\n## A Word From Our Sponsors...\n\nTo all the good folks and orgs below that opted to `pay it forward` and join our sponsorship program, I salute you!!\n\n* [Philomena Yeboah](https://github.com/PhilomenaYeboah1989)\n* [Kilian](https://github.com/kaerbr)\n* [TVRiddle](https://github.com/TVRiddle)\n* [Tom Morelly](https://github.com/FalcoSuessgott)\n* [Nikhil Narayen](https://github.com/nnarayen)\n* [Andrew Aadland](https://github.com/DaemonDude23)\n* [Radek](https://github.com/radvym)\n* [Timothée Gerber](https://github.com/TimotheeGerber)\n* [Matthias](https://github.com/maetthu)\n* [DKB](https://github.com/dkb-bank) ❤️\n* [Kraken Tech](https://github.com/kraken-tech)\n* [Daniel](https://github.com/sherlock7402)\n* [Fred Loucks](https://github.com/fullmetal-fred)\n* [Patricia Mascaros](https://github.com/ccong2586)\n* [Qube Research & Technologies](https://github.com/qube-rt)\n* [Michel Jung](https://github.com/micheljung)\n* [Ümüt Özalp](https://github.com/uozalp)\n* [Nathan Papapietro](https://github.com/npapapietro)\n* [Oleksandr Podze](https://github.com/dasdy)\n* [Lee Jones](https://github.com/leejones)\n* [tsahlif](https://github.com/tshalif)\n* [Jean-Christophe Amiel](https://github.com/jcamiel)\n* [Lightspark](https://github.com/lightsparkdev)\n* [egs-hub](https://github.com/egs-hub) ❤️\n* [Sergey](https://github.com/malsatin)\n* [Wynter Inc](https://github.com/copytesting)\n* [Jen Norris](https://github.com/tnorris)\n* [Joakim-Byg](https://github.com/Joakim-Byg)\n* [Oleksandr Podze](https://github.com/dasdy)\n* [Lee Jones](https://github.com/leejones)\n\n> Sponsorship cancellations since the last release: **17!** \U0001F979\n\n## Resolved Issues\n\n* [#3765](https://github.com/derailed/k9s/issues/3765) quay.io docker images not up to date but referenced in README.md\n* [#3762](https://github.com/derailed/k9s/issues/3762) Copy multiple selected items\n* [#3751](https://github.com/derailed/k9s/issues/3751) Improve visual distinction for cordoned nodes in Node view\n* [#3735](https://github.com/derailed/k9s/issues/3735) Cannot decode secret if there is no get permissions for all secrets\n* [#3708](https://github.com/derailed/k9s/issues/3708) Editing a single Namespace opens the editor with a list of all Namespaces\n* [#3731](https://github.com/derailed/k9s/issues/3731) feat: add neat plugin\n\n* [#3735](https://github.com/derailed/k9s/issues/3735) Cannot decode secret if there is no get permissions for all secrets\n* [#3708](https://github.com/derailed/k9s/issues/3708) Editing a single Namespace opens the editor with a list of all Namespaces\n\n---\n\n## Contributed PRs\n\nPlease be sure to give `Big Thanks!` and `ATTA Girls/Boys!` to all the fine contributors for making K9s better for all of us!!\n\n* [#3763](https://github.com/derailed/k9s/pull/3763) feat: enable copying multiple resource, namespace names to clipboard\n* [#3760](https://github.com/derailed/k9s/pull/3760) fix: Editing a single Namespace opens the editor with a list of all Namespaces\n* [#3756](https://github.com/derailed/k9s/pull/3756) feat: Add reconcile plugin for Flux instances\n* [#3755](https://github.com/derailed/k9s/pull/3755) fix: panic on 'jump to owner' of reflect.Value.Elem on zero Value\n* [#3753](https://github.com/derailed/k9s/pull/3553) feat: add plugins for argo workflows\n* [#3750](https://github.com/derailed/k9s/pull/3750) fix: Flux trace plugin shortcut conflict by changing to Shift-Q\n* [#3749](https://github.com/derailed/k9s/pull/3749) feat: add dark/light theme inversion using Oklch\n* [#3739](https://github.com/derailed/k9s/pull/3739) chore: refine LabelsSelector comment to match function behavior\n* [#3738](https://github.com/derailed/k9s/pull/3738) feat: add symlink handle for plugin directory\n* [#3720](https://github.com/derailed/k9s/pull/3720) fix(internal/render): ensure object is deep copied before realization in Render method\n* [#3704](https://github.com/derailed/k9s/pull/3704) Allow k9s to start without a valid Kubernetes context\n* [#3699](https://github.com/derailed/k9s/pull/3699) feat(pulse): map hjkl to navigate as help shows\n* [#3697](https://github.com/derailed/k9s/pull/3697) Issue 3667 Fix\n* [#3696](https://github.com/derailed/k9s/pull/3696) fix for scale option appearing on non-scalable resources\n* [#3690](https://github.com/derailed/k9s/pull/3690) feat: add support for scaling HPA targets\n* [#3671](https://github.com/derailed/k9s/pull/3671) fix fails to modify or delete namespaces using RBAC\n* [#3669](https://github.com/derailed/k9s/pull/3669) feat: logs column lock\n* [#3663](https://github.com/derailed/k9s/pull/3663) Map Q to \"Back\"\n* [#3859](https://github.com/derailed/k9s/pull/3859) fix: update busybox image version to 1.37.0 in configuration files\n* [#3650](https://github.com/derailed/k9s/pull/3650) Sort all columns\n* [#3458](https://github.com/derailed/k9s/pull/3458) Document how to install on Fedora\n\n---\n<img src=\"https://raw.githubusercontent.com/derailed/k9s/master/assets/imhotep_logo.png\" width=\"32\" height=\"auto\"/> © 2026 Imhotep Software LLC. All materials licensed under [Apache v2.0](http://www.apache.org/licenses/LICENSE-2.0)#"
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Cache-Control:
+                - private, max-age=60, s-maxage=60
+            Content-Length:
+                - "7248"
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/vnd.github.raw; charset=utf-8
+            Date:
+                - Thu, 12 Nov 2026 09:34:15 GMT
+            Etag:
+                - '"6e2c3c0f3ea90da5e225e7b1e6175c1bbac8391d"'
+            Last-Modified:
+                - Tue, 10 Nov 2026 17:45:15 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept, Authorization, Cookie, X-GitHub-OTP, Accept-Encoding, Accept, X-Requested-With
+            X-Accepted-Github-Permissions:
+                - contents=read
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Api-Version-Selected:
+                - "2022-11-28"
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.v3; param=raw
+            X-Ratelimit-Limit:
+                - "5000"
+            X-Ratelimit-Remaining:
+                - "4653"
+            X-Ratelimit-Reset:
+                - "1794476183"
+            X-Ratelimit-Resource:
+                - core
+            X-Ratelimit-Used:
+                - "347"
+            X-Xss-Protection:
+                - "0"
+        status: 200 OK
+        code: 200
+        duration: 2.039873375s
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.github.com
+        headers:
+            Accept:
+                - application/vnd.github.raw
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+            X-Github-Api-Version:
+                - "2022-11-28"
+        url: https://api.github.com/repos/derailed/k9s/contents/change_logs/release_v0.50.18.md
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 7536
+        body: "<img src=\"https://raw.githubusercontent.com/derailed/k9s/master/assets/k9s.png\" align=\"center\" width=\"800\" height=\"auto\"/>\n\n# Release v0.50.18\n\n## Notes\n\n\U0001F973\U0001F389 Happy new year fellow k9ers!\U0001F38A\U0001F37E Hoping 2026 will bring good health and great success to you and yours...\n\nThank you to all that contributed with flushing out issues and enhancements for K9s!\nI'll try to mark some of these issues as fixed. But if you don't mind grab the latest rev\nand see if we're happier with some of the fixes!\nIf you've filed an issue please help me verify and close.\n\nYour support, kindness and awesome suggestions to make K9s better are, as ever, very much noted and appreciated!\nAlso big thanks to all that have allocated their own time to help others on both slack and on this repo!!\n\nAs you may know, K9s is not pimped out by big corporations with deep pockets, thus if you feel K9s is helping in your Kubernetes journey, please consider joining our [sponsorship program](https://github.com/sponsors/derailed) and/or make some noise on social! [@kitesurfer](https://twitter.com/kitesurfer)\n\nOn Slack? Please join us [K9slackers](https://join.slack.com/t/k9sers/shared_invite/zt-3360a389v-ElLHrb0Dp1kAXqYUItSAFA)\n\n---\n\n## ♫ Sounds Behind The Release ♭\n\n* [A cool new way - Joe Satriani](https://www.youtube.com/watch?v=4apA948yOF0)\n* [Song for you - Ray Charles](https://www.youtube.com/watch?v=CzAkTrDiXxg)\n* [Kill the pain - SYZGYX](https://www.youtube.com/watch?v=5XuvMhHZorw&list=RD5XuvMhHZorw&start_radio=1)\n\n---\n\n## Maintenance Release!\n\nOops! I've missed a PR in the v0.50.17 excitement ;( Dropping v0.50.18 with feelings...\n\nSponsorships are dropping at an alarming rate which puts this project in the red. This is becoming a concern and sad not to mention unsustainable ;( If you dig `k9s` and want to help the project, please consider `paying it forward!` and don't become just another `satisfied, non paying customer!`. K9s does take a lot of my `free` time to maintain, enhance and keep the light on. Many cool ideas are making it straight to the `freezer` as I just can't budget them in.\nI know many of you work for big corporations, so please put in the word/work and have them help us out via sponsorships or other means.\n\nThank you!\n\n---\n\n## A Word From Our Sponsors...\n\nTo all the good folks and orgs below that opted to `pay it forward` and join our sponsorship program, I salute you!!\n\n* [Philomena Yeboah](https://github.com/PhilomenaYeboah1989)\n* [Kilian](https://github.com/kaerbr)\n* [TVRiddle](https://github.com/TVRiddle)\n* [Tom Morelly](https://github.com/FalcoSuessgott)\n* [Nikhil Narayen](https://github.com/nnarayen)\n* [Andrew Aadland](https://github.com/DaemonDude23)\n* [Radek](https://github.com/radvym)\n* [Timothée Gerber](https://github.com/TimotheeGerber)\n* [Matthias](https://github.com/maetthu)\n* [DKB](https://github.com/dkb-bank) ❤️\n* [Kraken Tech](https://github.com/kraken-tech)\n* [Daniel](https://github.com/sherlock7402)\n* [Fred Loucks](https://github.com/fullmetal-fred)\n* [Patricia Mascaros](https://github.com/ccong2586)\n* [Qube Research & Technologies](https://github.com/qube-rt)\n* [Michel Jung](https://github.com/micheljung)\n* [Ümüt Özalp](https://github.com/uozalp)\n* [Nathan Papapietro](https://github.com/npapapietro)\n* [Oleksandr Podze](https://github.com/dasdy)\n* [Lee Jones](https://github.com/leejones)\n* [tsahlif](https://github.com/tshalif)\n* [Jean-Christophe Amiel](https://github.com/jcamiel)\n* [Lightspark](https://github.com/lightsparkdev)\n* [egs-hub](https://github.com/egs-hub) ❤️\n* [Sergey](https://github.com/malsatin)\n* [Wynter Inc](https://github.com/copytesting)\n* [Jen Norris](https://github.com/tnorris)\n* [Joakim-Byg](https://github.com/Joakim-Byg)\n* [Oleksandr Podze](https://github.com/dasdy)\n* [Lee Jones](https://github.com/leejones)\n\n> Sponsorship cancellations since the last release: **17!** \U0001F979\n\n## Resolved Issues\n\n* [#3765](https://github.com/derailed/k9s/issues/3765) quay.io docker images not up to date but referenced in README.md\n* [#3762](https://github.com/derailed/k9s/issues/3762) Copy multiple selected items\n* [#3751](https://github.com/derailed/k9s/issues/3751) Improve visual distinction for cordoned nodes in Node view\n* [#3735](https://github.com/derailed/k9s/issues/3735) Cannot decode secret if there is no get permissions for all secrets\n* [#3708](https://github.com/derailed/k9s/issues/3708) Editing a single Namespace opens the editor with a list of all Namespaces\n* [#3731](https://github.com/derailed/k9s/issues/3731) feat: add neat plugin\n* [#3735](https://github.com/derailed/k9s/issues/3735) Cannot decode secret if there is no get permissions for all secrets\n* [#3708](https://github.com/derailed/k9s/issues/3708) Editing a single Namespace opens the editor with a list of all Namespaces\n* [#3649](https://github.com/derailed/k9s/issues/3649) Improved Column Sorting\n\n---\n\n## Contributed PRs\n\nPlease be sure to give `Big Thanks!` and `ATTA Girls/Boys!` to all the fine contributors for making K9s better for all of us!!\n\n* [#3763](https://github.com/derailed/k9s/pull/3763) feat: enable copying multiple resource, namespace names to clipboard\n* [#3760](https://github.com/derailed/k9s/pull/3760) fix: Editing a single Namespace opens the editor with a list of all Namespaces\n* [#3756](https://github.com/derailed/k9s/pull/3756) feat: Add reconcile plugin for Flux instances\n* [#3755](https://github.com/derailed/k9s/pull/3755) fix: panic on 'jump to owner' of reflect.Value.Elem on zero Value\n* [#3753](https://github.com/derailed/k9s/pull/3553) feat: add plugins for argo workflows\n* [#3750](https://github.com/derailed/k9s/pull/3750) fix: Flux trace plugin shortcut conflict by changing to Shift-Q\n* [#3749](https://github.com/derailed/k9s/pull/3749) feat: add dark/light theme inversion using Oklch\n* [#3739](https://github.com/derailed/k9s/pull/3739) chore: refine LabelsSelector comment to match function behavior\n* [#3738](https://github.com/derailed/k9s/pull/3738) feat: add symlink handle for plugin directory\n* [#3720](https://github.com/derailed/k9s/pull/3720) fix(internal/render): ensure object is deep copied before realization in Render method\n* [#3704](https://github.com/derailed/k9s/pull/3704) Allow k9s to start without a valid Kubernetes context\n* [#3699](https://github.com/derailed/k9s/pull/3699) feat(pulse): map hjkl to navigate as help shows\n* [#3697](https://github.com/derailed/k9s/pull/3697) Issue 3667 Fix\n* [#3696](https://github.com/derailed/k9s/pull/3696) fix for scale option appearing on non-scalable resources\n* [#3690](https://github.com/derailed/k9s/pull/3690) feat: add support for scaling HPA targets\n* [#3671](https://github.com/derailed/k9s/pull/3671) fix fails to modify or delete namespaces using RBAC\n* [#3669](https://github.com/derailed/k9s/pull/3669) feat: logs column lock\n* [#3663](https://github.com/derailed/k9s/pull/3663) Map Q to \"Back\"\n* [#3661](https://github.com/derailed/k9s/pull/3661) refactor: remove unused sorting key bindings from various views\n* [#3859](https://github.com/derailed/k9s/pull/3859) fix: update busybox image version to 1.37.0 in configuration files\n* [#3650](https://github.com/derailed/k9s/pull/3650) Sort all columns\n* [#3458](https://github.com/derailed/k9s/pull/3458) Document how to install on Fedora\n\n---\n<img src=\"https://raw.githubusercontent.com/derailed/k9s/master/assets/imhotep_logo.png\" width=\"32\" height=\"auto\"/> © 2026 Imhotep Software LLC. All materials licensed under [Apache v2.0](http://www.apache.org/licenses/LICENSE-2.0)#"
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Cache-Control:
+                - private, max-age=60, s-maxage=60
+            Content-Length:
+                - "7536"
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/vnd.github.raw; charset=utf-8
+            Date:
+                - Thu, 12 Nov 2026 09:34:15 GMT
+            Etag:
+                - '"4b3213533038ac0460f2a835d851cfbc7189739a"'
+            Last-Modified:
+                - Tue, 10 Nov 2026 17:45:15 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept, Authorization, Cookie, X-GitHub-OTP, Accept-Encoding, Accept, X-Requested-With
+            X-Accepted-Github-Permissions:
+                - contents=read
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Api-Version-Selected:
+                - "2022-11-28"
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.v3; param=raw
+            X-Ratelimit-Limit:
+                - "5000"
+            X-Ratelimit-Remaining:
+                - "4649"
+            X-Ratelimit-Reset:
+                - "1794476183"
+            X-Ratelimit-Resource:
+                - core
+            X-Ratelimit-Used:
+                - "351"
+            X-Xss-Protection:
+                - "0"
+        status: 200 OK
+        code: 200
+        duration: 408.985083ms
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.github.com
+        headers:
+            Accept:
+                - application/vnd.github.raw
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+            X-Github-Api-Version:
+                - "2022-11-28"
+        url: https://api.github.com/repos/derailed/k9s/contents/change_logs/release_v0.51.0.md
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 127
+        body: '{"message":"Not Found","documentation_url":"https://docs.github.com/rest/repos/contents#get-repository-content","status":"404"}'
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Content-Length:
+                - "127"
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/json; charset=utf-8
+            Date:
+                - Thu, 12 Nov 2026 09:34:15 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept-Encoding, Accept, X-Requested-With
+            X-Accepted-Github-Permissions:
+                - contents=read
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Api-Version-Selected:
+                - "2022-11-28"
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.v3; param=raw
+            X-Ratelimit-Limit:
+                - "5000"
+            X-Ratelimit-Remaining:
+                - "4648"
+            X-Ratelimit-Reset:
+                - "1794476183"
+            X-Ratelimit-Resource:
+                - core
+            X-Ratelimit-Used:
+                - "352"
+            X-Xss-Protection:
+                - "0"
+        status: 404 Not Found
+        code: 404
+        duration: 369.959958ms
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 95
+        host: api.osv.dev
+        body: '{"queries":[{"package":{"ecosystem":"Go","name":"github.com/cli/cli/v2"},"version":"2.103.3"}]}'
+        headers:
+            Accept:
+                - application/json
+            Content-Type:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.osv.dev/v1/querybatch
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 16
+        body: '{"results":[{}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "16"
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 12 Nov 2026 09:34:16 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-ef88437760f8e2ee28bf15dce0445029-0673e90273126b2c-00
+            X-Cloud-Trace-Context:
+                - ef88437760f8e2ee28bf15dce0445029/464971383279086380
+            X-Envoy-Decorator-Operation:
+                - ingress QueryAffectedBatch
+        status: 200 OK
+        code: 200
+        duration: 331.189542ms

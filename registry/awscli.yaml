@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../schemas/registry-v1.json
-# No GitHub releases; v1 and v2 share the repo. v2 notes are .changes/<version>.json on the v2 branch.
+# No GitHub releases; v1 and v2 share the repo. v2 notes are .changes/<version>.json on the v2
+# branch: an array of {type, category, description}. PyPI's awscli is v1, so there is no OSV.
 name: awscli
 aliases: [aws-cli, aws]
 repo: aws/aws-cli
@@ -11,3 +12,5 @@ sources:
   - kind: structured-json
     path_template: ".changes/{version}.json"
     ref: v2
+    json: { heading: type, text: "{category}: {description}" }
+bin: [aws]

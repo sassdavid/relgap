@@ -38,8 +38,23 @@ relgap: invalid registry entries:
   bad-regex.yaml:5:12: version.extract: bad regular expression: missing closing ): `jdk-(\d+`
   bad-regex.yaml:9:14: sources.0.heading: bad regular expression: missing closing ]: `[$`
 -- embedded.txt --
+valid: registry/argocd.yaml
 valid: registry/awscli.yaml
+valid: registry/claude-code.yaml
+valid: registry/gh.yaml
 valid: registry/go.yaml
+valid: registry/golangci-lint.yaml
 valid: registry/helm.yaml
+valid: registry/k9s.yaml
 valid: registry/kubectl.yaml
+valid: registry/mise.yaml
+valid: registry/node.yaml
+valid: registry/opentofu.yaml
+valid: registry/python.yaml
+valid: registry/ruff.yaml
+valid: registry/temurin.yaml
+valid: registry/terraform-provider-aws.yaml
+valid: registry/terraform-provider-kubernetes.yaml
 valid: registry/terraform.yaml
+valid: registry/terragrunt.yaml
+valid: registry/uv.yaml

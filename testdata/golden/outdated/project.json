@@ -9,10 +9,10 @@
     ],
     "pins": [
       {
-        "tool": "github-cli",
+        "tool": "gh",
         "repo": "cli/cli",
         "pin": {
-          "tool": "github-cli",
+          "tool": "gh",
           "raw_name": "gh",
           "kind": "tool",
           "value": "2.103.3",
@@ -74,12 +74,258 @@
         "counts": {
           "breaking": 0,
           "deprecation": 0,
-          "feature": 0,
+          "feature": 10,
           "fix": 0,
           "other": 0,
           "security": 0
         },
-        "status": "outdated"
+        "hidden": 133,
+        "status": "outdated",
+        "eol": {
+          "product": "go",
+          "current": {
+            "version": "1.25.14",
+            "cycle": "1.25",
+            "is_eol": true,
+            "eol_from": "2026-08-19",
+            "latest_in_cycle": "1.25.14"
+          },
+          "target": {
+            "version": "1.27.4",
+            "cycle": "1.27",
+            "is_eol": false,
+            "latest_in_cycle": "1.27.4"
+          }
+        },
+        "vulns": [
+          {
+            "id": "GO-2026-6599",
+            "aliases": [
+              "BIT-golang-2026-94448",
+              "CVE-2026-94448"
+            ],
+            "summary": "Reset context tracking on consecutive template expressions in html/template",
+            "package": {
+              "ecosystem": "Go",
+              "name": "stdlib"
+            },
+            "fixed_in": "1.26.9",
+            "affects_current": true,
+            "fixed_by_target": true
+          },
+          {
+            "id": "GO-2026-6600",
+            "aliases": [
+              "BIT-golang-2026-97030",
+              "CVE-2026-97030"
+            ],
+            "summary": "Recognize yield as regexp preceder keyword in html/template",
+            "package": {
+              "ecosystem": "Go",
+              "name": "stdlib"
+            },
+            "fixed_in": "1.26.9",
+            "affects_current": true,
+            "fixed_by_target": true
+          },
+          {
+            "id": "GO-2026-6603",
+            "aliases": [
+              "BIT-golang-2026-78659",
+              "CVE-2026-78659"
+            ],
+            "summary": "HTTP/2 server memory exhaustion due to Trailer headers in net/http",
+            "package": {
+              "ecosystem": "Go",
+              "name": "stdlib"
+            },
+            "fixed_in": "1.26.9",
+            "affects_current": true,
+            "fixed_by_target": true
+          },
+          {
+            "id": "GO-2026-6604",
+            "aliases": [
+              "BIT-golang-2026-56857",
+              "CVE-2026-56857"
+            ],
+            "summary": "Root.Mkdir(All) can follow junctions out of the root on Windows in os",
+            "package": {
+              "ecosystem": "Go",
+              "name": "stdlib"
+            },
+            "fixed_in": "1.26.9",
+            "affects_current": true,
+            "fixed_by_target": true
+          },
+          {
+            "id": "GO-2026-6605",
+            "aliases": [
+              "BIT-golang-2026-56866",
+              "CVE-2026-56866"
+            ],
+            "summary": "HTTP/1 client connection desynchronization after CONNECT rejection in net/http",
+            "package": {
+              "ecosystem": "Go",
+              "name": "stdlib"
+            },
+            "fixed_in": "1.26.9",
+            "affects_current": true,
+            "fixed_by_target": true
+          },
+          {
+            "id": "GO-2026-6607",
+            "aliases": [
+              "BIT-golang-2026-97031",
+              "CVE-2026-97031"
+            ],
+            "summary": "Reject malformed ECH outer extension references in crypto/tls",
+            "package": {
+              "ecosystem": "Go",
+              "name": "stdlib"
+            },
+            "fixed_in": "1.26.9",
+            "affects_current": true,
+            "fixed_by_target": true
+          },
+          {
+            "id": "GO-2026-6608",
+            "aliases": [
+              "BIT-golang-2026-94440",
+              "CVE-2026-94440"
+            ],
+            "summary": "Memory limit bypass when parsing MIME headers in net/textproto, mime/multipart",
+            "package": {
+              "ecosystem": "Go",
+              "name": "stdlib"
+            },
+            "fixed_in": "1.26.9",
+            "affects_current": true,
+            "fixed_by_target": true
+          },
+          {
+            "id": "GO-2026-6609",
+            "aliases": [
+              "BIT-golang-2026-78667",
+              "CVE-2026-78667"
+            ],
+            "summary": "Lack of limit on size of parsed Range headers in net/http",
+            "package": {
+              "ecosystem": "Go",
+              "name": "stdlib"
+            },
+            "fixed_in": "1.26.9",
+            "affects_current": true,
+            "fixed_by_target": true
+          },
+          {
+            "id": "GO-2026-6610",
+            "aliases": [
+              "BIT-golang-2026-78660",
+              "CVE-2026-78660"
+            ],
+            "summary": "HTTP/2 transport accepts malformed framing-related headers in net/http",
+            "package": {
+              "ecosystem": "Go",
+              "name": "stdlib"
+            },
+            "fixed_in": "1.26.9",
+            "affects_current": true,
+            "fixed_by_target": true
+          },
+          {
+            "id": "GO-2026-6611",
+            "aliases": [
+              "BIT-golang-2026-78669",
+              "CVE-2026-78669"
+            ],
+            "summary": "Excessive CPU consumption from repeated initial window changes in net/http",
+            "package": {
+              "ecosystem": "Go",
+              "name": "stdlib"
+            },
+            "fixed_in": "1.26.9",
+            "affects_current": true,
+            "fixed_by_target": true
+          },
+          {
+            "id": "GO-2026-6612",
+            "aliases": [
+              "BIT-golang-2026-78663",
+              "CVE-2026-78663"
+            ],
+            "summary": "Double flow control refund on HTTP/2 server streams in net/http",
+            "package": {
+              "ecosystem": "Go",
+              "name": "stdlib"
+            },
+            "fixed_in": "1.26.9",
+            "affects_current": true,
+            "fixed_by_target": true
+          },
+          {
+            "id": "GO-2026-6613",
+            "aliases": [
+              "BIT-golang-2026-94439",
+              "CVE-2026-94439"
+            ],
+            "summary": "HTTP/1 server connection desynchronization after 2xx CONNECT response in net/http",
+            "package": {
+              "ecosystem": "Go",
+              "name": "stdlib"
+            },
+            "fixed_in": "1.26.9",
+            "affects_current": true,
+            "fixed_by_target": true
+          },
+          {
+            "id": "GO-2026-6617",
+            "aliases": [
+              "BIT-golang-2026-97032",
+              "CVE-2026-97032"
+            ],
+            "summary": "HTTP/2 server crash due to HPACK encoder race in net/http",
+            "package": {
+              "ecosystem": "Go",
+              "name": "stdlib"
+            },
+            "fixed_in": "1.26.9",
+            "affects_current": true,
+            "fixed_by_target": true
+          },
+          {
+            "id": "GO-2026-6809",
+            "aliases": [
+              "BIT-golang-2026-111943",
+              "CVE-2026-111943",
+              "RUSTSEC-2026-0381",
+              "RUSTSEC-2026-0382",
+              "RUSTSEC-2026-0383"
+            ],
+            "summary": "Distrust compromised intermediate certificates in crypto/x509",
+            "package": {
+              "ecosystem": "Go",
+              "name": "stdlib"
+            },
+            "fixed_in": "1.26.10",
+            "affects_current": true,
+            "fixed_by_target": true
+          },
+          {
+            "id": "GO-2026-6859",
+            "aliases": [
+              "CVE-2026-97054"
+            ],
+            "summary": "HTTP/1 server crash due to MaxBytesReader header race in net/http",
+            "package": {
+              "ecosystem": "Go",
+              "name": "stdlib"
+            },
+            "fixed_in": "1.26.11",
+            "affects_current": true,
+            "fixed_by_target": true
+          }
+        ]
       },
       {
         "tool": "helm",
@@ -174,7 +420,7 @@
           "other": 3,
           "security": 0
         },
-        "hidden": 170,
+        "hidden": 167,
         "status": "outdated"
       },
       {
@@ -272,7 +518,23 @@
           "security": 0
         },
         "hidden": 15,
-        "status": "outdated"
+        "status": "outdated",
+        "eol": {
+          "product": "terraform",
+          "current": {
+            "version": "1.15.8",
+            "cycle": "1.15",
+            "is_eol": true,
+            "eol_from": "2026-10-21",
+            "latest_in_cycle": "1.15.9"
+          },
+          "target": {
+            "version": "1.17.2",
+            "cycle": "1.17",
+            "is_eol": false,
+            "latest_in_cycle": "1.17.2"
+          }
+        }
       },
       {
         "tool": "terraform",
@@ -310,7 +572,23 @@
           "security": 0
         },
         "hidden": 15,
-        "status": "outdated"
+        "status": "outdated",
+        "eol": {
+          "product": "terraform",
+          "current": {
+            "version": "1.15.8",
+            "cycle": "1.15",
+            "is_eol": true,
+            "eol_from": "2026-10-21",
+            "latest_in_cycle": "1.15.9"
+          },
+          "target": {
+            "version": "1.17.2",
+            "cycle": "1.17",
+            "is_eol": false,
+            "latest_in_cycle": "1.17.2"
+          }
+        }
       },
       {
         "tool": "uv",

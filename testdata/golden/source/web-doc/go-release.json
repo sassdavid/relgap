@@ -1,0 +1,20 @@
+[
+  {
+    "version": "1.27.1",
+    "tag": "go1.27.1",
+    "source": {
+      "adapter": "web-doc",
+      "url": "https://go.dev/doc/devel/release#go1.27.1"
+    },
+    "markdown": "go1.27.1 (released 2026-09-01) includes fixes to cgo, the compiler, the runtime, the `go fix` command, and the `database/sql`, `debug/elf`, `encoding/json`, `net/http`, `os`, `simd`, and `simd/archsimd` packages. See the [Go 1.27.1 milestone](https://github.com/golang/go/issues?q=milestone%3AGo1.27.1%20label%3ACherryPickApproved) on our issue tracker for details.\n"
+  },
+  {
+    "version": "1.27.2",
+    "tag": "go1.27.2",
+    "source": {
+      "adapter": "web-doc",
+      "url": "https://go.dev/doc/devel/release#go1.27.2"
+    },
+    "markdown": "go1.27.2 (released 2026-10-08) includes security fixes to the `go` command, and the `crypto/tls`, `html/template`, `net/http`, `net/textproto`, and `os` packages, as well as bug fixes to the compiler, the linker, the runtime, the `cover` tool, the `go fix` command, vet, and the `compress/flate`, `crypto/mlkem`, `encoding/json`, `encoding/json/v2`, `net/http`, and `os` packages. See the [Go 1.27.2 milestone](https://github.com/golang/go/issues?q=milestone%3AGo1.27.2%20label%3ACherryPickApproved) on our issue tracker for details.\n"
+  }
+]

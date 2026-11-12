@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/sassdavid/relgap/internal/execx"
@@ -50,4 +51,18 @@ func (c *Client) Registry(ctx context.Context) ([]RegistryEntry, error) {
 		return nil, fmt.Errorf("decode mise registry --json: %w", err)
 	}
 	return entries, nil
+}
+
+const whichTimeout = 10 * time.Second
+
+// Which returns the path of the executable a mise shim named bin runs, from `mise which`.
+func (c *Client) Which(ctx context.Context, bin string) (string, error) {
+	res, err := c.r.Run(ctx, execx.Cmd{Name: "mise", Args: []string{"which", bin}, Timeout: whichTimeout})
+	if errors.Is(err, execx.ErrNotFound) {
+		return "", ErrNotInstalled
+	}
+	if err != nil {
+		return "", fmt.Errorf("mise which %s: %w", bin, err)
+	}
+	return strings.TrimSpace(string(res.Stdout)), nil
 }

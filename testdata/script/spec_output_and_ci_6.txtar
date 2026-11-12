@@ -21,7 +21,7 @@ golden stdout drift/tree.txt
 # pins 1.14.2 next to ~> 1.14, which counts as the exact pin.
 stdout '^tree/team-02/repo-24 +\S+ +\S+ +\S+ +\S+ +≈1\.15\.0\* '
 stdout '^tree/team-00/repo-07 +\S+ +\S+ +\S+ +\S+ +1\.14\.2\* '
-stdout '^In agreement: github-cli 2\.83\.0 \(60 repos\), helm 3\.19\.0 \(60 repos\), image:node 24\.11\.0 \(60 repos\), jq 1\.7\.1 \(1 repo\), terragrunt ≈1\.2\.0 \(60 repos\)$'
+stdout '^In agreement: gh 2\.83\.0 \(60 repos\), helm 3\.19\.0 \(60 repos\), image:node 24\.11\.0 \(60 repos\), jq 1\.7\.1 \(1 repo\), terragrunt ≈1\.2\.0 \(60 repos\)$'
 stdout '^Not compared: go ≈1\.27 \(60 repos\)$'
 stdout '^5 of 11 tools drift across 60 repos\.$'
 

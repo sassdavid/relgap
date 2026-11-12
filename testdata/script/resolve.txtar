@@ -1,6 +1,6 @@
 # A tool known only to mise and aqua resolves from the snapshots.
-exec relgap resolve uv
-cmp stdout uv.txt
+exec relgap resolve hk
+cmp stdout hk.txt
 
 # Config tools and aliases take part.
 exec relgap resolve TG_VERSION
@@ -10,10 +10,10 @@ stdout 'repo +acme/terragrunt-fork +config'
 # Unknown names, unsupported syntax and tools without a repository are usage errors.
 exec expect-exit 2 relgap resolve no-such-tool-anywhere
 stderr 'unknown tool "no-such-tool-anywhere"'
-exec expect-exit 2 relgap resolve tfprovider:hashicorp/aws
-stderr 'unsupported tool syntax'
-exec expect-exit 2 relgap resolve node
-stderr 'set tools.node.repo in the config'
+exec expect-exit 2 relgap resolve tfprovider:hashicorp/random
+stderr 'only curated providers resolve'
+exec expect-exit 2 relgap resolve java
+stderr 'set tools.java.repo in the config'
 exec expect-exit 2 relgap resolve
 stderr 'takes 1 argument'
 exec expect-exit 2 relgap resolve terraform --format md
@@ -25,13 +25,13 @@ tools:
     repo: acme/terragrunt-fork
 aliases:
   TG_VERSION: terragrunt
--- uv.txt --
-input          uv (name, found in mise registry)
+-- hk.txt --
+input          hk (name, found in mise registry)
 mise registry  snapshot
 
 FIELD             VALUE           SOURCE
-name              uv              mise registry
-repo              astral-sh/uv    aqua registry
+name              hk              mise registry
+repo              jdx/hk          aqua registry
 version.scheme    loose           default
 version.universe  releases        default
 version.line      none            default

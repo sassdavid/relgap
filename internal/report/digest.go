@@ -45,12 +45,14 @@ type Version struct {
 	URL         string     `json:"url,omitempty"` // the GitHub release page, when there is a release
 }
 
-// GitHub lists releases and tags and fetches release bodies; [github.Client] implements it.
+// GitHub lists releases, tags and top-level files and fetches release bodies and files;
+// [github.Client] implements it.
 type GitHub interface {
 	Releases(ctx context.Context, repo string) ([]github.Release, error)
 	Tags(ctx context.Context, repo string) ([]string, error)
 	source.ReleaseFetcher
 	source.FileFetcher
+	source.RootLister
 }
 
 // DigestRequest says what to digest.
@@ -60,6 +62,7 @@ type DigestRequest struct {
 	Line               version.Level
 	IncludePrereleases bool
 	MinConfidence      float64
+	Only               *int // when set, only the source at this index of Tool.Sources runs
 }
 
 // Digester builds digests from GitHub.
@@ -67,6 +70,8 @@ type Digester struct {
 	logger *slog.Logger
 	gh     GitHub
 	files  *mdindex.Cache
+	web    source.WebFetcher
+	pages  *source.PageCache
 
 	mu   sync.Mutex
 	refs map[string]*refList // by tool name
@@ -80,10 +85,18 @@ type refList struct {
 	err      error
 }
 
-// NewDigester returns a digester that reads from gh. Changelog files are fetched and parsed once
-// per digester, and so is each tool's list of releases or tags.
-func NewDigester(logger *slog.Logger, gh GitHub) *Digester {
-	return &Digester{logger: logger, gh: gh, files: source.NewFileCache(gh), refs: map[string]*refList{}}
+// NewDigester returns a digester that reads from gh and, for web-doc and URL sources, from web.
+// Changelog files and web pages are fetched and parsed once per digester, and so is each tool's
+// list of releases or tags.
+func NewDigester(logger *slog.Logger, gh GitHub, web source.WebFetcher) *Digester {
+	return &Digester{
+		logger: logger,
+		gh:     gh,
+		files:  source.NewFileCache(gh),
+		web:    web,
+		pages:  source.NewPageCache(web),
+		refs:   map[string]*refList{},
+	}
 }
 
 // Universe returns every version of the tool, listed once per digester.
@@ -151,13 +164,25 @@ func (d *Digester) Digest(ctx context.Context, req DigestRequest) (*ToolDigest, 
 	for _, v := range r.Versions {
 		out.Versions = append(out.Versions, versionOf(v, releases[v.Tag]))
 	}
-	readers, err := d.readers(ctx, t)
+	var from version.V
+	if r.Base != nil {
+		from = r.Base.V
+	}
+	readers, err := d.readers(ctx, t, from, newestStable(universe), req.Only)
 	if err != nil {
 		return nil, err
 	}
 	entries, err := collect(ctx, t, readers, r.Versions)
 	if err != nil {
 		return nil, err
+	}
+	for _, rd := range readers {
+		if w, ok := rd.adapter.(interface{ Warnings() []string }); ok {
+			out.Warnings = append(out.Warnings, w.Warnings()...)
+		}
+	}
+	if len(entries) == 0 && len(r.Versions) > 0 {
+		out.Warnings = append(out.Warnings, "no release notes found; compare the versions at "+compareURL(t.Repo, r))
 	}
 	urls := map[string]string{}
 	order := map[string]int{}
@@ -239,13 +264,33 @@ func (d *Digester) fetchRefs(
 	return refs, byTag, nil
 }
 
-// readers returns an adapter and classifier for each of the tool's sources. Without sources it
-// falls back to gh-release, the first step of auto-discovery.
-func (d *Digester) readers(ctx context.Context, t registry.ToolSpec) ([]reader, error) {
-	sources := t.Sources
-	if len(sources) == 0 {
-		sources = []registry.Source{{Kind: source.KindGHRelease}}
+// readers returns an adapter and classifier for each of the tool's sources, upgrade-notes first
+// so its entries win over the same text in the changelog. Without sources it runs
+// auto-discovery. from is the version the range starts after; newest is the newest stable one.
+func (d *Digester) readers(
+	ctx context.Context,
+	t registry.ToolSpec,
+	from, newest version.V,
+	only *int,
+) ([]reader, error) {
+	if len(t.Sources) == 0 {
+		c, err := classify.New(classify.Options{BreakingMarkers: t.BreakingMarkers})
+		if err != nil {
+			return nil, fmt.Errorf("%s: %w", t.Name, err)
+		}
+		a := source.NewAuto(d.logger, d.gh, d.gh, d.files, newest)
+		return []reader{{adapter: a, classifier: c}}, nil
 	}
+	sources := slices.Clone(t.Sources)
+	if only != nil {
+		if *only < 0 || *only >= len(sources) {
+			return nil, fmt.Errorf("%s has no source %d", t.Name, *only)
+		}
+		sources = sources[*only : *only+1]
+	}
+	slices.SortStableFunc(sources, func(a, b registry.Source) int {
+		return cmp.Compare(boolInt(a.Kind != source.KindUpgradeNotes), boolInt(b.Kind != source.KindUpgradeNotes))
+	})
 	var out []reader
 	for _, s := range sources {
 		var a source.Adapter
@@ -254,8 +299,16 @@ func (d *Digester) readers(ctx context.Context, t registry.ToolSpec) ([]reader, 
 			a = source.NewGHRelease(d.gh)
 		case source.KindChangelogFile:
 			a = source.NewChangelogFile(d.logger, d.files, s)
+		case source.KindStructuredJSON:
+			a = source.NewStructuredJSON(d.logger, d.gh, d.web, s)
+		case source.KindWebDoc:
+			a = source.NewWebDoc(d.logger, d.pages, s, from)
+		case source.KindUpgradeGuide:
+			a = source.NewUpgradeGuide(d.logger, d.files, d.pages, s, from)
+		case source.KindUpgradeNotes:
+			a = source.NewUpgradeNotes(d.logger, d.files, s, changelogSource(t.Sources))
 		default:
-			d.logger.DebugContext(ctx, "skipping a source kind relgap can't read yet", "tool", t.Name, "kind", s.Kind)
+			d.logger.DebugContext(ctx, "skipping a source kind relgap can't read", "tool", t.Name, "kind", s.Kind)
 			continue
 		}
 		c, err := classify.New(classify.Options{BreakingMarkers: t.BreakingMarkers, IgnoreSections: s.IgnoreSections})
@@ -265,6 +318,42 @@ func (d *Digester) readers(ctx context.Context, t registry.ToolSpec) ([]reader, 
 		out = append(out, reader{adapter: a, classifier: c})
 	}
 	return out, nil
+}
+
+// changelogSource returns the first changelog-file source, which upgrade-notes reads.
+func changelogSource(sources []registry.Source) *registry.Source {
+	for i := range sources {
+		if sources[i].Kind == source.KindChangelogFile {
+			return &sources[i]
+		}
+	}
+	return nil
+}
+
+func boolInt(b bool) int {
+	if b {
+		return 1
+	}
+	return 0
+}
+
+// newestStable returns the newest version that isn't a prerelease, or the zero version.
+func newestStable(u *version.Universe) version.V {
+	var newest version.V
+	for _, v := range u.Versions() {
+		if !v.Prerelease && (newest.IsZero() || u.Scheme().Compare(v.V, newest) > 0) {
+			newest = v.V
+		}
+	}
+	return newest
+}
+
+// compareURL returns the GitHub page comparing the version before the range with its end.
+func compareURL(repo string, r *version.Range) string {
+	if r.Base == nil {
+		return "https://github.com/" + repo + "/releases/tag/" + r.To.Tag
+	}
+	return "https://github.com/" + repo + "/compare/" + r.Base.Tag + "..." + r.To.Tag
 }
 
 var (

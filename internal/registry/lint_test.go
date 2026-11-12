@@ -89,6 +89,36 @@ func TestLintSemantics(t *testing.T) {
 			[]string{"x.yaml:4:3: version.extract: extract needs scheme regex"},
 		},
 		{"valid", "name: x\nrepo: a/b\nversion:\n  scheme: regex\n  extract: \"jdk-(\\\\d+)\"\n", nil},
+		{
+			"host outside the allow-list",
+			"name: x\nrepo: a/b\nsources:\n  - kind: web-doc\n    url_template: https://raw.githubusercontent.com/a/b/{version}\n",
+			[]string{"x.yaml:5:19: sources.0.url_template: host not allowed: raw.githubusercontent.com: " +
+				"relgap fetches pages only from api.adoptium.net, docs.python.org, go.dev"},
+		},
+		{
+			"unknown placeholder",
+			"name: x\nrepo: a/b\nsources:\n  - kind: changelog-file\n    path_template: docs/{patch}.md\n",
+			[]string{"x.yaml:5:20: sources.0.path_template: unknown placeholder {patch}: want {version}, " +
+				"{major}, {minor}, {tag}, {prev_minor} or {prev_major}"},
+		},
+		{
+			"prev_minor outside upgrade-guide",
+			"name: x\nrepo: a/b\nsources:\n  - kind: changelog-file\n    path_template: \"{prev_minor}.md\"\n",
+			[]string{
+				"x.yaml:5:20: sources.0.path_template: placeholder {prev_minor} works only in upgrade-guide sources",
+			},
+		},
+		{
+			"bad selector",
+			"name: x\nrepo: a/b\nsources:\n  - kind: web-doc\n    url_template: https://go.dev/doc\n    strip: [\"div > p\"]\n",
+			[]string{`x.yaml:6:13: sources.0.strip.0: invalid selector "div > p": want tag, #id and .class ` +
+				"parts without spaces, such as div.body"},
+		},
+		{
+			"structured-json needs a mapping",
+			"name: x\nrepo: a/b\nsources:\n  - kind: structured-json\n    path_template: c/{version}.json\n",
+			[]string{"x.yaml:4:5: sources.0: missing property 'json'"},
+		},
 	}
 	for _, tt := range tests {
 		_, problems, lintErr := l.Lint("x.yaml", []byte(tt.in))
@@ -128,7 +158,7 @@ func TestEmbeddedEntries(t *testing.T) {
 	require.NoError(t, err)
 	entries, err := l.LoadFS(curated.FS(), ".")
 	require.NoError(t, err)
-	assert.Len(t, entries, 5)
+	assert.Len(t, entries, 20)
 
 	for _, e := range entries {
 		raw, readErr := os.ReadFile(filepath.Join("..", "..", "registry", e.Name+".yaml"))

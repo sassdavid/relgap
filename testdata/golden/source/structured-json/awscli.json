@@ -1,0 +1,20 @@
+[
+  {
+    "version": "2.31.1",
+    "tag": "2.31.1",
+    "source": {
+      "adapter": "structured-json",
+      "url": "https://github.com/aws/aws-cli/blob/v2/.changes/2.31.1.json"
+    },
+    "markdown": "### api-change\n\n- `appstream`: G6f instance support for AppStream 2.0\n- `neptune`: Doc-only update to address customer use.\n- `dax`: This release adds support for IPv6-only, DUAL_STACK DAX instances\n- `cloudwatch`: Fix default dualstack FIPS endpoints in AWS GovCloud(US) regions\n- `kms`: Documentation only updates for KMS.\n"
+  },
+  {
+    "version": "2.31.2",
+    "tag": "2.31.2",
+    "source": {
+      "adapter": "structured-json",
+      "url": "https://github.com/aws/aws-cli/blob/v2/.changes/2.31.2.json"
+    },
+    "markdown": "### api-change\n\n- `lightsail`: Attribute HTTP binding update for Get/Delete operations\n- `glue`: Update GetConnection(s) API to return KmsKeyArn \u0026 Add 63 missing connection types\n- `network-firewall`: Network Firewall now introduces Reject and Alert action support for stateful domain list rule groups, providing customers with more granular control over their network traffic.\n"
+  }
+]

@@ -21,7 +21,7 @@
 |---|---|---|
 | `ci.yml` | PR, push main | lint; test matrix (ubuntu, macos, windows); fuzz (`mise run fuzz`); docs-up-to-date; schema tests; goreleaser snapshot (6 archives, checksums, SBOMs, third-party notices in every archive) |
 | `security.yml` | PR, weekly | govulncheck (SARIF), zizmor, dependency review |
-| `live.yml` | nightly, manual | live corpus against real GitHub (token secret) |
+| `live.yml` | nightly (04:41 UTC), manual | live corpus against GitHub and the web with `GITHUB_TOKEN` (read-only job), then a job with `issues: write` that opens, updates or closes "corpus drift: <tool>" issues. Never writes goldens ([testing.md](../plan/testing.md)) |
 | `release-please.yml` | push main | opens or updates the release PR (version bump + CHANGELOG.md from Conventional Commits). On merge it creates the tag and a draft release (`draft` + `force-tag-creation`) |
 | `release.yml` | called by `release-please.yml` when a release is created (tags pushed with `GITHUB_TOKEN` don't trigger workflows); also tag `v*` | goreleaser: binaries, checksums, SBOM, cosign keyless signature, attestations, Homebrew cask, Scoop. Secrets: `HOMEBREW_TAP_TOKEN`, `SCOOP_BUCKET_TOKEN` |
 

@@ -1,0 +1,66 @@
+# registry test runs each source of an entry on its own over a range, then all together. A YAML
+# path runs that entry after the lint checks. It replays the argocd corpus cassette.
+[recording] skip 'replays the cassette spec_source_adapters_2.txtar records'
+env TEST_NOW=2026-11-12T12:00:00Z
+env GH_TOKEN=$TEST_GH_TOKEN
+env TEST_CASSETTE=$CASSETTES/corpus/argocd-3.5.0..3.6.1.yaml
+
+exec relgap registry test argocd 3.5.0..3.6.1 --format plain
+cmp stdout argocd.txt
+
+exec relgap registry test argocd.yaml 3.5.0..3.6.1 --format json
+stdout '"tool": "argocd"'
+stdout '"kind": "upgrade-guide"'
+
+exec expect-exit 2 relgap registry test broken.yaml 3.5.0..3.6.1
+stderr 'broken.yaml:5:20: sources.0.path_template: unknown placeholder \{previous\}'
+exec expect-exit 2 relgap registry test argocd
+stderr 'takes 2 argument'
+
+-- argocd.txt --
+argocd (argoproj/argo-cd) 3.5.0..3.6.1: 9 versions
+
+SOURCE                                                                          VERSIONS  ENTRIES  BREAKING  DEPRECATION  SECURITY
+0 gh-release                                                                    9/9       832      2         0            8
+1 upgrade-guide docs/operator-manual/upgrading/{prev_minor}-{major}.{minor}.md  1/9       48       16        0            0
+merged                                                                          9/9       880      18        0            8
+
+0 gh-release:
+  https://github.com/argoproj/argo-cd/releases/tag/v3.5.1
+  https://github.com/argoproj/argo-cd/releases/tag/v3.5.2
+  https://github.com/argoproj/argo-cd/releases/tag/v3.5.3
+  https://github.com/argoproj/argo-cd/releases/tag/v3.5.4
+  https://github.com/argoproj/argo-cd/releases/tag/v3.5.5
+  https://github.com/argoproj/argo-cd/releases/tag/v3.5.6
+  https://github.com/argoproj/argo-cd/releases/tag/v3.5.7
+  https://github.com/argoproj/argo-cd/releases/tag/v3.6.0
+  https://github.com/argoproj/argo-cd/releases/tag/v3.6.1
+
+1 upgrade-guide docs/operator-manual/upgrading/{prev_minor}-{major}.{minor}.md:
+  https://github.com/argoproj/argo-cd/blob/master/docs/operator-manual/upgrading/3.5-3.6.md
+
+merged:
+  https://github.com/argoproj/argo-cd/releases/tag/v3.5.1
+  https://github.com/argoproj/argo-cd/releases/tag/v3.5.2
+  https://github.com/argoproj/argo-cd/releases/tag/v3.5.3
+  https://github.com/argoproj/argo-cd/releases/tag/v3.5.4
+  https://github.com/argoproj/argo-cd/releases/tag/v3.5.5
+  https://github.com/argoproj/argo-cd/releases/tag/v3.5.6
+  https://github.com/argoproj/argo-cd/releases/tag/v3.5.7
+  https://github.com/argoproj/argo-cd/releases/tag/v3.6.0
+  https://github.com/argoproj/argo-cd/blob/master/docs/operator-manual/upgrading/3.5-3.6.md
+  https://github.com/argoproj/argo-cd/releases/tag/v3.6.1
+-- argocd.yaml --
+name: argocd
+repo: argoproj/argo-cd
+version: { scheme: semver, tag_prefix: "v" }
+sources:
+  - kind: upgrade-guide
+    path_template: "docs/operator-manual/upgrading/{prev_minor}-{major}.{minor}.md"
+    ref: master
+-- broken.yaml --
+name: broken
+repo: o/r
+sources:
+  - kind: upgrade-guide
+    path_template: "{previous}.md"

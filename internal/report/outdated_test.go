@@ -50,6 +50,8 @@ func (f *multiGitHub) Releases(_ context.Context, repo string) ([]github.Release
 
 func (f *multiGitHub) Tags(context.Context, string) ([]string, error) { return nil, nil }
 
+func (f *multiGitHub) RootFiles(context.Context, string) ([]github.File, error) { return nil, nil }
+
 func (f *multiGitHub) ReleaseBodies(_ context.Context, repo string, tags []string) (map[string]github.Release, error) {
 	f.mu.Lock()
 	f.bodies[repo]++
@@ -139,7 +141,7 @@ func TestOutdated(t *testing.T) {
 		pin("d", "1.0.0", scan.MatchExact, ".", "mise.toml", 7),
 		pin("e", "1.0.0", scan.MatchExact, ".", "mise.toml", 8),
 	}
-	digester := report.NewDigester(slog.New(slog.DiscardHandler), gh)
+	digester := report.NewDigester(slog.New(slog.DiscardHandler), gh, nil)
 	got, err := report.NewOutdater(digester, gh).Outdated(t.Context(), report.OutdatedRequest{
 		Repos: []string{".", "other"}, Pins: pins, Resolve: resolve, MinConfidence: 0.5, Concurrency: 4,
 	})
@@ -193,7 +195,7 @@ func TestOutdatedAuth(t *testing.T) {
 	t.Parallel()
 	gh, resolve := outdatedFixture()
 	gh.recentErr["o/a"] = fmt.Errorf("list recent releases of o/a: %w", github.ErrAuth)
-	_, err := report.NewOutdater(report.NewDigester(slog.New(slog.DiscardHandler), gh), gh).Outdated(
+	_, err := report.NewOutdater(report.NewDigester(slog.New(slog.DiscardHandler), gh, nil), gh).Outdated(
 		t.Context(),
 		report.OutdatedRequest{Pins: []scan.Pin{pin("a", "1.0.0", scan.MatchExact, ".", "f", 1)}, Resolve: resolve},
 	)

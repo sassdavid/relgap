@@ -1,6 +1,7 @@
 # drift --latest over the generated tree of 60 repositories adds a latest row with the newest
 # stable version of each tool that has a GitHub repository, from one GraphQL request for all
-# 8 of them. Image and tfprovider pins aren't looked up, and JSON says why.
+# of them. Curated providers such as tfprovider:hashicorp/aws count. Image pins aren't looked up,
+# and JSON says why.
 env TEST_NOW=2026-11-11T12:00:00Z
 env GH_TOKEN=$TEST_GH_TOKEN
 env TEST_CASSETTE=$CASSETTES/drift/latest.yaml
@@ -10,7 +11,7 @@ requests reset
 exec relgap drift tree --latest --format plain
 golden stdout drift/latest.txt
 requests 1
-stdout '^latest +- +1\.37\.2 +- +1\.17\.2 +-$'
+stdout '^latest +- +1\.37\.2 +26\.13\.1 +1\.17\.2 +6\.73\.0$'
 stdout '^Not compared: go ≈1\.27 \(60 repos, latest 1\.27\.4\)$'
 
 exec relgap drift tree --latest --format md
@@ -20,8 +21,8 @@ exec relgap drift tree --latest --format json
 jsonschema drift-v1.json stdout
 stdout '"latest": "1\.17\.2"'
 stdout '"note": "not looked up: unsupported tool syntax: unknown prefix \\"image:\\"'
-stdout '"note": "not looked up: no GitHub repository for \\"node\\"'
-stdout '"note": "not looked up: unsupported tool syntax: tfprovider: names need a lookup'
+stdout '"latest": "26\.13\.1"'
+stdout '"latest": "6\.73\.0"'
 
 # Later runs answer from the HTTP cache.
 [!recording] requests reset

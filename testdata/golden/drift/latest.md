@@ -1,6 +1,6 @@
 | REPO | image:golang | kubectl | node | terraform | tfprovider:hashicorp/aws |
 | --- | --- | --- | --- | --- | --- |
-| latest | - | 1.37.2 | - | 1.17.2 | - |
+| latest | - | 1.37.2 | 26.13.1 | 1.17.2 | 6.73.0 |
 | tree/team-00/repo-00 | 1.26.1\* | 1.34.2 | 24.11.0, ≈26 | 1.15.8 | 6.12.0 |
 | tree/team-00/repo-01 | 1.27.3 | 1.34.2 | 24.11.0, ≈26 | 1.15.8 | 6.12.0 |
 | tree/team-00/repo-02 | 1.27.3 | 1.34.2 | 24.11.0, ≈26 | 1.15.8 | 6.12.0 |
@@ -66,7 +66,7 @@
 
 \* differs from the version most repos pin.
 
-- In agreement: github-cli 2.83.0 (60 repos, latest 2.103.3), helm 3.19.0 (60 repos, latest 3.22.1), image:node 24.11.0 (60 repos), jq 1.7.1 (1 repo, latest 1.8.2), terragrunt ≈1.2.0 (60 repos, latest 1.2.1)
+- In agreement: gh 2.83.0 (60 repos, latest 2.103.3), helm 3.19.0 (60 repos, latest 3.22.1), image:node 24.11.0 (60 repos), jq 1.7.1 (1 repo, latest 1.8.2), terragrunt ≈1.2.0 (60 repos, latest 1.2.2)
 - Not compared: go ≈1.27 (60 repos, latest 1.27.4)
 
 5 of 11 tools drift across 60 repos.

@@ -34,4 +34,4 @@
 - [ ] The Markdown truncation footer appears exactly at the limit (property test on generated digests).
 - [x] `outdated` over a fixture project with 10 pins matches golden files in tty, plain, md and json, and each pin's counts equal those of the full digest `current..latest` (`TestSpec_output_and_ci_5`).
 - [x] `drift` over a generated tree of 60 repos matches golden files in tty, plain, md and json, marks constraint pins `≈`, sends no request (a refusing proxy and an empty request log), and `--fail-on drift` exits 3 (`TestSpec_output_and_ci_6`).
-- [x] `drift --latest` over the same tree adds the latest versions of 8 tools from 1 GraphQL request, and a second run answers from the cache with 0 requests (`TestSpec_output_and_ci_7`).
+- [x] `drift --latest` over the same tree adds the latest versions of 10 tools (8 until M8 added the node and terraform-provider-aws entries) from 1 GraphQL request, and a second run answers from the cache with 0 requests (`TestSpec_output_and_ci_7`).

@@ -51,6 +51,10 @@ run = "bash scripts/fuzz.sh"
 description = "Compare golden files; pass -update to regenerate them (review the diff)"
 run = "bash scripts/test-golden.sh"
 
+[tasks."test:live"]
+description = "Digest the 30-tool corpus against GitHub and the web (needs GH_TOKEN; the live workflow runs it nightly). Reports drift in $RELGAP_LIVE_OUT and never updates goldens"
+run = "go test -tags live -count=1 -run TestLiveCorpus -timeout 30m ./internal/cli/"
+
 [tasks.vuln]
 description = "Known vulnerabilities in reachable code"
 run = "govulncheck ./..."

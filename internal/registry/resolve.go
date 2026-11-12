@@ -320,7 +320,24 @@ func (r *Resolver) identifyExplicit(prefix, rest string) (string, Match, *AquaEn
 			return m.Short, match, pkg, "", nil
 		}
 		return path.Base(pkg.Name), match, pkg, "", nil
-	case "tfprovider", "chart", "npm", "pypi":
+	case "tfprovider":
+		// Curated providers resolve without the Terraform registry: hashicorp/aws is
+		// hashicorp/terraform-provider-aws by HashiCorp's naming rule.
+		if ns, provider, ok := strings.Cut(
+			rest,
+			"/",
+		); ok && ns != "" && provider != "" &&
+			!strings.Contains(provider, "/") {
+			if name, layer, found := r.byRepo(ns + "/terraform-provider-" + provider); found {
+				return name, Match{By: "terraform provider", Value: rest, Layer: layer}, nil, "", nil
+			}
+		}
+		return "", Match{}, nil, "", fmt.Errorf(
+			"%w: tfprovider: only curated providers resolve; other names need a lookup in the Terraform "+
+				"registry, which relgap doesn't do yet (use github:<namespace>/terraform-provider-<name>)",
+			ErrUnsupported,
+		)
+	case "chart", "npm", "pypi":
 		return "", Match{}, nil, "", fmt.Errorf(
 			"%w: %s: names need a lookup in the %s registry, which relgap doesn't do yet",
 			ErrUnsupported,
@@ -567,6 +584,10 @@ func (b *builder) fromEntry(e *Entry) {
 		b.spec.BreakingMarkers = slices.Clone(e.BreakingMarkers)
 		b.prov["breaking_markers"] = []Layer{l}
 	}
+	if len(b.spec.Bin) == 0 && len(e.Bin) > 0 {
+		b.spec.Bin = slices.Clone(e.Bin)
+		b.prov["bin"] = []Layer{l}
+	}
 }
 
 // startsWith matches the one aqua version_filter form that maps to a tag prefix.
@@ -605,4 +626,17 @@ func (b *builder) defaults() {
 	if b.spec.BreakingMarkers == nil {
 		b.spec.BreakingMarkers = []string{}
 	}
+	if b.spec.Bin == nil {
+		b.spec.Bin = []string{}
+	}
+}
+
+// SpecFromEntry returns the tool spec of one entry on its own, with defaults for the fields it
+// leaves out, as `relgap registry test` runs a file that isn't embedded yet.
+func SpecFromEntry(e *Entry) ToolSpec {
+	b := newBuilder()
+	b.spec.Name = e.Name
+	b.fromEntry(e)
+	b.defaults()
+	return b.spec
 }

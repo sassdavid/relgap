@@ -3,7 +3,9 @@
 Strategy and layers: [engineering ADR-0006](../engineering/adr/0006-testing-strategy.md). This file lists what is relgap-specific.
 
 ## The 30-tool corpus (`testdata/corpus.yaml`)
-Each entry: tool, range, adapters expected, expected breaking count (± tolerance), golden digest path.
+Each entry: tool, range, adapters expected, expected breaking count (± tolerance, default 2), golden digest path,
+or `skip` with the reason a tool isn't digested yet (chart:argo/argo-cd needs the Artifact Hub lookup;
+1password-cli has no public repository).
 
 | Group | Tools |
 |---|---|
@@ -15,8 +17,16 @@ Each entry: tool, range, adapters expected, expected breaking count (± toleranc
 
 The corpus mirrors the author's real toolchain (dotfriedrice `_mise/config.toml` and a typical Terraform/AWS CI image).
 
-- **PR CI:** replays cassettes recorded from the live corpus.
-- **Nightly `live.yml`:** re-runs live. On diff it opens or updates an issue "corpus drift: <tool>" with the diff attached, and never auto-updates goldens.
+- **PR CI:** replays cassettes recorded from the live corpus. The corpus subset (terraform, kubectl, awscli,
+  argocd, claude-code) has golden digests in `testdata/golden/corpus/` (`TestSpec_source_adapters_2`).
+- **Nightly `live.yml`** (04:41 UTC and on demand): `mise run test:live` runs `TestLiveCorpus`
+  (`//go:build live`) against GitHub and the web with `GITHUB_TOKEN`, from a job that can only read the
+  repository. For each tool it checks the expected adapters (at `--min-confidence 0`), the breaking count and,
+  with a golden, the exact digest data. It writes `results.json` and, for a golden that differs, the expected
+  and actual data. A second job with `issues: write` runs `scripts/corpus-issues.sh`: it opens an issue titled
+  "corpus drift: <tool>" (label `corpus-drift`) with what differs and the first 60,000 characters of the
+  diff, comments on the open one instead when there is one, and closes it when the tool is clean again. The
+  test refuses to run with `GOLDEN_UPDATE` set, and nothing in the workflow writes to the repository.
 
 ## Specific test suites
 - `version`: table tests + fuzz (`FuzzParse`, `FuzzCompareProperties`).

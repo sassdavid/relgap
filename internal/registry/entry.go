@@ -18,6 +18,7 @@ type Entry struct {
 	EOL             *EOL         `yaml:"eol"`
 	OSV             []OSVPackage `yaml:"osv"`
 	BreakingMarkers []string     `yaml:"breaking_markers"`
+	Bin             []string     `yaml:"bin"`
 }
 
 // VersionSpec says how a tool's tags become versions.
@@ -64,6 +65,18 @@ type Source struct {
 	Heading        string   `json:"heading,omitempty"         yaml:"heading"`
 	IgnoreSections []string `json:"ignore_sections,omitempty" yaml:"ignore_sections"`
 	FromHeading    string   `json:"from_heading,omitempty"    yaml:"from_heading"`
+	Content        string   `json:"content,omitempty"         yaml:"content"` // web-doc: selector of the element to convert
+	Strip          []string `json:"strip,omitempty"           yaml:"strip"`   // web-doc: selectors of elements to drop
+	Anchor         string   `json:"anchor,omitempty"          yaml:"anchor"`  // web-doc: id template of a version's element
+	JSON           *JSONMap `json:"json,omitempty"            yaml:"json"`
+}
+
+// JSONMap says how a structured-json document becomes Markdown entries.
+type JSONMap struct {
+	Items   string `json:"items,omitempty"   yaml:"items"`   // dotted path to the array; empty means the document
+	Heading string `json:"heading,omitempty" yaml:"heading"` // field whose value groups entries under a heading
+	Text    string `json:"text"              yaml:"text"`    // template with {field} placeholders
+	Link    string `json:"link,omitempty"    yaml:"link"`    // field holding a URL for the entry
 }
 
 // EOL names the endoflife.date product of a tool.
@@ -88,4 +101,5 @@ type ToolSpec struct {
 	EOL             *EOL         `json:"eol,omitempty"`
 	OSV             []OSVPackage `json:"osv"`
 	BreakingMarkers []string     `json:"breaking_markers"`
+	Bin             []string     `json:"bin"` // executable names; empty means the tool name
 }

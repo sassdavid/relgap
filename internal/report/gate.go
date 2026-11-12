@@ -83,6 +83,7 @@ type Gate struct {
 	Breaking  bool
 	Outdated  bool
 	Drift     bool
+	EOL       bool
 	MaxBehind MaxBehind
 	Now       time.Time
 }
@@ -93,7 +94,8 @@ type Finding struct {
 	Pin    *OutdatedPin
 }
 
-// Check returns the pins that match the gate, and the pins whose lag it couldn't measure.
+// Check returns the pins that match the gate, and the pins whose lag it couldn't measure. A pin
+// matches eol when its current version's cycle has reached its end, outdated or not.
 func (g Gate) Check(o *Outdated) ([]Finding, []*OutdatedPin) {
 	var (
 		findings   []Finding
@@ -101,6 +103,9 @@ func (g Gate) Check(o *Outdated) ([]Finding, []*OutdatedPin) {
 	)
 	for i := range o.Pins {
 		p := &o.Pins[i]
+		if g.EOL && p.EOL != nil && p.EOL.Current != nil && p.EOL.Current.IsEOL != nil && *p.EOL.Current.IsEOL {
+			findings = append(findings, Finding{FailOn: FailOnEOL, Pin: p})
+		}
 		if p.Status != StatusOutdated {
 			continue
 		}

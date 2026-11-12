@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=../schemas/registry-v1.json
+# No GitHub releases. "What's new" is one page per minor on docs.python.org; every heading ends
+# in a permalink that the strip rule drops.
+name: python
+aliases: [cpython, python3]
+repo: python/cpython
+version:
+  scheme: python
+  tag_prefix: "v"
+  universe: tags
+sources:
+  - kind: web-doc
+    url_template: "https://docs.python.org/3/whatsnew/{major}.{minor}.html"
+    content: div.body
+    strip: [a.headerlink]
+eol: { product: python, cycle: "{major}.{minor}" }
+osv:
+  - { ecosystem: GIT, name: "https://github.com/python/cpython" }
+bin: [python3, python]

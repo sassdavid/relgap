@@ -8,6 +8,7 @@ import (
 	"unicode/utf8"
 
 	"github.com/sassdavid/relgap/internal/classify"
+	"github.com/sassdavid/relgap/internal/enrich"
 	"github.com/sassdavid/relgap/internal/report"
 )
 
@@ -35,6 +36,12 @@ func OutdatedText(w io.Writer, o *report.Outdated, color bool) error {
 		b.WriteString("\nNotes:\n")
 		for _, n := range notes {
 			b.WriteString("  " + n + "\n")
+		}
+	}
+	if o.Binaries != nil {
+		b.WriteString("\nBinaries (" + enrich.ReachabilityNote + "):\n")
+		for _, line := range binaryLines(o.Binaries) {
+			b.WriteString("  " + line + "\n")
 		}
 	}
 	b.WriteString("\n" + summary(o) + "\n")
@@ -72,11 +79,17 @@ func writeAligned(b *strings.Builder, rows [][]cell, color bool) {
 func OutdatedMarkdown(w io.Writer, o *report.Outdated) error {
 	rows, notes := outdatedRows(o)
 	var b strings.Builder
-	writeMarkdownTable(&b, rows, "| --- | --- | --- | ---: | ---: | ---: | --- |")
+	writeMarkdownTable(&b, rows, "| --- | --- | --- | ---: | ---: | ---: | --- | ---: | --- |")
 	if len(notes) > 0 {
 		b.WriteString("\n")
 		for _, n := range notes {
 			b.WriteString("- " + mdCell(n) + "\n")
+		}
+	}
+	if o.Binaries != nil {
+		b.WriteString("\nBinaries (" + enrich.ReachabilityNote + "):\n\n")
+		for _, line := range binaryLines(o.Binaries) {
+			b.WriteString("- " + mdCell(line) + "\n")
 		}
 	}
 	b.WriteString("\n" + summary(o) + "\n")
@@ -105,7 +118,7 @@ func mdCell(s string) string {
 }
 
 func outdatedRows(o *report.Outdated) ([][]cell, []string) {
-	header := []string{"TOOL", "CURRENT", "LATEST", "BEHIND", "BREAKING", "DEPRECATION", "PIN"}
+	header := []string{"TOOL", "CURRENT", "LATEST", "BEHIND", "BREAKING", "DEPRECATION", "EOL", "VULNS", "PIN"}
 	rows := [][]cell{make([]cell, len(header))}
 	for i, h := range header {
 		rows[0][i] = cell{text: h}
@@ -119,6 +132,10 @@ func outdatedRows(o *report.Outdated) ([][]cell, []string) {
 		rows = append(rows, outdatedRow(p))
 		if n := outdatedNote(p); n != "" {
 			notes = append(notes, n)
+		}
+		if p.EOL != nil && p.EOL.Current != nil && p.EOL.Current.Note != "" {
+			notes = append(notes, fmt.Sprintf("%s %s (%s): %s", p.Tool, p.Current, PinLocation(p.Pin.Location),
+				p.EOL.Current.Note))
 		}
 	}
 	return rows, notes
@@ -139,6 +156,8 @@ func outdatedRow(p *report.OutdatedPin) []cell {
 		{text: noValue},
 		{text: noValue},
 		{text: noValue},
+		eolCell(p.EOL),
+		vulnCell(p.Vulns),
 		{text: PinLocation(p.Pin.Location)},
 	}
 	switch p.Status {
@@ -160,6 +179,73 @@ func outdatedRow(p *report.OutdatedPin) []cell {
 	}
 	row[5] = cell{text: strconv.Itoa(p.Counts[classify.KindDeprecation])}
 	return row
+}
+
+// eolCell says whether the current version's cycle has reached its end: yes with the date, no,
+// ? for a cycle endoflife.date doesn't list, or - without a product.
+func eolCell(e *enrich.EOL) cell {
+	switch {
+	case e == nil || e.Current == nil:
+		return cell{text: noValue}
+	case e.Current.IsEOL == nil:
+		return cell{text: "?"}
+	case *e.Current.IsEOL:
+		text := "yes"
+		if e.Current.EOLFrom != "" {
+			text += " (" + e.Current.EOLFrom + ")"
+		}
+		return cell{text: text, style: ansiBold + ansiRed}
+	default:
+		return cell{text: "no"}
+	}
+}
+
+// vulnCell counts the vulnerabilities of the current version, and how many the latest version
+// fixes.
+func vulnCell(vs []enrich.Vuln) cell {
+	if vs == nil {
+		return cell{text: noValue}
+	}
+	fixed := 0
+	for _, v := range vs {
+		if v.FixedByTarget != nil && *v.FixedByTarget {
+			fixed++
+		}
+	}
+	text := strconv.Itoa(len(vs))
+	if fixed > 0 {
+		text += fmt.Sprintf(" (%d fixed)", fixed)
+	}
+	c := cell{text: text}
+	if len(vs) > 0 {
+		c.style = ansiRed
+	}
+	return c
+}
+
+// binaryLines describes each installed executable and its vulnerabilities.
+func binaryLines(bins []*enrich.Binary) []string {
+	if len(bins) == 0 {
+		return []string{"no Go executables of the pinned tools found"}
+	}
+	out := make([]string, 0, len(bins))
+	for _, b := range bins {
+		built := "Go " + b.GoVersion
+		if b.ModuleVersion != "" {
+			built += ", " + b.Module + " " + b.ModuleVersion
+		}
+		ids := make([]string, 0, len(b.Vulns))
+		for _, v := range b.Vulns {
+			ids = append(ids, v.ID)
+		}
+		line := fmt.Sprintf("%s %s (%s): %d %s", b.Tool, b.Path, built, len(b.Vulns),
+			pinsWord(len(b.Vulns), "vulnerability", "vulnerabilities"))
+		if len(ids) > 0 {
+			line += ": " + strings.Join(ids, ", ")
+		}
+		out = append(out, line)
+	}
+	return out
 }
 
 // outdatedNote explains a non-exact pin or a pin that wasn't compared.

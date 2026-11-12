@@ -131,6 +131,7 @@ func writeResolution(d *app.Deps, res *registry.Resolution) error {
 	}
 	row("osv", strings.Join(osv, ", "))
 	row("breaking_markers", strings.Join(t.BreakingMarkers, ", "))
+	row("bin", strings.Join(t.Bin, ", "))
 	if err := tw.Flush(); err != nil {
 		return fmt.Errorf("write resolution: %w", err)
 	}
@@ -160,6 +161,15 @@ func sourceText(s registry.Source) string {
 	add("ignore", strings.Join(s.IgnoreSections, ","))
 	if s.FromHeading != "" {
 		add("from_heading", strconv.Quote(s.FromHeading))
+	}
+	add("content", s.Content)
+	add("strip", strings.Join(s.Strip, ","))
+	add("anchor", s.Anchor)
+	if s.JSON != nil {
+		add("json.items", s.JSON.Items)
+		add("json.heading", s.JSON.Heading)
+		add("json.text", strconv.Quote(s.JSON.Text))
+		add("json.link", s.JSON.Link)
 	}
 	return strings.Join(parts, " ")
 }

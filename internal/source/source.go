@@ -2,6 +2,7 @@ package source
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -12,9 +13,21 @@ import (
 
 // Adapter kinds, as named in registry entries.
 const (
-	KindGHRelease     = "gh-release"
-	KindChangelogFile = "changelog-file"
+	KindGHRelease      = "gh-release"
+	KindChangelogFile  = "changelog-file"
+	KindStructuredJSON = "structured-json"
+	KindWebDoc         = "web-doc"
+	KindUpgradeGuide   = "upgrade-guide"
+	KindUpgradeNotes   = "upgrade-notes"
 )
+
+// ErrNotFound is wrapped by [Web] errors for pages that don't exist.
+var ErrNotFound = errors.New("page not found")
+
+// missing reports whether err means the file or page doesn't exist, which adapters skip.
+func missing(err error) bool {
+	return errors.Is(err, ErrNotFound) || errors.Is(err, github.ErrNotFound)
+}
 
 // Ref says where a piece of notes came from.
 type Ref struct {

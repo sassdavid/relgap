@@ -114,7 +114,7 @@
         }
       },
       {
-        "tool": "github-cli",
+        "tool": "gh",
         "raw_name": "ubi:cli/cli",
         "kind": "tool",
         "value": "v2.83.0",

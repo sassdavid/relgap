@@ -1,12 +1,14 @@
 # --fail-on and --max-behind on outdated and digest, and the exit codes: 3 for a match, 0
 # without one, 2 for values relgap can't check, and 1 when a tool fails, even if a gate matched.
+# gate-added.yaml and gate-error-added.yaml hold the requests the first recordings lack (OSV,
+# k9s's changelog files), so those recordings stay as they were.
 env TEST_NOW=2026-11-11T12:00:00Z
 env GH_TOKEN=$TEST_GH_TOKEN
 cd project
 
 # Usage errors exit 2 before any request.
-! exec relgap outdated --fail-on eol
-stderr 'fail-on eol isn''t supported yet: relgap checks outdated and breaking'
+! exec relgap outdated --fail-on vuln
+stderr 'fail-on vuln isn''t supported yet: relgap checks outdated, breaking and eol'
 ! exec relgap outdated --max-behind weeks:2
 stderr 'policy.max_behind'
 ! exec relgap outdated --format sarif
@@ -18,7 +20,7 @@ stderr 'takes at most 1 argument'
 exec expect-exit 2 relgap outdated --fail-on vuln
 exec expect-exit 2 relgap digest terraform
 
-env TEST_CASSETTE=$CASSETTES/outdated/gate.yaml
+env TEST_CASSETTE=$CASSETTES/outdated/gate.yaml,$CASSETTES/outdated/gate-added.yaml
 exec relgap outdated --format plain
 cmp stdout ../outdated.txt
 ! stderr .
@@ -52,7 +54,7 @@ stderr 'fail-on breaking matched k9s 0.50.16'
 
 # A tool that fails exits 1 after printing the rest, and wins over a matched gate.
 cd ../broken
-env TEST_CASSETTE=$CASSETTES/outdated/gate-error.yaml
+env TEST_CASSETTE=$CASSETTES/outdated/gate-error.yaml,$CASSETTES/outdated/gate-error-added.yaml
 exec expect-exit 1 relgap outdated --fail-on breaking --format json
 jsonschema outdated-v1.json stdout
 stdout '"target": "ghost@mise.toml:2"'
@@ -61,9 +63,9 @@ stderr '^relgap: 1 pin or file failed; the report is partial$'
 ! stderr 'fail-on'
 
 -- outdated.txt --
-TOOL        CURRENT  LATEST   BEHIND  BREAKING  DEPRECATION  PIN
-github-cli  2.103.3  2.103.3  0       0         0            mise.toml:2
-k9s         0.50.16  0.51.0   3       1         0            mise.toml:3
+TOOL  CURRENT  LATEST   BEHIND  BREAKING  DEPRECATION  EOL  VULNS  PIN
+gh    2.103.3  2.103.3  0       0         0            -    0      mise.toml:2
+k9s   0.50.16  0.51.0   3       1         0            -    -      mise.toml:3
 
 1 of 2 compared pins are behind latest.
 -- project/mise.toml --

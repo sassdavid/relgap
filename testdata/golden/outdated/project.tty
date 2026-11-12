@@ -1,13 +1,13 @@
-TOOL        CURRENT   LATEST   BEHIND  BREAKING  DEPRECATION  PIN
-github-cli  2.103.3   [32m2.103.3[0m  0       0         0            mise.toml:4
-go          ≈1.25.14  [33m1.27.4[0m   17      0         0            .github/workflows/ci.yml:9
-helm        3.21.0    [33m3.22.1[0m   6       0         0            mise.toml:3
-k9s         0.50.16   [33m0.51.0[0m   3       [1m[31m1[0m         0            Dockerfile:2
-node        ≈lts      -        -       -         -            mise.toml:7
-ruff        ≈0.17.4   [32m0.17.4[0m   0       0         0            mise.toml:6
-terraform   ≈1.15.8   [33m1.17.2[0m   12      [1m[31m1[0m         0            main.tf:2
-terraform   1.15.8    [33m1.17.2[0m   12      [1m[31m1[0m         0            mise.toml:2
-uv          ≈0.13.7   [32m0.13.7[0m   0       0         0            mise.toml:5
+TOOL       CURRENT   LATEST   BEHIND  BREAKING  DEPRECATION  EOL               VULNS          PIN
+gh         2.103.3   [32m2.103.3[0m  0       0         0            -                 0              mise.toml:4
+go         ≈1.25.14  [33m1.27.4[0m   17      0         0            [1m[31myes (2026-08-19)[0m  [31m15 (15 fixed)[0m  .github/workflows/ci.yml:9
+helm       3.21.0    [33m3.22.1[0m   6       0         0            -                 0              mise.toml:3
+k9s        0.50.16   [33m0.51.0[0m   3       [1m[31m1[0m         0            -                 -              Dockerfile:2
+node       ≈lts      -        -       -         -            -                 -              mise.toml:7
+ruff       ≈0.17.4   [32m0.17.4[0m   0       0         0            -                 -              mise.toml:6
+terraform  ≈1.15.8   [33m1.17.2[0m   12      [1m[31m1[0m         0            [1m[31myes (2026-10-21)[0m  0              main.tf:2
+terraform  1.15.8    [33m1.17.2[0m   12      [1m[31m1[0m         0            [1m[31myes (2026-10-21)[0m  0              mise.toml:2
+uv         ≈0.13.7   [32m0.13.7[0m   0       0         0            -                 0              mise.toml:5
 
 Notes:
   go 1.25 (.github/workflows/ci.yml:9): highest stable version with this prefix

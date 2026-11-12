@@ -65,7 +65,7 @@
 
 \* differs from the version most repos pin.
 
-- In agreement: github-cli 2.83.0 (60 repos), helm 3.19.0 (60 repos), image:node 24.11.0 (60 repos), jq 1.7.1 (1 repo), terragrunt ≈1.2.0 (60 repos)
+- In agreement: gh 2.83.0 (60 repos), helm 3.19.0 (60 repos), image:node 24.11.0 (60 repos), jq 1.7.1 (1 repo), terragrunt ≈1.2.0 (60 repos)
 - Not compared: go ≈1.27 (60 repos)
 
 5 of 11 tools drift across 60 repos.

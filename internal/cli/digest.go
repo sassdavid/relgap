@@ -3,6 +3,7 @@ package cli
 import (
 	"errors"
 	"fmt"
+	"net/http"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -15,6 +16,7 @@ import (
 	"github.com/sassdavid/relgap/internal/render"
 	"github.com/sassdavid/relgap/internal/report"
 	"github.com/sassdavid/relgap/internal/scan"
+	"github.com/sassdavid/relgap/internal/source"
 	"github.com/sassdavid/relgap/internal/version"
 )
 
@@ -130,11 +132,11 @@ func runDigest(cmd *cobra.Command, d *app.Deps, g *globals, f digestFlags, tool,
 	}
 	defer cache.Close()
 	defer cache.LogSummary(cmd.Context())
-	gh, err := newGitHubClient(cmd, d, cache)
+	gh, hc, err := newGitHubClient(cmd, d, cache)
 	if err != nil {
 		return err
 	}
-	digest, err := report.NewDigester(d.Logger, gh).Digest(cmd.Context(), report.DigestRequest{
+	digest, err := report.NewDigester(d.Logger, gh, source.NewWeb(hc)).Digest(cmd.Context(), report.DigestRequest{
 		Tool:               resolution.Tool,
 		From:               from,
 		To:                 to,
@@ -188,7 +190,7 @@ func runDigestProject(cmd *cobra.Command, d *app.Deps, g *globals, f digestFlags
 	if err != nil {
 		return err
 	}
-	run, err := g.compare(cmd, d, resolver, root, keep)
+	run, err := g.compare(cmd, d, resolver, root, keep, compareOptions{})
 	if err != nil {
 		return err
 	}
@@ -245,8 +247,9 @@ func parseRange(s string) (string, string, error) {
 }
 
 // newGitHubClient finds a token and builds the client. Without a token it warns once and
-// lowers the concurrency.
-func newGitHubClient(cmd *cobra.Command, d *app.Deps, cache *httpx.Cache) (*github.Client, error) {
+// lowers the concurrency. The plain HTTP client it returns has the same retries, limits and
+// cache, never sends the token, and serves web pages, endoflife.date and OSV.
+func newGitHubClient(cmd *cobra.Command, d *app.Deps, cache *httpx.Cache) (*github.Client, *http.Client, error) {
 	ctx := cmd.Context()
 	token, tokenSource := github.Token(ctx, github.TokenOptions{
 		Lookup:      d.Env.Lookup,
@@ -273,9 +276,9 @@ func newGitHubClient(cmd *cobra.Command, d *app.Deps, cache *httpx.Cache) (*gith
 	})
 	gh, err := github.New(hc, github.Options{Token: token, Logger: d.Logger, Concurrency: concurrency})
 	if err != nil {
-		return nil, fmt.Errorf("create github client: %w", err)
+		return nil, nil, fmt.Errorf("create github client: %w", err)
 	}
-	return gh, nil
+	return gh, hc, nil
 }
 
 func digestError(err error) error {

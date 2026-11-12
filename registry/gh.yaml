@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=../schemas/registry-v1.json
+# The release bodies are the changelog. The entry adds the /v2 Go module for OSV.
+name: gh
+aliases: [github-cli]
+repo: cli/cli
+version:
+  scheme: semver
+  tag_prefix: "v"
+  universe: releases
+sources:
+  - kind: gh-release
+osv:
+  - { ecosystem: Go, name: github.com/cli/cli/v2 }

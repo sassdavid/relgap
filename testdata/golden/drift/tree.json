@@ -68,7 +68,7 @@
     ],
     "tools": [
       {
-        "tool": "github-cli",
+        "tool": "gh",
         "drift": false,
         "reference": "2.83.0",
         "versions": [

@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../schemas/registry-v1.json
+# Release bodies are a commit list; CHANGELOG.md has the curated notes under ### v<version>.
+name: golangci-lint
+repo: golangci/golangci-lint
+version:
+  scheme: semver
+  tag_prefix: "v"
+  universe: releases
+sources:
+  - kind: changelog-file
+    path_template: CHANGELOG.md
+    heading: "^v{version}$"

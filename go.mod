@@ -3,6 +3,7 @@ module github.com/sassdavid/relgap
 go 1.27.0
 
 require (
+	github.com/JohannesKaufmann/html-to-markdown/v2 v2.5.2
 	github.com/Masterminds/semver/v3 v3.5.0
 	github.com/adrg/xdg v0.5.3
 	github.com/cli/go-gh/v2 v2.17.0
@@ -18,6 +19,7 @@ require (
 	github.com/knadh/koanf/v2 v2.4.1
 	github.com/lmittmann/tint v1.2.1
 	github.com/mattn/go-isatty v0.0.24
+	github.com/pandatix/go-cvss v0.6.4
 	github.com/pelletier/go-toml/v2 v2.4.3
 	github.com/rogpeppe/go-internal v1.16.0
 	github.com/santhosh-tekuri/jsonschema/v6 v6.0.3
@@ -28,6 +30,7 @@ require (
 	github.com/yuin/goldmark/v2 v2.1.16
 	github.com/zclconf/go-cty v1.20.0
 	go.yaml.in/yaml/v4 v4.0.0
+	golang.org/x/net v0.62.0
 	golang.org/x/sync v0.25.0
 	golang.org/x/sys v0.50.0
 	golang.org/x/time v0.16.0
@@ -35,6 +38,7 @@ require (
 )
 
 require (
+	github.com/JohannesKaufmann/dom v0.3.1 // indirect
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
 	github.com/apparentlymart/go-textseg/v17 v17.0.1 // indirect

@@ -1,0 +1,20 @@
+# yaml-language-server: $schema=../schemas/registry-v1.json
+# CHANGELOG.md on main covers the current major; older majors are on release/<major>.x, so the
+# release bodies fill in. Each major has an upgrade guide.
+name: terraform-provider-aws
+repo: hashicorp/terraform-provider-aws
+version:
+  scheme: semver
+  tag_prefix: "v"
+  universe: releases
+sources:
+  - kind: changelog-file
+    path_template: CHANGELOG.md
+    ref: main
+    heading: "^{version} \\("
+  - kind: gh-release
+  - kind: upgrade-guide
+    path_template: "website/docs/guides/version-{major}-upgrade.html.markdown"
+    ref: main
+osv:
+  - { ecosystem: Go, name: github.com/hashicorp/terraform-provider-aws }

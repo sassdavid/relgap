@@ -23,11 +23,23 @@ behind, and constraint and prefix pins, need a tool's full release list.
 Pins of tools without a GitHub repository, and tfprovider, chart and image pins, are
 skipped; --format json lists them with the reason.
 
+EOL shows whether CURRENT's release cycle has reached its end on endoflife.date (yes, no, or
+? when endoflife.date doesn't list the cycle), for tools whose registry entry names a
+product. --format json also has the state of LATEST's cycle. VULNS counts the OSV
+vulnerabilities of CURRENT, and how many of them upgrading to LATEST fixes. Both sources
+are cached for a day. When one is down, relgap warns and prints the rest.
+
+--binaries also reads the Go build info of each pinned tool's installed executables (on
+PATH and in mise's installs directory) and lists the OSV vulnerabilities of the Go version
+and main module they were built with. Like govulncheck's binary mode, minus the check that
+the binary calls the vulnerable code.
+
 --fail-on outdated exits 3 when a pin is further behind than --max-behind (major:N,
 minor:N, patch:N, releases:N or days:N; empty means any pin behind latest). --fail-on
-breaking exits 3 when a digest has a breaking entry. A tool that fails exits 1 instead,
-after printing the rest. The eol, vuln and deprecation values exit 2 until relgap can
-check them.
+breaking exits 3 when a digest has a breaking entry. --fail-on eol exits 3 when CURRENT's
+cycle has reached its end. A tool that fails exits 1 instead, after printing the rest, and
+so does an endoflife.date outage under --fail-on eol. The vuln and deprecation values exit 2
+until relgap can check them.
 
 ```
 relgap outdated [path] [flags]
@@ -39,15 +51,19 @@ relgap outdated [path] [flags]
   relgap outdated
   relgap outdated ~/src/infra --format md
   relgap outdated --fail-on outdated --max-behind minor:2
+  relgap outdated --fail-on eol
+  relgap outdated --binaries --format json | jq '.data.binaries[]'
+
   relgap outdated --format json | jq '.data.pins[] | select(.status == "outdated")'
 ```
 
 ### Options
 
 ```
-      --fail-on strings     exit 3 when this matches: outdated or breaking; repeatable (config policy.fail_on)
-  -h, --help[=true|false]   help for outdated
-      --max-behind string   how far behind --fail-on outdated allows, such as minor:2, releases:10 or days:90 (config policy.max_behind)
+      --binaries[=true|false]   also check the Go version and main module of the pinned tools' installed executables against OSV
+      --fail-on strings         exit 3 when this matches: outdated, breaking or eol; repeatable (config policy.fail_on)
+  -h, --help[=true|false]       help for outdated
+      --max-behind string       how far behind --fail-on outdated allows, such as minor:2, releases:10 or days:90 (config policy.max_behind)
 ```
 
 ### Options inherited from parent commands

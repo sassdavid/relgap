@@ -120,7 +120,7 @@ func runDrift(cmd *cobra.Command, d *app.Deps, g *globals, f driftFlags, args []
 		}
 		defer cache.Close()
 		defer cache.LogSummary(cmd.Context())
-		gh, ghErr := newGitHubClient(cmd, d, cache)
+		gh, _, ghErr := newGitHubClient(cmd, d, cache)
 		if ghErr != nil {
 			return ghErr
 		}

@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=../schemas/registry-v1.json
+# The release bodies are the changelog; the repo has no CHANGELOG file. The entry adds OSV.
+name: terragrunt
+aliases: [tg]
+repo: gruntwork-io/terragrunt
+version:
+  scheme: semver
+  tag_prefix: "v"
+  universe: releases
+sources:
+  - kind: gh-release
+osv:
+  - { ecosystem: Go, name: github.com/gruntwork-io/terragrunt }

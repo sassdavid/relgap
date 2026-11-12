@@ -99,7 +99,7 @@
         }
       },
       {
-        "tool": "",
+        "tool": "terragrunt",
         "raw_name": "TG_VERSION",
         "kind": "tool",
         "value": "1.2.1",

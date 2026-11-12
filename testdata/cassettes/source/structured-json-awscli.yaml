@@ -1,0 +1,278 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.github.com
+        form:
+            ref:
+                - v2
+        headers:
+            Accept:
+                - application/vnd.github.raw
+            User-Agent:
+                - go-github/v93.0.0
+            X-Github-Api-Version:
+                - "2022-11-28"
+        url: https://api.github.com/repos/aws/aws-cli/contents/.changes/2.31.1.json?ref=v2
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 681
+        body: |-
+            [
+              {
+                "category": "``appstream``",
+                "description": "G6f instance support for AppStream 2.0",
+                "type": "api-change"
+              },
+              {
+                "category": "``neptune``",
+                "description": "Doc-only update to address customer use.",
+                "type": "api-change"
+              },
+              {
+                "category": "``dax``",
+                "description": "This release adds support for IPv6-only, DUAL_STACK DAX instances",
+                "type": "api-change"
+              },
+              {
+                "category": "``cloudwatch``",
+                "description": "Fix default dualstack FIPS endpoints in AWS GovCloud(US) regions",
+                "type": "api-change"
+              },
+              {
+                "category": "``kms``",
+                "description": "Documentation only updates for KMS.",
+                "type": "api-change"
+              }
+            ]
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Cache-Control:
+                - private, max-age=60, s-maxage=60
+            Content-Length:
+                - "681"
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/vnd.github.raw; charset=utf-8
+            Date:
+                - Thu, 12 Nov 2026 09:27:05 GMT
+            Etag:
+                - '"fa375d2f4a977f23fd750b0c36816b4b282e0f58"'
+            Last-Modified:
+                - Wed, 11 Nov 2026 19:04:02 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept, Authorization, Cookie, X-GitHub-OTP, Accept-Encoding, Accept, X-Requested-With
+            X-Accepted-Github-Permissions:
+                - contents=read
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Api-Version-Selected:
+                - "2022-11-28"
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.v3; param=raw
+            X-Ratelimit-Limit:
+                - "5000"
+            X-Ratelimit-Remaining:
+                - "4670"
+            X-Ratelimit-Reset:
+                - "1794476183"
+            X-Ratelimit-Resource:
+                - core
+            X-Ratelimit-Used:
+                - "330"
+            X-Xss-Protection:
+                - "0"
+        status: 200 OK
+        code: 200
+        duration: 367.391458ms
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.github.com
+        form:
+            ref:
+                - v2
+        headers:
+            Accept:
+                - application/vnd.github.raw
+            User-Agent:
+                - go-github/v93.0.0
+            X-Github-Api-Version:
+                - "2022-11-28"
+        url: https://api.github.com/repos/aws/aws-cli/contents/.changes/2.31.2.json?ref=v2
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 586
+        body: |-
+            [
+              {
+                "category": "``lightsail``",
+                "description": "Attribute HTTP binding update for Get/Delete operations",
+                "type": "api-change"
+              },
+              {
+                "category": "``glue``",
+                "description": "Update GetConnection(s) API to return KmsKeyArn & Add 63 missing connection types",
+                "type": "api-change"
+              },
+              {
+                "category": "``network-firewall``",
+                "description": "Network Firewall now introduces Reject and Alert action support for stateful domain list rule groups, providing customers with more granular control over their network traffic.",
+                "type": "api-change"
+              }
+            ]
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Cache-Control:
+                - private, max-age=60, s-maxage=60
+            Content-Length:
+                - "586"
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/vnd.github.raw; charset=utf-8
+            Date:
+                - Thu, 12 Nov 2026 09:27:05 GMT
+            Etag:
+                - '"6726d7c3bbb3f4a3f6fb6e5a43f673440b08f1bb"'
+            Last-Modified:
+                - Wed, 11 Nov 2026 19:04:02 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept, Authorization, Cookie, X-GitHub-OTP, Accept-Encoding, Accept, X-Requested-With
+            X-Accepted-Github-Permissions:
+                - contents=read
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Api-Version-Selected:
+                - "2022-11-28"
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.v3; param=raw
+            X-Ratelimit-Limit:
+                - "5000"
+            X-Ratelimit-Remaining:
+                - "4669"
+            X-Ratelimit-Reset:
+                - "1794476183"
+            X-Ratelimit-Resource:
+                - core
+            X-Ratelimit-Used:
+                - "331"
+            X-Xss-Protection:
+                - "0"
+        status: 200 OK
+        code: 200
+        duration: 262.480375ms
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.github.com
+        form:
+            ref:
+                - v2
+        headers:
+            Accept:
+                - application/vnd.github.raw
+            User-Agent:
+                - go-github/v93.0.0
+            X-Github-Api-Version:
+                - "2022-11-28"
+        url: https://api.github.com/repos/aws/aws-cli/contents/.changes/2.31.99.json?ref=v2
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 127
+        body: '{"message":"Not Found","documentation_url":"https://docs.github.com/rest/repos/contents#get-repository-content","status":"404"}'
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Content-Length:
+                - "127"
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/json; charset=utf-8
+            Date:
+                - Thu, 12 Nov 2026 09:27:05 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept-Encoding, Accept, X-Requested-With
+            X-Accepted-Github-Permissions:
+                - contents=read
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Api-Version-Selected:
+                - "2022-11-28"
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.v3; param=raw
+            X-Ratelimit-Limit:
+                - "5000"
+            X-Ratelimit-Remaining:
+                - "4668"
+            X-Ratelimit-Reset:
+                - "1794476183"
+            X-Ratelimit-Resource:
+                - core
+            X-Ratelimit-Used:
+                - "332"
+            X-Xss-Protection:
+                - "0"
+        status: 404 Not Found
+        code: 404
+        duration: 341.592791ms

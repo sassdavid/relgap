@@ -1,0 +1,38 @@
+# The corpus subset: five digests whose data the nightly live corpus compares with these goldens.
+# terraform reads a changelog on release branches and release bodies, kubectl per-minor changelog
+# files with upgrade notes, awscli structured JSON on the v2 branch, argocd release bodies and the
+# 3.5-3.6 upgrade guide, claude-code a 1.2 MB changelog and release bodies that repeat it.
+# terraform and kubectl replay the cassettes their digest scripts record.
+env TEST_NOW=2026-11-12T12:00:00Z
+env GH_TOKEN=$TEST_GH_TOKEN
+
+[!recording] env TEST_CASSETTE=$CASSETTES/gh-release/terraform-1.15.8..1.17.1.yaml
+[!recording] exec relgap digest terraform 1.15.8..1.17.1 --format json
+[!recording] golden stdout corpus/terraform.json
+[!recording] jsonschema digest-v1.json stdout
+
+[!recording] env TEST_CASSETTE=$CASSETTES/digest/kubectl-1.36.0..1.37.2.yaml
+[!recording] exec relgap digest kubectl 1.36.0..1.37.2 --format json
+[!recording] golden stdout corpus/kubectl.json
+[!recording] stdout '"adapter": "upgrade-notes"'
+
+env TEST_CASSETTE=$CASSETTES/corpus/awscli-2.31.0..2.31.10.yaml
+exec relgap digest awscli 2.31.0..2.31.10 --format json
+golden stdout corpus/awscli.json
+jsonschema digest-v1.json stdout
+stdout '"adapter": "structured-json"'
+! stderr .
+
+env TEST_CASSETTE=$CASSETTES/corpus/argocd-3.5.0..3.6.1.yaml
+exec relgap digest argocd 3.5.0..3.6.1 --format json
+golden stdout corpus/argocd.json
+jsonschema digest-v1.json stdout
+stdout '"adapter": "upgrade-guide"'
+stdout 'docs/operator-manual/upgrading/3\.5-3\.6\.md'
+! stderr .
+
+env TEST_CASSETTE=$CASSETTES/corpus/claude-code-2.1.300..2.1.319.yaml
+exec relgap digest claude-code 2.1.300..2.1.319 --format json
+golden stdout corpus/claude-code.json
+jsonschema digest-v1.json stdout
+! stderr .

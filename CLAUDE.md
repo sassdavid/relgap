@@ -15,9 +15,9 @@ Go CLI: release-notes range digests, toolchain drift across repos, EOL/OSV enric
 
 ## Layout
 - `cmd/relgap/main.go` only calls `cli.Run`. Commands are in `internal/cli/` (constructor functions, no globals).
-- Domain packages: `scan`, `misex`, `registry`, `version`, `github`, `source`, `mdindex`, `classify`, `enrich`, `report`, `render`, `summarize`, `mcpserver`, `httpx`, `cache`, `config`.
+- Domain packages: `scan`, `misex`, `registry`, `version`, `github`, `source`, `mdindex`, `htmlmd`, `classify`, `enrich`, `report`, `render`, `summarize`, `mcpserver`, `httpx`, `cache`, `config`.
 - Curated tool entries: `registry/*.yaml` (schema `schemas/registry-v1.json`).
-- Fixtures: `testdata/cassettes`, `testdata/script/*.txtar`, `testdata/repos/`, `testdata/labels/`.
+- Fixtures: `testdata/cassettes`, `testdata/script/*.txtar`, `testdata/repos/`, `testdata/labels/`, `testdata/autodiscovery/`; the live corpus is `testdata/corpus.yaml`.
 
 ## Reference sources (read-only, for inspiration)
 - Local clones live in `~/src/github/_reference/<owner>/<repo>` (list and license notes: `docs/plan/reference-repos.md`). Read them to verify formats and behaviour. **Never copy code** from BSL (terraform), AGPL (renovate) or Prosperity (dependabot) repos.
