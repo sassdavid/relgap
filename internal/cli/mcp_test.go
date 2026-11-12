@@ -495,7 +495,9 @@ func (notFound) RoundTrip(req *http.Request) (*http.Response, error) {
 	}, nil
 }
 
-// tree lists every path under dirs with its size, mode and modification time.
+// tree lists every path under dirs, with the mode, size and modification time of files.
+// Directories have no times: Windows reports a stale one for a directory until something opens
+// it, and a new or removed file shows as a path anyway.
 func tree(t *testing.T, dirs ...string) map[string]string {
 	t.Helper()
 	out := map[string]string{}
@@ -504,7 +506,11 @@ func tree(t *testing.T, dirs ...string) map[string]string {
 			if err != nil {
 				return err
 			}
-			info, err := d.Info()
+			if d.IsDir() {
+				out[p] = "dir"
+				return nil
+			}
+			info, err := os.Lstat(p)
 			if err != nil {
 				return err
 			}
