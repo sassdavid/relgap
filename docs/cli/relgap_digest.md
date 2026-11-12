@@ -13,7 +13,8 @@ version on the release line (--line).
 Notes come from the tool's registry sources: GitHub release bodies and changelog files, each
 file fetched and parsed once. A bullet that two sources share is shown once. Each entry has a
 confidence between 0 and 1; entries below --min-confidence (default 0.5) are hidden and counted.
---format md writes PR-ready Markdown with one <details> block per version.
+--format md writes PR-ready Markdown with one <details> block per version. --only lists
+the entries of the named kinds; the counts still cover every kind.
 
 --from-mise digests every tool pinned in the project's mise config files that is behind
 its latest version, from the pinned version to the latest. --all does the same for every pin
@@ -40,6 +41,7 @@ relgap digest <tool> <from>..[<to>] | --from-mise [path] | --all [path] [flags]
   relgap digest helm 3.19.0.. --line major
   relgap digest kubectl 1.36.0..1.37.2 --format md > digest.md
   relgap digest terraform 1.15.8..1.17.1 --min-confidence 0
+  relgap digest argo-cd 3.2.0..3.4.1 --only breaking --only deprecation
   relgap digest --from-mise --fail-on breaking
   relgap digest --all ~/src/infra --format md > upgrade-notes.md
   relgap digest terraform 1.15.8..1.17.1 --format json | jq '.data.tools[].entries[] | select(.kind == "breaking")'
@@ -55,6 +57,7 @@ relgap digest <tool> <from>..[<to>] | --from-mise [path] | --all [path] [flags]
       --include-prereleases[=true|false]   include prereleases (on when <from> or <to> is a prerelease)
       --line string                        release line the range stays on: none, major or minor (default "none")
       --min-count int                      findings a --fail-on value needs before it exits 3 (default 1)
+      --only strings                       list only entries of this kind: breaking, deprecation, security, feature, fix or other; repeatable
 ```
 
 ### Options inherited from parent commands

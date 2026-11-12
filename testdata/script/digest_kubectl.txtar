@@ -15,3 +15,22 @@ jsonschema digest-v1.json stdout
 exec relgap digest kubectl 1.36.0..1.37.2 --format md
 golden stdout digest/kubectl.md
 ! stderr .
+
+# --only lists the breaking and deprecation entries (the MCP breaking_changes tool); counts
+# still cover every kind, and the text output has no other sections.
+exec relgap digest kubectl 1.36.0..1.37.2 --only breaking --only deprecation --format json
+golden stdout digest/kubectl-breaking.json
+jsonschema digest-v1.json stdout
+! stderr .
+! stdout '"kind": "(fix|feature|other|security)"'
+stdout '"fix": 193'
+
+exec relgap digest kubectl 1.36.0..1.37.2 --only breaking --format plain
+stdout 'Breaking changes'
+! stdout '^(Deprecations|Fixes|Features|Other)$'
+stdout 'breaking 4, deprecation 4'
+
+exec expect-exit 2 relgap digest kubectl 1.36.0..1.37.2 --only fixes
+stderr 'invalid kind "fixes": want one of breaking, deprecation, security, feature, fix, other'
+exec expect-exit 2 relgap digest --from-mise --only breaking
+stderr 'none of the others can be'

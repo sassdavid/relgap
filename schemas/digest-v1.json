@@ -67,7 +67,7 @@
           }
         },
         "counts": {
-          "description": "Number of entries shown, per kind.",
+          "description": "Number of entries at or above the minimum confidence, per kind, including kinds that --only leaves out of entries.",
           "type": "object",
           "additionalProperties": false,
           "required": ["breaking", "deprecation", "security", "feature", "fix", "other"],

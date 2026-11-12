@@ -28,7 +28,7 @@ func DigestMarkdown(w io.Writer, d *report.Digest) error {
 func markdownTool(mw *textWriter, t *report.ToolDigest) {
 	markdownSummary(mw, t)
 	for _, k := range []classify.Kind{classify.KindBreaking, classify.KindSecurity} {
-		if t.Counts[k] == 0 {
+		if !listed(t.Entries, k) {
 			continue
 		}
 		mw.line("")

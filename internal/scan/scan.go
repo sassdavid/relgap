@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"runtime"
 	"slices"
+	"strings"
 
 	"golang.org/x/sync/errgroup"
 
@@ -31,6 +32,7 @@ type Options struct {
 	Submodules  bool     // scan checked-out submodules as repositories
 	Concurrency int      // files read at once; 0 means 4 per CPU
 	Report      []Pin    // pins from a Renovate report, resolved and merged with the rest
+	Base        string   // when set, repositories are named relative to it, as if the scan ran there
 }
 
 // Runner starts git; [execx.Runner] implements it.
@@ -156,7 +158,7 @@ func (s *Scanner) plan(ctx context.Context, pending []string) ([]task, []string,
 		}
 		var next []string
 		for i, dir := range pending {
-			repo := filepath.ToSlash(filepath.Clean(dir))
+			repo := s.name(dir)
 			if seen[repo] {
 				continue
 			}
@@ -173,6 +175,18 @@ func (s *Scanner) plan(ctx context.Context, pending []string) ([]task, []string,
 	}
 	slices.Sort(repos)
 	return tasks, repos, nil
+}
+
+// name returns a repository's display name: its path relative to [Options.Base] when it is
+// inside, otherwise its path as given, with forward slashes on every OS.
+func (s *Scanner) name(dir string) string {
+	if s.opts.Base != "" {
+		rel, err := filepath.Rel(s.opts.Base, dir)
+		if err == nil && rel != ".." && !strings.HasPrefix(rel, ".."+string(filepath.Separator)) {
+			return filepath.ToSlash(rel)
+		}
+	}
+	return filepath.ToSlash(filepath.Clean(dir))
 }
 
 func (s *Scanner) taskFor(detectors []detector, repo, dir, rel string) (task, bool) {

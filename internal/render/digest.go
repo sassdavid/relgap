@@ -3,6 +3,7 @@ package render
 import (
 	"fmt"
 	"io"
+	"slices"
 	"strings"
 
 	"github.com/sassdavid/relgap/internal/classify"
@@ -93,7 +94,7 @@ func (tw *textWriter) tool(t *report.ToolDigest) {
 		urls[v.Version] = v.URL
 	}
 	for _, k := range classify.Kinds() {
-		if t.Counts[k] == 0 {
+		if !listed(t.Entries, k) {
 			continue
 		}
 		tw.line("")
@@ -104,6 +105,11 @@ func (tw *textWriter) tool(t *report.ToolDigest) {
 		tw.line(tw.style(kindTitle(k), codes...))
 		tw.entries(t.Entries, k, urls)
 	}
+}
+
+// listed reports whether entries has one of kind k; with --only a kind can have a count and none.
+func listed(entries []classify.Entry, k classify.Kind) bool {
+	return slices.ContainsFunc(entries, func(e classify.Entry) bool { return e.Kind == k })
 }
 
 func (tw *textWriter) entries(entries []classify.Entry, k classify.Kind, urls map[string]string) {

@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"path"
@@ -101,10 +102,11 @@ func runOutdated(cmd *cobra.Command, d *app.Deps, g *globals, root string) error
 	if err != nil {
 		return usageError(err)
 	}
-	resolver, err := g.loadProject(cmd, d)
+	s, err := g.newSession(cmd, d)
 	if err != nil {
 		return err
 	}
+	defer s.close(cmd.Context())
 	gate, err := newGate(cmd, d, outdatedValues())
 	if err != nil {
 		return err
@@ -113,7 +115,7 @@ func runOutdated(cmd *cobra.Command, d *app.Deps, g *globals, root string) error
 	if err != nil {
 		return fmt.Errorf("read --%s: %w", flagBinaries, err)
 	}
-	run, err := g.compare(cmd, d, resolver, root, nil, compareOptions{enrich: true, binaries: binaries})
+	run, err := s.compare(cmd.Context(), root, nil, compareOptions{enrich: true, binaries: binaries})
 	if err != nil {
 		return err
 	}
@@ -133,34 +135,23 @@ type comparison struct {
 
 // compareOptions says what a comparison adds to the pins.
 type compareOptions struct {
-	enrich   bool // EOL and OSV for each compared pin
-	binaries bool // the Go build info of installed executables
-}
-
-// loadProject loads the config and the tool resolver; d.Config is set afterwards.
-func (g *globals) loadProject(cmd *cobra.Command, d *app.Deps) (*registry.Resolver, error) {
-	resolver, _, err := g.loadResolver(cmd, d)
-	return resolver, err
+	enrich   bool   // EOL and OSV for each compared pin
+	binaries bool   // the Go build info of installed executables
+	base     string // name repositories relative to this directory
 }
 
 // compare scans root, keeps the resolved pins that keep accepts (all when nil) and compares
 // them with the latest versions.
-func (g *globals) compare(
-	cmd *cobra.Command,
-	d *app.Deps,
-	resolver *registry.Resolver,
+func (s *session) compare(
+	ctx context.Context,
 	root string,
 	keep func(scan.Pin) bool,
 	with compareOptions,
 ) (*comparison, error) {
-	cfg := d.Config
-	opts, err := pinsOptions(cfg.Config.Scan, pinsFlags{})
+	cfg, resolver := s.d.Config, s.resolver
+	res, err := s.scan(ctx, []string{root}, false, with.base)
 	if err != nil {
 		return nil, err
-	}
-	res, err := scan.New(d.Logger, newRunner(d), resolver, opts).Scan(cmd.Context(), []string{root})
-	if err != nil {
-		return nil, usageError(err)
 	}
 	ignore := ignoreRules(resolver, cfg.Config.Ignore)
 	var pins []scan.Pin
@@ -169,18 +160,12 @@ func (g *globals) compare(
 			pins = append(pins, p)
 		}
 	}
-	cache, err := g.newCache(d)
+	gh, hc, err := s.clients(ctx)
 	if err != nil {
 		return nil, err
 	}
-	defer cache.Close()
-	defer cache.LogSummary(cmd.Context())
-	gh, hc, err := newGitHubClient(cmd, d, cache)
-	if err != nil {
-		return nil, err
-	}
-	out, err := report.NewOutdater(report.NewDigester(d.Logger, gh, source.NewWeb(hc)), gh).
-		Outdated(cmd.Context(), report.OutdatedRequest{
+	out, err := report.NewOutdater(report.NewDigester(s.d.Logger, gh, source.NewWeb(hc)), gh).
+		Outdated(ctx, report.OutdatedRequest{
 			Repos:         res.Repos,
 			Pins:          pins,
 			Resolve:       resolveFunc(resolver),
@@ -192,7 +177,7 @@ func (g *globals) compare(
 	}
 	run := &comparison{scan: res, out: out}
 	if with.enrich {
-		if err = run.enrich(cmd, d, hc, resolver, pins, with.binaries); err != nil {
+		if err = s.enrich(ctx, run, hc, pins, with.binaries); err != nil {
 			return nil, err
 		}
 	}
@@ -201,15 +186,8 @@ func (g *globals) compare(
 
 // enrich adds EOL states and vulnerabilities to the compared pins and, with binaries, the
 // vulnerabilities of installed executables. Failed sources become problems, not errors.
-func (c *comparison) enrich(
-	cmd *cobra.Command,
-	d *app.Deps,
-	hc *http.Client,
-	resolver *registry.Resolver,
-	pins []scan.Pin,
-	binaries bool,
-) error {
-	ctx := cmd.Context()
+func (s *session) enrich(ctx context.Context, c *comparison, hc *http.Client, pins []scan.Pin, binaries bool) error {
+	d, resolver := s.d, s.resolver
 	en := enrich.NewEnricher(d.Logger, enrich.NewEOLClient(hc, ""), enrich.NewOSVClient(hc, ""),
 		d.Config.Config.GitHub.Concurrency)
 	results, problems, err := en.Enrich(ctx, c.out.EnrichRequests(resolveFunc(resolver)))
@@ -223,7 +201,7 @@ func (c *comparison) enrich(
 	}
 	finder := enrich.BinaryFinder{
 		Lookup: d.Env.Lookup,
-		Which:  misex.New(newRunner(d)).Which,
+		Which:  misex.New(s.runner).Which,
 	}
 	seen := map[string]bool{}
 	c.out.Binaries = []*enrich.Binary{}

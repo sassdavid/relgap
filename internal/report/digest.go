@@ -32,7 +32,7 @@ type ToolDigest struct {
 	To       string                `json:"to"`
 	Versions []Version             `json:"versions"` // oldest first
 	Entries  []classify.Entry      `json:"entries"`  // by version, then document order
-	Counts   map[classify.Kind]int `json:"counts"`   // entries shown, per kind
+	Counts   map[classify.Kind]int `json:"counts"`   // entries at or above the minimum confidence, per kind, listed or not
 	Hidden   int                   `json:"hidden"`   // entries below the minimum confidence
 	Warnings []string              `json:"warnings"`
 }
@@ -62,7 +62,8 @@ type DigestRequest struct {
 	Line               version.Level
 	IncludePrereleases bool
 	MinConfidence      float64
-	Only               *int // when set, only the source at this index of Tool.Sources runs
+	Kinds              []classify.Kind // when set, Entries lists only these kinds; Counts still counts every kind
+	Only               *int            // when set, only the source at this index of Tool.Sources runs
 }
 
 // Digester builds digests from GitHub.
@@ -200,8 +201,10 @@ func (d *Digester) Digest(ctx context.Context, req DigestRequest) (*ToolDigest, 
 			out.Hidden++
 			continue
 		}
-		out.Entries = append(out.Entries, e)
 		out.Counts[e.Kind]++
+		if len(req.Kinds) == 0 || slices.Contains(req.Kinds, e.Kind) {
+			out.Entries = append(out.Entries, e)
+		}
 	}
 	return out, nil
 }

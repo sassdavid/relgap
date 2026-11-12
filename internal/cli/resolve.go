@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"strconv"
@@ -61,6 +62,11 @@ func (g *globals) resolveTool(cmd *cobra.Command, d *app.Deps, name string) (*re
 	if err != nil {
 		return nil, err
 	}
+	return resolveName(r, name)
+}
+
+// resolveName resolves name with r. Unknown tools are usage errors.
+func resolveName(r *registry.Resolver, name string) (*registry.Resolution, error) {
 	resolution, err := r.Resolve(name)
 	if errors.Is(err, registry.ErrUnknownTool) || errors.Is(err, registry.ErrUnsupported) ||
 		errors.Is(err, registry.ErrNoRepo) {
@@ -78,15 +84,30 @@ func (g *globals) loadResolver(cmd *cobra.Command, d *app.Deps) (*registry.Resol
 	if err != nil {
 		return nil, nil, err
 	}
-	cfg := registry.ConfigLayer{Tools: map[string]string{}, Aliases: res.Config.Aliases}
-	for tool, t := range res.Config.Tools {
-		cfg.Tools[tool] = t.Repo
-	}
-	r, err := registry.Load(cmd.Context(), d.Logger, misex.New(newRunner(d)), cfg)
+	r, err := newResolver(cmd.Context(), d, res, newRunner(d))
 	if err != nil {
 		return nil, nil, err
 	}
 	return r, res, nil
+}
+
+// newResolver loads the registries with the config's tools and aliases. runner starts
+// `mise registry --json`; without mise the embedded snapshot is used.
+func newResolver(
+	ctx context.Context,
+	d *app.Deps,
+	res *config.Result,
+	runner misex.Runner,
+) (*registry.Resolver, error) {
+	cfg := registry.ConfigLayer{Tools: map[string]string{}, Aliases: res.Config.Aliases}
+	for tool, t := range res.Config.Tools {
+		cfg.Tools[tool] = t.Repo
+	}
+	r, err := registry.Load(ctx, d.Logger, misex.New(runner), cfg)
+	if err != nil {
+		return nil, err //nolint:wrapcheck // registry.Load names what failed
+	}
+	return r, nil
 }
 
 func newRunner(d *app.Deps) *execx.Runner {
