@@ -93,15 +93,17 @@ func cachedClient(t *testing.T, transport http.RoundTripper, dir string, mode ht
 		TTLOverride: override,
 	})
 	t.Cleanup(func() { _ = c.Close() })
-	return httpx.New(httpx.Options{
+	hc := httpx.New(httpx.Options{
 		Logger:    slog.New(slog.DiscardHandler),
 		Transport: transport,
 		Limits:    map[string]httpx.Limit{},
 		Default:   httpx.Limit{Concurrency: 4},
 		RetryMax:  1,
 		Clock:     clk.Now,
-		Cache:     c,
-	}), c
+		RetryPOST: true,
+		Wrap:      c.Wrap,
+	})
+	return hc, c
 }
 
 func body(t *testing.T, c *http.Client, url string, header ...string) string {
@@ -280,7 +282,8 @@ func TestCacheGraphQL(t *testing.T) {
 	c := httpx.New(httpx.Options{
 		Logger:    slog.New(slog.DiscardHandler),
 		Transport: srv.Client().Transport,
-		Cache:     cache,
+		RetryPOST: true,
+		Wrap:      cache.Wrap,
 	})
 	post := func(q string) string {
 		req, err := http.NewRequestWithContext(t.Context(), http.MethodPost, srv.URL+"/graphql", strings.NewReader(q))

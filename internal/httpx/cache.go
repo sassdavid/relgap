@@ -123,7 +123,11 @@ func (c *Cache) Close() error {
 	return nil
 }
 
-func (c *Cache) wrap(next http.RoundTripper) http.RoundTripper {
+// Wrap puts the cache in front of next, for [Options.Wrap]. A nil cache returns next.
+func (c *Cache) Wrap(next http.RoundTripper) http.RoundTripper {
+	if c == nil {
+		return next
+	}
 	return &cacheTransport{c: c, next: next}
 }
 

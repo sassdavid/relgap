@@ -2,12 +2,17 @@ package httpx_test
 
 import (
 	"context"
+	"encoding/pem"
 	"errors"
 	"io"
 	"log/slog"
+	"net"
 	"net/http"
 	"net/http/httptest"
+	"os"
+	"path/filepath"
 	"strconv"
+	"strings"
 	"sync"
 	"sync/atomic"
 	"testing"
@@ -16,12 +21,13 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/sassdavid/relgap/internal/app"
 	"github.com/sassdavid/relgap/internal/httpx"
 )
 
 func newClient(t *testing.T, srv *httptest.Server, lim httpx.Limit) *http.Client {
 	t.Helper()
-	return httpx.New(httpx.Options{
+	c := httpx.New(httpx.Options{
 		Logger:       slog.New(slog.DiscardHandler),
 		Transport:    srv.Client().Transport,
 		UserAgent:    "relgap/test",
@@ -31,6 +37,7 @@ func newClient(t *testing.T, srv *httptest.Server, lim httpx.Limit) *http.Client
 		RetryWaitMin: time.Millisecond,
 		RetryWaitMax: 2 * time.Millisecond,
 	})
+	return c
 }
 
 func get(ctx context.Context, c *http.Client, url string) (*http.Response, error) {
@@ -182,4 +189,142 @@ func TestCancelWhileWaiting(t *testing.T) {
 	for range 2 {
 		require.ErrorIs(t, <-errs, context.Canceled)
 	}
+}
+
+func post(ctx context.Context, c *http.Client, url string) (*http.Response, error) {
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, strings.NewReader("{}"))
+	if err != nil {
+		return nil, err
+	}
+	return c.Do(req)
+}
+
+func TestPostIsNotRetriedAfterServerError(t *testing.T) {
+	t.Parallel()
+	var calls atomic.Int32
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		calls.Add(1)
+		w.WriteHeader(http.StatusBadGateway)
+	}))
+	t.Cleanup(srv.Close)
+
+	resp, err := post(t.Context(), newClient(t, srv, httpx.Limit{Concurrency: 1}), srv.URL)
+	require.NoError(t, err)
+	defer resp.Body.Close()
+	assert.Equal(t, http.StatusBadGateway, resp.StatusCode)
+	assert.Equal(t, int32(1), calls.Load(), "the server may have created something")
+}
+
+func TestPostIsRetriedAfterTooManyRequests(t *testing.T) {
+	t.Parallel()
+	var calls atomic.Int32
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		if calls.Add(1) == 1 {
+			w.Header().Set("Retry-After", "0")
+			w.WriteHeader(http.StatusTooManyRequests)
+			return
+		}
+		w.WriteHeader(http.StatusCreated)
+	}))
+	t.Cleanup(srv.Close)
+
+	resp, err := post(t.Context(), newClient(t, srv, httpx.Limit{Concurrency: 1}), srv.URL)
+	require.NoError(t, err)
+	defer resp.Body.Close()
+	assert.Equal(t, http.StatusCreated, resp.StatusCode)
+	assert.Equal(t, int32(2), calls.Load())
+}
+
+func TestNearLimitSlowsDown(t *testing.T) {
+	t.Parallel()
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		w.Header().Set("X-Ratelimit-Limit", "1000")
+		w.Header().Set("X-Ratelimit-Nearlimit", "true")
+		_, _ = io.WriteString(w, "ok")
+	}))
+	t.Cleanup(srv.Close)
+	var logs strings.Builder
+	c := httpx.New(httpx.Options{
+		Logger:    slog.New(slog.NewTextHandler(&logs, nil)),
+		Transport: srv.Client().Transport,
+		Limits:    map[string]httpx.Limit{},
+		Default:   httpx.Limit{Concurrency: 1, Rate: 100},
+	})
+
+	for range 2 {
+		resp, getErr := get(t.Context(), c, srv.URL)
+		require.NoError(t, getErr)
+		_ = resp.Body.Close()
+	}
+	assert.Equal(t, 1, strings.Count(logs.String(), "rate limit almost used up"), "warns once per host")
+}
+
+func TestCAFile(t *testing.T) {
+	t.Parallel()
+	srv := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		_, _ = io.WriteString(w, "ok")
+	}))
+	t.Cleanup(srv.Close)
+	ca := filepath.Join(t.TempDir(), "ca.pem")
+	block := &pem.Block{Type: "CERTIFICATE", Bytes: srv.Certificate().Raw}
+	require.NoError(t, os.WriteFile(ca, pem.EncodeToMemory(block), 0o600))
+
+	rt, err := httpx.CATransport(ca)
+	require.NoError(t, err)
+	c := httpx.New(httpx.Options{Logger: slog.New(slog.DiscardHandler), Transport: rt})
+	resp, err := get(t.Context(), c, srv.URL)
+	require.NoError(t, err)
+	defer resp.Body.Close()
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+
+	_, err = httpx.CATransport(filepath.Join(t.TempDir(), "missing.pem"))
+	require.Error(t, err)
+}
+
+func TestRetryPOST(t *testing.T) {
+	t.Parallel()
+	var calls atomic.Int32
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		if calls.Add(1) == 1 {
+			w.WriteHeader(http.StatusBadGateway)
+			return
+		}
+		_, _ = io.WriteString(w, "ok")
+	}))
+	t.Cleanup(srv.Close)
+	c := httpx.New(httpx.Options{
+		Logger:       slog.New(slog.DiscardHandler),
+		Transport:    srv.Client().Transport,
+		RetryPOST:    true,
+		RetryWaitMin: time.Millisecond,
+		RetryWaitMax: 2 * time.Millisecond,
+	})
+
+	resp, err := post(t.Context(), c, srv.URL)
+	require.NoError(t, err)
+	defer resp.Body.Close()
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+	assert.Equal(t, int32(2), calls.Load(), "a POST that only reads is resent")
+}
+
+func TestSecretPathHostsAreRedacted(t *testing.T) {
+	t.Parallel()
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		_, _ = io.WriteString(w, "ok")
+	}))
+	t.Cleanup(srv.Close)
+	host, _, err := net.SplitHostPort(strings.TrimPrefix(srv.URL, "http://"))
+	require.NoError(t, err)
+	var logs strings.Builder
+	c := httpx.New(httpx.Options{
+		Logger:          slog.New(slog.NewTextHandler(&logs, &slog.HandlerOptions{Level: app.LevelTrace})),
+		Transport:       srv.Client().Transport,
+		SecretPathHosts: []string{host},
+	})
+
+	resp, err := post(t.Context(), c, srv.URL+"/services/T000/B000/secret")
+	require.NoError(t, err)
+	_ = resp.Body.Close()
+	assert.NotContains(t, logs.String(), "secret")
+	assert.Contains(t, logs.String(), "[redacted]")
 }

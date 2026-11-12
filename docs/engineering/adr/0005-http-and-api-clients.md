@@ -10,6 +10,7 @@
 - An ETag/Last-Modified cache on disk (`$XDG_CACHE_HOME/relgap/http/`). Revalidation sends `If-None-Match`. An **authenticated** GitHub 304 does not count against the rate limit.
 - TTLs depend on the age of what's cached, following Renovate: releases under 7 days old → 1 h, under 6 months → 1 day, older → 10 days. `--offline` serves from the cache only. `--refresh` forces revalidation.
 - Proxies via `http.ProxyFromEnvironment`. `--ca-bundle` / `SSL_CERT_FILE` (also on macOS and Windows) adds corporate CAs.
+- The core (`internal/httpx/httpx.go` and its test) is shared with tfcensus and identical after the tool name swap (`mise run sibling:diff`). The cache is relgap's own and plugs in through `Options.Wrap`. The core resends a POST only after a 429 or a `Retry-After`, unless `Options.RetryPOST` is set, which relgap sets for its GraphQL queries. It also slows down on Bitbucket's `X-RateLimit-NearLimit`, redacts the URL paths of `Options.SecretPathHosts` in logs, and offers `CATransport` for a CA bundle, which relgap doesn't use yet.
 - User-Agent: `relgap/<version> (+https://github.com/sassdavid/relgap)`. Never personal data.
 
 **GitHub.**
