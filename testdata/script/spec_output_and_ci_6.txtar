@@ -28,9 +28,13 @@ stdout '^5 of 11 tools drift across 60 repos\.$'
 exec relgap drift tree --format md
 golden stdout drift/tree.md
 
-# --fail-on drift names every drifting tool and its versions.
+exec relgap drift tree --format sarif
+sarifschema stdout
+golden stdout drift/tree.sarif
+
+# --fail-on drift counts the drifted pins and names every drifting tool and its versions.
 exec expect-exit 3 relgap drift tree --fail-on drift --format plain
-stderr '^relgap: --fail-on drift matched image:golang \(1\.26\.1, 1\.27\.3\), kubectl \(1\.33\.5, 1\.34\.2\), node \(24\.10\.0, 24\.11\.0\), terraform \(1\.14\.2, 1\.15\.0, 1\.15\.8\), tfprovider:hashicorp/aws \(6\.10\.0, 6\.12\.0\)$'
+stderr '^relgap: --fail-on drift matched \d+ drifted pins: image:golang \(1\.26\.1, 1\.27\.3\), kubectl \(1\.33\.5, 1\.34\.2\), node \(24\.10\.0, 24\.11\.0\), terraform \(1\.14\.2, 1\.15\.0, 1\.15\.8\), tfprovider:hashicorp/aws \(6\.10\.0, 6\.12\.0\)$'
 
 # policy.fail_on from the config works like the flag; values for outdated are left to it.
 env RELGAP_POLICY_FAIL_ON=drift,outdated,eol
@@ -55,7 +59,7 @@ stdout '^0 of 1 tool drifts across 60 repos\.$'
 # Usage errors exit 2.
 exec expect-exit 2 relgap drift tree --fail-on outdated
 stderr 'fail-on outdated isn''t checked by drift'
-exec expect-exit 2 relgap drift tree --format sarif
-stderr 'format "sarif" is not supported by this command'
+exec expect-exit 2 relgap drift tree --fail-on drift --min-count 0
+stderr 'min-count must be at least 1, got 0'
 
 requests 0

@@ -1,11 +1,9 @@
 package cli
 
 import (
-	"errors"
 	"fmt"
 	"path"
 	"slices"
-	"strings"
 
 	"github.com/spf13/cobra"
 
@@ -15,6 +13,7 @@ import (
 	"github.com/sassdavid/relgap/internal/registry"
 	"github.com/sassdavid/relgap/internal/render"
 	"github.com/sassdavid/relgap/internal/report"
+	"github.com/sassdavid/relgap/internal/sarif"
 	"github.com/sassdavid/relgap/internal/scan"
 )
 
@@ -48,14 +47,21 @@ doesn't drift. Ignore rules in the config drop matching pins.
 --latest adds a latest row with the newest stable version of each tool, from one GraphQL
 query per 25 tools.
 
---fail-on drift exits 3 when a tool drifts. A file that doesn't parse, or a tool whose latest
-version can't be listed, exits 1 instead, after printing the rest.
+--format sarif writes a SARIF 2.1.0 log for GitHub code scanning with a result per drifted
+pin (a compared pin whose version differs from the version most repositories pin, the cells
+marked *), at the pin's file and line, and a failed result per file that doesn't parse or
+tool whose latest version can't be listed.
+
+--fail-on drift counts the drifted pins and exits 3 once the count reaches --min-count
+(default 1). Otherwise a file that doesn't parse, or a tool whose latest version can't be
+listed, exits 1 after printing the rest.
 
 Roots default to scan.roots, then the current directory.`,
 		Example: `  relgap drift ~/src/infra
   relgap drift ~/src/infra --tool terraform --tool terragrunt
   relgap drift ~/src/infra ~/src/apps --latest --format md
-  relgap drift --fail-on drift --drift-ignore-constraints`,
+  relgap drift --fail-on drift --drift-ignore-constraints
+  relgap drift ~/src/infra --fail-on drift --min-count 3 --format sarif > drift.sarif`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return runDrift(cmd, d, g, f, args)
 		},
@@ -71,13 +77,13 @@ Roots default to scan.roots, then the current directory.`,
 	fl.BoolVar(&f.ignoreConstraints, "drift-ignore-constraints", false,
 		"compare exact pins only; constraint pins are shown but don't count")
 	fl.BoolVar(&f.submodules, "submodules", false, "scan checked-out git submodules as repositories")
-	fl.StringSlice(flagFailOn, config.Default().Policy.FailOn,
-		"exit 3 when this matches: drift; repeatable (config policy.fail_on)")
+	addGateFlags(cmd, driftValues())
 	return cmd
 }
 
 func runDrift(cmd *cobra.Command, d *app.Deps, g *globals, f driftFlags, args []string) error {
-	err := g.outFormat.Check(render.FormatTTY, render.FormatPlain, render.FormatMD, render.FormatJSON)
+	err := g.outFormat.Check(render.FormatTTY, render.FormatPlain, render.FormatMD, render.FormatJSON,
+		render.FormatSARIF)
 	if err != nil {
 		return usageError(err)
 	}
@@ -85,7 +91,7 @@ func runDrift(cmd *cobra.Command, d *app.Deps, g *globals, f driftFlags, args []
 	if err != nil {
 		return err
 	}
-	gate, err := newDriftGate(cmd, d)
+	gate, err := newGate(cmd, d, driftValues())
 	if err != nil {
 		return err
 	}
@@ -140,7 +146,7 @@ func runDrift(cmd *cobra.Command, d *app.Deps, g *globals, f driftFlags, args []
 		return err
 	}
 	warnDrift(cmd, d, res, out, tools)
-	return driftExit(res, out, gate)
+	return gateExit(cmd, d, gate.Matches(gate.CheckDrift(out)), driftPartial(res, out))
 }
 
 // toolNames names each --tool value the way pins do, so --tool tf selects terraform pins.
@@ -155,27 +161,6 @@ func toolNames(resolver *registry.Resolver, in []string) []string {
 	return out
 }
 
-// newDriftGate builds the --fail-on checks of drift. Config values that belong to outdated or
-// digest are left to them; the same values given as a flag are a usage error.
-func newDriftGate(cmd *cobra.Command, d *app.Deps) (report.Gate, error) {
-	gate := report.Gate{Now: d.Clock()}
-	explicit := cmd.Flags().Changed(flagFailOn)
-	for _, v := range d.Config.Config.Policy.FailOn {
-		switch v {
-		case report.FailOnDrift:
-			gate.Drift = true
-		case report.FailOnBreaking, report.FailOnDeprecation, report.FailOnEOL, report.FailOnVuln,
-			report.FailOnOutdated:
-			if explicit {
-				return gate, usageError(fmt.Errorf("--fail-on %s isn't checked by drift: relgap drift checks drift", v))
-			}
-		default:
-			return gate, usageError(fmt.Errorf("invalid --fail-on value %q", v))
-		}
-	}
-	return gate, nil
-}
-
 func writeDrift(d *app.Deps, g *globals, res *scan.Result, out *report.Drift, all bool) error {
 	if g.outFormat == render.FormatJSON {
 		env := render.NewEnvelope(buildinfo.Get().Version, d.Clock(), out)
@@ -184,6 +169,9 @@ func writeDrift(d *app.Deps, g *globals, res *scan.Result, out *report.Drift, al
 	}
 	if g.outFormat == render.FormatMD {
 		return render.DriftMarkdown(d.Stdout, out, render.DriftOptions{All: all})
+	}
+	if g.outFormat == render.FormatSARIF {
+		return sarif.Write(d.Stdout, render.DriftSARIF(out, res.Problems, buildinfo.Get().Version))
 	}
 	color := g.outFormat == render.FormatTTY &&
 		render.UseColor(render.ColorMode(g.color), d.Env.Lookup, app.IsTerminal(d.Stdout))
@@ -220,27 +208,11 @@ func warnDrift(cmd *cobra.Command, d *app.Deps, res *scan.Result, out *report.Dr
 	}
 }
 
-// driftExit turns errors and gate findings into the exit code. A failed file or lookup wins over
-// a --fail-on match, so a gate never passes or fails on partial data.
-func driftExit(res *scan.Result, out *report.Drift, gate report.Gate) error {
+// driftPartial returns the error for a report that misses a file or a latest version.
+func driftPartial(res *scan.Result, out *report.Drift) error {
 	if errs := driftErrors(res, out); len(errs) > 0 {
 		return fmt.Errorf("%d %s failed; the report is partial",
 			len(errs), plural(len(errs), "file or tool", "files or tools"))
 	}
-	drifting := gate.CheckDrift(out)
-	if len(drifting) == 0 {
-		return nil
-	}
-	parts := make([]string, len(drifting))
-	for i, t := range drifting {
-		vs := make([]string, len(t.Versions))
-		for j, v := range t.Versions {
-			vs[j] = v.Version
-		}
-		parts[i] = fmt.Sprintf("%s (%s)", t.Tool, strings.Join(vs, ", "))
-	}
-	return &exitError{
-		code: ExitFindings,
-		err:  errors.New("--fail-on drift matched " + strings.Join(parts, ", ")),
-	}
+	return nil
 }

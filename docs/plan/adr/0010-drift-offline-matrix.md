@@ -33,7 +33,9 @@ columns, which neither a terminal nor a GitHub comment shows well.
 - Config ignore rules drop pins in `drift`, `outdated` and `digest --from-mise|--all`. `pins`
   keeps listing every pin.
 - Exit codes follow ADR-0009: a file that doesn't parse, or a tool whose latest version can't be
-  listed, exits 1, which wins over a `--fail-on drift` match (exit 3).
+  listed, exits 1, which wins over a `--fail-on drift` match (exit 3). Superseded by
+  [ADR-0012](0012-fail-on-gate-and-sarif.md): a match exits 3, and exit 1 needs a partial report
+  without one.
 - Q6: drift reads local clones only. Remote repositories through the GitHub or Bitbucket API
   are out of scope for v0.x.
 

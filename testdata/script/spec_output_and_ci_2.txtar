@@ -1,0 +1,77 @@
+# SARIF from outdated and drift validates against the SARIF 2.1.0 schema GitHub's upload-sarif
+# action uses, points each result at a pin's file and line, and doesn't depend on --fail-on.
+# TestSpec_output_and_ci_2 also checks every SARIF golden file; the sarif job in ci.yml feeds
+# them to upload-sarif.
+env TEST_NOW=2026-11-12T12:00:00Z
+env GH_TOKEN=$TEST_GH_TOKEN
+env TEST_CASSETTE=$CASSETTES/digest/kubectl-1.36.0..1.37.2.yaml,$CASSETTES/enrich/outdated-eol.yaml
+
+# kubectl 1.34.13: outdated, on an EOL cycle, with breaking changes, deprecations and two
+# advisories, each its own rule tagged security.
+cd eol
+exec relgap outdated --format sarif
+sarifschema stdout
+golden stdout outdated/eol.sarif
+cp stdout $WORK/eol.sarif
+exec expect-exit 3 relgap outdated --format sarif --fail-on eol --fail-on vuln
+cmp stdout $WORK/eol.sarif
+stdout '"id": "GO-2025-3521"'
+stdout '"tags": \[\s+"security",'
+stdout '"uri": "mise.toml"\s+},\s+"region": \{\s+"startLine": 2'
+
+# A pin whose tool fails (ghost's repository doesn't exist) is a failed result; k9s keeps its
+# results.
+env TEST_NOW=2026-11-11T12:00:00Z
+env TEST_CASSETTE=$CASSETTES/outdated/gate-error.yaml,$CASSETTES/outdated/gate-error-added.yaml
+cd ../broken
+exec expect-exit 1 relgap outdated --format sarif
+sarifschema stdout
+golden stdout outdated/failed.sarif
+stdout '"ruleId": "failed"'
+
+# drift: a result per drifted pin, and a failed result without a line for a file that doesn't
+# parse.
+cd ..
+exec expect-exit 1 relgap drift repos --format sarif
+sarifschema stdout
+golden stdout drift/failed.sarif
+stdout '"text": "terraform 1.14.2 differs from 1.15.8, which 2 of 4 repositories pin"'
+stdout '"uri": "repos/broken/mise.toml"\s+}\s+}'
+
+# An absolute root gives file URIs with forward slashes; on Windows $WORK is C:\..., and the
+# URI is file:///C:/.../repos/a/mise.toml.
+exec expect-exit 1 relgap drift $WORK/repos --format sarif
+sarifschema stdout
+stdout '"uri": "file:///[^"\\]+/repos/a/mise\.toml"'
+! stdout '"uri": "[A-Za-z]:'
+
+-- eol/mise.toml --
+[tools]
+kubectl = "1.34.13"
+-- broken/mise.toml --
+[tools]
+ghost = "1.0.0"
+k9s = "0.50.16"
+-- broken/.relgap.yaml --
+schema_version: 1
+tools:
+  ghost: {repo: no-such-owner-relgap/no-such-repo}
+-- repos/a/.git/HEAD --
+ref: refs/heads/main
+-- repos/a/mise.toml --
+[tools]
+terraform = "1.14.2"
+-- repos/b/.git/HEAD --
+ref: refs/heads/main
+-- repos/b/mise.toml --
+[tools]
+terraform = "1.15.8"
+-- repos/c/.git/HEAD --
+ref: refs/heads/main
+-- repos/c/.terraform-version --
+1.15.8
+-- repos/broken/.git/HEAD --
+ref: refs/heads/main
+-- repos/broken/mise.toml --
+[tools
+terraform = "1.15.8"

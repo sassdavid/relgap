@@ -33,6 +33,7 @@ policy:                         # defaults for --fail-on in CI
   fail_on: [eol, vuln]
   max_behind: "minor:2"
   min_confidence: 0.5
+  vuln_severity: high          # empty counts every advisory
 llm:
   provider: ""                 # off
   model: ""

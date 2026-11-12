@@ -57,7 +57,11 @@ its latest version, from the pinned version to the latest. --all does the same f
 'relgap outdated' compares. Both use the ranges and digests 'relgap outdated' shows, and
 take the project path as their only argument (default: the current directory).
 
---fail-on breaking exits 3 when a digest has a breaking entry at or above --min-confidence.
+--fail-on breaking exits 3 when a digest has a breaking entry at or above --min-confidence,
+and --fail-on deprecation when it has a deprecation. A single digest counts once; --from-mise
+and --all count each pin, as 'relgap outdated' does, and a value exits 3 once its count
+reaches --min-count. With --from-mise or --all, a pin that fails exits 1 when no value
+matched. The other --fail-on values belong to 'relgap outdated' and 'relgap drift'.
 
 GitHub token: GH_TOKEN, GITHUB_TOKEN, gh's config file, then 'gh auth token'. Without one,
 relgap uses the REST API (60 requests per hour) with 2 concurrent requests.`,
@@ -93,8 +97,7 @@ relgap uses the REST API (60 requests per hour) with 2 concurrent requests.`,
 	fl.BoolVar(&f.fromMise, flagFromMise, false,
 		"digest every outdated tool pinned in the project's mise config, pin to latest")
 	fl.BoolVar(&f.all, flagAll, false, "digest every outdated pin in the project, as 'relgap outdated' lists them")
-	fl.StringSlice(flagFailOn, config.Default().Policy.FailOn,
-		"exit 3 when this matches: breaking; repeatable (config policy.fail_on)")
+	addGateFlags(cmd, digestValues())
 	cmd.MarkFlagsMutuallyExclusive(flagFromMise, flagAll)
 	cmd.MarkFlagsMutuallyExclusive(flagFromMise, flagLine)
 	cmd.MarkFlagsMutuallyExclusive(flagAll, flagLine)
@@ -119,7 +122,7 @@ func runDigest(cmd *cobra.Command, d *app.Deps, g *globals, f digestFlags, tool,
 	if err != nil {
 		return err
 	}
-	gate, err := newGate(d, false)
+	gate, err := newGate(cmd, d, digestValues())
 	if err != nil {
 		return err
 	}
@@ -151,11 +154,7 @@ func runDigest(cmd *cobra.Command, d *app.Deps, g *globals, f digestFlags, tool,
 	if err = writeDigest(d, g, data, []render.Error{}); err != nil {
 		return err
 	}
-	if broken := report.BreakingIn(data.Tools); gate.Breaking && len(broken) > 0 {
-		return &exitError{code: ExitFindings, err: fmt.Errorf("--fail-on breaking matched %s %s..%s",
-			digest.Tool, digest.From, digest.To)}
-	}
-	return nil
+	return gateExit(cmd, d, gate.Matches(gate.CheckDigests(data.Tools)), nil)
 }
 
 func writeDigest(d *app.Deps, g *globals, data *report.Digest, errs []render.Error) error {
@@ -186,7 +185,7 @@ func runDigestProject(cmd *cobra.Command, d *app.Deps, g *globals, f digestFlags
 	if err != nil {
 		return err
 	}
-	gate, err := newGate(d, false)
+	gate, err := newGate(cmd, d, digestValues())
 	if err != nil {
 		return err
 	}

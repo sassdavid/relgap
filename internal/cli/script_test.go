@@ -16,6 +16,7 @@ import (
 	"os"
 	"os/signal"
 	"path/filepath"
+	"regexp"
 	"strconv"
 	"strings"
 	"syscall"
@@ -29,10 +30,13 @@ import (
 
 	"github.com/sassdavid/relgap/internal/app"
 	"github.com/sassdavid/relgap/internal/cli"
+	"github.com/sassdavid/relgap/internal/report"
+	"github.com/sassdavid/relgap/internal/sarif"
 	"github.com/sassdavid/relgap/internal/scan"
 	"github.com/sassdavid/relgap/internal/testutil"
 	"github.com/sassdavid/relgap/internal/testutil/fakebin"
 	"github.com/sassdavid/relgap/internal/testutil/ghtest"
+	"github.com/sassdavid/relgap/internal/testutil/sarifcheck"
 	"github.com/sassdavid/relgap/internal/testutil/vcr"
 	"github.com/sassdavid/relgap/schemas"
 )
@@ -289,6 +293,7 @@ func scriptParams(t *testing.T, files ...string) testscript.Params {
 		Cmds: map[string]func(ts *testscript.TestScript, neg bool, args []string){
 			"golden":      cmdGolden,
 			"jsonschema":  cmdJSONSchema,
+			"sarifschema": cmdSARIFSchema,
 			"slowgithub":  cmdSlowGitHub,
 			"countsmatch": cmdCountsMatch,
 			"gentree":     cmdGenTree,
@@ -357,6 +362,23 @@ func cmdJSONSchema(ts *testscript.TestScript, neg bool, args []string) {
 		ts.Fatalf("%s unexpectedly valid against %s", args[1], args[0])
 	case !neg && err != nil:
 		ts.Fatalf("%s invalid against %s: %v", args[1], args[0], err)
+	}
+}
+
+// cmdSARIFSchema validates stdout, stderr or a file against the SARIF 2.1.0 schema that GitHub's
+// upload-sarif action uses:
+//
+//	sarifschema stdout
+func cmdSARIFSchema(ts *testscript.TestScript, neg bool, args []string) {
+	if len(args) != 1 {
+		ts.Fatalf("usage: sarifschema <stdout|stderr|file>")
+	}
+	err := sarifcheck.Validate([]byte(ts.ReadFile(args[0])))
+	switch {
+	case neg && err == nil:
+		ts.Fatalf("%s unexpectedly valid SARIF", args[0])
+	case !neg && err != nil:
+		ts.Fatalf("%s isn't valid SARIF 2.1.0: %v", args[0], err)
 	}
 }
 
@@ -595,6 +617,121 @@ func TestSpec_pindiscovery_3(t *testing.T) {
 func TestSpec_pindiscovery_4(t *testing.T) {
 	t.Parallel()
 	testscript.Run(t, scriptParams(t, filepath.Join(scriptDir, "spec_pindiscovery_4.txtar")))
+}
+
+// TestSpec_output_and_ci_1: every format × command cell of the output-and-ci.md table has a golden
+// file that a script compares; spec_output_and_ci_1.txtar writes the cells no other script has.
+func TestSpec_output_and_ci_1(t *testing.T) {
+	t.Parallel()
+	cells := map[string][]string{
+		"digest":   {"digest/kubectl.tty", "digest/kubectl.txt", "digest/kubectl.md", "digest/kubectl.json"},
+		"outdated": outdatedCells("outdated/project"),
+		"drift":    outdatedCells("drift/tree"),
+		"pins":     {"pins/matrix.tty", "pins/matrix.txt", "pins/matrix.md", "pins/matrix.json"},
+	}
+	scripts, err := filepath.Glob(filepath.Join(scriptDir, "*.txtar"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	var all strings.Builder
+	for _, s := range scripts {
+		b, readErr := os.ReadFile(s)
+		if readErr != nil {
+			t.Fatal(readErr)
+		}
+		all.Write(b)
+	}
+	for cmd, goldens := range cells {
+		for _, g := range goldens {
+			if _, statErr := os.Stat(filepath.Join(goldenDir, filepath.FromSlash(g))); statErr != nil &&
+				!testutil.Updating() {
+				t.Errorf("%s: %v", cmd, statErr)
+			}
+			if !strings.Contains(all.String(), "golden stdout "+g+"\n") {
+				t.Errorf("%s: no script compares %s", cmd, g)
+			}
+		}
+	}
+	testscript.Run(t, scriptParams(t, filepath.Join(scriptDir, "spec_output_and_ci_1.txtar")))
+}
+
+// outdatedCells lists the golden files of a command that has every format, sarif included.
+func outdatedCells(base string) []string {
+	return []string{base + ".tty", base + ".txt", base + ".md", base + ".json", base + ".sarif"}
+}
+
+// TestSpec_output_and_ci_2: SARIF from outdated and drift validates against the SARIF 2.1.0 schema
+// that upload-sarif uses. Every SARIF golden file also validates, and each result names a rule at
+// its ruleIndex, has a partial fingerprint and a relative or file URI.
+func TestSpec_output_and_ci_2(t *testing.T) {
+	t.Parallel()
+	testscript.Run(t, scriptParams(t, filepath.Join(scriptDir, "spec_output_and_ci_2.txtar")))
+	if testutil.Updating() {
+		return
+	}
+	files, err := filepath.Glob(filepath.Join(goldenDir, "*", "*.sarif"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(files) < 5 {
+		t.Fatalf("found %d SARIF golden files, want the outdated and drift ones", len(files))
+	}
+	for _, f := range files {
+		t.Run(filepath.Base(f), func(t *testing.T) {
+			t.Parallel()
+			data, readErr := os.ReadFile(f)
+			if readErr != nil {
+				t.Fatal(readErr)
+			}
+			if validErr := sarifcheck.Validate(data); validErr != nil {
+				t.Fatalf("invalid SARIF: %v", validErr)
+			}
+			checkSARIFResults(t, data)
+		})
+	}
+}
+
+// checkSARIFResults checks what the schema can't: rule indexes, fingerprints and URIs.
+func checkSARIFResults(t *testing.T, data []byte) {
+	t.Helper()
+	var l sarif.Log
+	if err := json.Unmarshal(data, &l); err != nil {
+		t.Fatal(err)
+	}
+	rules := l.Runs[0].Tool.Driver.Rules
+	for i, r := range l.Runs[0].Results {
+		if r.RuleIndex >= len(rules) || rules[r.RuleIndex].ID != r.RuleID {
+			t.Errorf("result %d: ruleIndex %d doesn't name rule %s", i, r.RuleIndex, r.RuleID)
+		}
+		if r.PartialFingerprints["relgapFinding/v1"] == "" {
+			t.Errorf("result %d: no relgapFinding/v1 fingerprint", i)
+		}
+		for _, loc := range r.Locations {
+			uri := loc.PhysicalLocation.ArtifactLocation.URI
+			if strings.Contains(uri, `\`) || (strings.Contains(uri, ":") && !strings.HasPrefix(uri, "file://")) {
+				t.Errorf("result %d: URI %q is neither relative nor a file URI", i, uri)
+			}
+		}
+	}
+}
+
+// TestSpec_output_and_ci_3: every --fail-on value has a testscript that exits 3 and one that exits 0.
+func TestSpec_output_and_ci_3(t *testing.T) {
+	t.Parallel()
+	file := filepath.Join(scriptDir, "spec_output_and_ci_3.txtar")
+	data, err := os.ReadFile(file)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, v := range report.Values() {
+		for _, code := range []string{"3", "0"} {
+			re := regexp.MustCompile(`(?m)^exec expect-exit ` + code + ` relgap .*--fail-on ` + v + `( |$)`)
+			if !re.Match(data) {
+				t.Errorf("--fail-on %s has no line asserting exit %s", v, code)
+			}
+		}
+	}
+	testscript.Run(t, scriptParams(t, file))
 }
 
 // TestSpec_output_and_ci_5: outdated over a 10-pin project matches the goldens in tty, plain, md

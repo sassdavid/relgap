@@ -53,7 +53,7 @@ Scope: `structured-json`, `web-doc`, `upgrade-guide` adapters, EOL + OSV, all 20
 - [ ] First tagged release v0.1.0: Homebrew cask installs, `mise use github:sassdavid/relgap` works, `cosign verify-blob` passes. Open until the release-please PR after the merge.
 
 ### M9: SARIF + `--fail-on` matrix → [output-and-ci](specs/output-and-ci.md)
-- [ ] output-and-ci.md criteria 1–3.
+- [x] output-and-ci.md criteria 1-3. (`TestSpec_output_and_ci_1`, `_2`, `_3`; decisions in the spec and [ADR-0012](adr/0012-fail-on-gate-and-sarif.md). The upload-sarif dry run is the `sarif` job in `ci.yml`.)
 
 ### M10: MCP server → [mcp-and-llm](specs/mcp-and-llm.md)
 - [ ] MCP criteria 1–2. Registered in the author's Claude Code config and used for a real upgrade (terraform or argocd), notes recorded in `docs/dogfood.md`.

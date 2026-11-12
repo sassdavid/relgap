@@ -22,8 +22,14 @@ doesn't drift. Ignore rules in the config drop matching pins.
 --latest adds a latest row with the newest stable version of each tool, from one GraphQL
 query per 25 tools.
 
---fail-on drift exits 3 when a tool drifts. A file that doesn't parse, or a tool whose latest
-version can't be listed, exits 1 instead, after printing the rest.
+--format sarif writes a SARIF 2.1.0 log for GitHub code scanning with a result per drifted
+pin (a compared pin whose version differs from the version most repositories pin, the cells
+marked *), at the pin's file and line, and a failed result per file that doesn't parse or
+tool whose latest version can't be listed.
+
+--fail-on drift counts the drifted pins and exits 3 once the count reaches --min-count
+(default 1). Otherwise a file that doesn't parse, or a tool whose latest version can't be
+listed, exits 1 after printing the rest.
 
 Roots default to scan.roots, then the current directory.
 
@@ -38,6 +44,7 @@ relgap drift [roots...] [flags]
   relgap drift ~/src/infra --tool terraform --tool terragrunt
   relgap drift ~/src/infra ~/src/apps --latest --format md
   relgap drift --fail-on drift --drift-ignore-constraints
+  relgap drift ~/src/infra --fail-on drift --min-count 3 --format sarif > drift.sarif
 ```
 
 ### Options
@@ -47,6 +54,7 @@ relgap drift [roots...] [flags]
       --fail-on strings                         exit 3 when this matches: drift; repeatable (config policy.fail_on)
   -h, --help[=true|false]                       help for drift
       --latest[=true|false]                     add the newest stable version of each tool (needs the network or the cache)
+      --min-count int                           findings a --fail-on value needs before it exits 3 (default 1)
       --submodules[=true|false]                 scan checked-out git submodules as repositories
       --tool strings                            report only this tool, with a column even when it agrees; repeatable
 ```

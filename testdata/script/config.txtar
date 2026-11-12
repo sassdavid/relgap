@@ -86,6 +86,7 @@ policy:
   fail_on: []
   max_behind: ""
   min_confidence: 0.5
+  vuln_severity: ""
 scan:
   detectors:
     ci_actions: false

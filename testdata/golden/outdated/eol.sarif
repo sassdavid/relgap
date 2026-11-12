@@ -1,0 +1,274 @@
+{
+  "$schema": "https://docs.oasis-open.org/sarif/sarif/v2.1.0/errata01/os/schemas/sarif-schema-2.1.0.json",
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "relgap",
+          "version": "dev",
+          "informationUri": "https://github.com/sassdavid/relgap",
+          "rules": [
+            {
+              "id": "breaking",
+              "shortDescription": {
+                "text": "The upgrade to the latest version has breaking changes"
+              },
+              "fullDescription": {
+                "text": "The release notes from the pinned version to the latest version have entries classified as breaking at or above --min-confidence."
+              },
+              "help": {
+                "text": "Read the digest the message names before you upgrade the pin."
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              }
+            },
+            {
+              "id": "deprecation",
+              "shortDescription": {
+                "text": "The upgrade to the latest version has deprecations"
+              },
+              "fullDescription": {
+                "text": "The release notes from the pinned version to the latest version have entries classified as deprecations at or above --min-confidence."
+              },
+              "help": {
+                "text": "Read the digest the message names and move off the deprecated features before they go away."
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              }
+            },
+            {
+              "id": "eol",
+              "shortDescription": {
+                "text": "The pinned release cycle has reached its end of life"
+              },
+              "fullDescription": {
+                "text": "endoflife.date lists the release cycle of the pinned version as end of life, so it gets no more fixes."
+              },
+              "help": {
+                "text": "Upgrade the pin to a supported release cycle."
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              }
+            },
+            {
+              "id": "outdated",
+              "shortDescription": {
+                "text": "The pin is behind the latest version"
+              },
+              "fullDescription": {
+                "text": "A newer stable version is out on the pin's release line."
+              },
+              "help": {
+                "text": "Upgrade the pin; relgap digest lists what changed in between."
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              }
+            },
+            {
+              "id": "failed",
+              "shortDescription": {
+                "text": "relgap couldn't check this pin or file"
+              },
+              "fullDescription": {
+                "text": "A file didn't parse, or looking up the tool's versions failed."
+              },
+              "help": {
+                "text": "Fix the file, or run relgap again with -v to see the failing request."
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              }
+            },
+            {
+              "id": "GO-2025-3521",
+              "shortDescription": {
+                "text": "Kubernetes GitRepo Volume Inadvertent Local Repository Access in k8s.io/kubernetes"
+              },
+              "fullDescription": {
+                "text": "Kubernetes GitRepo Volume Inadvertent Local Repository Access in k8s.io/kubernetes (CVE-2025-1767, GHSA-3wgm-2gw2-vh5m)"
+              },
+              "help": {
+                "text": "Upgrade past the affected versions. Details: https://osv.dev/vulnerability/GO-2025-3521"
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "vulnerability"
+                ]
+              }
+            },
+            {
+              "id": "GO-2025-3547",
+              "shortDescription": {
+                "text": "Kubernetes kube-apiserver Vulnerable to Race Condition in k8s.io/kubernetes"
+              },
+              "fullDescription": {
+                "text": "Kubernetes kube-apiserver Vulnerable to Race Condition in k8s.io/kubernetes (CVE-2024-7598, GHSA-r56h-j38w-hrqq)"
+              },
+              "help": {
+                "text": "Upgrade past the affected versions. Details: https://osv.dev/vulnerability/GO-2025-3547"
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "vulnerability"
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "results": [
+        {
+          "ruleId": "breaking",
+          "ruleIndex": 0,
+          "level": "note",
+          "message": {
+            "text": "kubectl 1.34.13..1.37.2 has 15 breaking changes; see relgap digest kubectl 1.34.13..1.37.2"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "mise.toml"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "breaking|kubectl|mise.toml|1.34.13..1.37.2"
+          }
+        },
+        {
+          "ruleId": "deprecation",
+          "ruleIndex": 1,
+          "level": "note",
+          "message": {
+            "text": "kubectl 1.34.13..1.37.2 has 9 deprecations; see relgap digest kubectl 1.34.13..1.37.2"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "mise.toml"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "deprecation|kubectl|mise.toml|1.34.13..1.37.2"
+          }
+        },
+        {
+          "ruleId": "eol",
+          "ruleIndex": 2,
+          "level": "error",
+          "message": {
+            "text": "kubectl 1.34.13 is on release cycle 1.34, which reached its end of life on 2026-10-27; kubectl 1.37.2 is on cycle 1.37"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "mise.toml"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "eol|kubectl|mise.toml|1.34"
+          }
+        },
+        {
+          "ruleId": "GO-2025-3521",
+          "ruleIndex": 5,
+          "level": "note",
+          "message": {
+            "text": "kubectl 1.34.13 is affected by GO-2025-3521 (CVE-2025-1767, GHSA-3wgm-2gw2-vh5m): Kubernetes GitRepo Volume Inadvertent Local Repository Access in k8s.io/kubernetes"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "mise.toml"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GO-2025-3521|kubectl|mise.toml|GO-2025-3521"
+          }
+        },
+        {
+          "ruleId": "GO-2025-3547",
+          "ruleIndex": 6,
+          "level": "note",
+          "message": {
+            "text": "kubectl 1.34.13 is affected by GO-2025-3547 (CVE-2024-7598, GHSA-r56h-j38w-hrqq): Kubernetes kube-apiserver Vulnerable to Race Condition in k8s.io/kubernetes"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "mise.toml"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GO-2025-3547|kubectl|mise.toml|GO-2025-3547"
+          }
+        },
+        {
+          "ruleId": "outdated",
+          "ruleIndex": 3,
+          "level": "warning",
+          "message": {
+            "text": "kubectl 1.34.13 is behind 1.37.2 by 21 releases (0 major, 3 minor, 0 patch)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "mise.toml"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "outdated|kubectl|mise.toml|1.34.13"
+          }
+        }
+      ]
+    }
+  ]
+}

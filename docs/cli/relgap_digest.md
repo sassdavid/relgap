@@ -20,7 +20,11 @@ its latest version, from the pinned version to the latest. --all does the same f
 'relgap outdated' compares. Both use the ranges and digests 'relgap outdated' shows, and
 take the project path as their only argument (default: the current directory).
 
---fail-on breaking exits 3 when a digest has a breaking entry at or above --min-confidence.
+--fail-on breaking exits 3 when a digest has a breaking entry at or above --min-confidence,
+and --fail-on deprecation when it has a deprecation. A single digest counts once; --from-mise
+and --all count each pin, as 'relgap outdated' does, and a value exits 3 once its count
+reaches --min-count. With --from-mise or --all, a pin that fails exits 1 when no value
+matched. The other --fail-on values belong to 'relgap outdated' and 'relgap drift'.
 
 GitHub token: GH_TOKEN, GITHUB_TOKEN, gh's config file, then 'gh auth token'. Without one,
 relgap uses the REST API (60 requests per hour) with 2 concurrent requests.
@@ -45,11 +49,12 @@ relgap digest <tool> <from>..[<to>] | --from-mise [path] | --all [path] [flags]
 
 ```
       --all[=true|false]                   digest every outdated pin in the project, as 'relgap outdated' lists them
-      --fail-on strings                    exit 3 when this matches: breaking; repeatable (config policy.fail_on)
+      --fail-on strings                    exit 3 when this matches: breaking or deprecation; repeatable (config policy.fail_on)
       --from-mise[=true|false]             digest every outdated tool pinned in the project's mise config, pin to latest
   -h, --help[=true|false]                  help for digest
       --include-prereleases[=true|false]   include prereleases (on when <from> or <to> is a prerelease)
       --line string                        release line the range stays on: none, major or minor (default "none")
+      --min-count int                      findings a --fail-on value needs before it exits 3 (default 1)
 ```
 
 ### Options inherited from parent commands

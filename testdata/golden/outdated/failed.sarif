@@ -1,0 +1,163 @@
+{
+  "$schema": "https://docs.oasis-open.org/sarif/sarif/v2.1.0/errata01/os/schemas/sarif-schema-2.1.0.json",
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "relgap",
+          "version": "dev",
+          "informationUri": "https://github.com/sassdavid/relgap",
+          "rules": [
+            {
+              "id": "breaking",
+              "shortDescription": {
+                "text": "The upgrade to the latest version has breaking changes"
+              },
+              "fullDescription": {
+                "text": "The release notes from the pinned version to the latest version have entries classified as breaking at or above --min-confidence."
+              },
+              "help": {
+                "text": "Read the digest the message names before you upgrade the pin."
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              }
+            },
+            {
+              "id": "deprecation",
+              "shortDescription": {
+                "text": "The upgrade to the latest version has deprecations"
+              },
+              "fullDescription": {
+                "text": "The release notes from the pinned version to the latest version have entries classified as deprecations at or above --min-confidence."
+              },
+              "help": {
+                "text": "Read the digest the message names and move off the deprecated features before they go away."
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              }
+            },
+            {
+              "id": "eol",
+              "shortDescription": {
+                "text": "The pinned release cycle has reached its end of life"
+              },
+              "fullDescription": {
+                "text": "endoflife.date lists the release cycle of the pinned version as end of life, so it gets no more fixes."
+              },
+              "help": {
+                "text": "Upgrade the pin to a supported release cycle."
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              }
+            },
+            {
+              "id": "outdated",
+              "shortDescription": {
+                "text": "The pin is behind the latest version"
+              },
+              "fullDescription": {
+                "text": "A newer stable version is out on the pin's release line."
+              },
+              "help": {
+                "text": "Upgrade the pin; relgap digest lists what changed in between."
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              }
+            },
+            {
+              "id": "failed",
+              "shortDescription": {
+                "text": "relgap couldn't check this pin or file"
+              },
+              "fullDescription": {
+                "text": "A file didn't parse, or looking up the tool's versions failed."
+              },
+              "help": {
+                "text": "Fix the file, or run relgap again with -v to see the failing request."
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              }
+            }
+          ]
+        }
+      },
+      "results": [
+        {
+          "ruleId": "failed",
+          "ruleIndex": 4,
+          "level": "error",
+          "message": {
+            "text": "ghost 1.0.0: list recent releases of no-such-owner-relgap/no-such-repo: not found on github"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "mise.toml"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "failed|ghost|mise.toml|"
+          }
+        },
+        {
+          "ruleId": "breaking",
+          "ruleIndex": 0,
+          "level": "note",
+          "message": {
+            "text": "k9s 0.50.16..0.51.0 has 1 breaking change; see relgap digest k9s 0.50.16..0.51.0"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "mise.toml"
+                },
+                "region": {
+                  "startLine": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "breaking|k9s|mise.toml|0.50.16..0.51.0"
+          }
+        },
+        {
+          "ruleId": "outdated",
+          "ruleIndex": 3,
+          "level": "warning",
+          "message": {
+            "text": "k9s 0.50.16 is behind 0.51.0 by 3 releases (0 major, 1 minor, 2 patch)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "mise.toml"
+                },
+                "region": {
+                  "startLine": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "outdated|k9s|mise.toml|0.50.16"
+          }
+        }
+      ]
+    }
+  ]
+}

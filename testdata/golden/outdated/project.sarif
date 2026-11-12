@@ -1,0 +1,1007 @@
+{
+  "$schema": "https://docs.oasis-open.org/sarif/sarif/v2.1.0/errata01/os/schemas/sarif-schema-2.1.0.json",
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "relgap",
+          "version": "dev",
+          "informationUri": "https://github.com/sassdavid/relgap",
+          "rules": [
+            {
+              "id": "breaking",
+              "shortDescription": {
+                "text": "The upgrade to the latest version has breaking changes"
+              },
+              "fullDescription": {
+                "text": "The release notes from the pinned version to the latest version have entries classified as breaking at or above --min-confidence."
+              },
+              "help": {
+                "text": "Read the digest the message names before you upgrade the pin."
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              }
+            },
+            {
+              "id": "deprecation",
+              "shortDescription": {
+                "text": "The upgrade to the latest version has deprecations"
+              },
+              "fullDescription": {
+                "text": "The release notes from the pinned version to the latest version have entries classified as deprecations at or above --min-confidence."
+              },
+              "help": {
+                "text": "Read the digest the message names and move off the deprecated features before they go away."
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              }
+            },
+            {
+              "id": "eol",
+              "shortDescription": {
+                "text": "The pinned release cycle has reached its end of life"
+              },
+              "fullDescription": {
+                "text": "endoflife.date lists the release cycle of the pinned version as end of life, so it gets no more fixes."
+              },
+              "help": {
+                "text": "Upgrade the pin to a supported release cycle."
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              }
+            },
+            {
+              "id": "outdated",
+              "shortDescription": {
+                "text": "The pin is behind the latest version"
+              },
+              "fullDescription": {
+                "text": "A newer stable version is out on the pin's release line."
+              },
+              "help": {
+                "text": "Upgrade the pin; relgap digest lists what changed in between."
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              }
+            },
+            {
+              "id": "failed",
+              "shortDescription": {
+                "text": "relgap couldn't check this pin or file"
+              },
+              "fullDescription": {
+                "text": "A file didn't parse, or looking up the tool's versions failed."
+              },
+              "help": {
+                "text": "Fix the file, or run relgap again with -v to see the failing request."
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              }
+            },
+            {
+              "id": "GO-2026-6599",
+              "shortDescription": {
+                "text": "Reset context tracking on consecutive template expressions in html/template"
+              },
+              "fullDescription": {
+                "text": "Reset context tracking on consecutive template expressions in html/template (BIT-golang-2026-94448, CVE-2026-94448)"
+              },
+              "help": {
+                "text": "Upgrade past the affected versions. Details: https://osv.dev/vulnerability/GO-2026-6599"
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "vulnerability"
+                ]
+              }
+            },
+            {
+              "id": "GO-2026-6600",
+              "shortDescription": {
+                "text": "Recognize yield as regexp preceder keyword in html/template"
+              },
+              "fullDescription": {
+                "text": "Recognize yield as regexp preceder keyword in html/template (BIT-golang-2026-97030, CVE-2026-97030)"
+              },
+              "help": {
+                "text": "Upgrade past the affected versions. Details: https://osv.dev/vulnerability/GO-2026-6600"
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "vulnerability"
+                ]
+              }
+            },
+            {
+              "id": "GO-2026-6603",
+              "shortDescription": {
+                "text": "HTTP/2 server memory exhaustion due to Trailer headers in net/http"
+              },
+              "fullDescription": {
+                "text": "HTTP/2 server memory exhaustion due to Trailer headers in net/http (BIT-golang-2026-78659, CVE-2026-78659)"
+              },
+              "help": {
+                "text": "Upgrade past the affected versions. Details: https://osv.dev/vulnerability/GO-2026-6603"
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "vulnerability"
+                ]
+              }
+            },
+            {
+              "id": "GO-2026-6604",
+              "shortDescription": {
+                "text": "Root.Mkdir(All) can follow junctions out of the root on Windows in os"
+              },
+              "fullDescription": {
+                "text": "Root.Mkdir(All) can follow junctions out of the root on Windows in os (BIT-golang-2026-56857, CVE-2026-56857)"
+              },
+              "help": {
+                "text": "Upgrade past the affected versions. Details: https://osv.dev/vulnerability/GO-2026-6604"
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "vulnerability"
+                ]
+              }
+            },
+            {
+              "id": "GO-2026-6605",
+              "shortDescription": {
+                "text": "HTTP/1 client connection desynchronization after CONNECT rejection in net/http"
+              },
+              "fullDescription": {
+                "text": "HTTP/1 client connection desynchronization after CONNECT rejection in net/http (BIT-golang-2026-56866, CVE-2026-56866)"
+              },
+              "help": {
+                "text": "Upgrade past the affected versions. Details: https://osv.dev/vulnerability/GO-2026-6605"
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "vulnerability"
+                ]
+              }
+            },
+            {
+              "id": "GO-2026-6607",
+              "shortDescription": {
+                "text": "Reject malformed ECH outer extension references in crypto/tls"
+              },
+              "fullDescription": {
+                "text": "Reject malformed ECH outer extension references in crypto/tls (BIT-golang-2026-97031, CVE-2026-97031)"
+              },
+              "help": {
+                "text": "Upgrade past the affected versions. Details: https://osv.dev/vulnerability/GO-2026-6607"
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "vulnerability"
+                ]
+              }
+            },
+            {
+              "id": "GO-2026-6608",
+              "shortDescription": {
+                "text": "Memory limit bypass when parsing MIME headers in net/textproto, mime/multipart"
+              },
+              "fullDescription": {
+                "text": "Memory limit bypass when parsing MIME headers in net/textproto, mime/multipart (BIT-golang-2026-94440, CVE-2026-94440)"
+              },
+              "help": {
+                "text": "Upgrade past the affected versions. Details: https://osv.dev/vulnerability/GO-2026-6608"
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "vulnerability"
+                ]
+              }
+            },
+            {
+              "id": "GO-2026-6609",
+              "shortDescription": {
+                "text": "Lack of limit on size of parsed Range headers in net/http"
+              },
+              "fullDescription": {
+                "text": "Lack of limit on size of parsed Range headers in net/http (BIT-golang-2026-78667, CVE-2026-78667)"
+              },
+              "help": {
+                "text": "Upgrade past the affected versions. Details: https://osv.dev/vulnerability/GO-2026-6609"
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "vulnerability"
+                ]
+              }
+            },
+            {
+              "id": "GO-2026-6610",
+              "shortDescription": {
+                "text": "HTTP/2 transport accepts malformed framing-related headers in net/http"
+              },
+              "fullDescription": {
+                "text": "HTTP/2 transport accepts malformed framing-related headers in net/http (BIT-golang-2026-78660, CVE-2026-78660)"
+              },
+              "help": {
+                "text": "Upgrade past the affected versions. Details: https://osv.dev/vulnerability/GO-2026-6610"
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "vulnerability"
+                ]
+              }
+            },
+            {
+              "id": "GO-2026-6611",
+              "shortDescription": {
+                "text": "Excessive CPU consumption from repeated initial window changes in net/http"
+              },
+              "fullDescription": {
+                "text": "Excessive CPU consumption from repeated initial window changes in net/http (BIT-golang-2026-78669, CVE-2026-78669)"
+              },
+              "help": {
+                "text": "Upgrade past the affected versions. Details: https://osv.dev/vulnerability/GO-2026-6611"
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "vulnerability"
+                ]
+              }
+            },
+            {
+              "id": "GO-2026-6612",
+              "shortDescription": {
+                "text": "Double flow control refund on HTTP/2 server streams in net/http"
+              },
+              "fullDescription": {
+                "text": "Double flow control refund on HTTP/2 server streams in net/http (BIT-golang-2026-78663, CVE-2026-78663)"
+              },
+              "help": {
+                "text": "Upgrade past the affected versions. Details: https://osv.dev/vulnerability/GO-2026-6612"
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "vulnerability"
+                ]
+              }
+            },
+            {
+              "id": "GO-2026-6613",
+              "shortDescription": {
+                "text": "HTTP/1 server connection desynchronization after 2xx CONNECT response in net/http"
+              },
+              "fullDescription": {
+                "text": "HTTP/1 server connection desynchronization after 2xx CONNECT response in net/http (BIT-golang-2026-94439, CVE-2026-94439)"
+              },
+              "help": {
+                "text": "Upgrade past the affected versions. Details: https://osv.dev/vulnerability/GO-2026-6613"
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "vulnerability"
+                ]
+              }
+            },
+            {
+              "id": "GO-2026-6617",
+              "shortDescription": {
+                "text": "HTTP/2 server crash due to HPACK encoder race in net/http"
+              },
+              "fullDescription": {
+                "text": "HTTP/2 server crash due to HPACK encoder race in net/http (BIT-golang-2026-97032, CVE-2026-97032)"
+              },
+              "help": {
+                "text": "Upgrade past the affected versions. Details: https://osv.dev/vulnerability/GO-2026-6617"
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "vulnerability"
+                ]
+              }
+            },
+            {
+              "id": "GO-2026-6809",
+              "shortDescription": {
+                "text": "Distrust compromised intermediate certificates in crypto/x509"
+              },
+              "fullDescription": {
+                "text": "Distrust compromised intermediate certificates in crypto/x509 (BIT-golang-2026-111943, CVE-2026-111943, RUSTSEC-2026-0381, RUSTSEC-2026-0382, RUSTSEC-2026-0383)"
+              },
+              "help": {
+                "text": "Upgrade past the affected versions. Details: https://osv.dev/vulnerability/GO-2026-6809"
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "vulnerability"
+                ]
+              }
+            },
+            {
+              "id": "GO-2026-6859",
+              "shortDescription": {
+                "text": "HTTP/1 server crash due to MaxBytesReader header race in net/http"
+              },
+              "fullDescription": {
+                "text": "HTTP/1 server crash due to MaxBytesReader header race in net/http (CVE-2026-97054)"
+              },
+              "help": {
+                "text": "Upgrade past the affected versions. Details: https://osv.dev/vulnerability/GO-2026-6859"
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "vulnerability"
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "results": [
+        {
+          "ruleId": "eol",
+          "ruleIndex": 2,
+          "level": "error",
+          "message": {
+            "text": "go 1.25.14 is on release cycle 1.25, which reached its end of life on 2026-08-19; go 1.27.4 is on cycle 1.27"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/ci.yml"
+                },
+                "region": {
+                  "startLine": 9
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "eol|go|.github/workflows/ci.yml|1.25"
+          }
+        },
+        {
+          "ruleId": "GO-2026-6599",
+          "ruleIndex": 5,
+          "level": "note",
+          "message": {
+            "text": "go 1.25.14 is affected by GO-2026-6599 (BIT-golang-2026-94448, CVE-2026-94448): Reset context tracking on consecutive template expressions in html/template; fixed in 1.26.9"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/ci.yml"
+                },
+                "region": {
+                  "startLine": 9
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GO-2026-6599|go|.github/workflows/ci.yml|GO-2026-6599"
+          }
+        },
+        {
+          "ruleId": "GO-2026-6600",
+          "ruleIndex": 6,
+          "level": "note",
+          "message": {
+            "text": "go 1.25.14 is affected by GO-2026-6600 (BIT-golang-2026-97030, CVE-2026-97030): Recognize yield as regexp preceder keyword in html/template; fixed in 1.26.9"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/ci.yml"
+                },
+                "region": {
+                  "startLine": 9
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GO-2026-6600|go|.github/workflows/ci.yml|GO-2026-6600"
+          }
+        },
+        {
+          "ruleId": "GO-2026-6603",
+          "ruleIndex": 7,
+          "level": "note",
+          "message": {
+            "text": "go 1.25.14 is affected by GO-2026-6603 (BIT-golang-2026-78659, CVE-2026-78659): HTTP/2 server memory exhaustion due to Trailer headers in net/http; fixed in 1.26.9"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/ci.yml"
+                },
+                "region": {
+                  "startLine": 9
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GO-2026-6603|go|.github/workflows/ci.yml|GO-2026-6603"
+          }
+        },
+        {
+          "ruleId": "GO-2026-6604",
+          "ruleIndex": 8,
+          "level": "note",
+          "message": {
+            "text": "go 1.25.14 is affected by GO-2026-6604 (BIT-golang-2026-56857, CVE-2026-56857): Root.Mkdir(All) can follow junctions out of the root on Windows in os; fixed in 1.26.9"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/ci.yml"
+                },
+                "region": {
+                  "startLine": 9
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GO-2026-6604|go|.github/workflows/ci.yml|GO-2026-6604"
+          }
+        },
+        {
+          "ruleId": "GO-2026-6605",
+          "ruleIndex": 9,
+          "level": "note",
+          "message": {
+            "text": "go 1.25.14 is affected by GO-2026-6605 (BIT-golang-2026-56866, CVE-2026-56866): HTTP/1 client connection desynchronization after CONNECT rejection in net/http; fixed in 1.26.9"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/ci.yml"
+                },
+                "region": {
+                  "startLine": 9
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GO-2026-6605|go|.github/workflows/ci.yml|GO-2026-6605"
+          }
+        },
+        {
+          "ruleId": "GO-2026-6607",
+          "ruleIndex": 10,
+          "level": "note",
+          "message": {
+            "text": "go 1.25.14 is affected by GO-2026-6607 (BIT-golang-2026-97031, CVE-2026-97031): Reject malformed ECH outer extension references in crypto/tls; fixed in 1.26.9"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/ci.yml"
+                },
+                "region": {
+                  "startLine": 9
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GO-2026-6607|go|.github/workflows/ci.yml|GO-2026-6607"
+          }
+        },
+        {
+          "ruleId": "GO-2026-6608",
+          "ruleIndex": 11,
+          "level": "note",
+          "message": {
+            "text": "go 1.25.14 is affected by GO-2026-6608 (BIT-golang-2026-94440, CVE-2026-94440): Memory limit bypass when parsing MIME headers in net/textproto, mime/multipart; fixed in 1.26.9"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/ci.yml"
+                },
+                "region": {
+                  "startLine": 9
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GO-2026-6608|go|.github/workflows/ci.yml|GO-2026-6608"
+          }
+        },
+        {
+          "ruleId": "GO-2026-6609",
+          "ruleIndex": 12,
+          "level": "note",
+          "message": {
+            "text": "go 1.25.14 is affected by GO-2026-6609 (BIT-golang-2026-78667, CVE-2026-78667): Lack of limit on size of parsed Range headers in net/http; fixed in 1.26.9"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/ci.yml"
+                },
+                "region": {
+                  "startLine": 9
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GO-2026-6609|go|.github/workflows/ci.yml|GO-2026-6609"
+          }
+        },
+        {
+          "ruleId": "GO-2026-6610",
+          "ruleIndex": 13,
+          "level": "note",
+          "message": {
+            "text": "go 1.25.14 is affected by GO-2026-6610 (BIT-golang-2026-78660, CVE-2026-78660): HTTP/2 transport accepts malformed framing-related headers in net/http; fixed in 1.26.9"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/ci.yml"
+                },
+                "region": {
+                  "startLine": 9
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GO-2026-6610|go|.github/workflows/ci.yml|GO-2026-6610"
+          }
+        },
+        {
+          "ruleId": "GO-2026-6611",
+          "ruleIndex": 14,
+          "level": "note",
+          "message": {
+            "text": "go 1.25.14 is affected by GO-2026-6611 (BIT-golang-2026-78669, CVE-2026-78669): Excessive CPU consumption from repeated initial window changes in net/http; fixed in 1.26.9"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/ci.yml"
+                },
+                "region": {
+                  "startLine": 9
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GO-2026-6611|go|.github/workflows/ci.yml|GO-2026-6611"
+          }
+        },
+        {
+          "ruleId": "GO-2026-6612",
+          "ruleIndex": 15,
+          "level": "note",
+          "message": {
+            "text": "go 1.25.14 is affected by GO-2026-6612 (BIT-golang-2026-78663, CVE-2026-78663): Double flow control refund on HTTP/2 server streams in net/http; fixed in 1.26.9"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/ci.yml"
+                },
+                "region": {
+                  "startLine": 9
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GO-2026-6612|go|.github/workflows/ci.yml|GO-2026-6612"
+          }
+        },
+        {
+          "ruleId": "GO-2026-6613",
+          "ruleIndex": 16,
+          "level": "note",
+          "message": {
+            "text": "go 1.25.14 is affected by GO-2026-6613 (BIT-golang-2026-94439, CVE-2026-94439): HTTP/1 server connection desynchronization after 2xx CONNECT response in net/http; fixed in 1.26.9"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/ci.yml"
+                },
+                "region": {
+                  "startLine": 9
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GO-2026-6613|go|.github/workflows/ci.yml|GO-2026-6613"
+          }
+        },
+        {
+          "ruleId": "GO-2026-6617",
+          "ruleIndex": 17,
+          "level": "note",
+          "message": {
+            "text": "go 1.25.14 is affected by GO-2026-6617 (BIT-golang-2026-97032, CVE-2026-97032): HTTP/2 server crash due to HPACK encoder race in net/http; fixed in 1.26.9"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/ci.yml"
+                },
+                "region": {
+                  "startLine": 9
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GO-2026-6617|go|.github/workflows/ci.yml|GO-2026-6617"
+          }
+        },
+        {
+          "ruleId": "GO-2026-6809",
+          "ruleIndex": 18,
+          "level": "note",
+          "message": {
+            "text": "go 1.25.14 is affected by GO-2026-6809 (BIT-golang-2026-111943, CVE-2026-111943, RUSTSEC-2026-0381, RUSTSEC-2026-0382, RUSTSEC-2026-0383): Distrust compromised intermediate certificates in crypto/x509; fixed in 1.26.10"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/ci.yml"
+                },
+                "region": {
+                  "startLine": 9
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GO-2026-6809|go|.github/workflows/ci.yml|GO-2026-6809"
+          }
+        },
+        {
+          "ruleId": "GO-2026-6859",
+          "ruleIndex": 19,
+          "level": "note",
+          "message": {
+            "text": "go 1.25.14 is affected by GO-2026-6859 (CVE-2026-97054): HTTP/1 server crash due to MaxBytesReader header race in net/http; fixed in 1.26.11"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/ci.yml"
+                },
+                "region": {
+                  "startLine": 9
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GO-2026-6859|go|.github/workflows/ci.yml|GO-2026-6859"
+          }
+        },
+        {
+          "ruleId": "outdated",
+          "ruleIndex": 3,
+          "level": "warning",
+          "message": {
+            "text": "go 1.25.14 is behind 1.27.4 by 17 releases (0 major, 2 minor, 0 patch)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/ci.yml"
+                },
+                "region": {
+                  "startLine": 9
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "outdated|go|.github/workflows/ci.yml|1.25.14"
+          }
+        },
+        {
+          "ruleId": "outdated",
+          "ruleIndex": 3,
+          "level": "warning",
+          "message": {
+            "text": "helm 3.21.0 is behind 3.22.1 by 6 releases (0 major, 1 minor, 4 patch)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "mise.toml"
+                },
+                "region": {
+                  "startLine": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "outdated|helm|mise.toml|3.21.0"
+          }
+        },
+        {
+          "ruleId": "breaking",
+          "ruleIndex": 0,
+          "level": "note",
+          "message": {
+            "text": "k9s 0.50.16..0.51.0 has 1 breaking change; see relgap digest k9s 0.50.16..0.51.0"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "Dockerfile"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "breaking|k9s|Dockerfile|0.50.16..0.51.0"
+          }
+        },
+        {
+          "ruleId": "outdated",
+          "ruleIndex": 3,
+          "level": "warning",
+          "message": {
+            "text": "k9s 0.50.16 is behind 0.51.0 by 3 releases (0 major, 1 minor, 2 patch)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "Dockerfile"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "outdated|k9s|Dockerfile|0.50.16"
+          }
+        },
+        {
+          "ruleId": "breaking",
+          "ruleIndex": 0,
+          "level": "note",
+          "message": {
+            "text": "terraform 1.15.8..1.17.2 has 1 breaking change; see relgap digest terraform 1.15.8..1.17.2"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "main.tf"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "breaking|terraform|main.tf|1.15.8..1.17.2"
+          }
+        },
+        {
+          "ruleId": "eol",
+          "ruleIndex": 2,
+          "level": "error",
+          "message": {
+            "text": "terraform 1.15.8 is on release cycle 1.15, which reached its end of life on 2026-10-21; terraform 1.17.2 is on cycle 1.17"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "main.tf"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "eol|terraform|main.tf|1.15"
+          }
+        },
+        {
+          "ruleId": "outdated",
+          "ruleIndex": 3,
+          "level": "warning",
+          "message": {
+            "text": "terraform 1.15.8 is behind 1.17.2 by 12 releases (0 major, 2 minor, 1 patch)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "main.tf"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "outdated|terraform|main.tf|1.15.8"
+          }
+        },
+        {
+          "ruleId": "breaking",
+          "ruleIndex": 0,
+          "level": "note",
+          "message": {
+            "text": "terraform 1.15.8..1.17.2 has 1 breaking change; see relgap digest terraform 1.15.8..1.17.2"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "mise.toml"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "breaking|terraform|mise.toml|1.15.8..1.17.2"
+          }
+        },
+        {
+          "ruleId": "eol",
+          "ruleIndex": 2,
+          "level": "error",
+          "message": {
+            "text": "terraform 1.15.8 is on release cycle 1.15, which reached its end of life on 2026-10-21; terraform 1.17.2 is on cycle 1.17"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "mise.toml"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "eol|terraform|mise.toml|1.15"
+          }
+        },
+        {
+          "ruleId": "outdated",
+          "ruleIndex": 3,
+          "level": "warning",
+          "message": {
+            "text": "terraform 1.15.8 is behind 1.17.2 by 12 releases (0 major, 2 minor, 1 patch)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "mise.toml"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "outdated|terraform|mise.toml|1.15.8"
+          }
+        }
+      ]
+    }
+  ]
+}

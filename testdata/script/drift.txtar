@@ -22,10 +22,13 @@ exec relgap drift infra --tool helm --tool kubectl --format plain
 stderr 'no repository pins this tool.*tool=helm'
 stdout '^REPO +kubectl$'
 
-# A file that doesn't parse exits 1, even when --fail-on drift matches.
-exec expect-exit 1 relgap drift infra apps broken --fail-on drift --format json
+# A file that doesn't parse can only hide drift, never add it, so a matched --fail-on drift
+# still exits 3, with a warning. Without a match the partial report exits 1.
+exec expect-exit 3 relgap drift infra apps broken --fail-on drift --format json
 jsonschema drift-v1.json stdout
 stdout '"target": "broken/mise.toml"'
+stderr 'the report is partial; --fail-on matched anyway'
+exec expect-exit 1 relgap drift infra apps broken --format json
 stderr 'the report is partial'
 
 # A latest version that can't be listed (offline, empty cache) exits 1 after the matrix.

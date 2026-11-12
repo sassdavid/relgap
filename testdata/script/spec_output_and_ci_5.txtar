@@ -23,6 +23,10 @@ golden stdout outdated/project.txt
 exec relgap outdated --format md
 golden stdout outdated/project.md
 
+exec relgap outdated --format sarif
+sarifschema stdout
+golden stdout outdated/project.sarif
+
 # digest --all digests the same ranges outdated compared.
 exec relgap digest --all --format json
 jsonschema digest-v1.json stdout

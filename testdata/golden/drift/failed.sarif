@@ -1,0 +1,92 @@
+{
+  "$schema": "https://docs.oasis-open.org/sarif/sarif/v2.1.0/errata01/os/schemas/sarif-schema-2.1.0.json",
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "relgap",
+          "version": "dev",
+          "informationUri": "https://github.com/sassdavid/relgap",
+          "rules": [
+            {
+              "id": "drift",
+              "shortDescription": {
+                "text": "The pin differs from the version most repositories pin"
+              },
+              "fullDescription": {
+                "text": "The scanned repositories pin more than one version of the tool, and this pin stands for a version other than the one most of them pin."
+              },
+              "help": {
+                "text": "Pin the version most repositories use, or add an ignore rule for this path in .relgap.yaml."
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              }
+            },
+            {
+              "id": "failed",
+              "shortDescription": {
+                "text": "relgap couldn't check this pin or file"
+              },
+              "fullDescription": {
+                "text": "A file didn't parse, or looking up the tool's versions failed."
+              },
+              "help": {
+                "text": "Fix the file, or run relgap again with -v to see the failing request."
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              }
+            }
+          ]
+        }
+      },
+      "results": [
+        {
+          "ruleId": "drift",
+          "ruleIndex": 0,
+          "level": "warning",
+          "message": {
+            "text": "terraform 1.14.2 differs from 1.15.8, which 2 of 4 repositories pin"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "repos/a/mise.toml"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "drift|terraform|repos/a/mise.toml|1.14.2"
+          }
+        },
+        {
+          "ruleId": "failed",
+          "ruleIndex": 1,
+          "level": "error",
+          "message": {
+            "text": "can't read pins: mise: line 1: expected ']' to close table name"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "repos/broken/mise.toml"
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "failed||repos/broken/mise.toml|"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -68,8 +68,13 @@ func TestDrift(t *testing.T) {
 	assert.Empty(t, c.Reference)
 
 	assert.Equal(t, []string{"a", "b"}, toolsOf(d.Drifting()))
-	assert.Equal(t, []string{"a", "b"}, toolsOf(report.Gate{Drift: true}.CheckDrift(d)))
+	outliers := []string{}
+	for _, f := range (report.Gate{Values: []string{report.FailOnDrift}}).CheckDrift(d) {
+		outliers = append(outliers, f.Drift.Tool+" "+f.Drift.Outliers()[0].Value)
+	}
+	assert.Equal(t, []string{"a >= 1.1", "b 0.4.0"}, outliers, "one finding per drifted pin")
 	assert.Empty(t, report.Gate{}.CheckDrift(d))
+	assert.Empty(t, c.Outliers())
 }
 
 func TestDriftIgnoreConstraints(t *testing.T) {

@@ -12,6 +12,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/sassdavid/relgap/internal/classify"
+	"github.com/sassdavid/relgap/internal/enrich"
 	"github.com/sassdavid/relgap/internal/github"
 	"github.com/sassdavid/relgap/internal/registry"
 	"github.com/sassdavid/relgap/internal/report"
@@ -266,29 +267,110 @@ func TestMaxBehindExceeded(t *testing.T) {
 
 func TestGateCheck(t *testing.T) {
 	t.Parallel()
+	yes := true
 	o := &report.Outdated{Pins: []report.OutdatedPin{
 		{
 			Tool: "a", Status: report.StatusOutdated, Behind: &report.Behind{Releases: 1, Patch: 1},
 			Counts: map[classify.Kind]int{
-				classify.KindBreaking: 1, classify.KindDeprecation: 0, classify.KindSecurity: 0,
+				classify.KindBreaking: 1, classify.KindDeprecation: 2, classify.KindSecurity: 0,
 				classify.KindFeature: 0, classify.KindFix: 0, classify.KindOther: 0,
 			},
 		},
 		{Tool: "b", Status: report.StatusOutdated, Behind: &report.Behind{Releases: 4, Minor: 3}},
 		{Tool: "c", Status: report.StatusOutdated, Behind: &report.Behind{Releases: 2}},
-		{Tool: "d", Status: report.StatusCurrent, Behind: &report.Behind{}},
+		{
+			Tool: "d", Status: report.StatusCurrent, Behind: &report.Behind{},
+			EOL: &enrich.EOL{Current: &enrich.EOLStatus{Cycle: "1.0", IsEOL: &yes}},
+			Vulns: []enrich.Vuln{
+				{ID: "V-1", AffectsCurrent: true, Severity: &enrich.Score{Score: 9.8, Rating: "critical"}},
+				{ID: "V-2", AffectsCurrent: true, Severity: &enrich.Score{Score: 5, Rating: "medium"}},
+				{ID: "V-3", AffectsCurrent: true},
+				{ID: "V-4", AffectsCurrent: false, Severity: &enrich.Score{Score: 9.8, Rating: "critical"}},
+			},
+		},
 	}}
-	findings, unmeasured := report.Gate{
-		Outdated: true, Breaking: true, MaxBehind: report.MaxBehind{Unit: "minor", N: 2},
-	}.Check(o)
-	var got []string
-	for _, f := range findings {
-		got = append(got, f.FailOn+":"+f.Pin.Tool)
+	ids := func(fs []report.Finding) []string {
+		var got []string
+		for _, f := range fs {
+			s := f.FailOn + ":" + f.Pin.Tool
+			if f.Vuln != nil {
+				s += ":" + f.Vuln.ID
+			}
+			got = append(got, s)
+		}
+		return got
 	}
-	assert.Equal(t, []string{"breaking:a", "outdated:b"}, got)
+	gate := report.Gate{Values: report.Values(), MaxBehind: report.MaxBehind{Unit: "minor", N: 2}}
+	findings, unmeasured := gate.Check(o)
+	assert.Equal(t, []string{
+		"breaking:a", "deprecation:a", "outdated:b", "eol:d", "vuln:d:V-1", "vuln:d:V-2", "vuln:d:V-3",
+	}, ids(findings))
 	assert.Empty(t, unmeasured)
 
-	findings, unmeasured = report.Gate{Outdated: true, MaxBehind: report.MaxBehind{Unit: "days", N: 1}}.Check(o)
+	gate.VulnSeverity = "high"
+	findings, _ = gate.Check(o)
+	assert.Contains(t, ids(findings), "vuln:d:V-1")
+	assert.NotContains(t, ids(findings), "vuln:d:V-2")
+	assert.NotContains(t, ids(findings), "vuln:d:V-3", "an unrated advisory counts only without a threshold")
+
+	findings, unmeasured = report.Gate{
+		Values: []string{report.FailOnOutdated}, MaxBehind: report.MaxBehind{Unit: "days", N: 1},
+	}.Check(o)
 	assert.Empty(t, findings)
 	assert.Len(t, unmeasured, 3, "tags without publish dates can't be measured in days")
+}
+
+func TestGateMatches(t *testing.T) {
+	t.Parallel()
+	fs := []report.Finding{
+		{FailOn: report.FailOnVuln},
+		{FailOn: report.FailOnOutdated},
+		{FailOn: report.FailOnVuln},
+		{FailOn: report.FailOnBreaking},
+	}
+	values := func(ms []report.Match) []string {
+		var out []string
+		for _, m := range ms {
+			out = append(out, fmt.Sprintf("%s:%d", m.FailOn, len(m.Findings)))
+		}
+		return out
+	}
+	assert.Equal(t, []string{"breaking:1", "vuln:2", "outdated:1"}, values(report.Gate{}.Matches(fs)),
+		"values in schema order; MinCount 0 counts as 1")
+	assert.Equal(t, []string{"vuln:2"}, values(report.Gate{MinCount: 2}.Matches(fs)), "each value counts alone")
+	assert.Empty(t, report.Gate{MinCount: 3}.Matches(fs))
+}
+
+func TestGateCheckDigests(t *testing.T) {
+	t.Parallel()
+	counts := func(breaking, deprecation int) map[classify.Kind]int {
+		return map[classify.Kind]int{
+			classify.KindBreaking: breaking, classify.KindDeprecation: deprecation, classify.KindSecurity: 0,
+			classify.KindFeature: 0, classify.KindFix: 0, classify.KindOther: 0,
+		}
+	}
+	ds := []report.ToolDigest{
+		{Tool: "a", Counts: counts(2, 0)},
+		{Tool: "b", Counts: counts(0, 1)},
+		{Tool: "c", Counts: counts(0, 0)},
+	}
+	var got []string
+	for _, f := range (report.Gate{Values: report.Values()}).CheckDigests(ds) {
+		got = append(got, f.FailOn+":"+f.Digest.Tool)
+	}
+	assert.Equal(t, []string{"breaking:a", "deprecation:b"}, got)
+	assert.Empty(t, report.Gate{Values: []string{report.FailOnEOL}}.CheckDigests(ds))
+}
+
+func TestParseVulnSeverity(t *testing.T) {
+	t.Parallel()
+	for _, ok := range []string{"", "low", "medium", "high", "critical"} {
+		got, err := report.ParseVulnSeverity(ok)
+		require.NoError(t, err)
+		assert.Equal(t, ok, got)
+	}
+	for _, bad := range []string{"none", "HIGH", "severe"} {
+		_, err := report.ParseVulnSeverity(bad)
+		require.Error(t, err, bad)
+	}
 }

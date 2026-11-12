@@ -52,6 +52,7 @@ llm.provider               bedrock                                           use
 policy.fail_on             ["eol","vuln"]                                    project file $WORK/.relgap.yaml
 policy.max_behind          ""                                                default
 policy.min_confidence      0.7                                               flag --min-confidence
+policy.vuln_severity       ""                                                default
 scan.detectors.ci_actions  true                                              env RELGAP_SCAN__DETECTORS__CI_ACTIONS
 scan.detectors.generic     false                                             default
 scan.exclude               ["**/node_modules/**","**/.terragrunt-cache/**"]  default
