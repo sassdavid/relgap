@@ -12,6 +12,7 @@ import (
 	"github.com/sassdavid/relgap/internal/app"
 	"github.com/sassdavid/relgap/internal/buildinfo"
 	"github.com/sassdavid/relgap/internal/classify"
+	"github.com/sassdavid/relgap/internal/complete"
 	"github.com/sassdavid/relgap/internal/config"
 	"github.com/sassdavid/relgap/internal/github"
 	"github.com/sassdavid/relgap/internal/httpx"
@@ -96,15 +97,29 @@ relgap uses the REST API (60 requests per hour) with 2 concurrent requests.`,
 	}
 	fl := cmd.Flags()
 	fl.StringVar(&f.line, flagLine, string(version.LineNone),
-		"release line the range stays on: none, major or minor")
+		complete.Usage("release line the range stays on: {values}", lineChoices()))
 	fl.BoolVar(&f.includePrereleases, "include-prereleases", false,
 		"include prereleases (on when <from> or <to> is a prerelease)")
 	fl.BoolVar(&f.fromMise, flagFromMise, false,
 		"digest every outdated tool pinned in the project's mise config, pin to latest")
 	fl.BoolVar(&f.all, flagAll, false, "digest every outdated pin in the project, as 'relgap outdated' lists them")
 	fl.StringSliceVar(&f.only, flagOnly, nil,
-		"list only entries of this kind: breaking, deprecation, security, feature, fix or other; repeatable")
+		complete.Usage("list only entries of this kind: {values}; repeatable", kindChoices()))
 	addGateFlags(cmd, digestValues())
+	registerCompletions(cmd, map[string]cobra.CompletionFunc{
+		flagLine: complete.Enum(lineChoices()),
+		flagOnly: complete.List(kindChoices()),
+	})
+	cmd.ValidArgsFunction = func(cmd *cobra.Command, args []string, toComplete string) ([]cobra.Completion, cobra.ShellCompDirective) {
+		switch {
+		case f.fromMise || f.all:
+			return complete.Dirs()(cmd, args, toComplete)
+		case len(args) == 0:
+			return completeTools(d, g)(cmd, args, toComplete)
+		default:
+			return complete.NoFiles(cmd, args, toComplete)
+		}
+	}
 	cmd.MarkFlagsMutuallyExclusive(flagFromMise, flagAll)
 	cmd.MarkFlagsMutuallyExclusive(flagFromMise, flagLine)
 	cmd.MarkFlagsMutuallyExclusive(flagAll, flagLine)
@@ -306,4 +321,28 @@ func digestError(err error) error {
 	default:
 		return err
 	}
+}
+
+func lineChoices() []complete.Choice {
+	return []complete.Choice{
+		{Value: string(version.LineNone), Desc: "follow the range wherever it goes"},
+		{Value: string(version.LineMajor), Desc: "stay on the major version of <from>"},
+		{Value: string(version.LineMinor), Desc: "stay on the minor version of <from>"},
+	}
+}
+
+func kindChoices() []complete.Choice {
+	desc := map[classify.Kind]string{
+		classify.KindBreaking:    "breaking changes",
+		classify.KindDeprecation: "deprecations",
+		classify.KindSecurity:    "security fixes",
+		classify.KindFeature:     "new features",
+		classify.KindFix:         "bug fixes",
+		classify.KindOther:       "everything else",
+	}
+	var out []complete.Choice
+	for _, k := range classify.Kinds() {
+		out = append(out, complete.Choice{Value: string(k), Desc: desc[k]})
+	}
+	return out
 }

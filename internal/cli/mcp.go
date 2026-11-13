@@ -8,6 +8,7 @@ import (
 
 	"github.com/sassdavid/relgap/internal/app"
 	"github.com/sassdavid/relgap/internal/buildinfo"
+	"github.com/sassdavid/relgap/internal/complete"
 	"github.com/sassdavid/relgap/internal/httpx"
 	"github.com/sassdavid/relgap/internal/mcpkit"
 	"github.com/sassdavid/relgap/internal/mcpserver"
@@ -73,6 +74,10 @@ outdated pins, and drifting tools come first. A cursor lasts 15 minutes after it
 		"directory that outdated and drift may read; repeatable (default: the client's roots, else the current directory)")
 	cmd.Flags().IntVar(&f.maxBytes, "max-result-bytes", mcpkit.MaxBytes,
 		"split results larger than this many bytes of JSON into pages; 0 never splits")
+	registerCompletions(cmd, map[string]cobra.CompletionFunc{
+		"root":             complete.Dirs(),
+		"max-result-bytes": complete.NoFiles,
+	})
 	return cmd
 }
 

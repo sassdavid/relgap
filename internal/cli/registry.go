@@ -10,6 +10,7 @@ import (
 
 	"github.com/sassdavid/relgap/internal/app"
 	"github.com/sassdavid/relgap/internal/buildinfo"
+	"github.com/sassdavid/relgap/internal/complete"
 	"github.com/sassdavid/relgap/internal/registry"
 	"github.com/sassdavid/relgap/internal/render"
 	"github.com/sassdavid/relgap/internal/report"
@@ -48,6 +49,12 @@ the range isn't an error: an upgrade guide only has notes where a new release li
   relgap registry test registry/argocd.yaml 3.5.0..3.6.1
   relgap registry test python 3.13.5..3.14.0 --format json`,
 		Args: exactArgs(2), //nolint:mnd // tool and range
+		ValidArgsFunction: func(cmd *cobra.Command, args []string, toComplete string) ([]cobra.Completion, cobra.ShellCompDirective) {
+			if len(args) > 0 {
+				return complete.NoFiles(cmd, args, toComplete)
+			}
+			return completeTools(d, g)(cmd, args, toComplete)
+		},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return runRegistryTest(cmd, d, g, args[0], args[1])
 		},
@@ -133,8 +140,9 @@ func testSpec(cmd *cobra.Command, d *app.Deps, g *globals, tool string) (registr
 
 func newRegistryLintCmd(d *app.Deps, g *globals) *cobra.Command {
 	return &cobra.Command{
-		Use:   "lint [file...]",
-		Short: "Validate registry entries against the schema",
+		Use:               "lint [file...]",
+		Short:             "Validate registry entries against the schema",
+		ValidArgsFunction: complete.Files("yaml", "yml"),
 		Long: `Without arguments, checks the entries embedded in relgap. With arguments, checks those files.
 
 Reports unknown keys, wrong types, bad regular expressions and a name that doesn't match the

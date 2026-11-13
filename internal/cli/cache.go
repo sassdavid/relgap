@@ -13,6 +13,7 @@ import (
 
 	"github.com/sassdavid/relgap/internal/app"
 	"github.com/sassdavid/relgap/internal/buildinfo"
+	"github.com/sassdavid/relgap/internal/complete"
 	"github.com/sassdavid/relgap/internal/config"
 	"github.com/sassdavid/relgap/internal/github"
 	"github.com/sassdavid/relgap/internal/httpx"
@@ -128,6 +129,11 @@ Expired entries stay: their ETags let the next run revalidate them for free.`,
 		},
 	}
 	cmd.Flags().DurationVar(&olderThan, "older-than", defaultPruneAge, "delete entries unused for this long")
+	_ = cmd.RegisterFlagCompletionFunc("older-than", complete.Enum([]complete.Choice{
+		{Value: "24h", Desc: "a day"},
+		{Value: "168h", Desc: "a week"},
+		{Value: "720h", Desc: "30 days"},
+	}))
 	return cmd
 }
 

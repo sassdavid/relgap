@@ -10,6 +10,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/sassdavid/relgap/internal/app"
+	"github.com/sassdavid/relgap/internal/complete"
 	"github.com/sassdavid/relgap/internal/config"
 	"github.com/sassdavid/relgap/internal/render"
 	"github.com/sassdavid/relgap/internal/report"
@@ -40,22 +41,64 @@ func driftValues() []string { return []string{report.FailOnDrift} }
 func addGateFlags(cmd *cobra.Command, values []string) {
 	def := config.Default().Policy
 	fl := cmd.Flags()
+	failOn := failOnChoices(values)
 	fl.StringSlice(flagFailOn, def.FailOn,
-		"exit 3 when this matches: "+orList(values)+"; repeatable (config policy.fail_on)")
+		complete.Usage("exit 3 when this matches: {values}; repeatable (config policy.fail_on)", failOn))
 	fl.Int(flagMinCount, 1, "findings a --fail-on value needs before it exits 3")
+	registerCompletions(cmd, map[string]cobra.CompletionFunc{
+		flagFailOn:   complete.List(failOn),
+		flagMinCount: complete.NoFiles,
+	})
 	if slices.Contains(values, report.FailOnOutdated) {
 		fl.String(
 			flagMaxBehind,
 			def.MaxBehind,
 			"how far behind --fail-on outdated allows, such as minor:2, releases:10 or days:90 (config policy.max_behind)",
 		)
+		_ = cmd.RegisterFlagCompletionFunc(flagMaxBehind, complete.Enum(maxBehindHints()))
 	}
 	if slices.Contains(values, report.FailOnVuln) {
-		fl.String(
-			flagVulnSeverity,
-			def.VulnSeverity,
-			"lowest rating --fail-on vuln counts: low, medium, high or critical; empty counts all (config policy.vuln_severity)",
-		)
+		fl.String(flagVulnSeverity, def.VulnSeverity, complete.Usage(
+			"lowest rating --fail-on vuln counts: {values}; empty counts all (config policy.vuln_severity)",
+			vulnSeverityChoices()))
+		_ = cmd.RegisterFlagCompletionFunc(flagVulnSeverity, complete.Enum(vulnSeverityChoices()))
+	}
+}
+
+// failOnChoices describes the --fail-on values a command checks.
+func failOnChoices(values []string) []complete.Choice {
+	desc := map[string]string{
+		report.FailOnBreaking:    "a breaking change in the range",
+		report.FailOnDeprecation: "a deprecation in the range",
+		report.FailOnEOL:         "a pinned version past its end of life",
+		report.FailOnVuln:        "a known vulnerability in a pinned version",
+		report.FailOnDrift:       "repositories pin different versions",
+		report.FailOnOutdated:    "a pin further behind than --max-behind",
+	}
+	out := make([]complete.Choice, len(values))
+	for i, v := range values {
+		out[i] = complete.Choice{Value: v, Desc: desc[v]}
+	}
+	return out
+}
+
+// maxBehindHints are example values; --max-behind takes <unit>:<n> for any n.
+func maxBehindHints() []complete.Choice {
+	return []complete.Choice{
+		{Value: "major:1", Desc: "at most one major version behind"},
+		{Value: "minor:2", Desc: "at most two minor versions behind"},
+		{Value: "patch:5", Desc: "at most five patch versions behind"},
+		{Value: "releases:10", Desc: "at most ten releases behind"},
+		{Value: "days:90", Desc: "the first newer release is at most 90 days old"},
+	}
+}
+
+func vulnSeverityChoices() []complete.Choice {
+	return []complete.Choice{
+		{Value: "low", Desc: "CVSS 0.1 to 3.9"},
+		{Value: "medium", Desc: "CVSS 4.0 to 6.9"},
+		{Value: "high", Desc: "CVSS 7.0 to 8.9"},
+		{Value: "critical", Desc: "CVSS 9.0 to 10.0"},
 	}
 }
 

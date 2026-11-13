@@ -1,0 +1,143 @@
+# Shell completion from local data: cobra's __complete and __completeNoDesc, and carapace's
+# _carapace export for the shells cobra can't generate. stdout carries results only, and no
+# request reaches GitHub or mise.
+
+# Static: subcommands.
+exec relgap __complete registry ''
+cmp stdout $WORK/golden/registry.txt
+stderr 'ShellCompDirectiveNoFileComp'
+
+# Enum flags, with and without descriptions, and hints.
+exec relgap __complete --format ''
+cmp stdout $WORK/golden/format.txt
+exec relgap __completeNoDesc --format ''
+cmp stdout $WORK/golden/format-nodesc.txt
+exec relgap __complete outdated --fail-on breaking,
+cmp stdout $WORK/golden/fail-on.txt
+exec relgap __complete digest --only b
+cmp stdout $WORK/golden/only.txt
+exec relgap __complete outdated --max-behind ''
+cmp stdout $WORK/golden/max-behind.txt
+
+# File and directory flags and arguments.
+exec relgap __complete --config ''
+cmp stdout $WORK/golden/config.txt
+exec relgap __complete pins --renovate-report ''
+cmp stdout $WORK/golden/json.txt
+exec relgap __complete mcp --root ''
+cmp stdout $WORK/golden/dirs.txt
+exec relgap __complete drift ''
+cmp stdout $WORK/golden/dirs.txt
+exec relgap __complete version ''
+cmp stdout $WORK/golden/nothing.txt
+
+# Dynamic: tool names from the embedded registries and the config's tools.
+exec relgap __complete --config $WORK/relgap.yaml resolve terraf
+cmp stdout $WORK/golden/tools.txt
+exec relgap __complete --config $WORK/relgap.yaml digest zz-
+cmp stdout $WORK/golden/config-tools.txt
+exec relgap __complete --config $WORK/relgap.yaml digest terraform ''
+cmp stdout $WORK/golden/nothing.txt
+exec relgap __complete --config $WORK/relgap.yaml drift --tool terraform,terrag
+cmp stdout $WORK/golden/tool-list.txt
+
+# A missing --config file: no results and the error directive.
+exec relgap __complete --config $WORK/missing.yaml resolve ''
+cmp stdout $WORK/golden/error.txt
+
+# A FIFO as --config can't test the 1s timeout here: the config loader accepts regular files only
+# and fails at once. TestDynamic in internal/complete covers the timeout.
+[exec:mkfifo] exec mkfifo $WORK/fifo
+[exec:mkfifo] exec relgap __complete --config $WORK/fifo resolve ''
+[exec:mkfifo] cmp stdout $WORK/golden/error.txt
+
+# carapace answers from the same completion functions.
+exec relgap _carapace export relgap --color ''
+stdout '"values":\[\{"value":"always","display":"always","description":"always color"\},\{"value":"auto","display":"auto","description":"color on a terminal unless NO_COLOR is set"\},\{"value":"never","display":"never","description":"never color"\}\]'
+exec relgap _carapace export relgap --config $WORK/relgap.yaml digest zz-
+stdout '"values":\[\{"value":"zz-inhouse","display":"zz-inhouse","description":"acme/zz-inhouse"\}\]'
+exec relgap _carapace export relgap --config $WORK/missing.yaml resolve ''
+stdout '"values":\[\]'
+
+# Shells cobra can't generate get carapace snippets.
+exec relgap completion nushell
+stdout 'let relgap_completer'
+stdout '_carapace\W+nushell'
+exec relgap completion elvish
+stdout '_carapace\W+elvish'
+exec relgap completion xonsh
+stdout '_carapace\W+xonsh'
+exec relgap completion tcsh
+stdout '_carapace\W+tcsh'
+exec relgap completion oil
+stdout '_carapace\W+oil'
+exec relgap completion clink
+stdout '_carapace\W+cmd-clink'
+
+-- relgap.yaml --
+tools:
+  zz-inhouse:
+    repo: acme/zz-inhouse
+-- golden/registry.txt --
+lint	Validate registry entries against the schema
+test	Run each source of a registry entry live and show what it produced
+:4
+-- golden/format.txt --
+tty	table with color for a terminal
+plain	table without color
+md	Markdown
+json	JSON envelope for scripts
+sarif	SARIF 2.1.0 for code scanning
+:4
+-- golden/format-nodesc.txt --
+tty
+plain
+md
+json
+sarif
+:4
+-- golden/fail-on.txt --
+breaking,deprecation	a deprecation in the range
+breaking,eol	a pinned version past its end of life
+breaking,vuln	a known vulnerability in a pinned version
+breaking,outdated	a pin further behind than --max-behind
+:6
+-- golden/only.txt --
+breaking	breaking changes
+:6
+-- golden/max-behind.txt --
+major:1	at most one major version behind
+minor:2	at most two minor versions behind
+patch:5	at most five patch versions behind
+releases:10	at most ten releases behind
+days:90	the first newer release is at most 90 days old
+:4
+-- golden/config.txt --
+yaml
+yml
+:8
+-- golden/json.txt --
+json
+:8
+-- golden/dirs.txt --
+:16
+-- golden/nothing.txt --
+:4
+-- golden/tools.txt --
+terraform	hashicorp/terraform
+terraform-docs	terraform-docs/terraform-docs
+terraform-ls	hashicorp/terraform-ls
+terraform-lsp	juliosueiras/terraform-lsp
+terraform-provider-aws	hashicorp/terraform-provider-aws
+terraform-provider-kubernetes	hashicorp/terraform-provider-kubernetes
+terraform-validator	thazelart/terraform-validator
+terraformer	GoogleCloudPlatform/terraformer
+:4
+-- golden/config-tools.txt --
+zz-inhouse	acme/zz-inhouse
+:4
+-- golden/tool-list.txt --
+terraform,terragrunt	gruntwork-io/terragrunt
+:6
+-- golden/error.txt --
+:1
