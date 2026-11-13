@@ -49,7 +49,7 @@ exists for that version. Its source adapter is `version-jump` and its URL is the
 - Each entry links back to its source: the release URL or the file URL with `#L<line>` anchor.
 
 ## Acceptance criteria
-- [ ] Golden classification for the corpus subset. Precision on `breaking` ≥ 0.9 against a hand-labelled set of 300 entries from 15 tools (`testdata/labels/*.yaml`); recall is reported.
+- [x] Golden classification for the corpus subset. Precision on `breaking` ≥ 0.9 against a hand-labelled set of 300 entries from 15 tools (`testdata/labels/*.yaml`); recall is reported.
 - [x] Kubernetes `Dependencies › Removed` is never classified breaking.
 - [x] Fenced `# comment` lines never become headings (terragrunt fixture).
 - [x] `--min-confidence` filtering is covered by a testscript.
