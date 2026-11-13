@@ -8,8 +8,10 @@
 | `md` | PR-ready: `<details>` per version, Breaking/Security at top, source links | Markdown table and a notes list | Markdown table | table |
 | `json` | envelope (`schema_version`), `data.tools[]` = `ToolReport` | envelope, `data.pins[]` (`schemas/outdated-v1.json`) | envelope, `data.tools[]` (`schemas/drift-v1.json`) | envelope |
 | `sarif` | - | one result per finding (outdated/eol/vuln/breaking/deprecation/failed), location = pin file:line | one result per drifted pin, plus failed | - |
+| `github` | - | one workflow command (annotation) per SARIF result | one per SARIF result | - |
 
-- Markdown output stays under 60 KB by default (GitHub comment limit 65,536). When truncated, a footer says what was cut (`--md-max-bytes`).
+- Markdown output stays under 60,000 characters by default (GitHub comment limit 65,536). When truncated, a footer says what was cut (`--md-max-chars`, formerly planned as `--md-max-bytes`).
+- `--out <format>=<path>` (repeatable) writes the same report in more formats in one run, with the exit code `--format` alone gives.
 - JSON schemas: `schemas/report-v1.json`. Every testscript that emits JSON validates against it.
 
 ## `--fail-on` (exit 3)
@@ -30,6 +32,30 @@ command that checks it.
 `sassdavid/relgap-action`, a composite action that installs a verified release:
 - `mode: comment-on-renovate`: on a Renovate or Dependabot PR, parses the PR's upgraded tools (branch name / `renovate` JSON comment / diff of pin files) and posts or updates **one** sticky comment with the `md` digest.
 - `mode: report`: runs `outdated`/`drift` with SARIF upload to code scanning.
+
+## Decisions (M13)
+[Engineering ADR-0014](../../engineering/adr/0014-report-outputs-and-pr-comment.md) has the
+reasoning; tfcensus shares the code.
+
+- `--out` and `--md-max-chars` are command flags of `digest`, `outdated`, `drift` and `pins`.
+  Each command passes one format list to `--format` and `--out`; `tty` isn't an `--out` format.
+  Files are written through a temporary file and a rename, before the gate runs.
+- Truncation cuts the rendered Markdown between table rows, list items and sections (a
+  `<details>` element, or a heading with the text under it), counts Unicode code points, and ends
+  with `Truncated to N characters: cut 3 sections and 12 table rows, starting at "1.37.0".` and a
+  hint to run `--format json`.
+- `--format github` for `outdated` and `drift` turns the SARIF results into workflow commands
+  (`sarif.WriteGitHub`): error, warning, or notice for note, with the pin's file and line.
+- `relgap notify --from <json> --notify github-pr-comment` reads saved digest, outdated and drift
+  envelopes (told apart by their data) and keeps one comment per kind with the
+  `<!-- relgap:v1 {"kind","scope":"pull-request","hash"} -->` marker. A digest is open when it
+  covers a tool, an outdated report when a pin is outdated, EOL, vulnerable or failed, and a
+  drift report when a tool drifts or failed. An unchanged hash means no write; a closed report
+  edits the comment to "Nothing to report" and creates none. The token comes from GH_TOKEN,
+  GITHUB_TOKEN or gh, the repository from `GITHUB_REPOSITORY` and the pull request from the
+  `GITHUB_EVENT_PATH` event. Exit 2 when either is missing, 4 when GitHub refuses the token.
+- `docs/ci/outdated.yml` is the example workflow: one `outdated` run with `--out`, the step
+  summary, the SARIF upload and the comment on pull requests from the same repository.
 
 ## Decisions (M9)
 Agreed before coding; [ADR-0012](../adr/0012-fail-on-gate-and-sarif.md) has the reasoning for
@@ -91,7 +117,10 @@ the exit codes.
   values, then runs it: kubectl 1.34.13 and 1.37.2 for outdated, digest ranges of kubectl and
   helm, gh 2.103.3 for vuln, and two small trees for drift, plus `--min-count`,
   `--vuln-severity`, `--max-behind` and the config keys.)
-- [ ] The Markdown truncation footer appears exactly at the limit (property test on generated digests).
+- [x] The Markdown truncation footer appears exactly at the limit (property test on generated digests).
+  (`TestDigestMarkdownTruncation` renders 300 generated digests and cuts each at its own length,
+  one character less, and random limits; `TestTruncateMarkdownLimit` in the shared
+  `internal/render` checks the footer counts. `out.txtar` checks `--md-max-chars` end to end.)
 - [x] `outdated` over a fixture project with 10 pins matches golden files in tty, plain, md and json, and each pin's counts equal those of the full digest `current..latest` (`TestSpec_output_and_ci_5`).
 - [x] `drift` over a generated tree of 60 repos matches golden files in tty, plain, md and json, marks constraint pins `≈`, sends no request (a refusing proxy and an empty request log), and `--fail-on drift` exits 3 (`TestSpec_output_and_ci_6`).
 - [x] `drift --latest` over the same tree adds the latest versions of 10 tools (8 until M8 added the node and terraform-provider-aws entries) from 1 GraphQL request, and a second run answers from the cache with 0 requests (`TestSpec_output_and_ci_7`).

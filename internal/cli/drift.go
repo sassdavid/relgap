@@ -3,6 +3,7 @@ package cli
 import (
 	"context"
 	"fmt"
+	"io"
 	"path"
 	"slices"
 
@@ -80,15 +81,14 @@ Roots default to scan.roots, then the current directory.`,
 		"compare exact pins only; constraint pins are shown but don't count")
 	fl.BoolVar(&f.submodules, "submodules", false, "scan checked-out git submodules as repositories")
 	addGateFlags(cmd, driftValues())
+	addOutputFlags(cmd, g, driftFormats()...)
 	_ = cmd.RegisterFlagCompletionFunc("tool", completeToolList(d, g))
 	cmd.ValidArgsFunction = complete.Dirs()
 	return cmd
 }
 
 func runDrift(cmd *cobra.Command, d *app.Deps, g *globals, f driftFlags, args []string) error {
-	err := g.outFormat.Check(render.FormatTTY, render.FormatPlain, render.FormatMD, render.FormatJSON,
-		render.FormatSARIF)
-	if err != nil {
+	if err := g.checkFormats(driftFormats()...); err != nil {
 		return usageError(err)
 	}
 	s, err := g.newSession(cmd, d)
@@ -117,7 +117,9 @@ func runDrift(cmd *cobra.Command, d *app.Deps, g *globals, f driftFlags, args []
 	if err != nil {
 		return err
 	}
-	if err = writeDrift(d, g, res, out, len(tools) > 0); err != nil {
+	if err = g.sink(cmd, d).Write(func(w io.Writer, f render.Format) error {
+		return writeDrift(w, f, d, g, res, out, len(tools) > 0)
+	}); err != nil {
 		return err
 	}
 	warnDrift(cmd, d, res, out, tools)
@@ -181,21 +183,36 @@ func toolNames(resolver *registry.Resolver, in []string) []string {
 	return out
 }
 
-func writeDrift(d *app.Deps, g *globals, res *scan.Result, out *report.Drift, all bool) error {
-	if g.outFormat == render.FormatJSON {
+func driftFormats() []render.Format {
+	return []render.Format{
+		render.FormatTTY,
+		render.FormatPlain,
+		render.FormatMD,
+		render.FormatJSON,
+		render.FormatSARIF,
+		render.FormatGitHub,
+	}
+}
+
+func writeDrift(
+	w io.Writer, f render.Format, d *app.Deps, g *globals, res *scan.Result, out *report.Drift, all bool,
+) error {
+	switch f {
+	case render.FormatJSON:
 		env := render.NewEnvelope(buildinfo.Get().Version, d.Clock(), out)
 		env.Errors = driftErrors(res, out)
-		return render.JSON(d.Stdout, env)
+		return render.JSON(w, env)
+	case render.FormatMD:
+		return render.DriftMarkdown(w, out, render.DriftOptions{All: all})
+	case render.FormatSARIF:
+		return sarif.Write(w, render.DriftSARIF(out, res.Problems, buildinfo.Get().Version))
+	case render.FormatGitHub:
+		return sarif.WriteGitHub(w, render.DriftSARIF(out, res.Problems, buildinfo.Get().Version))
+	case render.FormatAuto, render.FormatTTY, render.FormatPlain, render.FormatCSV:
 	}
-	if g.outFormat == render.FormatMD {
-		return render.DriftMarkdown(d.Stdout, out, render.DriftOptions{All: all})
-	}
-	if g.outFormat == render.FormatSARIF {
-		return sarif.Write(d.Stdout, render.DriftSARIF(out, res.Problems, buildinfo.Get().Version))
-	}
-	color := g.outFormat == render.FormatTTY &&
+	color := f == render.FormatTTY &&
 		render.UseColor(render.ColorMode(g.color), d.Env.Lookup, app.IsTerminal(d.Stdout))
-	return render.DriftText(d.Stdout, out, render.DriftOptions{All: all, Color: color})
+	return render.DriftText(w, out, render.DriftOptions{All: all, Color: color})
 }
 
 // driftErrors lists the files that didn't parse and the tools whose latest version GitHub

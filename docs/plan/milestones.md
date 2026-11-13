@@ -168,20 +168,32 @@ elvish, xonsh, tcsh, oil and clink use embedded carapace, so users install nothi
 
 ### M13: CI outputs and the GitHub PR comment (shared) → v0.2.0 ([output-and-ci](specs/output-and-ci.md))
 Scope: everything the action (M14) needs from the CLI, so the action only wires flags.
-- [ ] A repeatable `--out <format>=<path>` flag in the shared `internal/render`. One run writes
+Decisions: [engineering ADR-0014](../engineering/adr/0014-report-outputs-and-pr-comment.md).
+- [x] A repeatable `--out <format>=<path>` flag in the shared `internal/render`. One run writes
   json, sarif, md and github output with the same exit code as `--format`, shown by a testscript.
   It replaces the `-o, --output` flag planned in `cli.md`.
-- [ ] A shared `internal/ghcomment` package on `internal/httpx`, the same code as tfcensus.
+  Evidence (2026-11-13, local): `testdata/script/out.txtar` runs drift over the generated tree
+  once with `--format json` and four `--out` files, exits 3 under `--fail-on drift`, and each
+  file equals the single-format run. `digest`, `outdated`, `drift` and `pins` take `--out`;
+  `outdated` and `drift` gain `--format github`. `cli.md` lists `--out`.
+- [x] A shared `internal/ghcomment` package on `internal/httpx`, the same code as tfcensus.
   `relgap notify --from <json> --notify github-pr-comment` keeps one comment per kind per PR with
   the `<!-- relgap:v1 ... -->` marker. An unchanged hash means no write, and a resolved report
   becomes "Nothing to report". The PR number comes from `GITHUB_EVENT_PATH`. Cassettes cover
   create, unchanged (0 writes), update and resolve.
+  Evidence: `TestPublish` replays `testdata/cassettes/github/pr-comment-{create,unchanged,update,resolve,skip}.yaml`
+  and counts writes (1, 0, 1, 1, 0; the dry run 0); `TestNotifyPRComment` runs the lifecycle on
+  saved drift reports and `TestNotifyErrors` the exit codes.
 - [ ] `digest` can take the upgraded tools of a PR: the pins at the base ref against the head ref,
-  or Renovate's branch name and JSON comment (output-and-ci.md).
-- [ ] Markdown truncation counts characters, defaults to 60,000 (GitHub's cap is 65,536), cuts at
+  or Renovate's branch name and JSON comment (output-and-ci.md). Not started.
+- [x] Markdown truncation counts characters, defaults to 60,000 (GitHub's cap is 65,536), cuts at
   row or section boundaries and adds a footer naming what was cut (output-and-ci.md criterion 4,
   formerly `--md-max-bytes`). A property test checks the limit. The flag has the same name in both
   CLIs.
+  Evidence: `--md-max-chars` in both CLIs; `TestDigestMarkdownTruncation` (300 generated digests)
+  and the shared `TestTruncateMarkdownLimit`; `digest_kubectl.txtar` checks the cut of a
+  digest over 60,000 characters. `docs/ci/outdated.yml` uses `--out` and the comment, and
+  `jactionlint docs/ci/outdated.yml` exits 0.
 - [ ] v0.2.0 is released.
 
 ### M14: GitHub Action → `sassdavid/relgap-action` v1.0.0 (clone at `~/src/github/relgap-action`, empty) (shared with tfcensus-action)

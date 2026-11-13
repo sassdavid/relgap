@@ -27,7 +27,7 @@ relgap completion elvish [flags]
       --color string            colorize output: auto, always or never (default "auto")
       --concurrency int         maximum concurrent requests per tool (config github.concurrency) (default 8)
       --config string           config file to use instead of the discovered .relgap.yaml (env RELGAP_CONFIG)
-      --format string           output format: tty, plain, md, json or sarif (default tty when stdout is a terminal, else plain)
+      --format string           output format: tty, plain, md, json, sarif or github (default tty when stdout is a terminal, else plain)
       --log-file string         write logs to this file instead of stderr
       --log-format string       log format: text or json (default "text")
       --min-confidence float    hide entries below this confidence, 0..1 (config policy.min_confidence) (default 0.5)

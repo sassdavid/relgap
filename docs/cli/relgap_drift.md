@@ -54,7 +54,9 @@ relgap drift [roots...] [flags]
       --fail-on strings                         exit 3 when this matches: drift; repeatable (config policy.fail_on)
   -h, --help[=true|false]                       help for drift
       --latest[=true|false]                     add the newest stable version of each tool (needs the network or the cache)
+      --md-max-chars int                        cut Markdown output to this many characters at a row or section boundary; 0 means no limit (default 60000)
       --min-count int                           findings a --fail-on value needs before it exits 3 (default 1)
+      --out stringArray                         also write the report to a file as format=path (repeatable); format is one of plain, md, json, sarif or github
       --submodules[=true|false]                 scan checked-out git submodules as repositories
       --tool strings                            report only this tool, with a column even when it agrees; repeatable
 ```
@@ -65,7 +67,7 @@ relgap drift [roots...] [flags]
       --color string            colorize output: auto, always or never (default "auto")
       --concurrency int         maximum concurrent requests per tool (config github.concurrency) (default 8)
       --config string           config file to use instead of the discovered .relgap.yaml (env RELGAP_CONFIG)
-      --format string           output format: tty, plain, md, json or sarif (default tty when stdout is a terminal, else plain)
+      --format string           output format: tty, plain, md, json, sarif or github (default tty when stdout is a terminal, else plain)
       --log-file string         write logs to this file instead of stderr
       --log-format string       log format: text or json (default "text")
       --min-confidence float    hide entries below this confidence, 0..1 (config policy.min_confidence) (default 0.5)

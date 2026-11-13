@@ -3,6 +3,7 @@ package cli
 import (
 	"context"
 	"fmt"
+	"io"
 	"net/http"
 	"path"
 	"slices"
@@ -92,6 +93,7 @@ since a pass on partial data proves nothing.`,
 		},
 	}
 	addGateFlags(cmd, outdatedValues())
+	addOutputFlags(cmd, g, outdatedFormats()...)
 	cmd.Flags().Bool(flagBinaries, false,
 		"also check the Go version and main module of the pinned tools' installed executables against OSV")
 	cmd.ValidArgsFunction = complete.Files()
@@ -99,9 +101,7 @@ since a pass on partial data proves nothing.`,
 }
 
 func runOutdated(cmd *cobra.Command, d *app.Deps, g *globals, root string) error {
-	err := g.outFormat.Check(render.FormatTTY, render.FormatPlain, render.FormatMD, render.FormatJSON,
-		render.FormatSARIF)
-	if err != nil {
+	if err := g.checkFormats(outdatedFormats()...); err != nil {
 		return usageError(err)
 	}
 	s, err := g.newSession(cmd, d)
@@ -121,7 +121,9 @@ func runOutdated(cmd *cobra.Command, d *app.Deps, g *globals, root string) error
 	if err != nil {
 		return err
 	}
-	if err = writeOutdated(d, g, run); err != nil {
+	if err = g.sink(cmd, d).Write(func(w io.Writer, f render.Format) error {
+		return writeOutdated(w, f, d, g, run)
+	}); err != nil {
 		return err
 	}
 	run.warn(cmd, d)
@@ -259,21 +261,34 @@ func ignoreRules(resolver *registry.Resolver, rules []config.IgnoreRule) []scan.
 	return out
 }
 
-func writeOutdated(d *app.Deps, g *globals, c *comparison) error {
-	if g.outFormat == render.FormatJSON {
+func outdatedFormats() []render.Format {
+	return []render.Format{
+		render.FormatTTY,
+		render.FormatPlain,
+		render.FormatMD,
+		render.FormatJSON,
+		render.FormatSARIF,
+		render.FormatGitHub,
+	}
+}
+
+func writeOutdated(w io.Writer, f render.Format, d *app.Deps, g *globals, c *comparison) error {
+	switch f {
+	case render.FormatJSON:
 		env := render.NewEnvelope(buildinfo.Get().Version, d.Clock(), c.out)
 		env.Errors = append(c.errors(), c.sourceErrors()...)
-		return render.JSON(d.Stdout, env)
+		return render.JSON(w, env)
+	case render.FormatMD:
+		return render.OutdatedMarkdown(w, c.out)
+	case render.FormatSARIF:
+		return sarif.Write(w, render.OutdatedSARIF(c.out, c.scan.Problems, buildinfo.Get().Version))
+	case render.FormatGitHub:
+		return sarif.WriteGitHub(w, render.OutdatedSARIF(c.out, c.scan.Problems, buildinfo.Get().Version))
+	case render.FormatAuto, render.FormatTTY, render.FormatPlain, render.FormatCSV:
 	}
-	if g.outFormat == render.FormatMD {
-		return render.OutdatedMarkdown(d.Stdout, c.out)
-	}
-	if g.outFormat == render.FormatSARIF {
-		return sarif.Write(d.Stdout, render.OutdatedSARIF(c.out, c.scan.Problems, buildinfo.Get().Version))
-	}
-	color := g.outFormat == render.FormatTTY &&
+	color := f == render.FormatTTY &&
 		render.UseColor(render.ColorMode(g.color), d.Env.Lookup, app.IsTerminal(d.Stdout))
-	return render.OutdatedText(d.Stdout, c.out, color)
+	return render.OutdatedText(w, c.out, color)
 }
 
 // errors lists the files that didn't parse and the pins GitHub failed for.
