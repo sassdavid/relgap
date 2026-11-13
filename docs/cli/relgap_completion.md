@@ -36,7 +36,13 @@ See each sub-command's help for details on how to use the generated script.
 
 * [relgap](relgap.md)	 - Release-notes digests and toolchain drift for the tools you pin
 * [relgap completion bash](relgap_completion_bash.md)	 - Generate the autocompletion script for bash
+* [relgap completion clink](relgap_completion_clink.md)	 - Generate the autocompletion script for clink
+* [relgap completion elvish](relgap_completion_elvish.md)	 - Generate the autocompletion script for elvish
 * [relgap completion fish](relgap_completion_fish.md)	 - Generate the autocompletion script for fish
+* [relgap completion nushell](relgap_completion_nushell.md)	 - Generate the autocompletion script for nushell
+* [relgap completion oil](relgap_completion_oil.md)	 - Generate the autocompletion script for oil
 * [relgap completion powershell](relgap_completion_powershell.md)	 - Generate the autocompletion script for powershell
+* [relgap completion tcsh](relgap_completion_tcsh.md)	 - Generate the autocompletion script for tcsh
+* [relgap completion xonsh](relgap_completion_xonsh.md)	 - Generate the autocompletion script for xonsh
 * [relgap completion zsh](relgap_completion_zsh.md)	 - Generate the autocompletion script for zsh
 

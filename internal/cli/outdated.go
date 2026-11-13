@@ -12,6 +12,7 @@ import (
 
 	"github.com/sassdavid/relgap/internal/app"
 	"github.com/sassdavid/relgap/internal/buildinfo"
+	"github.com/sassdavid/relgap/internal/complete"
 	"github.com/sassdavid/relgap/internal/config"
 	"github.com/sassdavid/relgap/internal/enrich"
 	"github.com/sassdavid/relgap/internal/misex"
@@ -93,6 +94,7 @@ since a pass on partial data proves nothing.`,
 	addGateFlags(cmd, outdatedValues())
 	cmd.Flags().Bool(flagBinaries, false,
 		"also check the Go version and main module of the pinned tools' installed executables against OSV")
+	cmd.ValidArgsFunction = complete.Files()
 	return cmd
 }
 

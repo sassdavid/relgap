@@ -145,7 +145,7 @@ func runRelgap(args []string) int {
 	if file := os.Getenv(envRequests); file != "" {
 		d.HTTPTransport = requestLog{file: file, rt: cmp.Or[http.RoundTripper](d.HTTPTransport, http.DefaultTransport)}
 	}
-	return cli.Execute(ctx, d, args)
+	return cli.Main(ctx, d, args)
 }
 
 // openCassettes opens the cassettes TEST_CASSETTE lists. Only the last one records, and only the

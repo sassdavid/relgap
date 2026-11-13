@@ -12,6 +12,7 @@ import (
 
 	"github.com/sassdavid/relgap/internal/app"
 	"github.com/sassdavid/relgap/internal/buildinfo"
+	"github.com/sassdavid/relgap/internal/complete"
 	"github.com/sassdavid/relgap/internal/config"
 	"github.com/sassdavid/relgap/internal/execx"
 	"github.com/sassdavid/relgap/internal/misex"
@@ -40,6 +41,12 @@ Layers, highest precedence first:
   relgap resolve TERRAFORM_VERSION
   relgap resolve aqua:hashicorp/terraform --format json`,
 		Args: exactArgs(1),
+		ValidArgsFunction: func(cmd *cobra.Command, args []string, toComplete string) ([]cobra.Completion, cobra.ShellCompDirective) {
+			if len(args) > 0 {
+				return complete.NoFiles(cmd, args, toComplete)
+			}
+			return completeTools(d, g)(cmd, args, toComplete)
+		},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if err := g.outFormat.Check(render.FormatTTY, render.FormatPlain, render.FormatJSON); err != nil {
 				return usageError(err)
@@ -212,4 +219,39 @@ func maxArgs(n int) cobra.PositionalArgs {
 		}
 		return nil
 	}
+}
+
+// completeTools completes a tool name from the embedded registries and the config's tools.
+func completeTools(d *app.Deps, g *globals) cobra.CompletionFunc {
+	return complete.Dynamic(complete.Timeout, completionTools(d, g))
+}
+
+// completeToolList is [completeTools] for a comma-separated list.
+func completeToolList(d *app.Deps, g *globals) cobra.CompletionFunc {
+	return complete.DynamicList(complete.Timeout, completionTools(d, g))
+}
+
+func completionTools(d *app.Deps, g *globals) complete.Source {
+	return complete.Tools(
+		func(_ context.Context, cmd *cobra.Command) (registry.ConfigLayer, error) {
+			cwd, err := d.Getwd()
+			if err != nil {
+				return registry.ConfigLayer{}, fmt.Errorf("get working directory: %w", err)
+			}
+			res, err := config.Load(config.Options{
+				Environ:      d.Env,
+				Cwd:          cwd,
+				ExplicitFile: g.configFile,
+				Flags:        cmd.Flags(),
+				FlagKeys:     flagKeys(),
+			})
+			if err != nil {
+				return registry.ConfigLayer{}, err //nolint:wrapcheck // config errors name the file
+			}
+			layer := registry.ConfigLayer{Tools: map[string]string{}, Aliases: res.Config.Aliases}
+			for tool, t := range res.Config.Tools {
+				layer.Tools[tool] = t.Repo
+			}
+			return layer, nil
+		})
 }

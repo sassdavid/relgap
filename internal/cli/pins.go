@@ -9,6 +9,7 @@ import (
 
 	"github.com/sassdavid/relgap/internal/app"
 	"github.com/sassdavid/relgap/internal/buildinfo"
+	"github.com/sassdavid/relgap/internal/complete"
 	"github.com/sassdavid/relgap/internal/config"
 	"github.com/sassdavid/relgap/internal/render"
 	"github.com/sassdavid/relgap/internal/scan"
@@ -56,6 +57,8 @@ Roots default to scan.roots, then the current directory.`,
 	fl.BoolVar(&f.submodules, "submodules", false, "scan checked-out git submodules as repositories")
 	fl.StringVar(&f.renovate, "renovate-report", "",
 		"add the pins in this Renovate JSON report (renovate --platform=local --dry-run=extract --report-type=file)")
+	_ = cmd.RegisterFlagCompletionFunc("renovate-report", complete.Files("json"))
+	cmd.ValidArgsFunction = complete.Dirs()
 	return cmd
 }
 

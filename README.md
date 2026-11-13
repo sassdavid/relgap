@@ -18,7 +18,8 @@ mise use github:sassdavid/relgap
 go install github.com/sassdavid/relgap/cmd/relgap@latest   # unsigned
 ```
 
-Homebrew and Scoop come later (milestone M19).
+Homebrew and Scoop come later (milestone M19). Each archive carries shell completion scripts and
+man pages; [docs/install.md](docs/install.md) sets them up for each shell.
 
 Release checksums are signed with cosign (keyless) and carry GitHub build-provenance attestations:
 

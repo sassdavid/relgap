@@ -14,6 +14,7 @@ import (
 
 	"github.com/sassdavid/relgap/internal/app"
 	"github.com/sassdavid/relgap/internal/buildinfo"
+	"github.com/sassdavid/relgap/internal/complete"
 	"github.com/sassdavid/relgap/internal/config"
 	"github.com/sassdavid/relgap/internal/render"
 )
@@ -181,8 +182,9 @@ func writeFiles(d *app.Deps, files []config.File) error {
 
 func newConfigValidateCmd(d *app.Deps, g *globals) *cobra.Command {
 	return &cobra.Command{
-		Use:   "validate [file...]",
-		Short: "Validate config files against the schema",
+		Use:               "validate [file...]",
+		Short:             "Validate config files against the schema",
+		ValidArgsFunction: complete.Files("yaml", "yml"),
 		Long: `Without arguments, validates the user and project config files plus RELGAP_* env vars and
 flags, exactly as other commands would load them. With arguments, validates only those files.
 

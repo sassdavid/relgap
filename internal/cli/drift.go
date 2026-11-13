@@ -10,6 +10,7 @@ import (
 
 	"github.com/sassdavid/relgap/internal/app"
 	"github.com/sassdavid/relgap/internal/buildinfo"
+	"github.com/sassdavid/relgap/internal/complete"
 	"github.com/sassdavid/relgap/internal/config"
 	"github.com/sassdavid/relgap/internal/registry"
 	"github.com/sassdavid/relgap/internal/render"
@@ -79,6 +80,8 @@ Roots default to scan.roots, then the current directory.`,
 		"compare exact pins only; constraint pins are shown but don't count")
 	fl.BoolVar(&f.submodules, "submodules", false, "scan checked-out git submodules as repositories")
 	addGateFlags(cmd, driftValues())
+	_ = cmd.RegisterFlagCompletionFunc("tool", completeToolList(d, g))
+	cmd.ValidArgsFunction = complete.Dirs()
 	return cmd
 }
 

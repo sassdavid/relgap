@@ -3,12 +3,14 @@ package cli
 import (
 	"fmt"
 	"io"
+	"log/slog"
 	"os"
 	"strings"
 
 	"github.com/spf13/cobra"
 
 	"github.com/sassdavid/relgap/internal/app"
+	"github.com/sassdavid/relgap/internal/complete"
 	"github.com/sassdavid/relgap/internal/config"
 	"github.com/sassdavid/relgap/internal/render"
 )
@@ -61,7 +63,6 @@ func (g *globals) close() {
 func NewRootCmd(d *app.Deps) *cobra.Command {
 	root, _ := newRoot(d)
 	root.InitDefaultHelpCmd()
-	root.InitDefaultCompletionCmd()
 	return root
 }
 
@@ -89,15 +90,17 @@ stdout carries data, stderr carries logs. Use --format json for scripting.`,
 	root.SetFlagErrorFunc(func(_ *cobra.Command, err error) error { return usageError(err) })
 
 	pf := root.PersistentFlags()
-	pf.StringVar(&g.format, "format", "",
-		"output format: tty, plain, md, json or sarif (default tty when stdout is a terminal, else plain)")
+	pf.StringVar(&g.format, "format", "", complete.Usage(
+		"output format: {values} (default tty when stdout is a terminal, else plain)", formatChoices()))
 	pf.StringVar(&g.configFile, "config", "",
 		"config file to use instead of the discovered "+config.ProjectFileName+" (env "+config.EnvConfigFile+")")
 	pf.CountVarP(&g.verbose, "verbose", "v", "more logging: -v info, -vv debug, -vvv trace")
 	pf.BoolVarP(&g.quiet, "quiet", "q", false, "log errors only")
-	pf.StringVar(&g.logFormat, "log-format", string(app.LogFormatText), "log format: text or json")
+	pf.StringVar(&g.logFormat, "log-format", string(app.LogFormatText),
+		complete.Usage("log format: {values}", logFormatChoices()))
 	pf.StringVar(&g.logFile, "log-file", "", "write logs to this file instead of stderr")
-	pf.StringVar(&g.color, "color", string(render.ColorAuto), "colorize output: auto, always or never")
+	pf.StringVar(&g.color, "color", string(render.ColorAuto),
+		complete.Usage("colorize output: {values}", colorChoices()))
 	pf.BoolVar(&g.noInput, "no-input", false, "never prompt for input")
 	pf.IntVar(&g.concurrency, flagConcurrency, def.GitHub.Concurrency,
 		"maximum concurrent requests per tool (config github.concurrency)")
@@ -108,6 +111,15 @@ stdout carries data, stderr carries logs. Use --format json for scripting.`,
 	pf.BoolVar(&g.noCache, "no-cache", false, "neither read nor write the HTTP cache")
 	root.MarkFlagsMutuallyExclusive("verbose", "quiet")
 	root.MarkFlagsMutuallyExclusive("offline", "refresh", "no-cache")
+	registerCompletions(root, map[string]cobra.CompletionFunc{
+		"format":          complete.Enum(formatChoices()),
+		"config":          complete.Files("yaml", "yml"),
+		"log-format":      complete.Enum(logFormatChoices()),
+		"log-file":        complete.Files(),
+		"color":           complete.Enum(colorChoices()),
+		flagConcurrency:   complete.NoFiles,
+		flagMinConfidence: complete.Enum(minConfidenceHints()),
+	})
 
 	root.AddCommand(
 		newVersionCmd(d, g),
@@ -121,10 +133,17 @@ stdout carries data, stderr carries logs. Use --format json for scripting.`,
 		newDriftCmd(d, g),
 		newMCPCmd(d, g),
 	)
+	addCompletionShells(root)
+	defaultNoFiles(root)
 	return root, g
 }
 
 func (g *globals) setup(cmd *cobra.Command, d *app.Deps) error {
+	// Completion requests get unparsed flags here and may print nothing but results.
+	if complete.IsRequest(cmd) {
+		d.Logger = slog.New(slog.DiscardHandler)
+		return nil
+	}
 	// cobra checks these only after PersistentPreRunE; check them first so they exit 2.
 	if err := cmd.ValidateRequiredFlags(); err != nil {
 		return usageError(err)
@@ -191,6 +210,26 @@ func (g *globals) loadConfig(cmd *cobra.Command, d *app.Deps) (*config.Result, e
 	}
 	d.Config = res
 	return res, nil
+}
+
+func formatChoices() []complete.Choice {
+	return []complete.Choice{
+		{Value: string(render.FormatTTY), Desc: "table with color for a terminal"},
+		{Value: string(render.FormatPlain), Desc: "table without color"},
+		{Value: string(render.FormatMD), Desc: "Markdown"},
+		{Value: string(render.FormatJSON), Desc: "JSON envelope for scripts"},
+		{Value: string(render.FormatSARIF), Desc: "SARIF 2.1.0 for code scanning"},
+	}
+}
+
+// minConfidenceHints are example values; --min-confidence takes any number from 0 to 1.
+func minConfidenceHints() []complete.Choice {
+	return []complete.Choice{
+		{Value: "0", Desc: "show every entry"},
+		{Value: "0.5", Desc: "the default: hides keyword-only and unmatched entries"},
+		{Value: "0.7", Desc: "leading verbs, commit types and headings"},
+		{Value: "0.9", Desc: "headings, breaking markers and footers only"},
+	}
 }
 
 // noArgs is cobra.NoArgs with exit code 2.

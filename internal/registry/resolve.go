@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
+	"maps"
 	"path"
 	"regexp"
 	"slices"
@@ -173,6 +174,41 @@ func NewResolver(in Inputs) *Resolver {
 		}
 	}
 	return r
+}
+
+// Name is a tool name the resolver knows, with the layer that defines it.
+type Name struct {
+	Name  string
+	Layer Layer
+	Repo  string // owner/repo when the layer names one
+}
+
+// Names lists the tool names of the relgap registry, the config and mise's registry, without
+// aliases. A name in several layers is listed once, from the first.
+func (r *Resolver) Names() []Name {
+	seen := map[string]bool{}
+	var out []Name
+	add := func(n Name) {
+		if k := strings.ToLower(n.Name); n.Name != "" && !seen[k] {
+			seen[k] = true
+			out = append(out, n)
+		}
+	}
+	for _, e := range r.in.Entries {
+		add(Name{Name: e.Name, Layer: LayerRelgap, Repo: e.Repo})
+	}
+	for _, name := range slices.Sorted(maps.Keys(r.in.Config.Tools)) {
+		add(Name{Name: name, Layer: LayerConfig, Repo: r.in.Config.Tools[name]})
+	}
+	for i := range r.in.Mise {
+		m := &r.in.Mise[i]
+		if r.isPrimary(m) {
+			repo, _ := r.miseRepo(m)
+			add(Name{Name: m.Short, Layer: LayerMise, Repo: repo})
+		}
+	}
+	slices.SortFunc(out, func(a, b Name) int { return strings.Compare(a.Name, b.Name) })
+	return out
 }
 
 // indexMise skips the extra entries `mise registry --json` prints for aliases, which repeat their

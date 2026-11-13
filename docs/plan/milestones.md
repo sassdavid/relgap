@@ -106,40 +106,64 @@ package channel gets anything until M19. No new features.
 Scope: every flag and argument completes from local data in every common shell, and every channel
 ships the scripts and man pages. bash, zsh, fish and PowerShell use cobra's scripts. nushell,
 elvish, xonsh, tcsh, oil and clink use embedded carapace, so users install nothing extra.
-- [ ] Every enum flag completes its values with descriptions and `ShellCompDirectiveNoFileComp`:
+- [x] Every enum flag completes its values with descriptions and `ShellCompDirectiveNoFileComp`:
   `--format`, `--color`, `--log-format`, `--fail-on`, `--vuln-severity` and `--only`, with hints
   for `--min-confidence` and `--max-behind`. One list feeds both the help text and the completion
   (the gh `StringEnumFlag` pattern). `--config` filters by yaml, `--renovate-report` by json,
   `--log-file` takes files, `--root` uses `FilterDirs`.
-- [ ] A test walks `NewRootCmd`: every non-bool flag has a completion func, a file or directory
+  Evidence (2026-11-13, local): `testdata/script/complete.txtar` goldens for `--format`,
+  `outdated --fail-on`, `digest --only`, `outdated --max-behind`, `--config`, `--renovate-report`
+  and `mcp --root`; `TestCompletionFuncs` and `TestJoinAndUsage` in `internal/complete`.
+- [x] A test walks `NewRootCmd`: every non-bool flag has a completion func, a file or directory
   annotation, or an allowlist entry with a reason.
-- [ ] Dynamic completion reads local data only. Tool names for `digest`, `resolve`, `--tool` and
+  Evidence: `TestCompletionCoverage` (`internal/cli/completion_test.go`) also checks argument
+  completion; the allowlist is empty.
+- [x] Dynamic completion reads local data only. Tool names for `digest`, `resolve`, `--tool` and
   `registry test` come from the embedded snapshots and the override registry (`registry.Load`),
   never from `mise registry` or GitHub. Each func has a 1 s timeout and returns
   `ShellCompDirectiveError` with empty stdout on failure. A test or depguard rule proves no
   `httpx` call is reachable.
-- [ ] `__complete` writes only results to stdout and does no I/O in `PersistentPreRunE`. Warm
+  Evidence: `TestTools` and `TestNoNetworkReachable` (`go list -deps`: no `httpx`,
+  `internal/github` or `net/http`) in `internal/complete`, `TestDynamic` for the timeout, and
+  the resolve, digest and drift goldens in `complete.txtar`.
+- [x] `__complete` writes only results to stdout and does no I/O in `PersistentPreRunE`. Warm
   runs stay under 100 ms.
-- [ ] carapace is embedded at the same pinned version in both repos. `Gen` runs outside the
+  Evidence: `TestCompleteSkipsSetup` (an unwritable `--log-file` doesn't fail
+  `__complete`) and `TestCompleteIsFast` (best of 5 in-process runs under 100 ms with `-race`).
+- [x] carapace is embedded at the same pinned version in both repos. `Gen` runs outside the
   constructors parallel tests use, and `go test -race` passes.
   `relgap completion nushell|elvish|xonsh|tcsh|oil|clink` prints the snippet. The owner has read
   carapace's `LICENSE.appendix`, and `lint:licenses` passes.
 - [ ] testscript goldens cover `__complete`, `__completeNoDesc` and `_carapace export` for static,
   enum, dynamic, missing-file and timeout cases. They live outside the shared `completion.txtar`.
+  Open: `testdata/script/complete.txtar` covers static, enum, dynamic and missing-file cases. No
+  relgap source can hang in a testscript (the config loader accepts regular files only), so the
+  timeout is covered by `TestDynamic` in `internal/complete` instead (engineering ADR-0013).
 - [ ] A CI job loads the scripts in real shells: bash 5 with bash-completion (ubuntu), bash 3.2
   with brew bash-completion v1 (macos), zsh with `compinit`, fish with `complete -C`, pwsh
   `TabExpansion2` on all three OSes, Windows PowerShell 5.1, and nushell through the carapace
   snippet.
-- [ ] A shared `scripts/completions.sh` (on the sibling-diff "identical" list) writes
+  Open: the `completion-shells` job in `ci.yml` and `scripts/completion-shells.sh`/`.ps1` exist but
+  have not run in CI yet. Locally on macOS, zsh, nushell 0.116.1 and pwsh 7.7.0 passed
+  (`completion-shells.sh zsh|nushell`, `completion-shells.ps1`).
+- [x] A shared `scripts/completions.sh` (on the sibling-diff "identical" list) writes
   `completions/` (bash, zsh, fish, ps1) and `manpages/*.1.gz` (`GenManTree` from
   `scripts/gendocs`, dates from `SOURCE_DATE_EPOCH`, the same bytes on a second run). Every
   archive contains both directories.
-- [ ] The cask uses goreleaser's `completions:` and `manpages:` keys instead of
+  Evidence (local): `goreleaser release --snapshot --clean --skip=sign,sbom` put `completions/`
+  (4 files) and 30 `manpages/*.1.gz` in all 6 archives; two runs of `bash scripts/completions.sh`
+  gave the same man page checksum. The CI snapshot job checks both.
+- [x] The cask uses goreleaser's `completions:` and `manpages:` keys instead of
   `generate_completions_from_executable`. Scoop's `post_install` prints the `$PROFILE` line with
   the `current` path.
-- [ ] An install page covers each shell and channel and the pitfalls in
+  Evidence: the snapshot's `dist/homebrew/Casks/relgap.rb` has `bash_completion`,
+  `zsh_completion`, `fish_completion` and 30 `manpage` lines; `dist/scoop/bucket/relgap.json`
+  has the `post_install` lines.
+- [x] An install page covers each shell and channel and the pitfalls in
   [roadmap-research.md](roadmap-research.md). An ADR records the shell, carapace and man page
   choices. ADR-0002's man page claim matches what ships.
+  Evidence: [docs/install.md](../install.md) and engineering
+  [ADR-0013](../engineering/adr/0013-shell-completion-and-man-pages.md).
 
 ### M13: CI outputs and the GitHub PR comment (shared) → v0.2.0 ([output-and-ci](specs/output-and-ci.md))
 Scope: everything the action (M14) needs from the CLI, so the action only wires flags.
