@@ -4,9 +4,30 @@ relgap merges the release notes between two versions of a tool into one digest, 
 tool versions your repositories pin, and adds end-of-life and vulnerability data. It can also run
 as an MCP server.
 
-relgap is pre-release. Milestones M0 (skeleton and release pipeline) and M1 (version schemes and
-tool resolution) are in place, and there are no digests yet. The plan is in [docs/plan](docs/plan/) and the CLI reference in
-[docs/cli](docs/cli/relgap.md).
+relgap is pre-release, and its commands and output can still change before 1.0.
+
+- `digest <tool> <from>..<to>` merges the release notes of every version in the range, breaking
+  changes and security fixes first, each entry with a link to its source.
+- `pins` lists the tool versions your repositories pin, with file and line: mise,
+  `.tool-versions`, aqua, version files such as `.nvmrc`, Terraform, Terragrunt, Dockerfiles, CI
+  workflows, Helm and Renovate reports.
+- `outdated` compares every pin with the latest release and adds end-of-life dates from
+  endoflife.date and known vulnerabilities from OSV. `digest --from-mise` and `digest --all`
+  digest the outdated pins.
+- `drift` shows which repositories pin different versions of the same tool, offline by default.
+- `mcp` serves `digest`, `breaking_changes`, `outdated`, `drift` and `resolve` to agents such as
+  Claude Code ([docs/dogfood.md](docs/dogfood.md)).
+
+The plan is in [docs/plan](docs/plan/) and the CLI reference in [docs/cli](docs/cli/relgap.md).
+
+## CI
+
+`outdated`, `digest` and `drift` exit 3 when a `--fail-on` value matches (breaking, deprecation,
+eol, vuln, drift or outdated). A repeatable `--out <format>=<path>` writes JSON, SARIF, Markdown
+and GitHub annotations from one run with the same exit code. Markdown is cut at a table row or
+section once it reaches `--md-max-chars` (60,000 characters, under GitHub's 65,536-character
+comment limit). `relgap notify --from <json> --notify github-pr-comment` keeps one comment per
+report on a pull request. [docs/ci/outdated.yml](docs/ci/outdated.yml) puts these together.
 
 ## Install
 
