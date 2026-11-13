@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.0](https://github.com/sassdavid/relgap/compare/v0.1.0...v0.2.0) (2026-11-13)
+
+
+### Features
+
+* add --out, Markdown truncation and the GitHub PR comment (M13) ([#30](https://github.com/sassdavid/relgap/issues/30)) ([599ebe2](https://github.com/sassdavid/relgap/commit/599ebe28ac8d2b8392a263a0f5c625f7a8973255))
+* add shell completion, carapace shells and man pages (M12) ([#27](https://github.com/sassdavid/relgap/issues/27)) ([ae8306d](https://github.com/sassdavid/relgap/commit/ae8306ded8e1091aad682c48dd82ceefe953a1ea))
+
 ## 0.1.0 (2026-11-13)
 
 
