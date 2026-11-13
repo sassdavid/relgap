@@ -94,9 +94,13 @@ package channel gets anything until M19. No new features.
   2 and 4, and versions-and-ranges criteria 1-5 (their `TestSpec_` tests pass). Move the answered
   open questions Q3 (`github.host`) and Q8 (embedded aqua snapshot) into a spec or ADR and delete
   them from `open-questions.md`.
-- [ ] Release PR #2 is merged and v0.1.0 is a GitHub release. `cosign verify-blob` and
+- [x] Release PR #2 is merged and v0.1.0 is a GitHub release. `cosign verify-blob` and
   `gh attestation verify` pass on a downloaded archive, `mise use github:sassdavid/relgap` works,
-  and the tap and the bucket get no commit.
+  and the tap and the bucket get no commit. Evidence from 2026-11-13: release run 43401197743
+  published 14 assets and the `package-manifests` artifact; on `relgap_0.1.0_darwin_arm64.tar.gz`
+  cosign printed "Verified OK", `shasum -c` "OK" and `gh attestation verify` succeeded (signer
+  workflow `release.yml`); `mise use github:sassdavid/relgap` installed 0.1.0; both the tap and
+  the bucket API answer 409 "Git Repository is empty".
 
 ### M12: Shell completion, carapace and man pages (shared)
 Scope: every flag and argument completes from local data in every common shell, and every channel
