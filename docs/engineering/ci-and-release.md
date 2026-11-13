@@ -19,11 +19,11 @@
 
 | Workflow | Trigger | Jobs |
 |---|---|---|
-| `ci.yml` | PR, push main | lint; test matrix (ubuntu, macos, windows); fuzz (`mise run fuzz`); docs-up-to-date; schema tests; SARIF dry run (upload-sarif with `CODEQL_ACTION_TEST_MODE` on each SARIF golden, so nothing is uploaded); goreleaser snapshot (6 archives, checksums, SBOMs, third-party notices in every archive) |
+| `ci.yml` | PR, push main | lint; test matrix (ubuntu, macos, windows); fuzz (`mise run fuzz`); docs-up-to-date; schema tests; SARIF dry run (upload-sarif with `CODEQL_ACTION_TEST_MODE` on each SARIF golden, so nothing is uploaded); goreleaser snapshot (6 archives, checksums, SBOMs, third-party notices in every archive, and the container image where the repo has a `Dockerfile`) |
 | `security.yml` | PR, weekly | govulncheck (SARIF), zizmor, dependency review |
 | `live.yml` | nightly (04:41 UTC), manual | live corpus against GitHub and the web with `GITHUB_TOKEN` (read-only job), then a job with `issues: write` that opens, updates or closes "corpus drift: <tool>" issues. Never writes goldens ([testing.md](../plan/testing.md)) |
 | `release-please.yml` | push main | opens or updates the release PR (version bump + CHANGELOG.md from Conventional Commits). On merge it creates the tag and a draft release (`draft` + `force-tag-creation`) |
-| `release.yml` | called by `release-please.yml` when a release is created (tags pushed with `GITHUB_TOKEN` don't trigger workflows); also tag `v*` | goreleaser: binaries, checksums, SBOM, cosign keyless signature, attestations, Homebrew cask, Scoop. Secrets: `HOMEBREW_TAP_TOKEN`, `SCOOP_BUCKET_TOKEN` |
+| `release.yml` | called by `release-please.yml` when a release is created (tags pushed with `GITHUB_TOKEN` don't trigger workflows); also tag `v*` | goreleaser: binaries, checksums, SBOM, cosign keyless signature, attestations. The Homebrew cask and the Scoop manifest are kept as the `package-manifests` workflow artifact until M19 publishes them. Secrets: `HOMEBREW_TAP_TOKEN`, `SCOOP_BUCKET_TOKEN` (unused until M19) |
 
 Rules:
 - Actions are pinned by commit SHA (Renovate updates them).
@@ -36,7 +36,7 @@ Rules:
 - `sboms:` via syft; `signs:` cosign `sign-blob --bundle` on the checksum file.
 - A `before` hook runs `scripts/licenses.sh`, and every archive carries `LICENSE`, `README.md` and `third_party_licenses/`: the license, notice and patent files of each compiled module and of Go, plus `THIRD_PARTY_NOTICES.md`, which links each module's source ([ADR-0012](adr/0012-third-party-notices.md)).
 - `release.use_existing_draft` finds release-please's draft by name (`{{ .Tag }}`), uploads the assets, then publishes it. `releases/latest` never points at a release without assets, and this works with immutable releases.
-- `homebrew_casks:` (replaces `brews:`) publishes to the tap `sassdavid/homebrew-tap`. Cask and Scoop uploads are skipped when their token secret is missing, and attestation runs even if a publisher fails.
+- `homebrew_casks:` (replaces `brews:`) publishes to the tap `sassdavid/homebrew-tap`. Until M19, `skip_upload: true` keeps the cask and the Scoop manifest in `dist/` (decided 2026-11-13, [roadmap research](../plan/roadmap-research.md)). Attestation runs even if a publisher fails. The cask's `generate_completions_from_executable` sets `shell_parameter_format: cobra` and no `args`, because brew already adds `completion <shell>`.
 - `scoops:` for Windows. `nfpms:` (deb/rpm) is optional and comes later.
 
 ## Distribution order

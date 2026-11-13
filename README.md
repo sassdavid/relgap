@@ -10,14 +10,15 @@ tool resolution) are in place, and there are no digests yet. The plan is in [doc
 
 ## Install
 
-Once v0.1.0 is out:
+Releases are on [GitHub](https://github.com/sassdavid/relgap/releases): download the archive for
+your platform, or let mise do it.
 
 ```sh
-brew install --cask sassdavid/tap/relgap
-scoop bucket add sassdavid https://github.com/sassdavid/scoop-bucket && scoop install relgap
 mise use github:sassdavid/relgap
 go install github.com/sassdavid/relgap/cmd/relgap@latest   # unsigned
 ```
+
+Homebrew and Scoop come later (milestone M19).
 
 Release checksums are signed with cosign (keyless) and carry GitHub build-provenance attestations:
 
