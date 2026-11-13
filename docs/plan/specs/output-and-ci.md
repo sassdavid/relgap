@@ -26,7 +26,7 @@ A value matches when its count reaches `--min-count` (default 1). A value given 
 command that doesn't check it exits 2; the same value from `policy.fail_on` is left to the
 command that checks it.
 
-## GitHub Action (M11)
+## GitHub Action (M14)
 `sassdavid/relgap-action`, a composite action that installs a verified release:
 - `mode: comment-on-renovate`: on a Renovate or Dependabot PR, parses the PR's upgraded tools (branch name / `renovate` JSON comment / diff of pin files) and posts or updates **one** sticky comment with the `md` digest.
 - `mode: report`: runs `outdated`/`drift` with SARIF upload to code scanning.
