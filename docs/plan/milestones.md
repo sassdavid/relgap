@@ -134,18 +134,19 @@ elvish, xonsh, tcsh, oil and clink use embedded carapace, so users install nothi
   constructors parallel tests use, and `go test -race` passes.
   `relgap completion nushell|elvish|xonsh|tcsh|oil|clink` prints the snippet. The owner has read
   carapace's `LICENSE.appendix`, and `lint:licenses` passes.
-- [ ] testscript goldens cover `__complete`, `__completeNoDesc` and `_carapace export` for static,
+- [x] testscript goldens cover `__complete`, `__completeNoDesc` and `_carapace export` for static,
   enum, dynamic, missing-file and timeout cases. They live outside the shared `completion.txtar`.
-  Open: `testdata/script/complete.txtar` covers static, enum, dynamic and missing-file cases. No
+  Evidence: `testdata/script/complete.txtar` covers static, enum, dynamic and missing-file cases. No
   relgap source can hang in a testscript (the config loader accepts regular files only), so the
   timeout is covered by `TestDynamic` in `internal/complete` instead (engineering ADR-0013).
-- [ ] A CI job loads the scripts in real shells: bash 5 with bash-completion (ubuntu), bash 3.2
+- [x] A CI job loads the scripts in real shells: bash 5 with bash-completion (ubuntu), bash 3.2
   with brew bash-completion v1 (macos), zsh with `compinit`, fish with `complete -C`, pwsh
   `TabExpansion2` on all three OSes, Windows PowerShell 5.1, and nushell through the carapace
   snippet.
-  Open: the `completion-shells` job in `ci.yml` and `scripts/completion-shells.sh`/`.ps1` exist but
-  have not run in CI yet. Locally on macOS, zsh, nushell 0.116.1 and pwsh 7.7.0 passed
-  (`completion-shells.sh zsh|nushell`, `completion-shells.ps1`).
+  Evidence (2026-11-13): the `completion-shells` jobs of ci run 43433798621 on main (after #27)
+  passed on ubuntu, macos and windows. The logs print "bash: ok" for bash 5 and bash 3.2, "zsh: ok",
+  "fish: ok", "nushell: ok", and "powershell: ok" for pwsh 7.6 on each OS and for Windows
+  PowerShell 5.1.26100.
 - [x] A shared `scripts/completions.sh` (on the sibling-diff "identical" list) writes
   `completions/` (bash, zsh, fish, ps1) and `manpages/*.1.gz` (`GenManTree` from
   `scripts/gendocs`, dates from `SOURCE_DATE_EPOCH`, the same bytes on a second run). Every
