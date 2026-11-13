@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/sassdavid/relgap/compare/v0.2.0...v0.3.0) (2026-11-13)
+
+
+### Features
+
+* add digest --base and --pull-request for upgraded pins ([#33](https://github.com/sassdavid/relgap/issues/33)) ([8ef226c](https://github.com/sassdavid/relgap/commit/8ef226ccb13707dd0f62a42484ba26de8ae9c961))
+
 ## [0.2.0](https://github.com/sassdavid/relgap/compare/v0.1.0...v0.2.0) (2026-11-13)
 
 
