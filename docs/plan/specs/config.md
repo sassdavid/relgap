@@ -49,6 +49,6 @@ llm:
 - Env vars: `RELGAP_GITHUB_CONCURRENCY`, `RELGAP_CACHE_DIR`, `RELGAP_LLM_PROVIDER`, and so on. Tokens are **never** read from config files, only from env, gh or the keyring.
 
 ## Acceptance criteria
-- [ ] `config show --sources` prints a key, its value and its source for every key (golden).
-- [ ] Unknown key and wrong type each produce a precise error (testscript).
-- [ ] Schema and struct stay in sync (generation test).
+- [x] `config show --sources` prints a key, its value and its source for every key (golden).
+- [x] Unknown key and wrong type each produce a precise error (testscript).
+- [x] Schema and struct stay in sync (generation test).

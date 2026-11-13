@@ -33,7 +33,8 @@ Scope: `httpx` (retry, rate, no cache yet), go-github + githubv4 batch, token di
 
 ### M3: `changelog-file`, section index, full classifier → [classification](specs/classification.md)
 - [x] mdindex parses each file once (request counter test). kubernetes, claude-code and node fixtures are golden.
-- [ ] All classification.md criteria. The precision check over the labelled set passes ≥ 0.9.
+- [x] All classification.md criteria. The precision check over the labelled set passes ≥ 0.9
+  (0.900, 36 of 40, labels reviewed 2026-11-13).
 - [x] `md` renderer golden output for 3 tools.
 
 ### M4: Cache, ETag, offline
@@ -78,18 +79,19 @@ M12 `--binaries` item was already done (`TestSpec_enrichment_3`).
 ### M11: Release readiness → v0.1.0 on GitHub only (shared)
 Scope: fix what blocks the first release, then cut it on GitHub only (decided 2026-11-13). No
 package channel gets anything until M19. No new features.
-- [ ] Package channels are off in the committed config: the cask and Scoop `skip_upload: true`
+- [x] Package channels are off in the committed config: the cask and Scoop `skip_upload: true`
   (no token check yet).
   goreleaser still renders the cask and the manifest into `dist/`, and `release.yml` keeps them as
   a workflow artifact so each release shows what M19 would publish.
-- [ ] A person reviews `testdata/labels/*.yaml`, re-runs the precision test and ticks the M3 box.
-  Precision is exactly 0.900 (36 of 40) today, so one relabelled entry can fail the gate.
+- [x] A person reviews `testdata/labels/*.yaml`, re-runs the precision test and ticks the M3 box.
+  Reviewed 2026-11-13 against upstream release notes: no label changed, and
+  `TestSpec_classification_1` gives 0.900 (36 of 40), recall 0.783 (36 of 46).
 - [ ] `gh workflow run live.yml` gives one green run on main and ticks the M8 corpus box. The box
   says 28 tools, or `chart:` lands first (argo-cd is skipped for it).
-- [ ] The Homebrew cask installs real completion scripts. Today `args: [completion]` plus
+- [x] The Homebrew cask installs real completion scripts. Today `args: [completion]` plus
   `shell_parameter_format: cobra` makes brew run `relgap completion completion bash`, which prints
   help text. Drop `args` (M12 replaces the stanza) and check the rendered cask in `dist/`.
-- [ ] Paperwork from the 2026-11-13 audit: tick config.md criteria 1-3, tool-resolution criteria 1,
+- [x] Paperwork from the 2026-11-13 audit: tick config.md criteria 1-3, tool-resolution criteria 1,
   2 and 4, and versions-and-ranges criteria 1-5 (their `TestSpec_` tests pass). Move the answered
   open questions Q3 (`github.host`) and Q8 (embedded aqua snapshot) into a spec or ADR and delete
   them from `open-questions.md`.

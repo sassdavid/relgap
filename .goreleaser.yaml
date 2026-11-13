@@ -99,14 +99,14 @@ homebrew_casks:
       name: homebrew-tap
       token: '{{ envOrDefault "HOMEBREW_TAP_TOKEN" "" }}'
     directory: Casks
-    skip_upload: '{{ if eq (envOrDefault "HOMEBREW_TAP_TOKEN" "") "" }}true{{ else }}false{{ end }}'
+    # Off until M19: goreleaser renders the cask into dist/ and release.yml keeps it as an artifact.
+    skip_upload: true
     homepage: https://github.com/sassdavid/relgap
     description: Release-notes digests and toolchain drift for the tools you pin
     license: Apache-2.0
     commit_msg_template: "chore(cask): {{ .ProjectName }} {{ .Tag }}"
     generate_completions_from_executable:
       executable: relgap
-      args: [completion]
       base_name: relgap
       shell_parameter_format: cobra
       shells: [bash, zsh, fish]
@@ -126,7 +126,8 @@ scoops:
       name: scoop-bucket
       token: '{{ envOrDefault "SCOOP_BUCKET_TOKEN" "" }}'
     directory: bucket
-    skip_upload: '{{ if eq (envOrDefault "SCOOP_BUCKET_TOKEN" "") "" }}true{{ else }}false{{ end }}'
+    # Off until M19: goreleaser renders the manifest into dist/ and release.yml keeps it as an artifact.
+    skip_upload: true
     homepage: https://github.com/sassdavid/relgap
     description: Release-notes digests and toolchain drift for the tools you pin
     license: Apache-2.0

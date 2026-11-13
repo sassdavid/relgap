@@ -28,8 +28,8 @@
 - Constraint pins (`~> 1.15`) take the highest *installed or locked* version if known, else the lowest satisfying version, and the output says which was used.
 
 ## Acceptance criteria
-- [ ] Table tests for every row above, plus Go's `go1.21rc2`, `go1.20` < `go1.20.1`, and Python `3.13.0a1` < `3.13.0`.
-- [ ] Fuzz: `Parse` never panics; `Compare` is antisymmetric and transitive on parsed values (property test over the fuzz corpus).
-- [ ] The helm fixture (interleaved v3/v4 publish dates) gives the correct ordered range for `3.19.0..3.22.1` and `--line major`.
-- [ ] The awscli fixture (no releases, tags only) yields the correct range from tags.
-- [ ] `atlascli/v1.30.0` tags are selected and bare `v1.2.3` strays are ignored, using the registry prefix (MongoDB Atlas CLI, as in the dotfriedrice mise config).
+- [x] Table tests for every row above, plus Go's `go1.21rc2`, `go1.20` < `go1.20.1`, and Python `3.13.0a1` < `3.13.0`.
+- [x] Fuzz: `Parse` never panics; `Compare` is antisymmetric and transitive on parsed values (property test over the fuzz corpus).
+- [x] The helm fixture (interleaved v3/v4 publish dates) gives the correct ordered range for `3.19.0..3.22.1` and `--line major`.
+- [x] The awscli fixture (no releases, tags only) yields the correct range from tags.
+- [x] `atlascli/v1.30.0` tags are selected and bare `v1.2.3` strays are ignored, using the registry prefix (MongoDB Atlas CLI, as in the dotfriedrice mise config).

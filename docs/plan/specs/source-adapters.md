@@ -70,6 +70,10 @@ Following Renovate and Dependabot:
 4. A **stale changelog guard**: if the file's newest version heading is older than the newest release, ignore the file, with a warning in the digest. ArgoCD's `CHANGELOG.md` stops at 2.4.8 (2022).
 
 ## GitHub specifics
+- Hosts: github.com only in v0.x (open question Q3, recorded here at M11). `github.host` exists
+  in the config schema so a later GitHub Enterprise Server adapter needs no new key. relgap
+  doesn't read the key yet, and every request goes to github.com. GitLab and Codeberg are out
+  of scope for v0.x and would be new adapters behind the same interface.
 - Files over 1 MB: `Accept: application/vnd.github.raw` on the contents API, never raw.githubusercontent.com.
 - Huge release bodies (terragrunt v1.2.0 is 96 KB): fetch bodies in small GraphQL pages; never `first:100` with bodies for big repos (adaptive).
 - One GraphQL query aliases up to 25 repos for "latest release + tags" (`outdated` over 45 tools = 2 queries).

@@ -50,6 +50,10 @@ type liveResult struct {
 
 var nonSlug = regexp.MustCompile(`[^a-z0-9.]+`)
 
+// lineAnchor is the #L<n> suffix of a source URL. Upstream files such as a CHANGELOG.md on HEAD or
+// a release branch grow above the entries, which moves the anchors without changing any entry.
+var lineAnchor = regexp.MustCompile(`#L\d+(-L\d+)?"`)
+
 // TestLiveCorpus digests every corpus range against GitHub and the web, as the nightly live
 // workflow does. It reports drift and never writes a golden or corpus.yaml.
 //
@@ -154,7 +158,7 @@ func checkLive(t *testing.T, tool corpusTool, cache, prefix string) []string {
 	if err != nil {
 		return append(problems, fmt.Sprintf("read golden %s: %v", tool.Golden, err))
 	}
-	if !bytes.Equal(want, data.raw) {
+	if !bytes.Equal(lineAnchor.ReplaceAll(want, []byte(`"`)), lineAnchor.ReplaceAll(data.raw, []byte(`"`))) {
 		problems = append(problems, fmt.Sprintf("the digest differs from testdata/golden/%s", tool.Golden))
 		_ = os.WriteFile(prefix+".want.json", want, 0o600)
 		_ = os.WriteFile(prefix+".got.json", data.raw, 0o600)
