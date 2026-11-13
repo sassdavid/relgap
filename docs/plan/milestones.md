@@ -6,8 +6,9 @@ Tick a box only when its check has passed, and quote the evidence (command plus 
 
 Release mapping (revised 2026-11-13): every release goes to GitHub only (archives, checksums,
 SBOMs, the cosign bundle and attestations) until M19 turns the package channels on.
-**v0.1.0 = M0-M11**, v0.2.0 = M12-M13, v0.3.0 = M15-M16, v0.4.0 = M17-M18, and M14 releases the
-separate action repo. M19 has no fixed version or place in the order: the owner runs it when the
+**v0.1.0 = M0-M11**, v0.2.0 = M12-M13, v0.3.0 = the `digest` pull request input (the first M14
+item), v0.4.0 = M15-M16, v0.5.0 = M17-M18, and the rest of M14 releases the separate action repo
+(revised 2026-11-13: v0.3.0 ships before M15). M19 has no fixed version or place in the order: the owner runs it when the
 GitHub releases look right. M20 waits for external users. The research and decisions behind
 M11-M20 are in [roadmap-research.md](roadmap-research.md).
 
@@ -184,7 +185,8 @@ Decisions: [engineering ADR-0014](../engineering/adr/0014-report-outputs-and-pr-
   Evidence: `TestPublish` replays `testdata/cassettes/github/pr-comment-{create,unchanged,update,resolve,skip}.yaml`
   and counts writes (1, 0, 1, 1, 0; the dry run 0); `TestNotifyPRComment` runs the lifecycle on
   saved drift reports and `TestNotifyErrors` the exit codes.
-- Moved to M14: `digest` taking the upgraded tools of a PR. v0.2.0 shipped without it.
+- Moved to M14: `digest` taking the upgraded tools of a PR. v0.2.0 shipped without it; v0.3.0
+  has it.
 - [x] Markdown truncation counts characters, defaults to 60,000 (GitHub's cap is 65,536), cuts at
   row or section boundaries and adds a footer naming what was cut (output-and-ci.md criterion 4,
   formerly `--md-max-bytes`). A property test checks the limit. The flag has the same name in both
@@ -205,10 +207,14 @@ Decisions: [engineering ADR-0014](../engineering/adr/0014-report-outputs-and-pr-
 Scope: a composite action in its own repo that installs a verified release and wires M13's flags.
 Design in [roadmap-research.md](roadmap-research.md#github-action). `comment-on-renovate` becomes
 mode `comment` with `command: digest`; update output-and-ci.md to match.
-- [ ] Moved from M13, needed by mode `comment` with `command: digest`: `digest` can take the
+- [x] Moved from M13, needed by mode `comment` with `command: digest`: `digest` can take the
   upgraded tools of a PR: the pins at the base ref against the head ref, or Renovate's branch name
-  and JSON comment (output-and-ci.md). It ships in the next relgap release, before the action's
-  v1.0.0.
+  and JSON comment (output-and-ci.md). It ships in relgap v0.3.0, before the action's v1.0.0.
+  Evidence (2026-11-13, local): `digest --base <ref> [--head <ref>]` and `digest --pull-request`;
+  `TestSpec_output_and_ci_8` runs `spec_output_and_ci_8.txtar` on a real git repository
+  (upgrades, added, removed and constraint pins, `--fail-on`, the Renovate branch filter, the
+  base fallbacks and the usage errors), and `TestDiff`, `TestRenovateTopicMatches`,
+  `TestRenovateTargetBranch` and `TestExtractRef` cover `internal/scan`. `mise run check` passes.
 - [ ] `scripts/sibling-diff.sh` reads the tool name from a `.sibling` file or the directory name
   instead of `go.mod`, stays verbatim in all four repos, and each action repo has its file list.
 - [ ] Skeleton: `action.yml`, `scripts/install.sh`, `scripts/run.sh` and `scripts/tool.env` (the
@@ -223,7 +229,7 @@ mode `comment` with `command: digest`; update output-and-ci.md to match.
   duplicate, and a fork PR falls back to the step summary.
 - [ ] v1.0.0 is on the Marketplace under a name that doesn't collide.
 
-### M15: MCP prompts and the LLM summary (shared, different per repo) → part of v0.3.0 ([mcp-and-llm](specs/mcp-and-llm.md))
+### M15: MCP prompts and the LLM summary (shared, different per repo) → part of v0.4.0 ([mcp-and-llm](specs/mcp-and-llm.md))
 Scope: relgap gets an opt-in `--summarize`. tfcensus gets MCP prompts but no built-in LLM call
 (decided 2026-11-13; see [roadmap-research.md](roadmap-research.md#llm-features)).
 - [ ] MCP prompt support in the shared `internal/mcpkit`. relgap ships
@@ -237,7 +243,7 @@ Scope: relgap gets an opt-in `--summarize`. tfcensus gets MCP prompts but no bui
 - [ ] With no provider configured, `--summarize` makes no network call (test).
 - [ ] `.claude/rules/siblings.md` lists `--summarize` as an intended difference.
 
-### M16: Planned CLI gaps (shared where both repos lack it) → v0.3.0
+### M16: Planned CLI gaps (shared where both repos lack it) → v0.4.0
 - [ ] `config init` writes a commented `relgap.yaml` and refuses to overwrite without `--force`.
   The same shape as tfcensus's.
 - [ ] The config search stops at the git root, through an option in the shared
@@ -246,12 +252,12 @@ Scope: relgap gets an opt-in `--summarize`. tfcensus gets MCP prompts but no bui
 - [ ] A CI job fails when the embedded mise or aqua snapshot is older than 30 days
   (tool-resolution.md).
 
-### M17: Resolution gaps → v0.4.0 (relgap only) ([tool-resolution](specs/tool-resolution.md))
+### M17: Resolution gaps → v0.5.0 (relgap only) ([tool-resolution](specs/tool-resolution.md))
 - [ ] `tfprovider:` resolves any registry.terraform.io provider, not only curated ones.
 - [ ] `chart:` (Artifact Hub), `npm:` and `pypi:` resolve, and argo-cd joins the live corpus.
 - [ ] `relgap registry update` and `--guess` from the resolution order in tool-resolution.md.
 
-### M18: Performance and integration → v0.4.0 (relgap only)
+### M18: Performance and integration → v0.5.0 (relgap only)
 - [ ] `BenchmarkScan60Repos` and `BenchmarkIndex1MB` from testing.md exist. The overview targets
   (outdated with about 45 tools under 10 s cold and 2 s warm, a warm digest under 2 s) are
   measured and recorded.

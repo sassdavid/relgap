@@ -21,9 +21,23 @@ its latest version, from the pinned version to the latest. --all does the same f
 'relgap outdated' compares. Both use the ranges and digests 'relgap outdated' shows, and
 take the project path as their only argument (default: the current directory).
 
+--base <ref> digests the pins a change upgrades: it scans the files the base commit has under
+the path and the working tree (or --head <ref>), pairs the pins by file, tool and name, and
+digests each tool whose exact version changed, from the base version to the head version.
+The base files come from 'git archive', so paths marked export-ignore aren't compared. Added,
+removed and constraint pins are listed on stderr and get no digest.
+
+--pull-request does the same in GitHub Actions. It reads the pull request from the
+GITHUB_EVENT_PATH event and uses its base commit, which the clone must have (actions/checkout
+with fetch-depth: 0). A Renovate pull request, one whose branch starts with renovate/ or whose
+body has Renovate's renovate-debug comment, is limited to the dependency its branch names, such
+as terraform in renovate/terraform-1.x. Group branches digest every upgraded pin. When the base
+commit is missing, the comment's target branch and then the pull request's base branch are tried.
+--base overrides the event's base commit.
+
 --fail-on breaking exits 3 when a digest has a breaking entry at or above --min-confidence,
 and --fail-on deprecation when it has a deprecation. A single digest counts once; --from-mise
-and --all count each pin, as 'relgap outdated' does, and a value exits 3 once its count
+and --all count each pin, as 'relgap outdated' does, and --base and --pull-request each digest, and a value exits 3 once its count
 reaches --min-count. With --from-mise or --all, a pin that fails exits 1 when no value
 matched. The other --fail-on values belong to 'relgap outdated' and 'relgap drift'.
 
@@ -31,7 +45,7 @@ GitHub token: GH_TOKEN, GITHUB_TOKEN, gh's config file, then 'gh auth token'. Wi
 relgap uses the REST API (60 requests per hour) with 2 concurrent requests.
 
 ```
-relgap digest <tool> <from>..[<to>] | --from-mise [path] | --all [path] [flags]
+relgap digest <tool> <from>..[<to>] | --from-mise [path] | --all [path] | --base <ref> [path] | --pull-request [path] [flags]
 ```
 
 ### Examples
@@ -44,6 +58,8 @@ relgap digest <tool> <from>..[<to>] | --from-mise [path] | --all [path] [flags]
   relgap digest argo-cd 3.2.0..3.4.1 --only breaking --only deprecation
   relgap digest --from-mise --fail-on breaking
   relgap digest --all ~/src/infra --format md > upgrade-notes.md
+  relgap digest --base origin/main --format md
+  relgap digest --pull-request --format json > digest.json
   relgap digest terraform 1.15.8..1.17.1 --format json | jq '.data.tools[].entries[] | select(.kind == "breaking")'
 ```
 
@@ -51,8 +67,10 @@ relgap digest <tool> <from>..[<to>] | --from-mise [path] | --all [path] [flags]
 
 ```
       --all[=true|false]                   digest every outdated pin in the project, as 'relgap outdated' lists them
+      --base string                        digest the pins upgraded since this git ref (branch, tag or commit), against the working tree
       --fail-on strings                    exit 3 when this matches: breaking or deprecation; repeatable (config policy.fail_on)
       --from-mise[=true|false]             digest every outdated tool pinned in the project's mise config, pin to latest
+      --head string                        compare --base or --pull-request with this git ref instead of the working tree
   -h, --help[=true|false]                  help for digest
       --include-prereleases[=true|false]   include prereleases (on when <from> or <to> is a prerelease)
       --line string                        release line the range stays on: none, major or minor (default "none")
@@ -60,6 +78,7 @@ relgap digest <tool> <from>..[<to>] | --from-mise [path] | --all [path] [flags]
       --min-count int                      findings a --fail-on value needs before it exits 3 (default 1)
       --only strings                       list only entries of this kind: breaking, deprecation, security, feature, fix or other; repeatable
       --out stringArray                    also write the report to a file as format=path (repeatable); format is one of plain, md or json
+      --pull-request[=true|false]          digest the pins the pull request in GITHUB_EVENT_PATH upgrades, from its base commit
 ```
 
 ### Options inherited from parent commands

@@ -24,7 +24,10 @@ func skippedDir(name string) bool {
 	return false
 }
 
-const gitTimeout = 30 * time.Second
+const (
+	gitCmd     = "git"
+	gitTimeout = 30 * time.Second
+)
 
 func hasGit(dir string) bool {
 	_, err := os.Lstat(filepath.Join(dir, ".git"))
@@ -86,7 +89,7 @@ type listing struct {
 // work tree, it walks the directory and skips the directories [skippedDir] names.
 func (s *Scanner) list(ctx context.Context, repo string) (listing, error) {
 	res, err := s.runner.Run(ctx, execx.Cmd{
-		Name: "git", Args: []string{"ls-files", "-z", "--cached", "--others", "--exclude-standard"},
+		Name: gitCmd, Args: []string{"ls-files", "-z", "--cached", "--others", "--exclude-standard"},
 		Dir: repo, Timeout: gitTimeout,
 	})
 	if err != nil {
@@ -115,7 +118,7 @@ func (s *Scanner) list(ctx context.Context, repo string) (listing, error) {
 // gitSubmodules returns the directories of gitlink entries (mode 160000) that are checked out.
 func (s *Scanner) gitSubmodules(ctx context.Context, repo string) ([]string, error) {
 	res, err := s.runner.Run(ctx, execx.Cmd{
-		Name: "git", Args: []string{"ls-files", "-z", "--stage"}, Dir: repo, Timeout: gitTimeout,
+		Name: gitCmd, Args: []string{"ls-files", "-z", "--stage"}, Dir: repo, Timeout: gitTimeout,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("list submodules of %s: %w", repo, err)

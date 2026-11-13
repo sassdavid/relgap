@@ -14,6 +14,9 @@ relgap is pre-release, and its commands and output can still change before 1.0.
 - `outdated` compares every pin with the latest release and adds end-of-life dates from
   endoflife.date and known vulnerabilities from OSV. `digest --from-mise` and `digest --all`
   digest the outdated pins.
+- `digest --base <ref>` digests the pins a change upgrades, from the old version to the new one.
+  `digest --pull-request` does it for the pull request of a GitHub Actions run, and on a Renovate
+  pull request only for the dependency its branch names.
 - `drift` shows which repositories pin different versions of the same tool, offline by default.
 - `mcp` serves `digest`, `breaking_changes`, `outdated`, `drift` and `resolve` to agents such as
   Claude Code ([docs/dogfood.md](docs/dogfood.md)).
@@ -27,7 +30,9 @@ eol, vuln, drift or outdated). A repeatable `--out <format>=<path>` writes JSON,
 and GitHub annotations from one run with the same exit code. Markdown is cut at a table row or
 section once it reaches `--md-max-chars` (60,000 characters, under GitHub's 65,536-character
 comment limit). `relgap notify --from <json> --notify github-pr-comment` keeps one comment per
-report on a pull request. [docs/ci/outdated.yml](docs/ci/outdated.yml) puts these together.
+report on a pull request. [docs/ci/outdated.yml](docs/ci/outdated.yml) puts these together, and
+[docs/ci/digest.yml](docs/ci/digest.yml) comments the release notes of the tools a pull request
+upgrades.
 
 ## Install
 

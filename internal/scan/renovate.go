@@ -1,6 +1,7 @@
 package scan
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"maps"
@@ -143,4 +144,75 @@ func detectGeneric(f file) ([]Pin, error) {
 		}
 	}
 	return pins, nil
+}
+
+// renovateBranchPrefix is Renovate's default branchPrefix.
+const renovateBranchPrefix = "renovate/"
+
+// RenovateTopic returns the branch topic of a Renovate branch name, the part after the last
+// slash, and reports whether the name starts with Renovate's default "renovate/" prefix.
+func RenovateTopic(branch string) (string, bool) {
+	return branch[strings.LastIndex(branch, "/")+1:], strings.HasPrefix(branch, renovateBranchPrefix)
+}
+
+var (
+	renovateDebug = regexp.MustCompile(`<!--\s*renovate-debug:([A-Za-z0-9+/=_-]+)\s*-->`)
+	// topicSuffix is what Renovate's default branch topics put after the dependency name:
+	// the new major or minor line, or the update type.
+	topicSuffix = regexp.MustCompile(`^(v?\d+(\.\d+)*(\.x)?|digest|pin|rollback|replacement)$`)
+)
+
+// RenovateTargetBranch returns targetBranch from the renovate-debug comment (base64 JSON) that
+// Renovate appends to its pull request bodies, and reports whether the body has one.
+func RenovateTargetBranch(body string) (string, bool) {
+	m := renovateDebug.FindStringSubmatch(body)
+	if m == nil {
+		return "", false
+	}
+	raw, err := base64.StdEncoding.DecodeString(m[1])
+	if err != nil {
+		if raw, err = base64.RawURLEncoding.DecodeString(strings.TrimRight(m[1], "=")); err != nil {
+			return "", true
+		}
+	}
+	var debug struct {
+		TargetBranch string `json:"targetBranch"`
+	}
+	if json.Unmarshal(raw, &debug) != nil {
+		return "", true
+	}
+	return debug.TargetBranch, true
+}
+
+// RenovateTopicMatches reports whether a Renovate branch topic, such as terraform-1.x or
+// hashicorp-aws-6.x, names a dependency called one of names.
+func RenovateTopicMatches(topic string, names ...string) bool {
+	topic = strings.ToLower(topic)
+	for _, n := range names {
+		s := sanitizeDepName(n)
+		if s == "" {
+			continue
+		}
+		if topic == s {
+			return true
+		}
+		if rest, ok := strings.CutPrefix(topic, s+"-"); ok && topicSuffix.MatchString(rest) {
+			return true
+		}
+	}
+	return false
+}
+
+// sanitizeDepName turns a dependency name into the form Renovate puts in branch names:
+// lower case, without @, with slashes, colons and spaces as dashes.
+func sanitizeDepName(name string) string {
+	name = strings.ToLower(strings.ReplaceAll(name, "@", ""))
+	name = strings.Map(func(r rune) rune {
+		switch r {
+		case '/', ':', ' ', '\t':
+			return '-'
+		}
+		return r
+	}, name)
+	return strings.Trim(name, "-")
 }
