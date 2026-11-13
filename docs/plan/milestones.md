@@ -184,8 +184,7 @@ Decisions: [engineering ADR-0014](../engineering/adr/0014-report-outputs-and-pr-
   Evidence: `TestPublish` replays `testdata/cassettes/github/pr-comment-{create,unchanged,update,resolve,skip}.yaml`
   and counts writes (1, 0, 1, 1, 0; the dry run 0); `TestNotifyPRComment` runs the lifecycle on
   saved drift reports and `TestNotifyErrors` the exit codes.
-- [ ] `digest` can take the upgraded tools of a PR: the pins at the base ref against the head ref,
-  or Renovate's branch name and JSON comment (output-and-ci.md). Not started.
+- Moved to M14: `digest` taking the upgraded tools of a PR. v0.2.0 shipped without it.
 - [x] Markdown truncation counts characters, defaults to 60,000 (GitHub's cap is 65,536), cuts at
   row or section boundaries and adds a footer naming what was cut (output-and-ci.md criterion 4,
   formerly `--md-max-bytes`). A property test checks the limit. The flag has the same name in both
@@ -194,12 +193,22 @@ Decisions: [engineering ADR-0014](../engineering/adr/0014-report-outputs-and-pr-
   and the shared `TestTruncateMarkdownLimit`; `digest_kubectl.txtar` checks the cut of a
   digest over 60,000 characters. `docs/ci/outdated.yml` uses `--out` and the comment, and
   `jactionlint docs/ci/outdated.yml` exits 0.
-- [ ] v0.2.0 is released.
+- [x] v0.2.0 is released.
+  Evidence (2026-11-13): release PR #28 merged; release run 43446534947 published v0.2.0 (tag on
+  095beb4) with 14 assets and the `package-manifests` artifact. On
+  `relgap_0.2.0_darwin_arm64.tar.gz` cosign printed "Verified OK", `shasum -c` "OK" and
+  `gh attestation verify --signer-workflow sassdavid/relgap/.github/workflows/release.yml` exited
+  0; `mise use github:sassdavid/relgap@0.2.0` installed it and `relgap version` prints 0.2.0. The
+  tap and the bucket API still answer 409 "Git Repository is empty".
 
 ### M14: GitHub Action → `sassdavid/relgap-action` v1.0.0 (clone at `~/src/github/relgap-action`, empty) (shared with tfcensus-action)
 Scope: a composite action in its own repo that installs a verified release and wires M13's flags.
 Design in [roadmap-research.md](roadmap-research.md#github-action). `comment-on-renovate` becomes
 mode `comment` with `command: digest`; update output-and-ci.md to match.
+- [ ] Moved from M13, needed by mode `comment` with `command: digest`: `digest` can take the
+  upgraded tools of a PR: the pins at the base ref against the head ref, or Renovate's branch name
+  and JSON comment (output-and-ci.md). It ships in the next relgap release, before the action's
+  v1.0.0.
 - [ ] `scripts/sibling-diff.sh` reads the tool name from a `.sibling` file or the directory name
   instead of `go.mod`, stays verbatim in all four repos, and each action repo has its file list.
 - [ ] Skeleton: `action.yml`, `scripts/install.sh`, `scripts/run.sh` and `scripts/tool.env` (the
