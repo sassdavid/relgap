@@ -55,7 +55,7 @@ Scope: `httpx` (retry, rate, no cache yet), go-github + githubv4 batch, token di
 ### M8: Remaining adapters, enrichment, curated registry → v0.1.0
 Scope: `structured-json`, `web-doc`, `upgrade-guide` adapters, EOL + OSV, all 20 curated registry entries, `registry lint|test`, live corpus job.
 - [x] Every enrichment.md criterion, plus source-adapters criteria 2, 4 and 5. (`TestSpec_enrichment_1` to `_4`, `TestSpec_source_adapters_2`, `_4`, `_5`; `mise run check` passes. Decisions: [ADR-0011](adr/0011-enrichment-and-web-sources.md).)
-- [ ] The nightly live corpus (30 tools) passes once on main. Open until `live.yml` runs on main after the merge. A local run of `mise run test:live` on 2026-11-12 passed 28 tools; chart:argo/argo-cd and 1password-cli are skipped with the reason in `testdata/corpus.yaml`.
+- [x] The nightly live corpus (30 tools) passes once on main: live run 43396597428 (8392522) passed 28 tools; chart:argo/argo-cd and 1password-cli are skipped with the reason in `testdata/corpus.yaml`.
 - Moved to M11: the first tagged release v0.1.0 and its install checks.
 
 ### M9: SARIF + `--fail-on` matrix → [output-and-ci](specs/output-and-ci.md)
@@ -86,8 +86,8 @@ package channel gets anything until M19. No new features.
 - [x] A person reviews `testdata/labels/*.yaml`, re-runs the precision test and ticks the M3 box.
   Reviewed 2026-11-13 against upstream release notes: no label changed, and
   `TestSpec_classification_1` gives 0.900 (36 of 40), recall 0.783 (36 of 46).
-- [ ] `gh workflow run live.yml` gives one green run on main and ticks the M8 corpus box. The box
-  says 28 tools, or `chart:` lands first (argo-cd is skipped for it).
+- [x] `gh workflow run live.yml` gives one green run on main and ticks the M8 corpus box: run
+  43396597428 on 2026-11-13 (28 passed, 2 skipped); it closed the false drift issues #21 and #22.
 - [x] The Homebrew cask installs real completion scripts. Today `args: [completion]` plus
   `shell_parameter_format: cobra` makes brew run `relgap completion completion bash`, which prints
   help text. Drop `args` (M12 replaces the stanza) and check the rendered cask in `dist/`.
