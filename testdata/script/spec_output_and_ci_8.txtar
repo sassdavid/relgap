@@ -1,0 +1,131 @@
+# digest --base and --pull-request digest the pins a change upgrades. The base commit pins
+# kubectl 1.36.0 and helm 3.21.0; the change moves them to 1.37.2 and 3.22.1, adds terraform,
+# removes gh, changes a constraint and leaves a Dockerfile pin as it was.
+[!git] skip
+usegit
+env TEST_NOW=2026-11-12T12:00:00Z
+env GH_TOKEN=$TEST_GH_TOKEN
+env TEST_CASSETTE=$CASSETTES/digest/kubectl-1.36.0..1.37.2.yaml,$CASSETTES/digest/helm-3.21.0..3.22.1.yaml
+
+cd repo
+exec git init -q -b main
+exec git add .
+exec git commit -q -m base
+cp ../change/mise.toml mise.toml
+cp ../change/versions.tf versions.tf
+
+# Against the working tree: one digest per upgraded tool, from the base version to the head
+# version, and a note for every other changed pin.
+exec relgap digest --base main --format json
+jsonschema digest-v1.json stdout
+stdout '"tool": "helm",\n\s+"repo": "helm/helm",\n\s+"from": "3\.21\.0",\n\s+"to": "3\.22\.1"'
+stdout '"tool": "kubectl",\n\s+"repo": "kubernetes/kubernetes",\n\s+"from": "1\.36\.0",\n\s+"to": "1\.37\.2"'
+! stdout '"tool": "terraform"'
+stderr '^relgap: not digested: gh 2\.80\.0 \(mise\.toml:4\): removed$'
+stderr '^relgap: not digested: terraform 1\.15\.8 \(mise\.toml:4\): added$'
+stderr '^relgap: not digested: tfprovider:hashicorp/aws ~> 6\.0 to ~> 6\.1 \(versions\.tf:5\): not an exact version on both sides$'
+! stderr 'Dockerfile'
+
+# Each digest counts once for --fail-on.
+exec expect-exit 3 relgap digest --base main --fail-on breaking --format plain
+stderr '^relgap: --fail-on breaking matched 1 digest: kubectl 1\.36\.0\.\.1\.37\.2$'
+
+# --head compares two commits and ignores the working tree.
+exec git checkout -q -b renovate/kubectl-1.x
+exec git commit -q -am change
+exec git checkout -q main
+exec relgap digest --base main --head renovate/kubectl-1.x --format json
+stdout '"from": "1\.36\.0"'
+stdout '"from": "3\.21\.0"'
+exec relgap digest --base main --head main --format json
+stdout '"tools": \[\]'
+stderr '^relgap: no pin changed between main and main$'
+
+# --pull-request reads the event. Its base commit isn't in this clone, so the target branch of
+# Renovate's debug comment is next. The Renovate branch names kubectl, so helm has no digest.
+exec git checkout -q renovate/kubectl-1.x
+env GITHUB_EVENT_PATH=$WORK/renovate.json
+exec relgap digest --pull-request --format json
+stdout '"tool": "kubectl"'
+! stdout '"tool": "helm"'
+stderr '^relgap: not digested: helm 3\.21\.0 to 3\.22\.1 \(mise\.toml:3\): the Renovate branch renovate/kubectl-1\.x names another dependency$'
+
+# A group branch names no single dependency, so every upgraded pin gets a digest. Without a
+# Renovate comment the pull request's base branch is the fallback.
+env GITHUB_EVENT_PATH=$WORK/group.json
+exec relgap digest --pull-request --format json
+stdout '"tool": "kubectl"'
+stdout '"tool": "helm"'
+
+# --base wins over the event.
+env GITHUB_EVENT_PATH=$WORK/renovate.json
+exec relgap digest --pull-request --base renovate/kubectl-1.x --format json
+stdout '"tools": \[\]'
+
+# Usage errors exit 2.
+exec expect-exit 2 relgap digest --head main
+stderr '--head needs --base or --pull-request'
+env GITHUB_EVENT_PATH=
+exec expect-exit 2 relgap digest --pull-request
+stderr 'GITHUB_EVENT_PATH'
+env GITHUB_EVENT_PATH=$WORK/push.json
+exec expect-exit 2 relgap digest --pull-request
+stderr 'has no pull request base'
+exec expect-exit 2 relgap digest --base no-such-branch
+stderr 'git ref not found: none of no-such-branch is in this clone'
+exec expect-exit 2 relgap digest --base main --all
+stderr 'none of the others can be|if any flags in the group'
+
+-- repo/mise.toml --
+[tools]
+kubectl = "1.36.0"
+helm = "3.21.0"
+gh = "2.80.0"
+-- repo/versions.tf --
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 6.0"
+    }
+  }
+}
+-- repo/Dockerfile --
+FROM alpine:3.22
+ARG KUBECTL_VERSION=1.36.0
+-- change/mise.toml --
+[tools]
+kubectl = "1.37.2"
+helm = "3.22.1"
+terraform = "1.15.8"
+-- change/versions.tf --
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 6.1"
+    }
+  }
+}
+-- renovate.json --
+{
+  "action": "synchronize",
+  "pull_request": {
+    "number": 7,
+    "body": "This PR contains the following updates:\n\n<!--renovate-debug:eyJjcmVhdGVkSW5WZXIiOiI0My4xMC4yIiwidXBkYXRlZEluVmVyIjoiNDMuMTAuMiIsInRhcmdldEJyYW5jaCI6Im1haW4iLCJsYWJlbHMiOlsiZGVwZW5kZW5jaWVzIl19-->\n",
+    "base": {"ref": "release", "sha": "0123456789abcdef0123456789abcdef01234567"},
+    "head": {"ref": "renovate/kubectl-1.x", "sha": "89abcdef0123456789abcdef0123456789abcdef"}
+  }
+}
+-- group.json --
+{
+  "action": "opened",
+  "pull_request": {
+    "number": 8,
+    "body": null,
+    "base": {"ref": "main", "sha": "0123456789abcdef0123456789abcdef01234567"},
+    "head": {"ref": "renovate/all-minor-patch", "sha": "89abcdef0123456789abcdef0123456789abcdef"}
+  }
+}
+-- push.json --
+{"ref": "refs/heads/main", "after": "0123456789abcdef0123456789abcdef01234567"}

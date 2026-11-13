@@ -131,8 +131,8 @@ the `usage` binary on PATH.
 
 ## GitHub Action
 
-Order: CLI v0.1.0, then a CLI release with the features the action needs (M13), then action v1.0.0
-pinned to that release (M14). GitHub-only CLI releases are enough, because the action downloads
+Order: CLI v0.1.0, then the CLI releases with the features the action needs (M13 in v0.2.0, the
+`digest` pull request input in v0.3.0), then action v1.0.0 pinned to v0.3.0 or later (M14). GitHub-only CLI releases are enough, because the action downloads
 from GitHub.
 
 Design, the same in both action repos:

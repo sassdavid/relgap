@@ -1,0 +1,62 @@
+# Release notes for the tools a pull request upgrades: copy this file to
+# .github/workflows/digest.yml in a repository whose mise.toml pins relgap
+# (mise use github:sassdavid/relgap).
+#
+# relgap digest --pull-request compares the pins of the pull request's base commit with the
+# checkout and digests each tool whose exact version changed, from the old version to the new
+# one. On a Renovate pull request it digests only the dependency the branch names. The base
+# commit must be in the clone, so the checkout fetches the full history. relgap notify keeps one
+# comment with the digest. Pull requests from forks and from Dependabot get a read-only
+# GITHUB_TOKEN, so they get the step summary only.
+name: digest
+
+on:
+  pull_request:
+    paths:
+      - "mise.toml"
+      - ".tool-versions"
+      - "**/*.tf"
+      - "**/.terraform.lock.hcl"
+      - "**/*.hcl"
+      - "**/Dockerfile"
+
+permissions: {}
+
+concurrency:
+  group: digest-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  digest:
+    name: digest
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      pull-requests: write # the sticky comment
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0 # the base commit
+          persist-credentials: false
+      - uses: jdx/mise-action@b44d12e7d0d8ee7461bb893e1b1993500433185b # v5.2.7
+        with:
+          version: 2026.11.5
+      # Exit 3: an upgrade has a breaking change. Exit 1: a digest failed and no gate matched.
+      # --out writes every file before the exit code is set.
+      - name: relgap digest
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          relgap digest --pull-request --format md --out json=digest.json --fail-on breaking \
+            > digest.md
+      - name: step summary
+        if: ${{ !cancelled() && hashFiles('digest.md') != '' }}
+        run: cat digest.md >> "$GITHUB_STEP_SUMMARY"
+      - name: pull request comment
+        if: >-
+          ${{ !cancelled() && hashFiles('digest.json') != '' && github.actor != 'dependabot[bot]' &&
+          github.event.pull_request.head.repo.full_name == github.repository }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: relgap notify --from digest.json --notify github-pr-comment

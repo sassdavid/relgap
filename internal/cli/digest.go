@@ -32,7 +32,13 @@ type digestFlags struct {
 	fromMise           bool
 	all                bool
 	only               []string
+	base               string
+	head               string
+	pullRequest        bool
 }
+
+// prMode reports whether the flags ask for the pins a pull request or a pair of refs upgrades.
+func (f *digestFlags) prMode() bool { return f.base != "" || f.head != "" || f.pullRequest }
 
 const (
 	flagLine     = "line"
@@ -41,12 +47,7 @@ const (
 	flagOnly     = "only"
 )
 
-func newDigestCmd(d *app.Deps, g *globals) *cobra.Command {
-	var f digestFlags
-	cmd := &cobra.Command{
-		Use:   "digest <tool> <from>..[<to>] | --from-mise [path] | --all [path]",
-		Short: "Merge the release notes of every version in a range into one digest",
-		Long: `Lists the versions after <from> up to and including <to>, fetches their release notes and
+const digestLong = `Lists the versions after <from> up to and including <to>, fetches their release notes and
 groups the entries by kind: breaking changes, deprecations, security, features, fixes, other.
 
 <tool> resolves as in 'relgap resolve'. Without <to> the range ends at the latest stable
@@ -63,14 +64,35 @@ its latest version, from the pinned version to the latest. --all does the same f
 'relgap outdated' compares. Both use the ranges and digests 'relgap outdated' shows, and
 take the project path as their only argument (default: the current directory).
 
+--base <ref> digests the pins a change upgrades: it scans the files the base commit has under
+the path and the working tree (or --head <ref>), pairs the pins by file, tool and name, and
+digests each tool whose exact version changed, from the base version to the head version.
+The base files come from 'git archive', so paths marked export-ignore aren't compared. Added,
+removed and constraint pins are listed on stderr and get no digest.
+
+--pull-request does the same in GitHub Actions. It reads the pull request from the
+GITHUB_EVENT_PATH event and uses its base commit, which the clone must have (actions/checkout
+with fetch-depth: 0). A Renovate pull request, one whose branch starts with renovate/ or whose
+body has Renovate's renovate-debug comment, is limited to the dependency its branch names, such
+as terraform in renovate/terraform-1.x. Group branches digest every upgraded pin. When the base
+commit is missing, the comment's target branch and then the pull request's base branch are tried.
+--base overrides the event's base commit.
+
 --fail-on breaking exits 3 when a digest has a breaking entry at or above --min-confidence,
 and --fail-on deprecation when it has a deprecation. A single digest counts once; --from-mise
-and --all count each pin, as 'relgap outdated' does, and a value exits 3 once its count
+and --all count each pin, as 'relgap outdated' does, and --base and --pull-request each digest, and a value exits 3 once its count
 reaches --min-count. With --from-mise or --all, a pin that fails exits 1 when no value
 matched. The other --fail-on values belong to 'relgap outdated' and 'relgap drift'.
 
 GitHub token: GH_TOKEN, GITHUB_TOKEN, gh's config file, then 'gh auth token'. Without one,
-relgap uses the REST API (60 requests per hour) with 2 concurrent requests.`,
+relgap uses the REST API (60 requests per hour) with 2 concurrent requests.`
+
+func newDigestCmd(d *app.Deps, g *globals) *cobra.Command {
+	var f digestFlags
+	cmd := &cobra.Command{
+		Use:   "digest <tool> <from>..[<to>] | --from-mise [path] | --all [path] | --base <ref> [path] | --pull-request [path]",
+		Short: "Merge the release notes of every version in a range into one digest",
+		Long:  digestLong,
 		Example: `  relgap digest terraform 1.15.8..1.17.1
   relgap digest helm 3.19.0.. --line major
   relgap digest kubectl 1.36.0..1.37.2 --format md > digest.md
@@ -78,18 +100,23 @@ relgap uses the REST API (60 requests per hour) with 2 concurrent requests.`,
   relgap digest argo-cd 3.2.0..3.4.1 --only breaking --only deprecation
   relgap digest --from-mise --fail-on breaking
   relgap digest --all ~/src/infra --format md > upgrade-notes.md
+  relgap digest --base origin/main --format md
+  relgap digest --pull-request --format json > digest.json
   relgap digest terraform 1.15.8..1.17.1 --format json | jq '.data.tools[].entries[] | select(.kind == "breaking")'`,
 		Args: func(cmd *cobra.Command, args []string) error {
-			if f.fromMise || f.all {
+			if f.fromMise || f.all || f.prMode() {
 				return maxArgs(1)(cmd, args)
 			}
 			return exactArgs(2)(cmd, args) //nolint:mnd // tool and range
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
-			if f.fromMise || f.all {
+			if f.fromMise || f.all || f.prMode() {
 				root := "."
 				if len(args) == 1 {
 					root = args[0]
+				}
+				if f.prMode() {
+					return runDigestPR(cmd, d, g, f, root)
 				}
 				return runDigestProject(cmd, d, g, f, root)
 			}
@@ -112,9 +139,10 @@ relgap uses the REST API (60 requests per hour) with 2 concurrent requests.`,
 		flagLine: complete.Enum(lineChoices()),
 		flagOnly: complete.List(kindChoices()),
 	})
+	addPRFlags(cmd, &f)
 	cmd.ValidArgsFunction = func(cmd *cobra.Command, args []string, toComplete string) ([]cobra.Completion, cobra.ShellCompDirective) {
 		switch {
-		case f.fromMise || f.all:
+		case f.fromMise || f.all || f.prMode():
 			return complete.Dirs()(cmd, args, toComplete)
 		case len(args) == 0:
 			return completeTools(d, g)(cmd, args, toComplete)

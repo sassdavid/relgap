@@ -14,9 +14,11 @@ import (
 	"net/http/httptest"
 	"net/url"
 	"os"
+	"os/exec"
 	"os/signal"
 	"path/filepath"
 	"regexp"
+	"runtime"
 	"strconv"
 	"strings"
 	"syscall"
@@ -283,10 +285,15 @@ func scriptParams(t *testing.T, files ...string) testscript.Params {
 			return nil
 		},
 		// [recording] is true under VCR_RECORD=1. Scripts that only replay another script's
-		// cassette skip then, so two processes never record the same file.
+		// cassette skip then, so two processes never record the same file. [git] is true when
+		// git is on the test process's PATH.
 		Condition: func(cond string) (bool, error) {
-			if cond == "recording" {
+			switch cond {
+			case "recording":
 				return vcr.Recording(), nil
+			case "git":
+				_, err := exec.LookPath("git")
+				return err == nil, nil
 			}
 			return false, fmt.Errorf("unknown condition %q", cond)
 		},
@@ -298,7 +305,38 @@ func scriptParams(t *testing.T, files ...string) testscript.Params {
 			"countsmatch": cmdCountsMatch,
 			"gentree":     cmdGenTree,
 			"requests":    cmdRequests,
+			"usegit":      cmdUseGit,
 		},
+	}
+}
+
+// cmdUseGit puts the machine's git on the script's PATH, without the other programs in its
+// directory, and keeps git away from the user's and the system's config. Scripts check the
+// git condition first:
+//
+//	[!git] skip
+//	usegit
+func cmdUseGit(ts *testscript.TestScript, neg bool, args []string) {
+	if neg || len(args) != 0 {
+		ts.Fatalf("usage: usegit")
+	}
+	git, err := exec.LookPath("git")
+	ts.Check(err)
+	dir := filepath.Dir(git)
+	if runtime.GOOS != "windows" { // Git for Windows keeps only git.exe and its GUIs in cmd/
+		dir = ts.MkAbs("gitbin")
+		ts.Check(os.MkdirAll(dir, 0o750))
+		ts.Check(os.Symlink(git, filepath.Join(dir, "git")))
+	}
+	ts.Setenv("PATH", dir+string(os.PathListSeparator)+ts.Getenv("PATH"))
+	for k, v := range map[string]string{
+		"GIT_CONFIG_NOSYSTEM": "1",
+		"GIT_AUTHOR_NAME":     "relgap test",
+		"GIT_AUTHOR_EMAIL":    "test@relgap.invalid",
+		"GIT_COMMITTER_NAME":  "relgap test",
+		"GIT_COMMITTER_EMAIL": "test@relgap.invalid",
+	} {
+		ts.Setenv(k, v)
 	}
 }
 
@@ -732,6 +770,14 @@ func TestSpec_output_and_ci_3(t *testing.T) {
 		}
 	}
 	testscript.Run(t, scriptParams(t, file))
+}
+
+// TestSpec_output_and_ci_8: digest --base and --pull-request digest the exact pins a change
+// upgrades, from the base version to the head version, and list the other changed pins on
+// stderr. A Renovate branch limits the digest to the dependency it names.
+func TestSpec_output_and_ci_8(t *testing.T) {
+	t.Parallel()
+	testscript.Run(t, scriptParams(t, filepath.Join(scriptDir, "spec_output_and_ci_8.txtar")))
 }
 
 // TestSpec_output_and_ci_5: outdated over a 10-pin project matches the goldens in tty, plain, md

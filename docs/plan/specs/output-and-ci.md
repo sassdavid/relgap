@@ -30,8 +30,39 @@ command that checks it.
 
 ## GitHub Action (M14)
 `sassdavid/relgap-action`, a composite action that installs a verified release:
-- `mode: comment-on-renovate`: on a Renovate or Dependabot PR, parses the PR's upgraded tools (branch name / `renovate` JSON comment / diff of pin files) and posts or updates **one** sticky comment with the `md` digest.
+- `mode: comment-on-renovate`: on a Renovate or Dependabot PR, runs `relgap digest --pull-request` (v0.3.0, below), which finds the upgraded tools from the diff of pin files, the branch name and the `renovate-debug` comment, and posts or updates **one** sticky comment with the `md` digest.
 - `mode: report`: runs `outdated`/`drift` with SARIF upload to code scanning.
+
+## Decisions (pull request input, v0.3.0)
+Agreed before coding (2026-11-13). The item moved from M13 to M14 and ships in v0.3.0.
+
+- `relgap digest --base <ref> [--head <ref>] [path]` compares the pins of two trees. The head is
+  the working tree unless `--head` names a ref. `--pull-request` reads the
+  `GITHUB_EVENT_PATH` event of a `pull_request` or `pull_request_target` run instead; `--base`
+  overrides its base commit. All three exclude `--from-mise`, `--all` and `--line`, and take
+  the project path as their only argument.
+- The base files come from `git archive <commit>`, run in the path, extracted through an
+  `os.Root` into a temporary directory and scanned there. That reads tracked files only and
+  leaves the repository untouched, but skips paths marked `export-ignore`. The extraction skips
+  files over 2 MiB (the scanner's limit), symlinks and other non-regular entries.
+- `scan.Diff` pairs pins by repository, file, kind, tool and raw name. A value both sides have is
+  unchanged, wherever its line moved. Several changed pins of one key pair in line order when
+  both sides have as many, and otherwise count as removed and added.
+- A change is digested when both sides pin one exact version of a resolved tool. Each tool and
+  range is digested once, with release line `none`, so a range across majors works. Added,
+  removed, constraint and unresolved pins, and downgrades, go to stderr as `not digested:` lines.
+  A failed digest is an envelope error and exits 1 when no `--fail-on` value matched; an auth
+  error exits 4. `--fail-on` counts each digest.
+- Renovate's PR body has one JSON comment, `<!--renovate-debug:BASE64-->`, with `createdInVer`,
+  `updatedInVer`, `targetBranch` and `labels` and no versions. Its default branch name
+  `renovate/<depNameSanitized>-<major>.x` names the dependency and the new major only. So the
+  versions always come from the pin diff, and Renovate's data narrows it: a pull request whose
+  branch starts with `renovate/` or whose body has the comment keeps only the upgrades whose
+  tool or raw name, in Renovate's sanitized form, the branch topic names. A topic that names no
+  upgrade, such as a group branch, keeps them all. Dependabot pull requests use the diff alone.
+- When the event's base commit isn't in the clone, `origin/<targetBranch>` and `<targetBranch>`
+  from the comment are tried, then `origin/<base.ref>` and `<base.ref>`. Without any of them the
+  command exits 2 and names `fetch-depth: 0`. `docs/ci/digest.yml` is the example workflow.
 
 ## Decisions (M13)
 [Engineering ADR-0014](../../engineering/adr/0014-report-outputs-and-pr-comment.md) has the
@@ -124,3 +155,10 @@ the exit codes.
 - [x] `outdated` over a fixture project with 10 pins matches golden files in tty, plain, md and json, and each pin's counts equal those of the full digest `current..latest` (`TestSpec_output_and_ci_5`).
 - [x] `drift` over a generated tree of 60 repos matches golden files in tty, plain, md and json, marks constraint pins `≈`, sends no request (a refusing proxy and an empty request log), and `--fail-on drift` exits 3 (`TestSpec_output_and_ci_6`).
 - [x] `drift --latest` over the same tree adds the latest versions of 10 tools (8 until M8 added the node and terraform-provider-aws entries) from 1 GraphQL request, and a second run answers from the cache with 0 requests (`TestSpec_output_and_ci_7`).
+- [x] `digest --base` and `--pull-request` digest the exact pins a change upgrades, from the base
+  version to the head version, list the other changed pins on stderr, count each digest for
+  `--fail-on`, and limit a Renovate pull request to the dependency its branch names
+  (`TestSpec_output_and_ci_8`: `spec_output_and_ci_8.txtar` builds a git repository where
+  kubectl and helm move up, terraform is added, gh is removed and a provider constraint changes,
+  then runs `--base` against the working tree and against `--head`, `--pull-request` with a
+  Renovate branch and a group branch, the base fallbacks and the usage errors).
