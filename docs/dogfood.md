@@ -23,8 +23,9 @@ Question: what breaks when Argo CD goes from 3.1.0 to the latest release?
   entries (78 breaking, 21 deprecation) in 6.6 s. The same call again took 0.07 s from the
   HTTP cache.
 - The answer was 85 KB, so it came in two pages: 61 breaking entries (49,734 bytes), then 17
-  breaking and 21 deprecation entries with the cursor. Every breaking entry came before any
-  deprecation.
+  breaking and 21 deprecation entries with the cursor. Breaking entries fill the pages first,
+  but each page keeps the digest's version order, so the second page lists the 3.2 to 3.5
+  deprecations before the 3.5.4 and 3.6.0 breaking entries (corrected 2026-11-13).
 - The upgrade guide gives the useful entries: 3.3.0 needs Server-Side Apply for the
   ApplicationSet CRD when Argo CD manages itself, and 3.2.0 changes the Source Hydrator's
   `syncSource.path` rules. The deprecations name the replacement, such as
@@ -53,5 +54,49 @@ errors.
   first page. That would fit about 15 more argocd entries per page.
 - Merge upgrade-guide paragraphs under one heading into a single entry, which would cut the
   argocd breaking count and the fragments.
-- Register the server in Claude Code at local scope and ask the same Argo CD question there, to
-  see how the agent handles the cursor.
+
+## Claude Code, 2026-11-13 (M10)
+
+Setup: the relgap binary from main (8392522), built into the checkout and registered for this
+project only:
+
+```sh
+mise exec -- go build -o ./relgap ./cmd/relgap
+claude mcp add --transport stdio --scope local relgap -- "$PWD/relgap" mcp
+claude mcp get relgap   # Scope: Local config, Status: Connected
+```
+
+The question ran headless in the relgap checkout, with only two relgap tools allowed:
+
+```sh
+claude -p "What breaks when Argo CD goes from 3.1.0 to the latest release? Use the relgap tools, \
+follow the cursor until you have every page, and list the breaking changes I must act on, grouped \
+by version, with a link for each." \
+  --allowedTools mcp__relgap__breaking_changes,mcp__relgap__digest --output-format json
+```
+
+### Argo CD 3.1.0 to the latest, through the agent
+
+- The agent called `breaking_changes` with `tool: argocd, from: 3.1.0`, got 61 entries
+  (49,728 bytes) and a cursor, then called it again with only the cursor and got the other 38
+  (35,286 bytes) with no cursor. It never called `digest`. That is all 99 entries, the same
+  count as the stdio run on 2026-11-12, and the agent said so in its answer.
+- The run took 4 turns, 85 s and 0.85 USD (9,212 output tokens, 138,655 cached input tokens).
+- The answer grouped the entries that need action by version, from 3.2.0 to 3.6.0, each with a
+  link to the upgrade guide or the release. Examples: Source Hydrator paths must be
+  subdirectories (3.2.0), Server-Side Apply for installs and upgrades (3.3.0), and
+  `ARGOCD_REPO_OTLP_HEADERS` renamed to `ARGOCD_REPO_SERVER_OTLP_HEADERS` (3.6.0). It ended with
+  the deprecations that still work in 3.6.1.
+- It dropped the upgrade-guide fragments itself ("Reduces repository clutter") and named them
+  as relgap noise, the same problem the stdio run found.
+
+### Follow-ups from the agent
+
+- Upgrade-guide URLs point at `blob/master` with no section anchor. A tag and a heading anchor
+  would keep a link valid after the next release.
+- A backported security fix shows up once per release line (3.3.15, 3.4.10, 3.5.4). One entry
+  that lists the three versions would be shorter.
+- Inside a page, entries keep the digest's version order, so the second page mixes
+  deprecations and breaking entries. Grouping by kind inside each page would read better.
+- Every page repeats the 73-version list (the first follow-up above).
+
