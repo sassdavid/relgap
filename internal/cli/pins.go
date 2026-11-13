@@ -2,6 +2,7 @@ package cli
 
 import (
 	"fmt"
+	"io"
 	"os"
 	"path"
 
@@ -58,13 +59,13 @@ Roots default to scan.roots, then the current directory.`,
 	fl.StringVar(&f.renovate, "renovate-report", "",
 		"add the pins in this Renovate JSON report (renovate --platform=local --dry-run=extract --report-type=file)")
 	_ = cmd.RegisterFlagCompletionFunc("renovate-report", complete.Files("json"))
+	addOutputFlags(cmd, g, pinsFormats()...)
 	cmd.ValidArgsFunction = complete.Dirs()
 	return cmd
 }
 
 func runPins(cmd *cobra.Command, d *app.Deps, g *globals, f pinsFlags, args []string) error {
-	err := g.outFormat.Check(render.FormatTTY, render.FormatPlain, render.FormatMD, render.FormatJSON)
-	if err != nil {
+	if err := g.checkFormats(pinsFormats()...); err != nil {
 		return usageError(err)
 	}
 	resolver, cfg, err := g.loadResolver(cmd, d)
@@ -95,7 +96,7 @@ func runPins(cmd *cobra.Command, d *app.Deps, g *globals, f pinsFlags, args []st
 			}
 		}
 	}
-	if err = writePins(d, g, res, pins, f.unresolved); err != nil {
+	if err = writePins(cmd, d, g, res, pins, f.unresolved); err != nil {
 		return err
 	}
 	for _, p := range res.Problems {
@@ -133,19 +134,29 @@ type pinsData struct {
 	Pins  []scan.Pin `json:"pins"`
 }
 
-func writePins(d *app.Deps, g *globals, res *scan.Result, pins []scan.Pin, unresolved bool) error {
-	if g.outFormat == render.FormatJSON {
-		env := render.NewEnvelope(buildinfo.Get().Version, d.Clock(), pinsData{Repos: res.Repos, Pins: pins})
-		for _, p := range res.Problems {
-			env.Errors = append(env.Errors, render.Error{Target: path.Join(p.Repo, p.File), Message: p.Message})
+func pinsFormats() []render.Format {
+	return []render.Format{render.FormatTTY, render.FormatPlain, render.FormatMD, render.FormatJSON}
+}
+
+func writePins(
+	cmd *cobra.Command, d *app.Deps, g *globals, res *scan.Result, pins []scan.Pin, unresolved bool,
+) error {
+	err := g.sink(cmd, d).Write(func(w io.Writer, f render.Format) error {
+		switch f {
+		case render.FormatJSON:
+			env := render.NewEnvelope(buildinfo.Get().Version, d.Clock(), pinsData{Repos: res.Repos, Pins: pins})
+			for _, p := range res.Problems {
+				env.Errors = append(env.Errors, render.Error{Target: path.Join(p.Repo, p.File), Message: p.Message})
+			}
+			return render.JSON(w, env)
+		case render.FormatMD:
+			return render.PinsMarkdown(w, pins, unresolved)
+		case render.FormatAuto, render.FormatTTY, render.FormatPlain, render.FormatCSV, render.FormatSARIF,
+			render.FormatGitHub:
 		}
-		return render.JSON(d.Stdout, env)
-	}
-	write := render.PinsText
-	if g.outFormat == render.FormatMD {
-		write = render.PinsMarkdown
-	}
-	if err := write(d.Stdout, pins, unresolved); err != nil {
+		return render.PinsText(w, pins, unresolved)
+	})
+	if err != nil {
 		return err
 	}
 	if unresolved && len(pins) > 0 {

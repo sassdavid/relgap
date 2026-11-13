@@ -45,8 +45,11 @@ type globals struct {
 	offline       bool
 	refresh       bool
 	noCache       bool
+	outSpecs      []string // --out, on commands that write a report
+	mdMaxChars    int
 
 	outFormat render.Format
+	outputs   []render.Output
 	started   bool
 	closers   []io.Closer
 	mcpServe  serveFunc // set by [ServeMCP]; nil serves stdio
@@ -130,6 +133,7 @@ stdout carries data, stderr carries logs. Use --format json for scripting.`,
 		newCacheCmd(d, g),
 		newPinsCmd(d, g),
 		newOutdatedCmd(d, g),
+		newNotifyCmd(d, g),
 		newDriftCmd(d, g),
 		newMCPCmd(d, g),
 	)
@@ -219,6 +223,7 @@ func formatChoices() []complete.Choice {
 		{Value: string(render.FormatMD), Desc: "Markdown"},
 		{Value: string(render.FormatJSON), Desc: "JSON envelope for scripts"},
 		{Value: string(render.FormatSARIF), Desc: "SARIF 2.1.0 for code scanning"},
+		{Value: string(render.FormatGitHub), Desc: "GitHub Actions annotations"},
 	}
 }
 

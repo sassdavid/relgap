@@ -73,7 +73,9 @@ relgap outdated [path] [flags]
       --fail-on strings         exit 3 when this matches: breaking, deprecation, eol, vuln or outdated; repeatable (config policy.fail_on)
   -h, --help[=true|false]       help for outdated
       --max-behind string       how far behind --fail-on outdated allows, such as minor:2, releases:10 or days:90 (config policy.max_behind)
+      --md-max-chars int        cut Markdown output to this many characters at a row or section boundary; 0 means no limit (default 60000)
       --min-count int           findings a --fail-on value needs before it exits 3 (default 1)
+      --out stringArray         also write the report to a file as format=path (repeatable); format is one of plain, md, json, sarif or github
       --vuln-severity string    lowest rating --fail-on vuln counts: low, medium, high or critical; empty counts all (config policy.vuln_severity)
 ```
 
@@ -83,7 +85,7 @@ relgap outdated [path] [flags]
       --color string            colorize output: auto, always or never (default "auto")
       --concurrency int         maximum concurrent requests per tool (config github.concurrency) (default 8)
       --config string           config file to use instead of the discovered .relgap.yaml (env RELGAP_CONFIG)
-      --format string           output format: tty, plain, md, json or sarif (default tty when stdout is a terminal, else plain)
+      --format string           output format: tty, plain, md, json, sarif or github (default tty when stdout is a terminal, else plain)
       --log-file string         write logs to this file instead of stderr
       --log-format string       log format: text or json (default "text")
       --min-confidence float    hide entries below this confidence, 0..1 (config policy.min_confidence) (default 0.5)

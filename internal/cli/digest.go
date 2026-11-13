@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io"
 	"net/http"
 	"strings"
 
@@ -106,6 +107,7 @@ relgap uses the REST API (60 requests per hour) with 2 concurrent requests.`,
 	fl.StringSliceVar(&f.only, flagOnly, nil,
 		complete.Usage("list only entries of this kind: {values}; repeatable", kindChoices()))
 	addGateFlags(cmd, digestValues())
+	addOutputFlags(cmd, g, digestFormats()...)
 	registerCompletions(cmd, map[string]cobra.CompletionFunc{
 		flagLine: complete.Enum(lineChoices()),
 		flagOnly: complete.List(kindChoices()),
@@ -131,7 +133,7 @@ relgap uses the REST API (60 requests per hour) with 2 concurrent requests.`,
 }
 
 func runDigest(cmd *cobra.Command, d *app.Deps, g *globals, f digestFlags, tool, rangeArg string) error {
-	if err := g.outFormat.Check(render.FormatTTY, render.FormatPlain, render.FormatMD, render.FormatJSON); err != nil {
+	if err := g.checkFormats(digestFormats()...); err != nil {
 		return usageError(err)
 	}
 	from, to, err := parseRange(rangeArg)
@@ -173,30 +175,38 @@ func runDigest(cmd *cobra.Command, d *app.Deps, g *globals, f digestFlags, tool,
 		return err
 	}
 	data := &report.Digest{Tools: []report.ToolDigest{*digest}}
-	if err = writeDigest(d, g, data, []render.Error{}); err != nil {
+	if err = writeDigest(cmd, d, g, data, []render.Error{}); err != nil {
 		return err
 	}
 	return gateExit(cmd, d, gate.Matches(gate.CheckDigests(data.Tools)), nil)
 }
 
-func writeDigest(d *app.Deps, g *globals, data *report.Digest, errs []render.Error) error {
-	if g.outFormat == render.FormatJSON {
-		env := render.NewEnvelope(buildinfo.Get().Version, d.Clock(), data)
-		env.Errors = errs
-		return render.JSON(d.Stdout, env)
-	}
-	if g.outFormat == render.FormatMD {
-		return render.DigestMarkdown(d.Stdout, data)
-	}
-	color := g.outFormat == render.FormatTTY &&
-		render.UseColor(render.ColorMode(g.color), d.Env.Lookup, app.IsTerminal(d.Stdout))
-	return render.DigestText(d.Stdout, data, color)
+func digestFormats() []render.Format {
+	return []render.Format{render.FormatTTY, render.FormatPlain, render.FormatMD, render.FormatJSON}
+}
+
+func writeDigest(cmd *cobra.Command, d *app.Deps, g *globals, data *report.Digest, errs []render.Error) error {
+	return g.sink(cmd, d).Write(func(w io.Writer, f render.Format) error {
+		switch f {
+		case render.FormatJSON:
+			env := render.NewEnvelope(buildinfo.Get().Version, d.Clock(), data)
+			env.Errors = errs
+			return render.JSON(w, env)
+		case render.FormatMD:
+			return render.DigestMarkdown(w, data)
+		case render.FormatAuto, render.FormatTTY, render.FormatPlain, render.FormatCSV, render.FormatSARIF,
+			render.FormatGitHub:
+		}
+		color := f == render.FormatTTY &&
+			render.UseColor(render.ColorMode(g.color), d.Env.Lookup, app.IsTerminal(d.Stdout))
+		return render.DigestText(w, data, color)
+	})
 }
 
 // runDigestProject digests the outdated pins of the project at root, using the comparison
 // 'relgap outdated' makes, so both commands report the same ranges and counts.
 func runDigestProject(cmd *cobra.Command, d *app.Deps, g *globals, f digestFlags, root string) error {
-	if err := g.outFormat.Check(render.FormatTTY, render.FormatPlain, render.FormatMD, render.FormatJSON); err != nil {
+	if err := g.checkFormats(digestFormats()...); err != nil {
 		return usageError(err)
 	}
 	var keep func(scan.Pin) bool
@@ -216,7 +226,7 @@ func runDigestProject(cmd *cobra.Command, d *app.Deps, g *globals, f digestFlags
 	if err != nil {
 		return err
 	}
-	if err = writeDigest(d, g, &report.Digest{Tools: run.out.Digests()}, run.errors()); err != nil {
+	if err = writeDigest(cmd, d, g, &report.Digest{Tools: run.out.Digests()}, run.errors()); err != nil {
 		return err
 	}
 	run.warn(cmd, d)

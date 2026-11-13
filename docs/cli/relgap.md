@@ -16,7 +16,7 @@ stdout carries data, stderr carries logs. Use --format json for scripting.
       --color string            colorize output: auto, always or never (default "auto")
       --concurrency int         maximum concurrent requests per tool (config github.concurrency) (default 8)
       --config string           config file to use instead of the discovered .relgap.yaml (env RELGAP_CONFIG)
-      --format string           output format: tty, plain, md, json or sarif (default tty when stdout is a terminal, else plain)
+      --format string           output format: tty, plain, md, json, sarif or github (default tty when stdout is a terminal, else plain)
   -h, --help[=true|false]       help for relgap
       --log-file string         write logs to this file instead of stderr
       --log-format string       log format: text or json (default "text")
@@ -37,6 +37,7 @@ stdout carries data, stderr carries logs. Use --format json for scripting.
 * [relgap digest](relgap_digest.md)	 - Merge the release notes of every version in a range into one digest
 * [relgap drift](relgap_drift.md)	 - Show which repositories pin different versions of the same tool
 * [relgap mcp](relgap_mcp.md)	 - Serve digest, breaking_changes, outdated, drift and resolve to an MCP client over stdio
+* [relgap notify](relgap_notify.md)	 - Publish saved digest, outdated and drift reports as a GitHub pull request comment
 * [relgap outdated](relgap_outdated.md)	 - Compare every pinned tool version in a project with the latest release
 * [relgap pins](relgap_pins.md)	 - List the tool versions pinned in your repositories, with file and line
 * [relgap registry](relgap_registry.md)	 - Check relgap registry entries

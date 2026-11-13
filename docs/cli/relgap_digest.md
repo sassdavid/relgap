@@ -56,8 +56,10 @@ relgap digest <tool> <from>..[<to>] | --from-mise [path] | --all [path] [flags]
   -h, --help[=true|false]                  help for digest
       --include-prereleases[=true|false]   include prereleases (on when <from> or <to> is a prerelease)
       --line string                        release line the range stays on: none, major or minor (default "none")
+      --md-max-chars int                   cut Markdown output to this many characters at a row or section boundary; 0 means no limit (default 60000)
       --min-count int                      findings a --fail-on value needs before it exits 3 (default 1)
       --only strings                       list only entries of this kind: breaking, deprecation, security, feature, fix or other; repeatable
+      --out stringArray                    also write the report to a file as format=path (repeatable); format is one of plain, md or json
 ```
 
 ### Options inherited from parent commands
@@ -66,7 +68,7 @@ relgap digest <tool> <from>..[<to>] | --from-mise [path] | --all [path] [flags]
       --color string            colorize output: auto, always or never (default "auto")
       --concurrency int         maximum concurrent requests per tool (config github.concurrency) (default 8)
       --config string           config file to use instead of the discovered .relgap.yaml (env RELGAP_CONFIG)
-      --format string           output format: tty, plain, md, json or sarif (default tty when stdout is a terminal, else plain)
+      --format string           output format: tty, plain, md, json, sarif or github (default tty when stdout is a terminal, else plain)
       --log-file string         write logs to this file instead of stderr
       --log-format string       log format: text or json (default "text")
       --min-confidence float    hide entries below this confidence, 0..1 (config policy.min_confidence) (default 0.5)

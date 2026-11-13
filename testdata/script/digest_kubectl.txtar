@@ -12,9 +12,14 @@ jsonschema digest-v1.json stdout
 ! stderr .
 ! stdout '"Dependencies"'
 
-exec relgap digest kubectl 1.36.0..1.37.2 --format md
+exec relgap digest kubectl 1.36.0..1.37.2 --format md --md-max-chars 0
 golden stdout digest/kubectl.md
 ! stderr .
+
+# The full digest is longer than a GitHub comment, so the default --md-max-chars cuts it.
+exec relgap digest kubectl 1.36.0..1.37.2 --format md
+stdout 'Truncated to 60000 characters: cut \d+ sections, starting at "1\.37\.\d+"\.'
+stdout 'Run `relgap digest --format json` for the full report\.$'
 
 # --only lists the breaking and deprecation entries (the MCP breaking_changes tool); counts
 # still cover every kind, and the text output has no other sections.

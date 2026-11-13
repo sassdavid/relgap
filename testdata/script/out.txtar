@@ -1,0 +1,50 @@
+# --out writes several formats in one run, with the exit code --format gives. Each file matches the
+# single-format run, and Markdown is cut at --md-max-chars.
+env TEST_NOW=2026-11-11T12:00:00Z
+env HTTPS_PROXY=http://127.0.0.1:1
+env HTTP_PROXY=http://127.0.0.1:1
+gentree tree
+
+exec expect-exit 3 relgap drift tree --fail-on drift --format json --out sarif=drift.sarif --out md=drift.md --out github=drift.github --out plain=drift.txt
+cp stdout multi.json
+sarifschema drift.sarif
+jsonschema report-v1.json multi.json
+grep '^::warning file=tree/team-\d+/repo-\d+/[^,]+,line=\d+,title=relgap drift::' drift.github
+
+exec expect-exit 3 relgap drift tree --fail-on drift --format json
+cmp stdout multi.json
+exec expect-exit 3 relgap drift tree --fail-on drift --format sarif
+cmp stdout drift.sarif
+exec expect-exit 3 relgap drift tree --fail-on drift --format md
+cmp stdout drift.md
+exec expect-exit 3 relgap drift tree --fail-on drift --format github
+cmp stdout drift.github
+exec expect-exit 3 relgap drift tree --fail-on drift --format plain
+cmp stdout drift.txt
+
+# Without a gate the run exits 0, with or without --out.
+exec relgap drift tree --format plain --out md=nogate.md
+cmp nogate.md drift.md
+
+# --md-max-chars cuts the Markdown between table rows and names what it cut.
+exec relgap drift tree --format plain --out md=short.md --md-max-chars 1500
+grep 'Truncated to 1500 characters: cut \d+ table rows' short.md
+grep 'Run `relgap drift --format json` for the full report\.$' short.md
+exec relgap drift tree --format md --md-max-chars 1500
+cmp stdout short.md
+
+# pins takes --out too.
+exec relgap pins tree/team-00/repo-00 --format plain --out json=pins.json
+jsonschema pins-v1.json pins.json
+
+# Usage errors exit 2.
+exec expect-exit 2 relgap drift tree --out tty=x.txt
+stderr 'invalid --out format "tty"'
+exec expect-exit 2 relgap pins tree --out sarif=x.sarif
+stderr '--out sarif=x.sarif: format "sarif" is not supported by this command'
+exec expect-exit 2 relgap drift tree --out md
+stderr 'want format=path'
+exec expect-exit 2 relgap drift tree --md-max-chars -1
+stderr '--md-max-chars must be 0 or more'
+! exists x.txt
+! exists x.sarif
