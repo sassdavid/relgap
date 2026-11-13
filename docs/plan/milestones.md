@@ -62,11 +62,10 @@ Scope: `structured-json`, `web-doc`, `upgrade-guide` adapters, EOL + OSV, all 20
 - [x] output-and-ci.md criteria 1-3. (`TestSpec_output_and_ci_1`, `_2`, `_3`; decisions in the spec and [ADR-0012](adr/0012-fail-on-gate-and-sarif.md). The upload-sarif dry run is the `sarif` job in `ci.yml`.)
 
 ### M10: MCP server → [mcp-and-llm](specs/mcp-and-llm.md)
-- [ ] MCP criteria 1–2. Registered in the author's Claude Code config and used for a real upgrade (terraform or argocd), notes recorded in `docs/dogfood.md`.
-  Open until the Claude Code part is done. Criteria 1-2 pass (`TestSpec_mcp_and_llm_1`, `_2`;
-  `mise run check` passes on 2026-11-12; decisions in the spec). The server answered real
-  argocd and terraform questions over stdio, with notes in [dogfood.md](../dogfood.md), but it
-  isn't registered in Claude Code yet.
+- [x] MCP criteria 1–2. Registered in the author's Claude Code config and used for a real upgrade (terraform or argocd), notes recorded in `docs/dogfood.md`.
+  Criteria 1-2 pass (`TestSpec_mcp_and_llm_1`, `_2`). On 2026-11-13 the server was registered
+  at local scope and answered the Argo CD 3.1.0 to 3.6.1 question in Claude Code, following
+  the cursor to all 99 entries ([dogfood.md](../dogfood.md)).
 
 ---
 
@@ -98,7 +97,6 @@ package channel gets anything until M19. No new features.
 - [ ] Release PR #2 is merged and v0.1.0 is a GitHub release. `cosign verify-blob` and
   `gh attestation verify` pass on a downloaded archive, `mise use github:sassdavid/relgap` works,
   and the tap and the bucket get no commit.
-- Manual, any time: register the MCP server in Claude Code and close M10 (`docs/dogfood.md`).
 
 ### M12: Shell completion, carapace and man pages (shared)
 Scope: every flag and argument completes from local data in every common shell, and every channel
