@@ -222,12 +222,19 @@ mode `comment` with `command: digest`; update output-and-ci.md to match.
   and `writing.md` with its tool's repo. A copy in a directory with another name exits 2 and
   passes with `.sibling`. `.release-please-manifest.json` moved to the similar list, since the
   two tools release different versions.
-- [ ] Skeleton: `action.yml`, `scripts/install.sh`, `scripts/run.sh` and `scripts/tool.env` (the
+- [x] Skeleton: `action.yml`, `scripts/install.sh`, `scripts/run.sh` and `scripts/tool.env` (the
   only tool-specific file besides the README). Install checks sha256 and
   `gh attestation verify --signer-workflow sassdavid/relgap/.github/workflows/release.yml`, with
   cosign and checksum-only as options. A tampered archive fails in CI. CI runs on ubuntu, macos
   and windows, zizmor and actionlint pass, every `uses:` is pinned by SHA, and release-please
   publishes immutable releases with a moving `v1` tag.
+  Evidence (2026-11-15, relgap-action v1.0.0 = 4c18623): `ci` run 43727575743 passed `lint`
+  (jactionlint, shellcheck, prose), `test` on ubuntu, macos and windows (`scripts/test-install.sh`
+  fails a tampered archive in every verify mode) and the action job for attestation, cosign and
+  checksum on all three. `security` run 43727575763 passed zizmor. Every `uses:` is a SHA or `$/`.
+  release-please drafted v1.0.0 from #2. After it was published, the API reports
+  `"immutable": true`, `gh release verify v1.0.0` prints "Release v1.0.0 verified!", and
+  `major-tag` run 43728377470 moved `v1` to 4c18623, the commit of `v1.0.0`.
 - [x] Report mode: `outdated` or `drift` writes json, SARIF, md and annotations in one run. SARIF
   shows in code scanning on a test repo, and `fail-on` fails the step on exit 3.
   Evidence (2026-11-15, sassdavid/action-test, relgap-action#3): push run 43722958845 uploaded
@@ -242,7 +249,9 @@ mode `comment` with `command: digest`; update output-and-ci.md to match.
   digests only its tool. A re-run of 43726011622 logged `unchanged` and left one comment. On #1 a
   second commit edited the same comment (new hash). `scripts/test-run.sh` runs the fork and
   Dependabot fallback with a fake event on ubuntu, macos and windows.
-- [ ] v1.0.0 is on the Marketplace under a name that doesn't collide.
+- [x] v1.0.0 is on the Marketplace under a name that doesn't collide.
+  Evidence (2026-11-15): published at 15:10 UTC as https://github.com/marketplace/actions/relgap
+  (HTTP 200). Before that the page answered 404, and GitHub has no user or org named relgap.
 
 ### M15: MCP prompts and the LLM summary (shared, different per repo) → part of v0.4.0 ([mcp-and-llm](specs/mcp-and-llm.md))
 Scope: relgap gets an opt-in `--summarize`. tfcensus gets MCP prompts but no built-in LLM call
