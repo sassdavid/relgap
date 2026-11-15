@@ -30,8 +30,42 @@ command that checks it.
 
 ## GitHub Action (M14)
 `sassdavid/relgap-action`, a composite action that installs a verified release:
-- `mode: comment-on-renovate`: on a Renovate or Dependabot PR, runs `relgap digest --pull-request` (v0.3.0, below), which finds the upgraded tools from the diff of pin files, the branch name and the `renovate-debug` comment, and posts or updates **one** sticky comment with the `md` digest.
-- `mode: report`: runs `outdated`/`drift` with SARIF upload to code scanning.
+- `mode: report`: runs `relgap outdated` (the default `command`) or `relgap drift` once with
+  `--format github` and `--out` for JSON, SARIF and Markdown, uploads the SARIF to code scanning
+  and appends the Markdown to the step summary. A `fail-on` match exits 3 and fails the step after
+  the upload.
+- `mode: comment` with `command: digest` (its only and default command): on a `pull_request`
+  event, runs `relgap digest --pull-request` (v0.3.0, below), which finds the upgraded tools from
+  the diff of pin files, the branch name and the `renovate-debug` comment, then
+  `relgap notify --notify github-pr-comment` posts or updates **one** sticky comment with the
+  `md` digest. A pull request from a fork or from Dependabot gets the step summary instead.
+
+## Decisions (M14 report and comment mode)
+Agreed before coding (2026-11-15). tfcensus-action shares `action.yml` and `scripts/run.sh`;
+each repo's `scripts/tool.env` holds the differences.
+
+- `tool.env` lists the commands of each mode (the first is the default) and the ones that write
+  SARIF. relgap: report takes `outdated` or `drift`, comment takes `digest` and adds
+  `--pull-request`. tfcensus: report and comment take `drift`. Any other command exits 2.
+- `from` maps to a flag in `tool.env`. relgap has none, so a non-empty `from` exits 2. tfcensus
+  passes `--from-json-out-dir <from>`, plus `--report-file <from>/report.json` when that file
+  exists and `args` has no `--report-file`.
+- One run of the command writes every file: `--format github` and `--out sarif=` for the SARIF
+  commands, `--format plain` otherwise, and `--out json=` and `--out md=` for all of them. The
+  files go to a directory under `RUNNER_TEMP`; the outputs give their absolute paths.
+- The step exits with the command's code, after the step summary and the comment. The SARIF upload
+  runs after a failed step too (`!cancelled()`). In comment mode a refused comment fails the step
+  with notify's code when the command passed.
+- Comment mode needs a `pull_request` event and exits 2 on any other. The comment needs a token
+  that can write: when the head repository differs from `GITHUB_REPOSITORY`, is unknown, or the
+  actor is `dependabot[bot]`, the action skips notify, says why in a notice and writes the step
+  summary even with `step-summary: false`. `scripts/test-run.sh` checks these cases with a stub
+  binary on every runner OS.
+- The SARIF category is `relgap-<command>`, plus `/<directory>` when `working-directory` isn't the
+  workspace root, so two runs keep their own alerts. SARIF locations are relative to
+  `working-directory`.
+- Proof runs on `sassdavid/action-test`: code scanning alerts from report mode, a sticky comment
+  on a Renovate pull request that a re-run edits, and exit 3 from `fail-on`.
 
 ## Decisions (pull request input, v0.3.0)
 Agreed before coding (2026-11-13). The item moved from M13 to M14 and ships in v0.3.0.
