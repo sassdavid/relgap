@@ -82,6 +82,7 @@ llm:
   max_input_tokens: 30000
   model: ""
   provider: ""
+  timeout: 120s
 policy:
   fail_on: []
   max_behind: ""

@@ -4,6 +4,11 @@ name: live
 # GitHub and the web, then opens or updates a "corpus drift: <tool>" issue for each difference and
 # closes the issues of tools that are clean again. It never updates goldens or corpus.yaml: the
 # corpus job can only read the repository.
+#
+# The bedrock job sends one --summarize prompt to Amazon Bedrock. It runs only when the repository
+# variables RELGAP_BEDROCK_ROLE_ARN (an IAM role GitHub's OIDC provider can assume, allowed
+# bedrock:InvokeModel) and RELGAP_BEDROCK_MODEL (a model or inference profile ID) are both set, so
+# nothing calls Bedrock until they are. RELGAP_BEDROCK_REGION defaults to us-east-1.
 on:
   schedule:
     - cron: "41 4 * * *"
@@ -42,6 +47,30 @@ jobs:
           path: ${{ runner.temp }}/corpus
           if-no-files-found: error
           retention-days: 14
+
+  bedrock:
+    name: bedrock smoke test
+    if: ${{ vars.RELGAP_BEDROCK_ROLE_ARN != '' && vars.RELGAP_BEDROCK_MODEL != '' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      id-token: write # assume the Bedrock role with OIDC
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: jdx/mise-action@b44d12e7d0d8ee7461bb893e1b1993500433185b # v5.2.7
+        with:
+          version: 2026.11.7
+      - uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
+        with:
+          role-to-assume: ${{ vars.RELGAP_BEDROCK_ROLE_ARN }}
+          aws-region: ${{ vars.RELGAP_BEDROCK_REGION || 'us-east-1' }}
+      - name: summarize a digest with Bedrock Converse
+        env:
+          RELGAP_BEDROCK_MODEL: ${{ vars.RELGAP_BEDROCK_MODEL }}
+        run: mise run test:live:bedrock
 
   issues:
     name: drift issues

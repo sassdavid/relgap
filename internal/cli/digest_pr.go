@@ -161,7 +161,9 @@ func runDigestPR(cmd *cobra.Command, d *app.Deps, g *globals, f digestFlags, roo
 	if err != nil {
 		return err
 	}
-	if err = writeDigest(cmd, d, g, &report.Digest{Tools: tools}, errs); err != nil {
+	data := &report.Digest{Tools: tools}
+	summarizeDigest(cmd, d, g, f, data)
+	if err = writeDigest(cmd, d, g, data, errs); err != nil {
 		return err
 	}
 	prNotes(d, diff.base, diff.head, len(changes), append(skipped, notes...))

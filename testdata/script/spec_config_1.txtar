@@ -49,6 +49,7 @@ llm.base_url               ""                                                def
 llm.max_input_tokens       30000                                             default
 llm.model                  ""                                                default
 llm.provider               bedrock                                           user file $WORK/.config/relgap/config.yaml
+llm.timeout                120s                                              default
 policy.fail_on             ["eol","vuln"]                                    project file $WORK/.relgap.yaml
 policy.max_behind          ""                                                default
 policy.min_confidence      0.7                                               flag --min-confidence

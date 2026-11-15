@@ -41,6 +41,13 @@ and --all count each pin, as 'relgap outdated' does, and --base and --pull-reque
 reaches --min-count. With --from-mise or --all, a pin that fails exits 1 when no value
 matched. The other --fail-on values belong to 'relgap outdated' and 'relgap drift'.
 
+--summarize adds an upgrade-risk summary from the model the llm config names: up to 5 risks and
+the required actions, each citing entry IDs. The model gets the tool, the range and the listed
+entries with their IDs and source URLs, never a local path or pin location. relgap removes
+claims that cite no entry ID or one it didn't send, and labels the summary as LLM output in
+every format. The --fail-on gate and the exit code never read it. A missing llm config,
+--offline, a provider error and llm.timeout (default 120s) are warnings with no summary.
+
 GitHub token: GH_TOKEN, GITHUB_TOKEN, gh's config file, then 'gh auth token'. Without one,
 relgap uses the REST API (60 requests per hour) with 2 concurrent requests.
 
@@ -60,6 +67,7 @@ relgap digest <tool> <from>..[<to>] | --from-mise [path] | --all [path] | --base
   relgap digest --all ~/src/infra --format md > upgrade-notes.md
   relgap digest --base origin/main --format md
   relgap digest --pull-request --format json > digest.json
+  relgap digest --from-mise --format md --summarize > upgrade-notes.md
   relgap digest terraform 1.15.8..1.17.1 --format json | jq '.data.tools[].entries[] | select(.kind == "breaking")'
 ```
 
@@ -79,6 +87,7 @@ relgap digest <tool> <from>..[<to>] | --from-mise [path] | --all [path] | --base
       --only strings                       list only entries of this kind: breaking, deprecation, security, feature, fix or other; repeatable
       --out stringArray                    also write the report to a file as format=path (repeatable); format is one of plain, md or json
       --pull-request[=true|false]          digest the pins the pull request in GITHUB_EVENT_PATH upgrades, from its base commit
+      --summarize[=true|false]             add an LLM summary that cites entry IDs (needs the llm config; never changes the exit code)
 ```
 
 ### Options inherited from parent commands

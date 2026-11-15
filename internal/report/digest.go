@@ -21,7 +21,29 @@ import (
 
 // Digest is the data of `relgap digest --format json`.
 type Digest struct {
-	Tools []ToolDigest `json:"tools"`
+	Tools   []ToolDigest `json:"tools"`
+	Summary *Summary     `json:"summary,omitempty"` // only with --summarize
+}
+
+// SummaryNotice labels every LLM summary in every format.
+const SummaryNotice = "LLM-generated, verify against cited sources"
+
+// Summary is the optional LLM summary of a digest. It is advisory: no gate reads it.
+type Summary struct {
+	Notice   string  `json:"notice"` // always [SummaryNotice]
+	Provider string  `json:"provider"`
+	Model    string  `json:"model"`
+	Risks    []Claim `json:"risks"`   // at most 5
+	Actions  []Claim `json:"actions"` // required actions
+	Entries  int     `json:"entries"` // entries sent to the model
+	Trimmed  int     `json:"trimmed"` // entries left out to fit llm.max_input_tokens
+	Dropped  int     `json:"dropped"` // claims removed for citing no entry ID or an unknown one
+}
+
+// Claim is one line of a [Summary] and the entry IDs it cites.
+type Claim struct {
+	Text  string   `json:"text"`
+	Cites []string `json:"cites"`
 }
 
 // ToolDigest is the digest of one tool over (From, To].

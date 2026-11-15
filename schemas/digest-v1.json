@@ -10,12 +10,39 @@
       "additionalProperties": false,
       "required": ["tools"],
       "properties": {
-        "tools": { "type": "array", "items": { "$ref": "#/$defs/tool" } }
+        "tools": { "type": "array", "items": { "$ref": "#/$defs/tool" } },
+        "summary": { "$ref": "#/$defs/summary" }
       }
     }
   },
   "$defs": {
     "count": { "type": "integer", "minimum": 0 },
+    "entryID": { "type": "string", "pattern": "^e-[0-9a-f]{8}(-[0-9]+)?$" },
+    "claim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["text", "cites"],
+      "properties": {
+        "text": { "type": "string", "minLength": 1 },
+        "cites": { "description": "IDs of the entries the claim rests on; each is in data.tools[].entries.", "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/entryID" } }
+      }
+    },
+    "summary": {
+      "description": "Only with --summarize: an LLM summary of the entries. Advisory; --fail-on and the exit code never read it.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["notice", "provider", "model", "risks", "actions", "entries", "trimmed", "dropped"],
+      "properties": {
+        "notice": { "const": "LLM-generated, verify against cited sources" },
+        "provider": { "enum": ["openai-compatible", "anthropic", "bedrock"] },
+        "model": { "type": "string", "minLength": 1 },
+        "risks": { "description": "Upgrade risks, at most 5.", "type": "array", "maxItems": 5, "items": { "$ref": "#/$defs/claim" } },
+        "actions": { "description": "Actions the entries require before or during the upgrade.", "type": "array", "items": { "$ref": "#/$defs/claim" } },
+        "entries": { "description": "Entries sent to the model.", "$ref": "#/$defs/count" },
+        "trimmed": { "description": "Entries left out, lowest confidence first, to fit llm.max_input_tokens.", "$ref": "#/$defs/count" },
+        "dropped": { "description": "Claims removed because they cited no entry ID or one the model wasn't sent.", "$ref": "#/$defs/count" }
+      }
+    },
     "kind": { "enum": ["breaking", "deprecation", "security", "feature", "fix", "other"] },
     "tool": {
       "type": "object",
@@ -49,7 +76,7 @@
             "additionalProperties": false,
             "required": ["id", "version", "kind", "confidence", "text", "source"],
             "properties": {
-              "id": { "description": "Stable entry ID: e- and 8 hex digits of a hash over the tool, the version and the normalized text, with -2, -3 on a collision. The same in every page, filter and run.", "type": "string", "pattern": "^e-[0-9a-f]{8}(-[0-9]+)?$" },
+              "id": { "description": "Stable entry ID: e- and 8 hex digits of a hash over the tool, the version and the normalized text, with -2, -3 on a collision. The same in every page, filter and run.", "$ref": "#/$defs/entryID" },
               "version": { "type": "string", "minLength": 1 },
               "kind": { "$ref": "#/$defs/kind" },
               "confidence": { "type": "number", "minimum": 0, "maximum": 1 },

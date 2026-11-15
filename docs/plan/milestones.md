@@ -264,13 +264,32 @@ Scope: relgap gets an opt-in `--summarize`. tfcensus gets MCP prompts but no bui
   the prompt and checks that `breaking_changes` and `digest` give an entry the same `id`;
   `TestDigestEntryIDs` (`internal/report`). Entries had no ID, so every digest entry now has a
   stable `id` (mcp-and-llm.md, "Decisions (M15, prompts and entry IDs)").
-- [ ] mcp-and-llm.md criteria 3-4: a fake-provider test drops uncited claims and claims with
+- [x] mcp-and-llm.md criteria 3-4: a fake-provider test drops uncited claims and claims with
   unknown IDs and respects the token budget; a Bedrock smoke test runs only in `live.yml`.
-- [ ] The summary is advisory only: it never changes `--fail-on`, exit codes or SARIF levels.
+  Evidence: `TestSpec_mcp_and_llm_3` (`internal/summarize`) drops claims without an ID, with an
+  unknown ID and outside the headings, caps risks at 5, and with a 520-token budget leaves out
+  the two lowest-confidence entries and drops a claim citing one of them.
+  `TestSpec_mcp_and_llm_4` (build tag `live`, `mise run test:live:bedrock`) runs in the
+  `bedrock` job of `live.yml` only when `RELGAP_BEDROCK_ROLE_ARN` and `RELGAP_BEDROCK_MODEL` are
+  set, and skips without a model or credentials. Neither variable is set yet, so it hasn't run
+  against Bedrock; `TestBedrock` checks the Converse request against a fake endpoint.
+- [x] The summary is advisory only: it never changes `--fail-on`, exit codes or SARIF levels.
   Upstream text goes to the model as delimited untrusted data, repo paths and pin locations are
   never sent, and a provider failure or timeout is a warning. An ADR-0004 amendment records this.
-- [ ] With no provider configured, `--summarize` makes no network call (test).
-- [ ] `.claude/rules/siblings.md` lists `--summarize` as an intended difference.
+  Evidence: `TestSummarize_advisory` (`internal/cli`) gets exit 3 with `--fail-on breaking` with
+  and without `--summarize` while the model claims "No breaking changes", and the same entries;
+  `digest` writes no SARIF. `TestSummarize_untrustedData` checks that an entry containing
+  `</release_notes>` can't close the block and that only the tool, range and entries are sent.
+  `TestSummarize_warnings` covers a 503 (one call, no resend), a 50ms `llm.timeout`, `--offline`
+  and a missing key. ADR-0004 has the 2026-11-15 amendment.
+- [x] With no provider configured, `--summarize` makes no network call (test).
+  Evidence: `TestSummarize_noProviderNoNetwork` records the same requests with and without
+  `--summarize`, none to the model host; `TestNew` builds no client and fails on any request.
+- [x] `.claude/rules/siblings.md` lists `--summarize` as an intended difference. It already did
+  ("relgap only: `--summarize` and its `llm` config"); the box waited for `--summarize` to work.
+  All four boxes: `mise run check` passed on 2026-11-15 (lint, `go test -race ./...` with 26
+  packages ok, govulncheck "No vulnerabilities found"), and `mise run sibling:diff` reports
+  "shared files match".
 
 ### M16: Planned CLI gaps (shared where both repos lack it) → v0.4.0
 - [ ] `config init` writes a commented `relgap.yaml` and refuses to overwrite without `--force`.

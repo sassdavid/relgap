@@ -105,13 +105,64 @@ Default **off**. When on:
    - `openai-compatible`: `base_url` + key env var. Covers OpenAI, LiteLLM, Ollama and vLLM.
    - `anthropic`: Messages API.
    - `bedrock`: Converse API via aws-sdk-go-v2, using a profile. Fits the author's Bedrock setup.
-4. Config: `llm.provider`, `llm.model`, `llm.base_url`, `llm.api_key_env`, `llm.max_input_tokens` (default 30k; entries are trimmed lowest confidence first).
+4. Config: `llm.provider`, `llm.model`, `llm.base_url`, `llm.api_key_env`, `llm.aws_profile`, `llm.max_input_tokens` (default 30k; entries are trimmed lowest confidence first), `llm.timeout` (default 120s).
 5. Output: an extra `summary` block in every format, clearly labelled "LLM-generated, verify against cited sources".
 
 Non-goals: no chat loop, no embedding store, no LLM in the default path, no sending of local file content.
 
+### Decisions (M15, `--summarize`)
+Agreed with the owner before coding. [ADR-0004](../adr/0004-llm-optional-cited.md) has the
+amendment.
+
+- `--summarize` is a `digest` flag and works in every digest mode: a range, `--from-mise`,
+  `--all`, `--base` and `--pull-request`. A run makes one model call and gets one summary for all
+  its tools. `outdated`, `drift` and the MCP tools don't summarize.
+- relgap ships no default model ID. `llm.model` is required, because model IDs go stale between
+  releases and the model sets the cost. The docs show example IDs.
+- An empty `llm.api_key_env` means `ANTHROPIC_API_KEY` for `anthropic`, and no key for
+  `openai-compatible`, which suits Ollama and vLLM. `openai-compatible` needs `llm.base_url`;
+  `anthropic` defaults to `https://api.anthropic.com`. `bedrock` uses the AWS default chain, or
+  `llm.aws_profile`, and needs a region from `AWS_REGION` or the profile.
+- The summary is advisory. It is `data.summary` in `digest-v1.json` (the shared `report-v1.json`
+  is unchanged), a labelled block at the top of md, tty and plain output, and nothing in SARIF,
+  which `digest` doesn't write. The `--fail-on` gate reads only the entries,
+  and the exit code never depends on it.
+- Every failure is a warning on stderr with no summary and an unchanged exit code: no provider,
+  no model, an empty key, `--offline`, a provider error, a refusal, and `llm.timeout`. With no
+  provider relgap builds no client and sends no request. `llm.timeout` is a Go duration capped at
+  2m, the longest single attempt `internal/httpx` allows (that file is shared with tfcensus).
+- What the model gets: one JSON line per tool (`tool`, `from`, `to`) and one per listed entry
+  (`id`, `tool`, `version`, `kind`, `text`, `url`), between `<release_notes>` and
+  `</release_notes>`. `json.Marshal` escapes `<`, `>` and `&`, so no upstream text can close the
+  block. The system prompt calls the block untrusted data and says not to follow instructions in
+  it. Pin locations, file paths, repository paths and config values are never sent. For a private
+  repository in `tools`, the source URLs name it.
+- The model answers in plain text under `RISKS` (at most 5 lines) and `ACTIONS`, each line ending
+  with `[e-...]` IDs. Plain text works with every provider and every model, including small
+  local ones, where structured output and forced tool calls don't. A line is kept only when it
+  cites at least one ID and every ID it cites was sent; an ID left out by the budget counts as
+  unknown. Dropped lines are counted in `summary.dropped` and named in a warning.
+- The budget estimates 3 bytes per token, below the usual 4, because release notes are full of
+  URLs, code and version numbers. Entries go lowest confidence first, then by kind (other, fix,
+  feature, deprecation, security, breaking), then the latest first. `summary.trimmed` counts
+  them and a warning says so.
+- Providers: `openai-compatible` posts to `<base_url>/chat/completions` and `anthropic` posts to
+  `/v1/messages` with `anthropic-version: 2026-10-21`. Both use thin HTTP clients on
+  `internal/httpx` without the cache, so a POST is sent again only after a 429 or a Retry-After
+  and a call is never billed twice. `anthropic` sets `max_tokens` 16000 and sends no
+  `temperature`, which that API version rejects. `openai-compatible` sends no token limit, since
+  OpenAI's reasoning models reject `max_tokens` and other servers name it differently.
+  `bedrock` calls Converse through aws-sdk-go-v2 and its own HTTP client and retries, as tfcensus
+  does. Anthropic's Bedrock docs list Converse support up to Claude Opus 4.6, Sonnet 4.6 and
+  Haiku 4.5; the newer Claude models are listed for InvokeModel only, so a Converse call to them
+  is untested.
+- The Bedrock smoke test (`TestSpec_mcp_and_llm_4`, `mise run test:live:bedrock`) runs in the
+  `bedrock` job of `live.yml`, only when the repository variables `RELGAP_BEDROCK_ROLE_ARN` and
+  `RELGAP_BEDROCK_MODEL` are set. It assumes the role with OIDC and skips without credentials, so
+  nothing calls Bedrock until the owner sets both.
+
 ## Acceptance criteria
 - [x] An in-process MCP client test calls every tool and matches the `--format json` golden output. (`TestSpec_mcp_and_llm_1`)
 - [x] Response size caps are enforced (over 50 KB → truncated with a cursor). (`TestSpec_mcp_and_llm_2`)
-- [ ] The summarizer is tested against a fake provider. It rejects uncited claims and respects the token budget.
-- [ ] A Bedrock provider smoke test exists in the `live.yml` nightly only (skipped without credentials).
+- [x] The summarizer is tested against a fake provider. It rejects uncited claims and respects the token budget. (`TestSpec_mcp_and_llm_3`)
+- [x] A Bedrock provider smoke test exists in the `live.yml` nightly only (skipped without credentials). (`TestSpec_mcp_and_llm_4`)
