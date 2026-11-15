@@ -32,6 +32,7 @@ Go CLI: release-notes range digests, toolchain drift across repos, EOL/OSV enric
 - A changelog file is parsed once per digest (`mdindex`). Don't re-parse per version.
 - New adapter or detector → fixtures + golden + a spec acceptance-criterion test named `TestSpec_<spec>_<n>`.
 - Conventional Commits. release-please owns versions and tags.
+- Renovate runs from `.github/workflows/renovate.yml` with the rules in `renovate.json` (engineering ADR-0015, setup in `docs/engineering/ci-and-release.md#renovate`). Change both files in all repos that share them.
 
 ## Sibling repo
 - tfcensus (`~/src/github/tfcensus`) shares this repo's build, lint, test and release setup. Follow `.claude/rules/siblings.md`: reuse its files instead of writing new ones, keep shared files identical (`mise run sibling:diff`), and make shared changes in both repos.
