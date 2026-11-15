@@ -228,10 +228,20 @@ mode `comment` with `command: digest`; update output-and-ci.md to match.
   cosign and checksum-only as options. A tampered archive fails in CI. CI runs on ubuntu, macos
   and windows, zizmor and actionlint pass, every `uses:` is pinned by SHA, and release-please
   publishes immutable releases with a moving `v1` tag.
-- [ ] Report mode: `outdated` or `drift` writes json, SARIF, md and annotations in one run. SARIF
+- [x] Report mode: `outdated` or `drift` writes json, SARIF, md and annotations in one run. SARIF
   shows in code scanning on a test repo, and `fail-on` fails the step on exit 3.
-- [ ] Comment mode: one sticky comment on a test repo's Renovate PR. A re-run edits it with no
+  Evidence (2026-11-15, sassdavid/action-test, relgap-action#3): push run 43722958845 uploaded
+  `relgap-outdated`, and code scanning lists 16 open alerts on `mise.toml` lines (eol, outdated,
+  breaking, deprecation and 6 advisories). The macOS and Windows jobs wrote all three files. The
+  dispatched `gate` job (run 43723750568) printed `--fail-on eol matched 2 pins` and failed with
+  exit code 3.
+- [x] Comment mode: one sticky comment on a test repo's Renovate PR. A re-run edits it with no
   duplicate, and a fork PR falls back to the step summary.
+  Evidence (2026-11-15, sassdavid/action-test): the self-hosted `sassdavid-renovate` app opened
+  #4 (gh) and #5 (helm) on `renovate-self-hosted/` branches, and each got one comment that
+  digests only its tool. A re-run of 43726011622 logged `unchanged` and left one comment. On #1 a
+  second commit edited the same comment (new hash). `scripts/test-run.sh` runs the fork and
+  Dependabot fallback with a fake event on ubuntu, macos and windows.
 - [ ] v1.0.0 is on the Marketplace under a name that doesn't collide.
 
 ### M15: MCP prompts and the LLM summary (shared, different per repo) → part of v0.4.0 ([mcp-and-llm](specs/mcp-and-llm.md))
