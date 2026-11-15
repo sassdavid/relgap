@@ -196,6 +196,7 @@ func (d *Digester) Digest(ctx context.Context, req DigestRequest) (*ToolDigest, 
 		entries,
 		func(a, b classify.Entry) int { return cmp.Compare(order[a.Version], order[b.Version]) },
 	)
+	assignIDs(t.Name, entries)
 	for _, e := range entries {
 		if e.Confidence < req.MinConfidence {
 			out.Hidden++

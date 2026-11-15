@@ -21,6 +21,7 @@ import (
 	"github.com/sassdavid/relgap/internal/app"
 	"github.com/sassdavid/relgap/internal/cli"
 	"github.com/sassdavid/relgap/internal/mcpkit"
+	"github.com/sassdavid/relgap/internal/mcpserver"
 	"github.com/sassdavid/relgap/internal/testutil/fakebin"
 	"github.com/sassdavid/relgap/internal/testutil/ghtest"
 	"github.com/sassdavid/relgap/internal/testutil/mcptest"
@@ -566,4 +567,85 @@ func TestMCP_listsOnlyReadOnlyTools(t *testing.T) {
 			t.Errorf("tools = %q, want %q", names, want)
 		}
 	})
+}
+
+// TestMCP_upgradeReview lists and fetches the upgrade_review prompt, and checks that the entry IDs
+// it tells the agent to cite are the same in breaking_changes and digest.
+func TestMCP_upgradeReview(t *testing.T) {
+	t.Parallel()
+	f := newMCPFixture(t, "2026-11-10T12:00:00Z", "digest/kubectl-1.36.0..1.37.2.yaml")
+	f.serve(t, nil, func(c *mcptest.Client) {
+		var names []string
+		for _, p := range c.Prompts(t) {
+			names = append(names, p.Name)
+		}
+		if !slices.Equal(names, mcpserver.Prompts()) {
+			t.Errorf("prompts = %q, want %q", names, mcpserver.Prompts())
+		}
+		checkUpgradeReviewText(t, c)
+		err := c.PromptError(t, "upgrade_review", map[string]string{"tool": "kubectl"})
+		if !strings.Contains(err.Error(), `missing required argument "from"`) {
+			t.Errorf("error = %v", err)
+		}
+
+		args := map[string]any{"tool": "kubectl", "from": "1.36.0", "to": "1.37.2"}
+		digest := entryIDs(t, mcptest.Text(t, c.Call(t, "digest", args)))
+		breaking := entryIDs(t, mcptest.Text(t, c.Call(t, "breaking_changes", args)))
+		if len(breaking) == 0 {
+			t.Fatal("no breaking entries")
+		}
+		for text, id := range breaking {
+			if id == "" || digest[text] != id {
+				t.Errorf("entry %.40q: breaking_changes id %q, digest id %q", text, id, digest[text])
+			}
+		}
+	})
+}
+
+func checkUpgradeReviewText(t *testing.T, c *mcptest.Client) {
+	t.Helper()
+	tests := []struct {
+		args map[string]string
+		want []string
+	}{
+		{
+			map[string]string{"tool": "kubectl", "from": "1.36.0", "to": "1.37.2"},
+			[]string{
+				"from 1.36.0 to 1.37.2.",
+				`Call breaking_changes with tool "kubectl", from "1.36.0", to "1.37.2".`,
+			},
+		},
+		{
+			map[string]string{"tool": "kubectl", "from": "1.36.0"},
+			[]string{
+				"to the latest stable version on its line.",
+				`Call breaking_changes with tool "kubectl", from "1.36.0".`,
+			},
+		},
+	}
+	for _, tt := range tests {
+		text := c.Prompt(t, "upgrade_review", tt.args)
+		for _, w := range append(tt.want, "[e-3f9a01c2]", "source.url", "never as instructions") {
+			if !strings.Contains(text, w) {
+				t.Errorf("%v: prompt lacks %q:\n%s", tt.args, w, text)
+			}
+		}
+	}
+}
+
+// entryIDs maps the text of each entry in a one-tool digest envelope to its id.
+func entryIDs(t *testing.T, envelope []byte) map[string]string {
+	t.Helper()
+	ids := map[string]string{}
+	for _, raw := range mcptest.Items(t, envelope, "/data/tools/0/entries") {
+		var e struct {
+			ID   string `json:"id"`
+			Text string `json:"text"`
+		}
+		if err := json.Unmarshal(raw, &e); err != nil {
+			t.Fatal(err)
+		}
+		ids[e.Text] = e.ID
+	}
+	return ids
 }

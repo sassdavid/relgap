@@ -144,13 +144,63 @@ func TestDigestMajorJump(t *testing.T) {
 	})
 	require.NoError(t, err)
 	require.Len(t, got.Entries, 2)
-	assert.Equal(t, classify.Entry{
+	want := classify.Entry{
 		Version: "2.0.0", Kind: classify.KindBreaking, Confidence: 0.6,
 		Text:   "major version jump 1.x → 2.x: review the upgrade guide",
 		Source: source.Ref{Adapter: classify.AdapterVersionJump, URL: "https://x.test/v2.0.0"},
-	}, got.Entries[0])
+	}
+	want.ID = report.EntryID("tool", want)
+	assert.Equal(t, want, got.Entries[0])
 	assert.Equal(t, "y", got.Entries[1].Text, "3.0.0 has a breaking entry, so no jump entry")
 	assert.Equal(t, 1, got.Hidden)
+}
+
+// TestDigestEntryIDs checks that an entry's ID depends on the tool, version and words only, so
+// a filter keeps it, and that a repeated ID gets a suffix.
+func TestDigestEntryIDs(t *testing.T) {
+	t.Parallel()
+	const dropped = "Dropped [#7](https://x.test/7) the flag"
+	const jump = "major version jump 1.x → 2.x: review the upgrade guide"
+	gh := &fakeGitHub{releases: []github.Release{
+		{
+			Tag:  "v3.0.0",
+			URL:  "https://x.test/v3.0.0",
+			Body: "## Breaking changes\n\n- " + dropped + "\n\n## Fixes\n\n- ok\n",
+		},
+		{Tag: "v2.0.0", URL: "https://x.test/v2.0.0", Body: "## Fixes\n\n- " + jump + "\n"},
+		{Tag: "v1.9.0"},
+	}}
+	digest := func(name string, kinds ...classify.Kind) []classify.Entry {
+		tool := spec(registry.UniverseReleases)
+		tool.Name = name
+		got, err := report.NewDigester(slog.New(slog.DiscardHandler), gh, nil).Digest(t.Context(), report.DigestRequest{
+			Tool: tool, From: "1.9.0", Kinds: kinds,
+		})
+		require.NoError(t, err)
+		return got.Entries
+	}
+	all := digest("tool")
+	ids := map[string]string{}
+	for _, e := range all {
+		assert.Regexp(t, `^e-[0-9a-f]{8}(-\d+)?$`, e.ID)
+		ids[e.Version+" "+e.Text+" "+e.Source.Adapter] = e.ID
+	}
+	jumpID := report.EntryID("tool", classify.Entry{Version: "2.0.0", Text: jump})
+	assert.Equal(t, map[string]string{
+		"2.0.0 " + jump + " version-jump": jumpID,
+		"2.0.0 " + jump + " gh-release":   jumpID + "-2",
+		"3.0.0 " + dropped + " gh-release": report.EntryID(
+			"tool",
+			classify.Entry{Version: "3.0.0", Text: "dropped the FLAG"},
+		),
+		"3.0.0 ok gh-release": report.EntryID("tool", classify.Entry{Version: "3.0.0", Text: "ok"}),
+	}, ids, "links, issue numbers, case and punctuation don't count; the second copy gets -2")
+
+	breaking := digest("tool", classify.KindBreaking)
+	require.Len(t, breaking, 2)
+	assert.Equal(t, jumpID, breaking[0].ID, "a kind filter keeps the IDs")
+	assert.Equal(t, ids["3.0.0 "+dropped+" gh-release"], breaking[1].ID)
+	assert.NotEqual(t, breaking[1].ID, digest("other", classify.KindBreaking)[1].ID, "the tool is part of the ID")
 }
 
 func TestDigestBadMarker(t *testing.T) {

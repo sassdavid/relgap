@@ -34,6 +34,7 @@ func Kinds() []Kind {
 
 // Entry is one item of release notes.
 type Entry struct {
+	ID         string     `json:"id,omitempty"` // set by the digest; see report.EntryID
 	Version    string     `json:"version"`
 	Kind       Kind       `json:"kind"`
 	Confidence float64    `json:"confidence"`

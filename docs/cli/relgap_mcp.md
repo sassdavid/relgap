@@ -32,6 +32,11 @@ to the model) is split. The envelope then has a page field, and the agent passes
 page.next_cursor back to the same tool for the rest. Breaking changes, failed and
 outdated pins, and drifting tools come first. A cursor lasts 15 minutes after its last use.
 
+The prompt upgrade_review <tool> <from> [<to>] tells the agent to call breaking_changes,
+list the required actions and cite the id of every entry it uses, such as [e-3f9a01c2].
+An entry keeps its id in every page, filter and run. Claude Code offers the prompt as
+/mcp__relgap__upgrade_review.
+
 ```
 relgap mcp [flags]
 ```

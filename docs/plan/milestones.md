@@ -256,9 +256,14 @@ mode `comment` with `command: digest`; update output-and-ci.md to match.
 ### M15: MCP prompts and the LLM summary (shared, different per repo) → part of v0.4.0 ([mcp-and-llm](specs/mcp-and-llm.md))
 Scope: relgap gets an opt-in `--summarize`. tfcensus gets MCP prompts but no built-in LLM call
 (decided 2026-11-13; see [roadmap-research.md](roadmap-research.md#llm-features)).
-- [ ] MCP prompt support in the shared `internal/mcpkit`. relgap ships
+- [x] MCP prompt support in the shared `internal/mcpkit`. relgap ships
   `upgrade_review(tool, from, to)`, which tells the agent to call `breaking_changes` and cite entry
   IDs. The mcptest lists and fetches it.
+  Evidence: `TestPrompt_*` and `TestAddPrompt_duplicateArgument` (`internal/mcpkit/prompt_test.go`,
+  identical in tfcensus); `TestMCP_upgradeReview` (`internal/cli/mcp_test.go`) lists and fetches
+  the prompt and checks that `breaking_changes` and `digest` give an entry the same `id`;
+  `TestDigestEntryIDs` (`internal/report`). Entries had no ID, so every digest entry now has a
+  stable `id` (mcp-and-llm.md, "Decisions (M15, prompts and entry IDs)").
 - [ ] mcp-and-llm.md criteria 3-4: a fake-provider test drops uncited claims and claims with
   unknown IDs and respects the token budget; a Bedrock smoke test runs only in `live.yml`.
 - [ ] The summary is advisory only: it never changes `--fail-on`, exit codes or SARIF levels.

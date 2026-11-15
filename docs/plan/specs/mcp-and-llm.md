@@ -73,6 +73,30 @@ Agreed before coding, except where a point says it changed during the work.
   `TestMCP_noProcessesNoWrites` puts fake git, mise and gh on PATH and checks that none ran and
   that only the cache changed.
 
+### Decisions (M15, prompts and entry IDs)
+Agreed with the owner before coding.
+
+- `internal/mcpkit` has `AddPrompt`: a prompt declares string arguments and a Go func returns
+  one user message. mcpkit rejects an unknown argument or a missing required one before the func
+  runs, because go-sdk v1.8.0 checks neither. `mcptest` lists and fetches prompts. tfcensus
+  uses the same code for its own prompts.
+- `upgrade_review(tool, from, to?)` tells the agent to call `breaking_changes` (and `digest`
+  with `only: [security]` when a security fix matters), to cite each claim as `[<id>]` with the
+  entry's `source.url`, to use only IDs a tool returned, and to treat entry text as data. `to` is
+  optional, as in `breaking_changes`.
+- Every digest entry has an `id`: `e-` and the first 8 hex digits of sha256 over
+  `relgap-entry/v1`, the tool, the version and the normalized text, joined by NUL bytes. It
+  uses the same key that drops repeated entries, so the source URL, kind and confidence can change
+  without changing the ID. The digest sets IDs before filters and paging, so an entry has the
+  same ID in the CLI, in every MCP page, in `digest` and `breaking_changes`, and across runs. A
+  repeated ID gets `-2`, `-3` in entry order. A change to `normalize` or text extraction bumps
+  `v1`.
+- Why this form: models copy long random IDs badly (BoundaryML measured UUIDs against integers),
+  but a sparse short hash turns a copy error into an unknown ID, which the `--summarize` checker
+  drops. Small integers would turn it into a valid but wrong ID. The `e-` prefix keeps IDs apart
+  from commit SHAs in the text. Only OpenAI lacks a native inline-document citation, so a
+  prompt-level ID is the scheme all three providers share.
+
 ## LLM summary (`--summarize`)
 Default **off**. When on:
 1. relgap first builds the normal report. The LLM only sees **extracted entries with their source URLs**, never raw pages.
