@@ -31,6 +31,9 @@ Go CLI: release-notes range digests, toolchain drift across repos, EOL/OSV enric
 - Sort versions with `version.Scheme`, never by publish date.
 - A changelog file is parsed once per digest (`mdindex`). Don't re-parse per version.
 - New adapter or detector → fixtures + golden + a spec acceptance-criterion test named `TestSpec_<spec>_<n>`.
+- CI workflows and the examples in `docs/ci/` install tools with mise (`jdx/mise-action`, `mise.lock`,
+  and `mise.<env>.toml` for a tool only one job needs), not `setup-*` actions, `npm install -g` or
+  downloads. Rules in `docs/engineering/ci-and-release.md#github-actions-workflows`.
 - Conventional Commits. release-please owns versions and tags.
 - Renovate runs from `.github/workflows/renovate.yml` with the rules in `renovate.json` (engineering ADR-0015, setup in `docs/engineering/ci-and-release.md#renovate`). Change both files in all repos that share them.
 
