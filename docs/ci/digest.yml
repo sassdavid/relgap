@@ -41,7 +41,7 @@ jobs:
           persist-credentials: false
       - uses: jdx/mise-action@b44d12e7d0d8ee7461bb893e1b1993500433185b # v5.2.7
         with:
-          version: 2026.11.5
+          version: 2026.11.7
       # Exit 3: an upgrade has a breaking change. Exit 1: a digest failed and no gate matched.
       # --out writes every file before the exit code is set.
       - name: relgap digest

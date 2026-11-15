@@ -43,7 +43,7 @@ jobs:
           persist-credentials: false
       - uses: jdx/mise-action@b44d12e7d0d8ee7461bb893e1b1993500433185b # v5.2.7
         with:
-          version: 2026.11.5
+          version: 2026.11.7
       # Exit 3: a pin is end of life or has a known vulnerability. Exit 1: a source failed and no
       # gate matched. --out writes every file before the exit code is set.
       - name: relgap outdated
