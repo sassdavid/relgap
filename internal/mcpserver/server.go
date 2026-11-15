@@ -71,7 +71,7 @@ type Options struct {
 	Backend  Backend
 }
 
-// New returns the MCP server with every relgap tool.
+// New returns the MCP server with every relgap tool and prompt.
 func New(o Options) *mcpkit.Server {
 	s := mcpkit.NewServer(mcpkit.Options{
 		Name:         Name,
@@ -118,6 +118,7 @@ func New(o Options) *mcpkit.Server {
 		Description: "Shows how a tool name resolves to a GitHub repository, version rules and changelog sources, " +
 			"with the registry layer behind each field.",
 	}, t.resolve)
+	addPrompts(s)
 	return s
 }
 
