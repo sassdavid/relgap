@@ -102,6 +102,8 @@ goreleaser, chezmoi, k9s, golangci-lint.
 | actions/download-artifact | v8.0.2 (released 2026-10-07; relgap `live.yml`) |
 | actions/dependency-review-action | v5.0.0 |
 | zizmorcore/zizmor-action | v0.8.1 |
+| actions/create-github-app-token | v3.3.0, only in `renovate.yml` |
+| renovatebot/github-action | v46.3.12 with Renovate 44.201.1, in `renovate.yml` and `renovate-config.yml` |
 
 Indirect modules are whatever MVS selects, except where govulncheck flags a known (even unreachable)
 vulnerability: at M0, `golang.org/x/text` went from v0.14.0 to v0.43.0 and `golang.org/x/sys` from
