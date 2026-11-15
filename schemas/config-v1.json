@@ -200,6 +200,11 @@
         "max_input_tokens": {
           "type": "integer",
           "minimum": 1
+        },
+        "timeout": {
+          "type": "string",
+          "pattern": "^([0-9]+(\\.[0-9]+)?(ns|us|µs|ms|s|m|h))+$",
+          "description": "Hard limit on the model call, as a Go duration. A timeout is a warning."
         }
       },
       "additionalProperties": false,

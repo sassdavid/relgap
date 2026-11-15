@@ -35,6 +35,7 @@ type digestFlags struct {
 	base               string
 	head               string
 	pullRequest        bool
+	summarize          bool
 }
 
 // prMode reports whether the flags ask for the pins a pull request or a pair of refs upgrades.
@@ -84,6 +85,13 @@ and --all count each pin, as 'relgap outdated' does, and --base and --pull-reque
 reaches --min-count. With --from-mise or --all, a pin that fails exits 1 when no value
 matched. The other --fail-on values belong to 'relgap outdated' and 'relgap drift'.
 
+--summarize adds an upgrade-risk summary from the model the llm config names: up to 5 risks and
+the required actions, each citing entry IDs. The model gets the tool, the range and the listed
+entries with their IDs and source URLs, never a local path or pin location. relgap removes
+claims that cite no entry ID or one it didn't send, and labels the summary as LLM output in
+every format. The --fail-on gate and the exit code never read it. A missing llm config,
+--offline, a provider error and llm.timeout (default 120s) are warnings with no summary.
+
 GitHub token: GH_TOKEN, GITHUB_TOKEN, gh's config file, then 'gh auth token'. Without one,
 relgap uses the REST API (60 requests per hour) with 2 concurrent requests.`
 
@@ -102,6 +110,7 @@ func newDigestCmd(d *app.Deps, g *globals) *cobra.Command {
   relgap digest --all ~/src/infra --format md > upgrade-notes.md
   relgap digest --base origin/main --format md
   relgap digest --pull-request --format json > digest.json
+  relgap digest --from-mise --format md --summarize > upgrade-notes.md
   relgap digest terraform 1.15.8..1.17.1 --format json | jq '.data.tools[].entries[] | select(.kind == "breaking")'`,
 		Args: func(cmd *cobra.Command, args []string) error {
 			if f.fromMise || f.all || f.prMode() {
@@ -133,6 +142,8 @@ func newDigestCmd(d *app.Deps, g *globals) *cobra.Command {
 	fl.BoolVar(&f.all, flagAll, false, "digest every outdated pin in the project, as 'relgap outdated' lists them")
 	fl.StringSliceVar(&f.only, flagOnly, nil,
 		complete.Usage("list only entries of this kind: {values}; repeatable", kindChoices()))
+	fl.BoolVar(&f.summarize, flagSummarize, false,
+		"add an LLM summary that cites entry IDs (needs the llm config; never changes the exit code)")
 	addGateFlags(cmd, digestValues())
 	addOutputFlags(cmd, g, digestFormats()...)
 	registerCompletions(cmd, map[string]cobra.CompletionFunc{
@@ -203,6 +214,7 @@ func runDigest(cmd *cobra.Command, d *app.Deps, g *globals, f digestFlags, tool,
 		return err
 	}
 	data := &report.Digest{Tools: []report.ToolDigest{*digest}}
+	summarizeDigest(cmd, d, g, f, data)
 	if err = writeDigest(cmd, d, g, data, []render.Error{}); err != nil {
 		return err
 	}
@@ -254,7 +266,9 @@ func runDigestProject(cmd *cobra.Command, d *app.Deps, g *globals, f digestFlags
 	if err != nil {
 		return err
 	}
-	if err = writeDigest(cmd, d, g, &report.Digest{Tools: run.out.Digests()}, run.errors()); err != nil {
+	data := &report.Digest{Tools: run.out.Digests()}
+	summarizeDigest(cmd, d, g, f, data)
+	if err = writeDigest(cmd, d, g, data, run.errors()); err != nil {
 		return err
 	}
 	run.warn(cmd, d)
@@ -334,7 +348,7 @@ func newGitHubClient(
 	hc := httpx.New(httpx.Options{
 		Logger:    d.Logger,
 		Transport: d.HTTPTransport,
-		UserAgent: fmt.Sprintf("relgap/%s (+https://github.com/sassdavid/relgap)", buildinfo.Get().Version),
+		UserAgent: userAgent(),
 		Limits:    limits,
 		Default:   def,
 		RetryPOST: true, // GraphQL queries

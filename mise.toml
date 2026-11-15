@@ -57,6 +57,10 @@ run = "bash scripts/test-golden.sh"
 description = "Digest the 30-tool corpus against GitHub and the web (needs GH_TOKEN; the live workflow runs it nightly). Reports drift in $RELGAP_LIVE_OUT and never updates goldens"
 run = "go test -tags live -count=1 -run TestLiveCorpus -timeout 30m ./internal/cli/"
 
+[tasks."test:live:bedrock"]
+description = "Bedrock smoke test of --summarize (needs AWS credentials and RELGAP_BEDROCK_MODEL; skips without them)"
+run = "go test -tags live -count=1 -run TestSpec_mcp_and_llm_4 ./internal/summarize/"
+
 [tasks.vuln]
 description = "Known vulnerabilities in reachable code"
 run = "govulncheck ./..."

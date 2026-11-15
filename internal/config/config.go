@@ -75,12 +75,14 @@ type LLM struct {
 	APIKeyEnv      string `json:"api_key_env"                                                                            jsonschema_description:"Name of the env var holding the API key. Keys are never read from files."`
 	AWSProfile     string `json:"aws_profile"`
 	MaxInputTokens int    `json:"max_input_tokens" jsonschema:"minimum=1"`
+	Timeout        string `json:"timeout"          jsonschema:"pattern=^([0-9]+(\\.[0-9]+)?(ns|us|µs|ms|s|m|h))+$"       jsonschema_description:"Hard limit on the model call, as a Go duration. A timeout is a warning."`
 }
 
 const (
 	defaultConcurrency    = 8
 	defaultMinConfidence  = 0.5
 	defaultMaxInputTokens = 30000
+	defaultLLMTimeout     = "120s"
 )
 
 // Default returns the built-in configuration. Slices and maps are non-nil so that
@@ -105,7 +107,7 @@ func Default() Config {
 			MinConfidence: defaultMinConfidence,
 			VulnSeverity:  "",
 		},
-		LLM: LLM{MaxInputTokens: defaultMaxInputTokens},
+		LLM: LLM{MaxInputTokens: defaultMaxInputTokens, Timeout: defaultLLMTimeout},
 	}
 }
 

@@ -10,9 +10,14 @@ import (
 )
 
 // DigestMarkdown writes d as PR-ready Markdown: counts, then breaking changes and security
-// entries of every version, then one <details> block per version with the other kinds.
+// entries of every version, then one <details> block per version with the other kinds. A
+// --summarize summary comes first, labelled as LLM output.
 func DigestMarkdown(w io.Writer, d *report.Digest) error {
 	mw := &textWriter{w: w}
+	if d.Summary != nil {
+		mw.summaryMarkdown(d.Summary, sourceURLs(d))
+		mw.line("")
+	}
 	for i, t := range d.Tools {
 		if i > 0 {
 			mw.line("")

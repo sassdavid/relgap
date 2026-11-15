@@ -16,10 +16,15 @@ const (
 	ansiReset = "\x1b[0m"
 )
 
-// DigestText writes d as plain text, breaking changes first and entries grouped by version.
+// DigestText writes d as plain text, breaking changes first and entries grouped by version. A
+// --summarize summary comes first, labelled as LLM output.
 // With color it adds ANSI bold headings and red breaking changes (the tty format).
 func DigestText(w io.Writer, d *report.Digest, color bool) error {
 	tw := &textWriter{w: w, color: color}
+	if d.Summary != nil {
+		tw.summary(d.Summary)
+		tw.line("")
+	}
 	for i, t := range d.Tools {
 		if i > 0 {
 			tw.line("")

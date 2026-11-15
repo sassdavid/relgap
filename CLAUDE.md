@@ -27,6 +27,7 @@ Go CLI: release-notes range digests, toolchain drift across repos, EOL/OSV enric
 - stdout = data, stderr = logs. Output goes through the injected `io.Writer`; never `fmt.Print*` (forbidigo).
 - Logger comes from `Deps`, never `slog.Default()` (sloglint).
 - Every network call goes through `internal/httpx` (retry, rate limit, ETag cache). Never `http.Get`.
+  The one exception is the Bedrock provider of `--summarize`, which uses the AWS SDK client (ADR-0004).
 - GitHub large files: use the contents API with the raw Accept header, never raw.githubusercontent.com.
 - Sort versions with `version.Scheme`, never by publish date.
 - A changelog file is parsed once per digest (`mdindex`). Don't re-parse per version.
