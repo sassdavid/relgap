@@ -46,7 +46,7 @@ jobs:
       # No tool cache in the release job (cache poisoning); mise.lock pins checksums.
       - uses: jdx/mise-action@b44d12e7d0d8ee7461bb893e1b1993500433185b # v5.2.7
         with:
-          version: 2026.11.5
+          version: 2026.11.7
           cache: false
       - name: goreleaser release
         run: goreleaser release --clean
