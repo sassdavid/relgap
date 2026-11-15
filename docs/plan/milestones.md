@@ -215,8 +215,13 @@ mode `comment` with `command: digest`; update output-and-ci.md to match.
   (upgrades, added, removed and constraint pins, `--fail-on`, the Renovate branch filter, the
   base fallbacks and the usage errors), and `TestDiff`, `TestRenovateTopicMatches`,
   `TestRenovateTargetBranch` and `TestExtractRef` cover `internal/scan`. `mise run check` passes.
-- [ ] `scripts/sibling-diff.sh` reads the tool name from a `.sibling` file or the directory name
+- [x] `scripts/sibling-diff.sh` reads the tool name from a `.sibling` file or the directory name
   instead of `go.mod`, stays verbatim in all four repos, and each action repo has its file list.
+  Evidence (2026-11-15, local): `mise run sibling:diff` prints "shared files match" in relgap,
+  tfcensus, relgap-action and tfcensus-action. An action repo also compares the verbatim files
+  and `writing.md` with its tool's repo. A copy in a directory with another name exits 2 and
+  passes with `.sibling`. `.release-please-manifest.json` moved to the similar list, since the
+  two tools release different versions.
 - [ ] Skeleton: `action.yml`, `scripts/install.sh`, `scripts/run.sh` and `scripts/tool.env` (the
   only tool-specific file besides the README). Install checks sha256 and
   `gh attestation verify --signer-workflow sassdavid/relgap/.github/workflows/release.yml`, with
