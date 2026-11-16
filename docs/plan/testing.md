@@ -84,7 +84,7 @@ hyperfine --runs 5 --prepare 'rm -rf "$XDG_CACHE_HOME"' 'relgap digest terraform
 hyperfine --warmup 1 --runs 5 'relgap digest terraform 1.15.8..1.17.1 --format json'
 ```
 
-### 2026-11-16
+### 2026-11-16, before ADR-0013
 Apple M4 Pro, 48 GiB, macOS 27.2.1, Go 1.27.4, relgap at 4089fb2, dotfriedrice at ebdcb83, from a
 home connection served by GitHub's Frankfurt edge.
 
@@ -103,6 +103,23 @@ home connection served by GitHub's Frankfurt edge.
 
 A cold `outdated` uses 0.15 s of CPU; the rest is waiting on the network. In the traced run
 (`-vvv --log-format json`), the two batched "latest" GraphQL queries of 25 repositories each took
-4.2 s and 4.7 s on GitHub's side. Then 13 GraphQL queries for full version lists (exact pins
-behind latest and non-exact pins) ran two at a time for about 4 s, followed by endoflife.date and
-python.org (0.5 s) and OSV (1.5 s), which start only after the GitHub phase.
+4.2 s and 4.7 s on GitHub's side. Then the full version lists of the prefix pins `node = "26"`
+and `python = "3.14"` (13 pages of 100) took about 4 s, one page after another for each tool.
+endoflife.date and python.org (0.5 s) and then OSV (1.5 s) ran only after the GitHub phase.
+
+### 2026-11-16, with ADR-0013
+The same machine, network and dotfriedrice checkout, with
+[ADR-0013](adr/0013-parallel-latest-lookup.md): 5 batched queries of 10 repositories in parallel,
+the prefix pins' version lists loading at the same time, and endoflife.date and OSV asked
+together. The report has the same 55 rows as before.
+
+| Command | Target | Median | Min to max | Requests | Result |
+|---|---|---|---|---|---|
+| `outdated` cold (55 pins, 50 tools) | under 10 s | 5.75 s | 5.37 to 7.46 s | 29 | met |
+| `outdated` warm | under 2 s | 0.081 s | 0.081 to 0.082 s | 0 | met |
+| `digest terraform` cold | none | 5.09 s | 4.58 to 5.67 s | | |
+| `digest terraform` warm | under 2 s | 0.032 s | 0.031 to 0.032 s | 0 | met |
+
+In the traced run, the GitHub phase ended at 3.8 s instead of 8.6 s. The two version lists set
+its length now: a cursor-paged list can't be split. OSV (1.5 s) follows, because it needs
+python's current version from its list.

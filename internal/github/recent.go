@@ -16,9 +16,18 @@ import (
 const (
 	// RecentWindow is how many of the newest releases or tags [Client.Recent] reads per repo.
 	RecentWindow = 30
-	// RecentBatch is how many repositories one GraphQL query of [Client.Recent] asks about.
-	RecentBatch = 25
+	// RecentBatchMin is the fewest repositories a GraphQL query of [Client.Recent] asks about
+	// while more remain, so a small project still sends one query.
+	RecentBatchMin = 10
+	// RecentBatchMax is the most repositories one GraphQL query of [Client.Recent] asks about.
+	RecentBatchMax = 25
 )
+
+// recentBatchSize spreads n repositories over one query per concurrent request, because GitHub
+// answers the aliased repositories of one query one after another.
+func recentBatchSize(n, concurrency int) int {
+	return min(max((n+concurrency-1)/max(concurrency, 1), RecentBatchMin), RecentBatchMax)
+}
 
 // RecentQuery asks for the newest releases of Repo, or its newest tags when Tags is set.
 type RecentQuery struct {
@@ -33,7 +42,8 @@ type Recent struct {
 }
 
 // Recent returns the newest releases or tags of every repository, keyed by repo. With a token it
-// sends one GraphQL query per [RecentBatch] repositories; without one it makes REST calls per repo.
+// sends GraphQL queries of [RecentBatchMin] to [RecentBatchMax] repositories, as many at once as the
+// client's concurrency allows; without one it makes REST calls per repo.
 // The error is set only when nothing could be asked; per-repo failures are in [Recent.Err].
 func (c *Client) Recent(ctx context.Context, qs []RecentQuery) (map[string]Recent, error) {
 	out := make(map[string]Recent, len(qs))
@@ -59,8 +69,9 @@ func (c *Client) Recent(ctx context.Context, qs []RecentQuery) (map[string]Recen
 	g, gctx := errgroup.WithContext(ctx)
 	g.SetLimit(c.concurrency)
 	if c.gql != nil {
-		for i := 0; i < len(valid); i += RecentBatch {
-			batch := valid[i:min(i+RecentBatch, len(valid))]
+		size := recentBatchSize(len(valid), c.concurrency)
+		for i := 0; i < len(valid); i += size {
+			batch := valid[i:min(i+size, len(valid))]
 			g.Go(func() error {
 				for repo, r := range c.gqlRecent(gctx, batch) {
 					set(repo, r)

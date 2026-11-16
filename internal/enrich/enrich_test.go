@@ -1,6 +1,8 @@
 package enrich_test
 
 import (
+	"context"
+	"io"
 	"log/slog"
 	"net/http"
 	"os"
@@ -8,7 +10,9 @@ import (
 	"path/filepath"
 	"slices"
 	"strings"
+	"sync"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -46,6 +50,49 @@ func spec(name string, eol *registry.EOL, osv ...registry.OSVPackage) registry.T
 		EOL:     eol,
 		OSV:     osv,
 	}
+}
+
+// meetTransport answers an endoflife.date request only once an OSV query has arrived.
+type meetTransport struct {
+	once    sync.Once
+	osvSeen chan struct{}
+}
+
+func (m *meetTransport) RoundTrip(req *http.Request) (*http.Response, error) {
+	body := `{"result":{"releases":[{"name":"1.17","isEol":false}]}}`
+	if req.URL.Host == "api.osv.dev" {
+		m.once.Do(func() { close(m.osvSeen) })
+		body = `{"results":[{}]}`
+	} else {
+		select {
+		case <-m.osvSeen:
+		case <-req.Context().Done():
+			return nil, req.Context().Err()
+		}
+	}
+	return &http.Response{
+		StatusCode: http.StatusOK,
+		Header:     http.Header{"Content-Type": {"application/json"}},
+		Body:       io.NopCloser(strings.NewReader(body)),
+		Request:    req,
+	}, nil
+}
+
+func TestEnrichAsksBothSourcesAtOnce(t *testing.T) {
+	t.Parallel()
+	hc := &http.Client{Transport: &meetTransport{osvSeen: make(chan struct{})}}
+	terraform := spec("terraform", &registry.EOL{Product: "terraform", Cycle: "{major}.{minor}"},
+		registry.OSVPackage{Ecosystem: "Go", Name: "github.com/hashicorp/terraform"})
+	ctx, cancel := context.WithTimeout(t.Context(), 10*time.Second)
+	defer cancel()
+	res, problems, err := enrich.NewEnricher(slog.New(slog.DiscardHandler),
+		enrich.NewEOLClient(hc, ""), enrich.NewOSVClient(hc, ""), 2).
+		Enrich(ctx, []enrich.Request{{Key: "tf", Tool: terraform, Current: semver(t, "1.17.2")}})
+	require.NoError(t, err, "the endoflife.date request waits for the OSV query")
+	assert.Empty(t, problems)
+	require.NotNil(t, res["tf"].EOL)
+	assert.Equal(t, "1.17", res["tf"].EOL.Current.Cycle)
+	assert.Empty(t, res["tf"].Vulns)
 }
 
 // TestSpec_enrichment_1: terraform 1.15.8 is on an EOL cycle and 1.17.2 isn't; a tool without

@@ -47,7 +47,7 @@ Scope: `httpx` (retry, rate, no cache yet), go-github + githubv4 batch, token di
 
 ### M6: `outdated` + `digest --from-mise`
 - [x] Fixture project with 10 pins: correct table in tty/md/json, with breaking counts matching the full digests.
-- [x] Uses at most 2 GraphQL queries for "latest version" of 45 tools (counter).
+- [x] Uses at most 2 GraphQL queries for "latest version" of 45 tools (counter). Revised 2026-11-16 by plan ADR-0013: at most 5, sent in parallel.
 
 ### M7: `drift`
 - [x] A generated tree of 60 repos gives a correct matrix, constraint pins marked `≈`, `--fail-on drift` exits 3 (`TestSpec_output_and_ci_6`).
@@ -308,9 +308,10 @@ Scope: relgap gets an opt-in `--summarize`. tfcensus gets MCP prompts but no bui
 - [x] `relgap registry update` and `--guess` from the resolution order in tool-resolution.md.
 
 ### M18: Performance and integration → v0.5.0 (relgap only)
-- [ ] `BenchmarkScan60Repos` and `BenchmarkIndex1MB` from testing.md exist. The overview targets
+- [x] `BenchmarkScan60Repos` and `BenchmarkIndex1MB` from testing.md exist. The overview targets
   (outdated with about 45 tools under 10 s cold and 2 s warm, a warm digest under 2 s) are
-  measured and recorded.
+  measured and recorded. (testing.md#measured-performance: cold 5.75 s, warm 0.081 s, warm digest
+  0.032 s, after plan ADR-0013.)
 - [ ] The `docs/dogfood.md` follow-ups: split digests keep only the cited versions, upgrade-guide
   paragraphs merge, and the MCP cursor works in Claude Code.
 - [ ] `drift --from-tfcensus` and the tfcensus pin detector from integration.md, using the
