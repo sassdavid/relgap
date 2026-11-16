@@ -16,8 +16,8 @@ stdout 'repo +acme/terragrunt-fork +config'
 # Unknown names, unsupported syntax and tools without a repository are usage errors.
 exec expect-exit 2 relgap resolve no-such-tool-anywhere
 stderr 'unknown tool "no-such-tool-anywhere"'
-exec expect-exit 2 relgap resolve tfprovider:hashicorp/random
-stderr 'only curated providers resolve'
+exec expect-exit 2 relgap resolve tfprovider:hashicorp
+stderr 'tfprovider:hashicorp is not tfprovider:<namespace>/<name>'
 exec expect-exit 2 relgap resolve java
 stderr 'set tools.java.repo in the config'
 exec expect-exit 2 relgap resolve

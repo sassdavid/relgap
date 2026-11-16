@@ -152,12 +152,12 @@ func (s *session) compare(
 	keep func(scan.Pin) bool,
 	with compareOptions,
 ) (*comparison, error) {
-	cfg, resolver := s.d.Config, s.resolver
+	cfg := s.d.Config
 	res, err := s.scan(ctx, []string{root}, false, with.base)
 	if err != nil {
 		return nil, err
 	}
-	ignore := ignoreRules(resolver, cfg.Config.Ignore)
+	ignore := ignoreRules(s.resolver, cfg.Config.Ignore)
 	var pins []scan.Pin
 	for _, p := range res.Pins {
 		if p.Resolved() && !scan.Ignored(ignore, &p) && (keep == nil || keep(p)) {
@@ -172,7 +172,7 @@ func (s *session) compare(
 		Outdated(ctx, report.OutdatedRequest{
 			Repos:         res.Repos,
 			Pins:          pins,
-			Resolve:       resolveFunc(resolver),
+			Resolve:       resolveFunc(ctx, s),
 			MinConfidence: cfg.Config.Policy.MinConfidence,
 			Concurrency:   cfg.Config.GitHub.Concurrency,
 		})
@@ -191,10 +191,10 @@ func (s *session) compare(
 // enrich adds EOL states and vulnerabilities to the compared pins and, with binaries, the
 // vulnerabilities of installed executables. Failed sources become problems, not errors.
 func (s *session) enrich(ctx context.Context, c *comparison, hc *http.Client, pins []scan.Pin, binaries bool) error {
-	d, resolver := s.d, s.resolver
+	d := s.d
 	en := enrich.NewEnricher(d.Logger, enrich.NewEOLClient(hc, ""), enrich.NewOSVClient(hc, ""),
 		d.Config.Config.GitHub.Concurrency)
-	results, problems, err := en.Enrich(ctx, c.out.EnrichRequests(resolveFunc(resolver)))
+	results, problems, err := en.Enrich(ctx, c.out.EnrichRequests(resolveFunc(ctx, s)))
 	if err != nil {
 		return err //nolint:wrapcheck // only a canceled context
 	}
@@ -214,7 +214,7 @@ func (s *session) enrich(ctx context.Context, c *comparison, hc *http.Client, pi
 			continue
 		}
 		seen[p.Tool] = true
-		spec, resolveErr := resolveFunc(resolver)(p.Tool)
+		spec, resolveErr := resolveFunc(ctx, s)(p.Tool)
 		if resolveErr != nil {
 			continue
 		}
@@ -236,12 +236,13 @@ func (s *session) enrich(ctx context.Context, c *comparison, hc *http.Client, pi
 	return nil
 }
 
-// resolveFunc turns a pin's tool name into its spec through resolver.
-func resolveFunc(resolver *registry.Resolver) report.ResolveFunc {
+// resolveFunc turns a pin's tool name into its spec through the session, which looks up
+// tfprovider: and chart: pins that no registry knows.
+func resolveFunc(ctx context.Context, s *session) report.ResolveFunc {
 	return func(tool string) (registry.ToolSpec, error) {
-		r, err := resolver.Resolve(tool)
+		r, err := s.resolve(ctx, tool)
 		if err != nil {
-			return registry.ToolSpec{}, err //nolint:wrapcheck // the resolver names the tool
+			return registry.ToolSpec{}, err
 		}
 		return r.Tool, nil
 	}

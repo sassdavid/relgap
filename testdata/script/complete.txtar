@@ -81,6 +81,7 @@ tools:
 -- golden/registry.txt --
 lint	Validate registry entries against the schema
 test	Run each source of a registry entry live and show what it produced
+update	Download the newest registry entries from relgap's repository
 :4
 -- golden/format.txt --
 tty	table with color for a terminal

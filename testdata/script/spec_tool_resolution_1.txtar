@@ -18,8 +18,9 @@ stdout '"repo": "hashicorp/terraform"'
 stdout '"mise_source": "snapshot"'
 
 -- terraform.txt --
-input          terraform (name, found in relgap registry)
-mise registry  snapshot
+input            terraform (name, found in relgap registry)
+mise registry    snapshot
+relgap registry  embedded
 
 FIELD               VALUE                                                                        SOURCE
 name                terraform                                                                    relgap registry
@@ -34,8 +35,9 @@ sources.1           gh-release ignore=Previous Releases                         
 eol                 terraform {major}.{minor}                                                    relgap registry
 osv                 Go github.com/hashicorp/terraform                                            relgap registry
 -- tf.txt --
-input          tf (alias, found in relgap registry)
-mise registry  snapshot
+input            tf (alias, found in relgap registry)
+mise registry    snapshot
+relgap registry  embedded
 
 FIELD               VALUE                                                                        SOURCE
 name                terraform                                                                    relgap registry
@@ -50,8 +52,9 @@ sources.1           gh-release ignore=Previous Releases                         
 eol                 terraform {major}.{minor}                                                    relgap registry
 osv                 Go github.com/hashicorp/terraform                                            relgap registry
 -- env.txt --
-input          TERRAFORM_VERSION (env var name, found in relgap registry)
-mise registry  snapshot
+input            TERRAFORM_VERSION (env var name, found in relgap registry)
+mise registry    snapshot
+relgap registry  embedded
 
 FIELD               VALUE                                                                        SOURCE
 name                terraform                                                                    relgap registry
@@ -66,8 +69,9 @@ sources.1           gh-release ignore=Previous Releases                         
 eol                 terraform {major}.{minor}                                                    relgap registry
 osv                 Go github.com/hashicorp/terraform                                            relgap registry
 -- aqua.txt --
-input          aqua:hashicorp/terraform (aqua package, found in relgap registry)
-mise registry  snapshot
+input            aqua:hashicorp/terraform (aqua package, found in relgap registry)
+mise registry    snapshot
+relgap registry  embedded
 
 FIELD               VALUE                                                                        SOURCE
 name                terraform                                                                    relgap registry

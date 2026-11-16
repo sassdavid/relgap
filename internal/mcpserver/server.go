@@ -57,7 +57,7 @@ type Backend struct {
 	Digest   func(ctx context.Context, a DigestArgs) (*report.ToolDigest, error)
 	Outdated func(ctx context.Context, root, base string) (*report.Outdated, []render.Error, error)
 	Drift    func(ctx context.Context, a DriftArgs) (*report.Drift, []render.Error, error)
-	Resolve  func(name string) (*registry.Resolution, error)
+	Resolve  func(ctx context.Context, name string) (*registry.Resolution, error)
 }
 
 // Options configures [New].
@@ -250,11 +250,11 @@ func (t *tools) drift(ctx context.Context, req *mcp.CallToolRequest, in driftInp
 }
 
 type resolveInput struct {
-	Tool string `json:"tool" jsonschema:"Tool name or alias (terraform, tf), a NAME_VERSION variable, github:owner/repo or aqua:package."` //nolint:lll // struct tag
+	Tool string `json:"tool" jsonschema:"Tool name or alias (terraform, tf), a NAME_VERSION variable, github:owner/repo, aqua:package, tfprovider:namespace/name, chart:repo/name, npm:package or pypi:package."` //nolint:lll // struct tag
 }
 
-func (t *tools) resolve(_ context.Context, _ *mcp.CallToolRequest, in resolveInput) (*mcpkit.Result, error) {
-	res, err := t.o.Backend.Resolve(in.Tool)
+func (t *tools) resolve(ctx context.Context, _ *mcp.CallToolRequest, in resolveInput) (*mcpkit.Result, error) {
+	res, err := t.o.Backend.Resolve(ctx, in.Tool)
 	if err != nil {
 		return nil, err
 	}

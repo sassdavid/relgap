@@ -21,25 +21,38 @@ import (
 )
 
 func newResolveCmd(d *app.Deps, g *globals) *cobra.Command {
-	return &cobra.Command{
+	var guess bool
+	cmd := &cobra.Command{
 		Use:   "resolve <tool>",
 		Short: "Show how a tool name resolves to a repository, version rules and changelog sources",
 		Long: `Resolves a tool name and prints the result with the layer that supplied each field.
 
 <tool> is a name or alias (terraform, tf), a NAME_VERSION variable (TERRAFORM_VERSION),
-github:owner/repo or aqua:package. github: and aqua: identify a tool; when a registry knows it,
-the result is the same as for its name.
+github:owner/repo, aqua:package, tfprovider:namespace/name, chart:repo/name, chart:name,
+npm:package or pypi:package. When a registry knows the tool, the result is the same as for its
+name.
+
+tfprovider:, chart:, npm: and pypi: names that no registry knows are looked up in the Terraform
+registry, Artifact Hub, the npm registry or PyPI, which name the source repository. chart:name
+without a repository resolves only when one Artifact Hub repository has a chart of that name.
 
 Layers, highest precedence first:
 
   config           tools.<name> and aliases in the config file
-  relgap registry  curated entries embedded in relgap (registry/*.yaml)
+  relgap registry  curated entries embedded in relgap (registry/*.yaml), or the newer copies
+                   from 'relgap registry update'
   mise registry    mise registry --json when mise is on PATH, otherwise an embedded snapshot
   aqua registry    an embedded index of the aqua registry
-  default          built-in defaults`,
+  default          built-in defaults
+
+With --guess, a name that no layer knows is searched on GitHub. The repository whose name
+matches exactly and has the most stars wins, and the result is marked low-confidence.`,
 		Example: `  relgap resolve terraform
   relgap resolve TERRAFORM_VERSION
-  relgap resolve aqua:hashicorp/terraform --format json`,
+  relgap resolve aqua:hashicorp/terraform --format json
+  relgap resolve tfprovider:integrations/github
+  relgap resolve chart:argo/argo-cd
+  relgap resolve some-tool --guess`,
 		Args: exactArgs(1),
 		ValidArgsFunction: func(cmd *cobra.Command, args []string, toComplete string) ([]cobra.Completion, cobra.ShellCompDirective) {
 			if len(args) > 0 {
@@ -51,7 +64,13 @@ Layers, highest precedence first:
 			if err := g.outFormat.Check(render.FormatTTY, render.FormatPlain, render.FormatJSON); err != nil {
 				return usageError(err)
 			}
-			resolution, err := g.resolveTool(cmd, d, args[0])
+			s, err := g.newSession(cmd, d)
+			if err != nil {
+				return err
+			}
+			defer s.close(cmd.Context())
+			s.guess = guess
+			resolution, err := s.resolve(cmd.Context(), args[0])
 			if err != nil {
 				return err
 			}
@@ -61,22 +80,26 @@ Layers, highest precedence first:
 			return writeResolution(d, resolution)
 		},
 	}
+	addGuessFlag(cmd, &guess)
+	return cmd
 }
 
-// resolveTool loads the config and the registries and resolves name. Unknown tools are usage errors.
-func (g *globals) resolveTool(cmd *cobra.Command, d *app.Deps, name string) (*registry.Resolution, error) {
-	r, _, err := g.loadResolver(cmd, d)
-	if err != nil {
-		return nil, err
-	}
-	return resolveName(r, name)
+// addGuessFlag adds --guess, which lets resolution search GitHub for an unknown name.
+func addGuessFlag(cmd *cobra.Command, guess *bool) {
+	cmd.Flags().BoolVar(guess, "guess", false,
+		"search GitHub for a tool no registry knows and use the exact name match with the most stars")
 }
 
-// resolveName resolves name with r. Unknown tools are usage errors.
-func resolveName(r *registry.Resolver, name string) (*registry.Resolution, error) {
-	resolution, err := r.Resolve(name)
+// resolveName resolves name with r. Unknown and ambiguous tools are usage errors.
+func resolveName(
+	ctx context.Context,
+	r *registry.Resolver,
+	name string,
+	opts registry.ResolveOptions,
+) (*registry.Resolution, error) {
+	resolution, err := r.Resolve(ctx, name, opts)
 	if errors.Is(err, registry.ErrUnknownTool) || errors.Is(err, registry.ErrUnsupported) ||
-		errors.Is(err, registry.ErrNoRepo) {
+		errors.Is(err, registry.ErrNoRepo) || errors.Is(err, registry.ErrAmbiguous) {
 		return nil, usageError(err)
 	}
 	if err != nil {
@@ -110,7 +133,14 @@ func newResolver(
 	for tool, t := range res.Config.Tools {
 		cfg.Tools[tool] = t.Repo
 	}
-	r, err := registry.Load(ctx, d.Logger, misex.New(runner), cfg)
+	updated, err := registryDir(d)
+	if err != nil {
+		return nil, err
+	}
+	r, err := registry.LoadWith(ctx, d.Logger, misex.New(runner), cfg, registry.LoadOptions{
+		UpdatedDir: updated,
+		Version:    buildinfo.Get().Version,
+	})
 	if err != nil {
 		return nil, err //nolint:wrapcheck // registry.Load names what failed
 	}
@@ -125,7 +155,17 @@ func writeResolution(d *app.Deps, res *registry.Resolution) error {
 	t := res.Tool
 	tw := tabwriter.NewWriter(d.Stdout, 0, 0, 2, ' ', 0) //nolint:mnd // column padding
 	_, _ = fmt.Fprintf(tw, "input\t%s (%s, found in %s)\n", res.Input, res.Match.By, res.Match.Layer)
-	_, _ = fmt.Fprintf(tw, "mise registry\t%s\n\n", res.MiseSource)
+	_, _ = fmt.Fprintf(tw, "mise registry\t%s\n", res.MiseSource)
+	if res.RelgapSource != "" {
+		_, _ = fmt.Fprintf(tw, "relgap registry\t%s\n", res.RelgapSource)
+	}
+	if res.Confidence != "" {
+		_, _ = fmt.Fprintf(tw, "confidence\t%s\n", res.Confidence)
+	}
+	if len(res.Alternatives) > 0 {
+		_, _ = fmt.Fprintf(tw, "alternatives\t%s\n", strings.Join(res.Alternatives, ", "))
+	}
+	_, _ = fmt.Fprintln(tw)
 	_, _ = fmt.Fprintln(tw, "FIELD\tVALUE\tSOURCE")
 	row := func(key, value string) {
 		if value == "" {

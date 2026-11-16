@@ -23,17 +23,18 @@ import (
 func newRegistryCmd(d *app.Deps, g *globals) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "registry",
-		Short: "Check relgap registry entries",
+		Short: "Check, test and update relgap registry entries",
 		Long: `relgap's registry has one file per tool, registry/<name>.yaml, for tools whose versions or
 changelogs need rules that auto-discovery gets wrong. The schema is schemas/registry-v1.json.`,
 		Args: noArgs,
 	}
-	cmd.AddCommand(newRegistryLintCmd(d, g), newRegistryTestCmd(d, g))
+	cmd.AddCommand(newRegistryLintCmd(d, g), newRegistryTestCmd(d, g), newRegistryUpdateCmd(d, g))
 	return cmd
 }
 
 func newRegistryTestCmd(d *app.Deps, g *globals) *cobra.Command {
-	return &cobra.Command{
+	var guess bool
+	cmd := &cobra.Command{
 		Use:   "test <tool|file.yaml> <from>..[<to>]",
 		Short: "Run each source of a registry entry live and show what it produced",
 		Long: `Digests the range once per source of the tool's entry and once with all of them, and
@@ -56,12 +57,14 @@ the range isn't an error: an upgrade guide only has notes where a new release li
 			return completeTools(d, g)(cmd, args, toComplete)
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return runRegistryTest(cmd, d, g, args[0], args[1])
+			return runRegistryTest(cmd, d, g, args[0], args[1], guess)
 		},
 	}
+	addGuessFlag(cmd, &guess)
+	return cmd
 }
 
-func runRegistryTest(cmd *cobra.Command, d *app.Deps, g *globals, tool, rangeArg string) error {
+func runRegistryTest(cmd *cobra.Command, d *app.Deps, g *globals, tool, rangeArg string, guess bool) error {
 	if err := g.outFormat.Check(render.FormatTTY, render.FormatPlain, render.FormatJSON); err != nil {
 		return usageError(err)
 	}
@@ -69,17 +72,17 @@ func runRegistryTest(cmd *cobra.Command, d *app.Deps, g *globals, tool, rangeArg
 	if err != nil {
 		return usageError(err)
 	}
-	spec, err := testSpec(cmd, d, g, tool)
+	s, err := g.newSession(cmd, d)
 	if err != nil {
 		return err
 	}
-	cache, err := g.newCache(d)
+	defer s.close(cmd.Context())
+	s.guess = guess
+	spec, err := testSpec(cmd, s, tool)
 	if err != nil {
 		return err
 	}
-	defer cache.Close()
-	defer cache.LogSummary(cmd.Context())
-	gh, hc, err := newGitHubClient(cmd.Context(), d, cache, newRunner(d))
+	gh, hc, err := s.clients(cmd.Context())
 	if err != nil {
 		return err
 	}
@@ -109,16 +112,13 @@ func runRegistryTest(cmd *cobra.Command, d *app.Deps, g *globals, tool, rangeArg
 }
 
 // testSpec resolves tool, or loads and lints it when it names a YAML file.
-func testSpec(cmd *cobra.Command, d *app.Deps, g *globals, tool string) (registry.ToolSpec, error) {
+func testSpec(cmd *cobra.Command, s *session, tool string) (registry.ToolSpec, error) {
 	if !strings.HasSuffix(tool, ".yaml") {
-		resolution, err := g.resolveTool(cmd, d, tool)
+		resolution, err := s.resolve(cmd.Context(), tool)
 		if err != nil {
 			return registry.ToolSpec{}, err
 		}
 		return resolution.Tool, nil
-	}
-	if _, err := g.loadConfig(cmd, d); err != nil {
-		return registry.ToolSpec{}, err
 	}
 	l, err := registry.NewLinter()
 	if err != nil {
@@ -206,4 +206,72 @@ func lintEntries(paths []string) ([]string, error) {
 		return nil, usageError(all)
 	}
 	return paths, nil
+}
+
+func newRegistryUpdateCmd(d *app.Deps, g *globals) *cobra.Command {
+	return &cobra.Command{
+		Use:   "update",
+		Short: "Download the newest registry entries from relgap's repository",
+		Long: `Downloads registry/*.yaml from the main branch of ` + registry.UpdateRepo + ` through the
+GitHub contents API, with the HTTP cache's ETags, and keeps the entries that differ from the ones
+embedded in this binary. Resolution then uses them in place of the embedded entries of the same
+name, and 'relgap resolve' shows "relgap registry  updated" for them.
+
+An entry that fails 'relgap registry lint' or whose min_relgap is newer than this binary is
+skipped, and the embedded entry stays in use. Each run replaces the entries of the run before.
+The entries live in the registry directory next to the HTTP cache; 'relgap cache clear' removes
+them.`,
+		Example: `  relgap registry update
+  relgap registry update --format json`,
+		Args: noArgs,
+		RunE: func(cmd *cobra.Command, _ []string) error {
+			if err := g.outFormat.Check(render.FormatTTY, render.FormatPlain, render.FormatJSON); err != nil {
+				return usageError(err)
+			}
+			s, err := g.newSession(cmd, d)
+			if err != nil {
+				return err
+			}
+			defer s.close(cmd.Context())
+			gh, _, err := s.clients(cmd.Context())
+			if err != nil {
+				return err
+			}
+			dir, err := registryDir(d)
+			if err != nil {
+				return err
+			}
+			res, err := registry.Update(cmd.Context(), gh, dir, buildinfo.Get().Version)
+			if err != nil {
+				return digestError(err)
+			}
+			if g.outFormat == render.FormatJSON {
+				return render.JSON(d.Stdout, render.NewEnvelope(buildinfo.Get().Version, d.Clock(), res))
+			}
+			return writeUpdate(d.Stdout, res)
+		},
+	}
+}
+
+func writeUpdate(w io.Writer, res *registry.UpdateResult) error {
+	var b strings.Builder
+	counts := map[string]int{}
+	for _, e := range res.Entries {
+		counts[e.Status]++
+		if e.Status == registry.UpdateUnchanged {
+			continue
+		}
+		line := e.Status + ": " + e.Name
+		if e.Reason != "" {
+			line += " (" + e.Reason + ")"
+		}
+		b.WriteString(line + "\n")
+	}
+	fmt.Fprintf(&b, "%d added, %d changed, %d unchanged, %d skipped from %s@%s into %s\n",
+		counts[registry.UpdateAdded], counts[registry.UpdateChanged], counts[registry.UpdateUnchanged],
+		counts[registry.UpdateSkipped], res.Repo, res.Ref, res.Dir)
+	if _, err := io.WriteString(w, b.String()); err != nil {
+		return fmt.Errorf("write result: %w", err)
+	}
+	return nil
 }

@@ -1,0 +1,10 @@
+# registry update downloads registry/*.yaml from relgap's main branch and keeps the entries that
+# differ from the embedded ones.
+env TEST_NOW=2026-11-16T12:00:00Z
+env GH_TOKEN=$TEST_GH_TOKEN
+env TEST_CASSETTE=$CASSETTES/registry/update.yaml
+exec relgap registry update --format json
+stdout '"repo": "sassdavid/relgap"'
+stdout '"ref": "main"'
+stdout '"name": "terraform",\s+"status": "unchanged"'
+! stderr .

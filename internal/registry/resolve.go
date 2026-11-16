@@ -1,6 +1,7 @@
 package registry
 
 import (
+	"cmp"
 	"context"
 	"errors"
 	"fmt"
@@ -34,7 +35,22 @@ const (
 	LayerMise     Layer = "mise registry"
 	LayerAqua     Layer = "aqua registry"
 	LayerDefault  Layer = "default"
+
+	LayerTerraform   Layer = "terraform registry"
+	LayerArtifactHub Layer = "artifact hub"
+	LayerNPM         Layer = "npm registry"
+	LayerPyPI        Layer = "pypi"
+	LayerGuess       Layer = "github search"
 )
+
+// Where a relgap registry entry was read from.
+const (
+	RelgapSourceEmbedded = "embedded"
+	RelgapSourceUpdated  = "updated"
+)
+
+// ConfidenceLow marks a resolution that `--guess` made from a GitHub search.
+const ConfidenceLow = "low"
 
 // Where mise's registry was read from.
 const (
@@ -58,11 +74,20 @@ type Match struct {
 
 // Resolution is a resolved tool with the layer that supplied each field.
 type Resolution struct {
-	Input      string             `json:"input"`
-	Match      Match              `json:"match"`
-	Tool       ToolSpec           `json:"tool"`
-	Provenance map[string][]Layer `json:"provenance"` // field path to layers
-	MiseSource string             `json:"mise_source"`
+	Input        string             `json:"input"`
+	Match        Match              `json:"match"`
+	Tool         ToolSpec           `json:"tool"`
+	Provenance   map[string][]Layer `json:"provenance"` // field path to layers
+	MiseSource   string             `json:"mise_source"`
+	RelgapSource string             `json:"relgap_source,omitempty"` // set when a relgap entry took part
+	Confidence   string             `json:"confidence,omitempty"`    // low for a guess
+	Alternatives []string           `json:"alternatives,omitempty"`  // other repositories a guess matched
+}
+
+// ResolveOptions say what [Resolver.Resolve] may do beyond the embedded registries.
+type ResolveOptions struct {
+	Finder Finder // nil resolves offline: tfprovider:, chart:, npm: and pypi: then resolve only from registries
+	Guess  bool   // search GitHub for an unknown name; needs Finder
 }
 
 // ConfigLayer is the part of the user config that takes part in resolution.
@@ -75,6 +100,7 @@ type ConfigLayer struct {
 type Inputs struct {
 	Config     ConfigLayer
 	Entries    []*Entry
+	Updated    []*Entry // from `relgap registry update`; each replaces the entry of the same name
 	Mise       []misex.RegistryEntry
 	MiseSource string
 	Aqua       []AquaEntry
@@ -85,6 +111,7 @@ type Resolver struct {
 	in Inputs
 
 	relgap      map[string]*Entry // by lowercase name and alias
+	updated     map[*Entry]bool
 	relgapRepo  map[string]*Entry // by lowercase repo
 	config      map[string]string // lowercase tool name to canonical name
 	mise        map[string]*misex.RegistryEntry
@@ -101,6 +128,23 @@ type MiseLister interface {
 // Load builds a resolver from the embedded entries and snapshots. With a non-nil mise, the live
 // `mise registry --json` replaces the mise snapshot when it works.
 func Load(ctx context.Context, logger *slog.Logger, mise MiseLister, cfg ConfigLayer) (*Resolver, error) {
+	return LoadWith(ctx, logger, mise, cfg, LoadOptions{})
+}
+
+// LoadOptions add the entries of `relgap registry update` to [LoadWith].
+type LoadOptions struct {
+	UpdatedDir string // directory of updated entries; empty or missing means none
+	Version    string // relgap's version, checked against an entry's min_relgap
+}
+
+// LoadWith is [Load] with the updated entries in o.UpdatedDir on top of the embedded ones.
+func LoadWith(
+	ctx context.Context,
+	logger *slog.Logger,
+	mise MiseLister,
+	cfg ConfigLayer,
+	o LoadOptions,
+) (*Resolver, error) {
 	l, err := NewLinter()
 	if err != nil {
 		return nil, err
@@ -114,6 +158,9 @@ func Load(ctx context.Context, logger *slog.Logger, mise MiseLister, cfg ConfigL
 		return nil, err
 	}
 	in := Inputs{Config: cfg, Entries: entries, Aqua: aqua}
+	if o.UpdatedDir != "" {
+		in.Updated = LoadUpdated(ctx, logger, l, o.UpdatedDir, o.Version)
+	}
 	if mise != nil {
 		live, liveErr := mise.Registry(ctx)
 		switch {
@@ -143,6 +190,7 @@ func NewResolver(in Inputs) *Resolver {
 	r := &Resolver{
 		in:          in,
 		relgap:      map[string]*Entry{},
+		updated:     map[*Entry]bool{},
 		relgapRepo:  map[string]*Entry{},
 		config:      map[string]string{},
 		mise:        map[string]*misex.RegistryEntry{},
@@ -150,7 +198,11 @@ func NewResolver(in Inputs) *Resolver {
 		aquaRepo:    map[string][]*AquaEntry{},
 		configAlias: map[string]string{},
 	}
-	for _, e := range in.Entries {
+	r.in.Entries = mergeUpdated(in.Entries, in.Updated)
+	for _, e := range in.Updated {
+		r.updated[e] = true
+	}
+	for _, e := range r.in.Entries {
 		for _, n := range append([]string{e.Name}, e.Aliases...) {
 			setOnce(r.relgap, strings.ToLower(n), e)
 		}
@@ -255,47 +307,190 @@ var (
 	repoRe     = regexp.MustCompile(`^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$`)
 )
 
+// identity is what identifying an input found, before the layers merge.
+type identity struct {
+	name  string // a tool a layer knows; empty when only repo is known
+	match Match
+	pkg   *AquaEntry
+	repo  string // owner/repo when no layer knows the tool
+	found *Found // set when a lookup supplied repo
+}
+
 // Resolve identifies input and merges every layer that knows the tool. input is a name, an
-// alias, a NAME_VERSION variable, github:owner/repo or aqua:package.
-func (r *Resolver) Resolve(input string) (*Resolution, error) {
+// alias, a NAME_VERSION variable, github:owner/repo, aqua:package, tfprovider:namespace/name,
+// chart:repo/name, chart:name, npm:package or pypi:package.
+func (r *Resolver) Resolve(ctx context.Context, input string, opts ResolveOptions) (*Resolution, error) {
 	input = strings.TrimSpace(input)
 	if input == "" {
 		return nil, fmt.Errorf("%w: empty name", ErrUnknownTool)
 	}
 	prefix, rest, explicit := strings.Cut(input, ":")
 	var (
-		name  string
-		match Match
-		pkg   *AquaEntry
-		repo  string
-		err   error
+		id  identity
+		err error
 	)
-	if explicit {
-		name, match, pkg, repo, err = r.identifyExplicit(prefix, rest)
-	} else {
-		name, match, err = r.identifyName(input)
+	switch {
+	case explicit && isLookupPrefix(prefix):
+		id, err = r.identifyLookup(ctx, prefix, rest, opts.Finder)
+	case explicit:
+		id.name, id.match, id.pkg, id.repo, err = r.identifyExplicit(prefix, rest)
+	default:
+		id.name, id.match, err = r.identifyName(input)
+		if errors.Is(err, ErrUnknownTool) && opts.Guess && opts.Finder != nil {
+			id, err = r.identifyGuess(ctx, input, opts.Finder, err)
+		}
 	}
 	if err != nil {
 		return nil, err
 	}
 	b := newBuilder()
-	r.merge(b, name, pkg)
-	b.setString("repo", &b.spec.Repo, repo, LayerExplicit)
+	r.merge(b, id.name, id.pkg)
+	repoLayer, foundName := LayerExplicit, ""
+	if id.found != nil {
+		repoLayer, foundName = id.found.Layer, id.found.Name
+	}
+	b.setString("repo", &b.spec.Repo, id.repo, repoLayer)
 	if b.spec.Name == "" {
-		b.setString(fieldName, &b.spec.Name, path.Base(repo), LayerExplicit)
+		b.setString(fieldName, &b.spec.Name, cmp.Or(foundName, path.Base(id.repo)), repoLayer)
 	}
 	if b.spec.Repo == "" {
 		return nil, fmt.Errorf("%w for %q: no registry has a GitHub repo for it%s; set tools.%s.repo in the config",
-			ErrNoRepo, input, r.backendHint(name), b.spec.Name)
+			ErrNoRepo, input, r.backendHint(id.name), b.spec.Name)
+	}
+	if id.found != nil {
+		b.setString("version.tag_prefix", &b.spec.Version.TagPrefix, id.found.TagPrefix, id.found.Layer)
 	}
 	b.defaults()
-	return &Resolution{
-		Input:      input,
-		Match:      match,
-		Tool:       b.spec,
-		Provenance: b.prov,
-		MiseSource: r.in.MiseSource,
-	}, nil
+	res := &Resolution{
+		Input:        input,
+		Match:        id.match,
+		Tool:         b.spec,
+		Provenance:   b.prov,
+		MiseSource:   r.in.MiseSource,
+		RelgapSource: r.relgapSource(id.name),
+	}
+	if id.match.Layer == LayerGuess {
+		res.Confidence = ConfidenceLow
+		if id.found != nil {
+			res.Alternatives = id.found.Alternatives
+		}
+	}
+	return res, nil
+}
+
+func (r *Resolver) relgapSource(name string) string {
+	e := r.relgap[strings.ToLower(name)]
+	switch {
+	case name == "" || e == nil:
+		return ""
+	case r.updated[e]:
+		return RelgapSourceUpdated
+	}
+	return RelgapSourceEmbedded
+}
+
+func isLookupPrefix(prefix string) bool {
+	switch prefix {
+	case KindTFProvider, KindChart, KindNPM, KindPyPI:
+		return true
+	}
+	return false
+}
+
+// identifyLookup identifies tfprovider:, chart:, npm: and pypi: names. The registries answer
+// first, so curated tools resolve offline; finder asks the package registry otherwise.
+func (r *Resolver) identifyLookup(ctx context.Context, prefix, rest string, finder Finder) (identity, error) {
+	var (
+		by      string
+		offline func() (string, Layer, bool)
+		service string
+	)
+	switch prefix {
+	case KindTFProvider:
+		by, service = "terraform provider", "the Terraform registry"
+		ns, provider, ok := strings.Cut(rest, "/")
+		if !ok || ns == "" || provider == "" || strings.Contains(provider, "/") {
+			return identity{}, fmt.Errorf(
+				"%w: tfprovider:%s is not tfprovider:<namespace>/<name>",
+				ErrUnsupported,
+				rest,
+			)
+		}
+		// hashicorp/aws is hashicorp/terraform-provider-aws by HashiCorp's naming rule.
+		offline = func() (string, Layer, bool) { return r.byRepo(ns + "/terraform-provider-" + provider) }
+	case KindChart:
+		by, service = "chart", "Artifact Hub"
+	case KindNPM:
+		by, service = "npm package", "the npm registry"
+		offline = func() (string, Layer, bool) { return r.byPackage("npm", "npm:", rest) }
+	case KindPyPI:
+		by, service = "pypi package", "PyPI"
+		offline = func() (string, Layer, bool) { return r.byPackage("PyPI", "pipx:", rest) }
+	}
+	if rest == "" {
+		return identity{}, fmt.Errorf("%w: %s: needs a name", ErrUnsupported, prefix)
+	}
+	match := Match{By: by, Value: rest}
+	if offline != nil {
+		if name, layer, ok := offline(); ok {
+			match.Layer = layer
+			return identity{name: name, match: match}, nil
+		}
+	}
+	if finder == nil {
+		return identity{}, fmt.Errorf("%w: %s:%s needs a lookup in %s, which this command doesn't make",
+			ErrUnsupported, prefix, rest, service)
+	}
+	f, err := finder.Find(ctx, prefix, rest)
+	if err != nil {
+		return identity{}, err //nolint:wrapcheck // lookup errors name the package and the service
+	}
+	match.Layer = f.Layer
+	// A chart's repository can be the application's own, whose curated entry describes app
+	// versions, so a chart never takes another tool's entry.
+	if prefix != KindChart {
+		if name, layer, ok := r.byRepo(f.Repo); ok {
+			match.Layer = layer
+			return identity{name: name, match: match}, nil
+		}
+	}
+	return identity{match: match, repo: f.Repo, found: f}, nil
+}
+
+// identifyGuess searches GitHub for a repository named input, after notFound.
+func (r *Resolver) identifyGuess(ctx context.Context, input string, finder Finder, notFound error) (identity, error) {
+	f, err := finder.Find(ctx, KindGuess, input)
+	if err != nil {
+		return identity{}, fmt.Errorf("%w; --guess: %w", notFound, err)
+	}
+	match := Match{By: "guess", Value: input, Layer: LayerGuess}
+	if name, _, ok := r.byRepo(f.Repo); ok {
+		return identity{name: name, match: match, found: f}, nil
+	}
+	return identity{match: match, repo: f.Repo, found: f}, nil
+}
+
+// byPackage finds the tool a package of a package registry belongs to: a curated entry that
+// lists it among its OSV packages, or a mise entry with that backend.
+func (r *Resolver) byPackage(ecosystem, miseBackend, pkg string) (string, Layer, bool) {
+	for _, e := range r.in.Entries {
+		if slices.ContainsFunc(e.OSV, func(o OSVPackage) bool {
+			return strings.EqualFold(o.Ecosystem, ecosystem) && strings.EqualFold(o.Name, pkg)
+		}) {
+			return e.Name, LayerRelgap, true
+		}
+	}
+	if m := r.miseByBackend(miseBackend + pkg); m != nil {
+		if e, ok := r.relgap[strings.ToLower(m.Short)]; ok {
+			return e.Name, LayerMise, true
+		}
+		// A mise tool that installs only from the package registry names no repository, so
+		// the lookup has to find it.
+		if repo, _ := r.miseRepo(m); repo != "" {
+			return m.Short, LayerMise, true
+		}
+	}
+	return "", "", false
 }
 
 // Identify returns the name `relgap digest` accepts for input without merging layers: the
@@ -356,33 +551,9 @@ func (r *Resolver) identifyExplicit(prefix, rest string) (string, Match, *AquaEn
 			return m.Short, match, pkg, "", nil
 		}
 		return path.Base(pkg.Name), match, pkg, "", nil
-	case "tfprovider":
-		// Curated providers resolve without the Terraform registry: hashicorp/aws is
-		// hashicorp/terraform-provider-aws by HashiCorp's naming rule.
-		if ns, provider, ok := strings.Cut(
-			rest,
-			"/",
-		); ok && ns != "" && provider != "" &&
-			!strings.Contains(provider, "/") {
-			if name, layer, found := r.byRepo(ns + "/terraform-provider-" + provider); found {
-				return name, Match{By: "terraform provider", Value: rest, Layer: layer}, nil, "", nil
-			}
-		}
-		return "", Match{}, nil, "", fmt.Errorf(
-			"%w: tfprovider: only curated providers resolve; other names need a lookup in the Terraform "+
-				"registry, which relgap doesn't do yet (use github:<namespace>/terraform-provider-<name>)",
-			ErrUnsupported,
-		)
-	case "chart", "npm", "pypi":
-		return "", Match{}, nil, "", fmt.Errorf(
-			"%w: %s: names need a lookup in the %s registry, which relgap doesn't do yet",
-			ErrUnsupported,
-			prefix,
-			prefix,
-		)
 	default:
 		return "", Match{}, nil, "", fmt.Errorf(
-			"%w: unknown prefix %q (relgap knows github and aqua)",
+			"%w: unknown prefix %q (relgap knows github, aqua, tfprovider, chart, npm and pypi)",
 			ErrUnsupported,
 			prefix+":",
 		)
