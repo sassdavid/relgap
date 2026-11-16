@@ -21,7 +21,10 @@ Contributor and agent rules: [CLAUDE.md](../CLAUDE.md).
    [enrichment](plan/specs/enrichment.md) ·
    [output-and-ci](plan/specs/output-and-ci.md) ·
    [mcp-and-llm](plan/specs/mcp-and-llm.md) ·
-   [config](plan/specs/config.md)
+   [config](plan/specs/config.md) ·
+   [docs-site](plan/specs/docs-site.md) ·
+   [docs-design](plan/specs/docs-design.md) ·
+   [docs-content](plan/specs/docs-content.md)
 5. [milestones.md](plan/milestones.md): M0–M12, each one session with checkable "done when" items
 6. [testing.md](plan/testing.md) · [risks.md](plan/risks.md) · [open-questions.md](plan/open-questions.md) · [research.md](plan/research.md)
 7. Tool ADRs: [0001 goldmark section index](plan/adr/0001-goldmark-section-index.md) ·
