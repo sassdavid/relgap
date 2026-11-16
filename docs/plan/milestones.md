@@ -7,8 +7,9 @@ Tick a box only when its check has passed, and quote the evidence (command plus 
 Release mapping (revised 2026-11-13): every release goes to GitHub only (archives, checksums,
 SBOMs, the cosign bundle and attestations) until M19 turns the package channels on.
 **v0.1.0 = M0-M11**, v0.2.0 = M12-M13, v0.3.0 = the `digest` pull request input (the first M14
-item), v0.4.0 = M15-M16, v0.5.0 = M17-M18, and the rest of M14 releases the separate action repo
-(revised 2026-11-13: v0.3.0 ships before M15). M19 has no fixed version or place in the order: the owner runs it when the
+item), v0.4.0 = M15-M18, and the rest of M14 releases the separate action repo
+(revised 2026-11-13: v0.3.0 ships before M15; revised 2026-11-16: M17-M18 ship in v0.4.0, with no
+v0.5.0). M19 has no fixed version or place in the order: the owner runs it when the
 GitHub releases look right. M20 waits for external users. The research and decisions behind
 M11-M20 are in [roadmap-research.md](roadmap-research.md).
 
@@ -302,12 +303,12 @@ Scope: relgap gets an opt-in `--summarize`. tfcensus gets MCP prompts but no bui
 - [x] A CI job fails when the embedded mise or aqua snapshot is older than 30 days
   (tool-resolution.md): `registry.yml`, weekly and on snapshot changes.
 
-### M17: Resolution gaps → v0.5.0 (relgap only) ([tool-resolution](specs/tool-resolution.md))
+### M17: Resolution gaps → v0.4.0 (relgap only) ([tool-resolution](specs/tool-resolution.md))
 - [x] `tfprovider:` resolves any registry.terraform.io provider, not only curated ones.
 - [x] `chart:` (Artifact Hub), `npm:` and `pypi:` resolve, and argo-cd joins the live corpus.
 - [x] `relgap registry update` and `--guess` from the resolution order in tool-resolution.md.
 
-### M18: Performance and integration → v0.5.0 (relgap only)
+### M18: Performance and integration → v0.4.0 (relgap only)
 - [x] `BenchmarkScan60Repos` and `BenchmarkIndex1MB` from testing.md exist. The overview targets
   (outdated with about 45 tools under 10 s cold and 2 s warm, a warm digest under 2 s) are
   measured and recorded. (testing.md#measured-performance: cold 5.75 s, warm 0.081 s, warm digest
