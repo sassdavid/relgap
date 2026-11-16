@@ -223,6 +223,69 @@ func TestSpec_mcp_and_llm_2(t *testing.T) {
 	}
 }
 
+// TestSpec_mcp_and_llm_5: each page of a split digest lists only the versions its entries cite,
+// in the digest's order. A result that fits in one page keeps every version.
+func TestSpec_mcp_and_llm_5(t *testing.T) {
+	t.Parallel()
+	for _, tc := range mcpCases() {
+		golden, err := os.ReadFile(filepath.Join(goldenDir, filepath.FromSlash(tc.golden)))
+		if err != nil {
+			t.Fatal(err)
+		}
+		if tc.schema != "digest-v1.json" || len(compact(t, golden)) <= mcpkit.MaxBytes {
+			continue
+		}
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			all := mcptest.Items(t, golden, "/data/tools/0/versions")
+			trimmed := false
+			f := tc.fixture(t)
+			f.serve(t, nil, func(c *mcptest.Client) {
+				for n, p := range c.Pages(t, tc.tool, tc.args) {
+					got := mcptest.Items(t, p, "/data/tools/0/versions")
+					want := citedVersions(t, all, mcptest.Items(t, p, tc.items))
+					same := func(a, b json.RawMessage) bool { return bytes.Equal(a, compact(t, b)) }
+					if !slices.EqualFunc(got, want, same) {
+						t.Errorf("page %d lists %d versions, want the %d its entries cite", n, len(got), len(want))
+					}
+					trimmed = trimmed || len(got) < len(all)
+				}
+			})
+			if !trimmed {
+				t.Errorf("every page lists all %d versions; the fixture doesn't test trimming", len(all))
+			}
+		})
+	}
+}
+
+// citedVersions returns the versions some entry cites, in their original order.
+func citedVersions(t *testing.T, versions, entries []json.RawMessage) []json.RawMessage {
+	t.Helper()
+	cited := map[string]bool{}
+	for _, e := range entries {
+		cited[versionOf(t, e)] = true
+	}
+	var out []json.RawMessage
+	for _, v := range versions {
+		if cited[versionOf(t, v)] {
+			out = append(out, v)
+		}
+	}
+	return out
+}
+
+// versionOf returns the version field of an entry or a version.
+func versionOf(t *testing.T, raw json.RawMessage) string {
+	t.Helper()
+	var v struct {
+		Version string `json:"version"`
+	}
+	if err := json.Unmarshal(raw, &v); err != nil {
+		t.Fatal(err)
+	}
+	return v.Version
+}
+
 func checkPages(t *testing.T, pages [][]byte, golden []byte, tc mcpCase) {
 	t.Helper()
 	if len(pages) < 2 {

@@ -312,8 +312,10 @@ Scope: relgap gets an opt-in `--summarize`. tfcensus gets MCP prompts but no bui
   (outdated with about 45 tools under 10 s cold and 2 s warm, a warm digest under 2 s) are
   measured and recorded. (testing.md#measured-performance: cold 5.75 s, warm 0.081 s, warm digest
   0.032 s, after plan ADR-0013.)
-- [ ] The `docs/dogfood.md` follow-ups: split digests keep only the cited versions, upgrade-guide
-  paragraphs merge, and the MCP cursor works in Claude Code.
+- [x] The `docs/dogfood.md` follow-ups: split digests keep only the cited versions, upgrade-guide
+  paragraphs merge, and the MCP cursor works in Claude Code. (`TestSpec_mcp_and_llm_5`,
+  `TestSpec_classification_5`; dogfood.md "Claude Code, 2026-11-16": argocd 3.1.0 to 3.6.1 in two
+  pages of 52 and 6 entries with 8 and 1 versions.)
 - [ ] `drift --from-tfcensus` and the tfcensus pin detector from integration.md, using the
   tfcensus v0.1 inventory schema.
 

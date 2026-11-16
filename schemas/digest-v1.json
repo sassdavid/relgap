@@ -54,7 +54,7 @@
         "from": { "description": "Start of the range, excluded.", "type": "string", "minLength": 1 },
         "to": { "description": "End of the range, included.", "type": "string", "minLength": 1 },
         "versions": {
-          "description": "Versions in the range, oldest first.",
+          "description": "Versions in the range, oldest first. A page of a split MCP result lists only the versions its entries cite.",
           "type": "array",
           "items": {
             "type": "object",

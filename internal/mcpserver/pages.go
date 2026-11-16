@@ -9,7 +9,8 @@ import (
 )
 
 // digestPager splits a one-tool digest by entry. Kinds fill pages in the order
-// [classify.Kinds] lists them, so breaking changes and deprecations come first.
+// [classify.Kinds] lists them, so breaking changes and deprecations come first. A page lists
+// only the versions its entries cite.
 func digestPager(d *report.Digest) mcpkit.Pager {
 	if len(d.Tools) != 1 {
 		return nil
@@ -20,6 +21,7 @@ func digestPager(d *report.Digest) mcpkit.Pager {
 		func(keep []classify.Entry) any {
 			t := tool
 			t.Entries = keep
+			t.Versions = citedVersions(tool.Versions, keep)
 			return &report.Digest{Tools: []report.ToolDigest{t}}
 		})
 }
@@ -59,4 +61,19 @@ func driftPager(d *report.Drift) mcpkit.Pager {
 			out.Tools = keep
 			return &out
 		})
+}
+
+// citedVersions returns the versions some entry cites, in their original order.
+func citedVersions(versions []report.Version, entries []classify.Entry) []report.Version {
+	cited := make(map[string]bool, len(entries))
+	for _, e := range entries {
+		cited[e.Version] = true
+	}
+	out := make([]report.Version, 0, len(cited))
+	for _, v := range versions {
+		if cited[v.Version] {
+			out = append(out, v)
+		}
+	}
+	return out
 }

@@ -22,8 +22,8 @@ argocd (argoproj/argo-cd) 3.5.0..3.6.1: 9 versions
 
 SOURCE                                                                          VERSIONS  ENTRIES  BREAKING  DEPRECATION  SECURITY
 0 gh-release                                                                    9/9       832      2         0            8
-1 upgrade-guide docs/operator-manual/upgrading/{prev_minor}-{major}.{minor}.md  1/9       48       16        0            0
-merged                                                                          9/9       880      18        0            8
+1 upgrade-guide docs/operator-manual/upgrading/{prev_minor}-{major}.{minor}.md  1/9       17       9         0            0
+merged                                                                          9/9       849      11        0            8
 
 0 gh-release:
   https://github.com/argoproj/argo-cd/releases/tag/v3.5.1
