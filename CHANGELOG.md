@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.4.0](https://github.com/sassdavid/relgap/compare/v0.3.0...v0.4.0) (2026-11-16)
+
+
+### Features
+
+* **cli:** add config init and close the other M16 gaps ([#51](https://github.com/sassdavid/relgap/issues/51)) ([42238f0](https://github.com/sassdavid/relgap/commit/42238f02cd99e0d29aeb5c2afeed84199893f16e))
+* **digest:** add --summarize with cited, advisory LLM summaries ([#47](https://github.com/sassdavid/relgap/issues/47)) ([2d1f503](https://github.com/sassdavid/relgap/commit/2d1f503a671d2b774d036fab7aef6b0518ec024a))
+* **drift:** read a tfcensus inventory with --from-tfcensus ([#57](https://github.com/sassdavid/relgap/issues/57)) ([34abdd7](https://github.com/sassdavid/relgap/commit/34abdd7e9f6aff21b9b937c00462641847de6e68))
+* **mcp:** add the upgrade_review prompt and stable entry IDs ([#46](https://github.com/sassdavid/relgap/issues/46)) ([f4cdb45](https://github.com/sassdavid/relgap/commit/f4cdb45c800d05bd65cfb7b617d22c04139bf8ef))
+* **mcp:** trim page versions and merge upgrade-guide sections ([#55](https://github.com/sassdavid/relgap/issues/55)) ([ff09f0c](https://github.com/sassdavid/relgap/commit/ff09f0c9fae8e8de1f411e582b314397fa3accc6))
+* **registry:** resolve tfprovider, chart, npm and pypi names, add registry update and --guess ([#52](https://github.com/sassdavid/relgap/issues/52)) ([6ccea3d](https://github.com/sassdavid/relgap/commit/6ccea3d46035fa784f7965e25a784b1687f823a6))
+* **summarize:** add the bedrock-mantle provider and opt-in Bedrock API keys ([#50](https://github.com/sassdavid/relgap/issues/50)) ([79db409](https://github.com/sassdavid/relgap/commit/79db409ef497f48ba61cb751f0ef1bde1bf1a5fe))
+
+
+### Bug Fixes
+
+* **deps:** update module gopkg.in/dnaeon/go-vcr.v4 to v4.0.8 ([#40](https://github.com/sassdavid/relgap/issues/40)) ([af55531](https://github.com/sassdavid/relgap/commit/af555316afc67baf9c520d1388d1466022d23d44))
+
+
+### Performance Improvements
+
+* **outdated:** parallel latest lookup, and record the M18 performance targets ([#54](https://github.com/sassdavid/relgap/issues/54)) ([b525e24](https://github.com/sassdavid/relgap/commit/b525e24383966e50ccd0d2ec7b3221760a0c8b51))
+
 ## [0.3.0](https://github.com/sassdavid/relgap/compare/v0.2.0...v0.3.0) (2026-11-13)
 
 
