@@ -56,6 +56,18 @@ env RELGAP_POLICY_MAX_BEHIND=
 
 exec expect-exit 3 relgap digest --from-mise --fail-on breaking --format plain
 stderr 'fail-on breaking matched 1 pin: k9s 0.50.16'
+
+# --only works with --from-mise and --all as with one tool: it lists only the named kinds,
+# while the counts and --fail-on still cover every kind.
+exec expect-exit 3 relgap digest --from-mise --only breaking,deprecation --fail-on breaking --format json
+jsonschema digest-v1.json stdout
+stdout '"kind": "breaking"'
+! stdout '"kind": "(fix|feature|other|security)"'
+stdout '"other": 3'
+exec relgap digest --all --only deprecation --format json
+jsonschema digest-v1.json stdout
+! stdout '"kind": "(breaking|fix|feature|other|security)"'
+stdout '"breaking": 1'
 [!recording] exec expect-exit 3 relgap digest k9s 0.50.16.. --fail-on breaking --format plain
 [!recording] stderr '^relgap: --fail-on breaking matched 1 digest: k9s 0.50.16..0.51.0$'
 

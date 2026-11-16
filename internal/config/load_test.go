@@ -200,6 +200,55 @@ func TestLocate(t *testing.T) {
 	require.ErrorIs(t, err, config.ErrInvalid)
 }
 
+// TestSpec_config_5 checks that the project-file search stops at the git root or StopDir, and
+// reads only the working directory outside both.
+func TestSpec_config_5(t *testing.T) {
+	t.Parallel()
+	tests := []struct {
+		name  string
+		git   string   // directory that gets a .git, relative to the temp dir; empty for none
+		files []string // project files to create, relative to the temp dir
+		stop  string   // StopDir, relative to the temp dir
+		want  string   // expected project file, relative to the temp dir; empty for none
+	}{
+		{"nearest in repo", "repo", []string{"repo/.relgap.yaml", "repo/a/.relgap.yaml"}, "", "repo/a/.relgap.yaml"},
+		{"at the git root", "repo", []string{"repo/.relgap.yaml"}, "", "repo/.relgap.yaml"},
+		{"above the git root", "repo", []string{".relgap.yaml"}, "", ""},
+		{"no repo, working directory", "", []string{"repo/a/b/.relgap.yaml"}, "", "repo/a/b/.relgap.yaml"},
+		{"no repo, parent", "", []string{"repo/.relgap.yaml"}, "", ""},
+		{"stop dir, below it", "", []string{"repo/a/.relgap.yaml"}, "repo", "repo/a/.relgap.yaml"},
+		{"stop dir, at it", "", []string{"repo/.relgap.yaml"}, "repo", "repo/.relgap.yaml"},
+		{"stop dir, above it", "", []string{".relgap.yaml"}, "repo", ""},
+		{"stop dir below the git root", "", []string{"repo/.relgap.yaml"}, "repo/a", ""},
+		{"git root below the stop dir", "repo/a", []string{"repo/.relgap.yaml"}, "repo", ""},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			dir := t.TempDir()
+			cwd := filepath.Join(dir, "repo", "a", "b")
+			require.NoError(t, os.MkdirAll(cwd, 0o750))
+			if tt.git != "" {
+				require.NoError(t, os.Mkdir(filepath.Join(dir, filepath.FromSlash(tt.git), ".git"), 0o750))
+			}
+			for _, f := range tt.files {
+				writeFile(t, filepath.Join(dir, filepath.FromSlash(f)), "{}\n")
+			}
+			opts := config.Options{Environ: env(dir), Cwd: cwd}
+			if tt.stop != "" {
+				opts.StopDir = filepath.Join(dir, filepath.FromSlash(tt.stop))
+			}
+			files, err := config.Locate(opts)
+			require.NoError(t, err)
+			want := config.File{Kind: config.SourceProject}
+			if tt.want != "" {
+				want.Path, want.Found = filepath.Join(dir, filepath.FromSlash(tt.want)), true
+			}
+			assert.Equal(t, want, files[1])
+		})
+	}
+}
+
 func TestUserConfigPath(t *testing.T) {
 	t.Parallel()
 	lookup := func(m map[string]string) config.LookupFunc {

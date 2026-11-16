@@ -394,6 +394,32 @@ func TestMCP_roots(t *testing.T) {
 	}
 }
 
+// TestMCP_configStopsAtRoot: the project-file search ends at the first --root, so a broken
+// .relgap.yaml above it doesn't stop the server. Without --root it walks to the git root.
+func TestMCP_configStopsAtRoot(t *testing.T) {
+	t.Parallel()
+	f := newMCPFixture(t, "2026-11-11T12:00:00Z")
+	top := f.dir
+	f.dir = filepath.Join(top, "a", "b")
+	if err := os.MkdirAll(f.dir, 0o750); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Mkdir(filepath.Join(top, ".git"), 0o750); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(top, ".relgap.yaml"), []byte("nope: 1\n"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	serve := func(_ context.Context, _ *mcpkit.Server) error { return nil }
+	if err := cli.ServeMCP(t.Context(), f.d, []string{"--root", ".."}, serve); err != nil {
+		t.Errorf("with --root ..: %v", err)
+	}
+	err := cli.ServeMCP(t.Context(), f.d, nil, serve)
+	if err == nil || !strings.Contains(err.Error(), "nope: unknown key") {
+		t.Errorf("without --root: err = %v, want the unknown key in %s", err, filepath.Join(top, ".relgap.yaml"))
+	}
+}
+
 // rootsFixture returns a working directory with a repository under tree and a link to outside.
 func rootsFixture(t *testing.T, outside string) *mcpFixture {
 	t.Helper()

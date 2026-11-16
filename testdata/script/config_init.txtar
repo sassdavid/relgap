@@ -1,0 +1,42 @@
+# config init writes the commented template, refuses to replace a file without --force, and
+# writes the user file with --user. TestSpec_config_4 checks the template itself.
+mkdir repo/.git
+cd repo
+
+exec relgap config init
+! stdout .
+stderr '^relgap: wrote .*\.relgap\.yaml$'
+grep '^schema_version: 1$' .relgap.yaml
+grep '^#   concurrency: 8 ' .relgap.yaml
+exec relgap config validate .relgap.yaml
+exec relgap config show --sources
+stdout '^github\.concurrency +8 +default$'
+
+# An existing file is kept, with exit code 2.
+cp ../custom.yaml .relgap.yaml
+! exec relgap config init
+stderr 'file exists: .*\.relgap\.yaml; pass --force to replace it'
+cmp .relgap.yaml ../custom.yaml
+
+exec relgap config init --force
+grep '^#   concurrency: 8 ' .relgap.yaml
+
+# A path argument, with missing directories created.
+exec relgap config init ci/relgap.yaml
+exec relgap config validate ci/relgap.yaml
+
+# --user writes $XDG_CONFIG_HOME/relgap/config.yaml.
+exec relgap config init --user
+exists $WORK/.config/relgap/config.yaml
+! exec relgap config init --user
+stderr 'pass --force'
+
+! exec relgap config init --user other.yaml
+stderr '--user and a path can''t be combined'
+! exec relgap config init a.yaml b.yaml
+stderr 'accepts at most 1 arg'
+
+-- custom.yaml --
+schema_version: 1
+github:
+  concurrency: 2

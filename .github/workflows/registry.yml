@@ -1,0 +1,40 @@
+name: registry
+
+# Fails when the embedded mise or aqua registry snapshot in internal/registry/snapshot comes
+# from a commit over 30 days old (docs/plan/specs/tool-resolution.md). It runs weekly and on
+# changes to the snapshots, not on every pull request, so time passing doesn't fail unrelated
+# changes. The fix is `mise run registry:snapshot` and a commit of the result.
+on:
+  schedule:
+    - cron: "23 5 * * 1"
+  pull_request:
+    paths:
+      - internal/registry/snapshot/**
+      - scripts/regsnapshot/**
+      - .github/workflows/registry.yml
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  snapshot-age:
+    name: snapshot age
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    env:
+      GOTOOLCHAIN: local # don't let a newer go.mod toolchain line replace the mise.toml version
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: jdx/mise-action@d5574b52816a478f9d4e6529a3f6ff17a8a36785 # v5.2.8
+        with:
+          version: 2026.11.7
+          install_args: go
+      - run: mise run registry:age

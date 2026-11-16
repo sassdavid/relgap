@@ -61,7 +61,8 @@ gh attestation verify --owner sassdavid relgap_<version>_<os>_<arch>.tar.gz
 `relgap config show --sources` prints every effective setting and where it came from.
 Layers, lowest to highest: defaults, `~/.config/relgap/config.yaml`, `.relgap.yaml` (nearest, up to
 the git root), `RELGAP_*` env vars, flags. Unknown keys are errors. Schema:
-[schemas/config-v1.json](schemas/config-v1.json).
+[schemas/config-v1.json](schemas/config-v1.json). `relgap config init` writes a `.relgap.yaml` with
+every key commented out at its default.
 
 ## Tool resolution
 

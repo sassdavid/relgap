@@ -225,11 +225,25 @@ func (d *Digester) Digest(ctx context.Context, req DigestRequest) (*ToolDigest, 
 			continue
 		}
 		out.Counts[e.Kind]++
-		if len(req.Kinds) == 0 || slices.Contains(req.Kinds, e.Kind) {
-			out.Entries = append(out.Entries, e)
+		out.Entries = append(out.Entries, e)
+	}
+	out.Entries = EntriesOf(out.Entries, req.Kinds)
+	return out, nil
+}
+
+// EntriesOf returns the entries of the given kinds in a new slice, or entries itself when
+// kinds is empty.
+func EntriesOf(entries []classify.Entry, kinds []classify.Kind) []classify.Entry {
+	if len(kinds) == 0 {
+		return entries
+	}
+	out := []classify.Entry{}
+	for _, e := range entries {
+		if slices.Contains(kinds, e.Kind) {
+			out = append(out, e)
 		}
 	}
-	return out, nil
+	return out
 }
 
 // collect runs every reader and drops entries an earlier source already had for the version,

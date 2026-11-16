@@ -25,7 +25,7 @@ outdated and drift read only directories inside the roots: the --root directorie
 the roots the client lists (Claude Code lists its launch directory and the directories
 added with --add-dir), else the current directory. A relative path starts at the first
 root, and repositories are named relative to it. The config file is read once at startup,
-as for every command.
+as for every command, but the search for .relgap.yaml also stops at the first --root.
 
 A result over --max-result-bytes (default 50,000, Claude Code's limit for showing a result
 to the model) is split. The envelope then has a page field, and the agent passes

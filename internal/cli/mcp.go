@@ -3,6 +3,7 @@ package cli
 import (
 	"context"
 	"fmt"
+	"path/filepath"
 
 	"github.com/spf13/cobra"
 
@@ -52,7 +53,7 @@ outdated and drift read only directories inside the roots: the --root directorie
 the roots the client lists (Claude Code lists its launch directory and the directories
 added with --add-dir), else the current directory. A relative path starts at the first
 root, and repositories are named relative to it. The config file is read once at startup,
-as for every command.
+as for every command, but the search for .relgap.yaml also stops at the first --root.
 
 A result over --max-result-bytes (default 50,000, Claude Code's limit for showing a result
 to the model) is split. The envelope then has a page field, and the agent passes
@@ -114,6 +115,16 @@ func runMCP(cmd *cobra.Command, d *app.Deps, g *globals, f mcpFlags, serve serve
 	case maxBytes == 0:
 		maxBytes = -1 // mcpkit's value for no cap
 	}
+	cwd, err := d.Getwd()
+	if err != nil {
+		return fmt.Errorf("get working directory: %w", err)
+	}
+	if len(f.roots) > 0 {
+		g.stopDir = f.roots[0]
+		if !filepath.IsAbs(g.stopDir) {
+			g.stopDir = filepath.Join(cwd, g.stopDir)
+		}
+	}
 	cfg, err := g.loadConfig(cmd, d)
 	if err != nil {
 		return err
@@ -121,10 +132,6 @@ func runMCP(cmd *cobra.Command, d *app.Deps, g *globals, f mcpFlags, serve serve
 	resolver, err := newResolver(ctx, d, cfg, mcpserver.NoExec{})
 	if err != nil {
 		return err
-	}
-	cwd, err := d.Getwd()
-	if err != nil {
-		return fmt.Errorf("get working directory: %w", err)
 	}
 	s := &session{
 		d:        d,

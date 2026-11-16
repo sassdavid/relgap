@@ -38,6 +38,18 @@ type digestFlags struct {
 	summarize          bool
 }
 
+// kinds returns the --only kinds; empty means every kind.
+func (f *digestFlags) kinds() ([]classify.Kind, error) {
+	kinds := make([]classify.Kind, len(f.only))
+	for i, k := range f.only {
+		kinds[i] = classify.Kind(k)
+	}
+	if err := checkKinds(kinds); err != nil {
+		return nil, err
+	}
+	return kinds, nil
+}
+
 // prMode reports whether the flags ask for the pins a pull request or a pair of refs upgrades.
 func (f *digestFlags) prMode() bool { return f.base != "" || f.head != "" || f.pullRequest }
 
@@ -166,8 +178,6 @@ func newDigestCmd(d *app.Deps, g *globals) *cobra.Command {
 	cmd.MarkFlagsMutuallyExclusive(flagAll, flagLine)
 	cmd.MarkFlagsMutuallyExclusive(flagFromMise, "include-prereleases")
 	cmd.MarkFlagsMutuallyExclusive(flagAll, "include-prereleases")
-	cmd.MarkFlagsMutuallyExclusive(flagFromMise, flagOnly)
-	cmd.MarkFlagsMutuallyExclusive(flagAll, flagOnly)
 	return cmd
 }
 
@@ -182,11 +192,8 @@ func runDigest(cmd *cobra.Command, d *app.Deps, g *globals, f digestFlags, tool,
 	if _, err = version.ParseLevel(f.line); err != nil {
 		return usageError(err)
 	}
-	kinds := make([]classify.Kind, len(f.only))
-	for i, k := range f.only {
-		kinds[i] = classify.Kind(k)
-	}
-	if err = checkKinds(kinds); err != nil {
+	kinds, err := f.kinds()
+	if err != nil {
 		return err
 	}
 	s, err := g.newSession(cmd, d)
@@ -249,6 +256,10 @@ func runDigestProject(cmd *cobra.Command, d *app.Deps, g *globals, f digestFlags
 	if err := g.checkFormats(digestFormats()...); err != nil {
 		return usageError(err)
 	}
+	kinds, err := f.kinds()
+	if err != nil {
+		return err
+	}
 	var keep func(scan.Pin) bool
 	if f.fromMise {
 		keep = func(p scan.Pin) bool { return p.Location.Detector == scan.DetectorMise }
@@ -267,6 +278,9 @@ func runDigestProject(cmd *cobra.Command, d *app.Deps, g *globals, f digestFlags
 		return err
 	}
 	data := &report.Digest{Tools: run.out.Digests()}
+	for i := range data.Tools {
+		data.Tools[i].Entries = report.EntriesOf(data.Tools[i].Entries, kinds)
+	}
 	summarizeDigest(cmd, d, g, f, data)
 	if err = writeDigest(cmd, d, g, data, run.errors()); err != nil {
 		return err

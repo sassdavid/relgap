@@ -3,7 +3,9 @@ package registry
 import (
 	"embed"
 	"encoding/json"
+	"errors"
 	"fmt"
+	"time"
 
 	"github.com/sassdavid/relgap/internal/misex"
 )
@@ -14,6 +16,12 @@ const (
 	AquaSnapshotFile = "aqua.json"
 )
 
+// MaxSnapshotAge is how old a snapshot's commit may be before the registry workflow fails.
+const MaxSnapshotAge = 30 * day
+
+// ErrSnapshotStale reports a snapshot whose commit is older than the allowed age.
+var ErrSnapshotStale = errors.New("snapshot is stale")
+
 //go:embed snapshot/*.json
 var snapshots embed.FS
 
@@ -23,6 +31,32 @@ type SnapshotMeta struct {
 	Commit     string `json:"commit"`
 	CommitDate string `json:"commit_date"` // RFC 3339
 }
+
+// Age returns how long before now the snapshot's commit was made.
+func (m SnapshotMeta) Age(now time.Time) (time.Duration, error) {
+	t, err := time.Parse(time.RFC3339, m.CommitDate)
+	if err != nil {
+		return 0, fmt.Errorf("parse commit_date of %s: %w", m.Source, err)
+	}
+	return now.Sub(t), nil
+}
+
+// CheckAge returns [ErrSnapshotStale] when the snapshot's commit is older than maxAge at now.
+func (m SnapshotMeta) CheckAge(now time.Time, maxAge time.Duration) error {
+	age, err := m.Age(now)
+	if err != nil {
+		return err
+	}
+	if age > maxAge {
+		return fmt.Errorf("%w: %s at %s is from %s, %d days old, over the %d-day limit",
+			ErrSnapshotStale, m.Source, m.Commit, m.CommitDate, days(age), days(maxAge))
+	}
+	return nil
+}
+
+const day = 24 * time.Hour
+
+func days(d time.Duration) int { return int(d / day) }
 
 // AquaEntry is one package of the aqua registry, reduced to what resolution needs.
 type AquaEntry struct {
