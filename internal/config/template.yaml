@@ -1,0 +1,44 @@
+# relgap configuration, written by 'relgap config init'.
+# Each key below is commented out and shows its default. Uncomment a key to change it.
+# Later layers win: defaults < user file < project file < env (RELGAP_*) < flags.
+# 'relgap config show --sources' prints every effective value and where it came from, and
+# 'relgap config validate' checks this file. Unknown keys are errors.
+schema_version: 1
+#
+# github:
+#   host: github.com              # only github.com in v0.x
+#   concurrency: 8                # concurrent requests per tool, 1 to 64
+#
+# cache:
+#   dir: ""                       # empty means $XDG_CACHE_HOME/relgap
+#   ttl_override: {}              # per-source TTLs as Go durations, for example {endoflife: 24h}
+#
+# scan:
+#   roots: []                     # what drift and pins scan when you name no directory
+#   exclude:                      # globs that are never scanned
+#     - '**/node_modules/**'
+#     - '**/.terragrunt-cache/**'
+#   detectors:
+#     ci_actions: false           # read tool versions from CI workflow files
+#     generic: false              # read NAME_VERSION=x.y.z lines in extra_files
+#   extra_files: []               # globs the generic detector reads, for example ["Makefile", "**/*.env"]
+#
+# tools: {}                       # local registry entries, for example {hk: {repo: jdx/hk}}
+# aliases: {}                     # raw pin name to tool, for example {TG_VERSION: terragrunt}
+# ignore: []                      # pins never reported, for example [{tool: terraform, path: "**/legacy/**"}]
+#
+# policy:                         # defaults for the CI flags
+#   fail_on: []                   # breaking, deprecation, eol, vuln, drift, outdated
+#   max_behind: ""                # for example minor:2, releases:10 or days:90; empty allows any lag
+#   min_confidence: 0.5           # hide entries below this confidence, 0 to 1
+#   vuln_severity: ""             # low, medium, high or critical; empty counts every advisory
+#
+# llm:                            # only for 'relgap digest --summarize'
+#   provider: ""                  # empty is off; openai-compatible, anthropic, bedrock or bedrock-mantle
+#   model: ""                     # required with a provider
+#   base_url: ""                  # required for openai-compatible; empty means the provider default
+#   api_key_env: ""               # env var with the API key (anthropic: ANTHROPIC_API_KEY); never a key
+#   api: ""                       # bedrock-mantle: messages or chat-completions; empty picks by model ID
+#   aws_profile: ""               # bedrock and bedrock-mantle; empty means the AWS default chain
+#   max_input_tokens: 30000
+#   timeout: 120s                 # Go duration, at most 2m

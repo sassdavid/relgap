@@ -292,13 +292,15 @@ Scope: relgap gets an opt-in `--summarize`. tfcensus gets MCP prompts but no bui
   "shared files match".
 
 ### M16: Planned CLI gaps (shared where both repos lack it) → v0.4.0
-- [ ] `config init` writes a commented `relgap.yaml` and refuses to overwrite without `--force`.
+- [x] `config init` writes a commented `.relgap.yaml` and refuses to overwrite without `--force`.
   The same shape as tfcensus's.
-- [ ] The config search stops at the git root, through an option in the shared
-  `internal/config/load.go` (the M10 decision in mcp-and-llm.md).
-- [ ] `--only` is a global flag as `cli.md` says, or `cli.md` is corrected.
-- [ ] A CI job fails when the embedded mise or aqua snapshot is older than 30 days
-  (tool-resolution.md).
+- [x] The config search stops at the git root, through an option in the shared
+  `internal/config/load.go` (the M10 decision in mcp-and-llm.md). `relgap mcp` passes its first
+  `--root` as `config.Options.StopDir`, and outside a repository only the working directory counts.
+- [x] `--only` is a global flag as `cli.md` says, or `cli.md` is corrected. `cli.md` now lists it as a
+  `digest` flag, and it works with `--from-mise` and `--all` (ADR-0003's example).
+- [x] A CI job fails when the embedded mise or aqua snapshot is older than 30 days
+  (tool-resolution.md): `registry.yml`, weekly and on snapshot changes.
 
 ### M17: Resolution gaps → v0.5.0 (relgap only) ([tool-resolution](specs/tool-resolution.md))
 - [ ] `tfprovider:` resolves any registry.terraform.io provider, not only curated ones.

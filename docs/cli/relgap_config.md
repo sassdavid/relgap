@@ -15,6 +15,7 @@ Env vars:     RELGAP_<KEY> with dots as underscores, e.g. RELGAP_GITHUB_CONCURRE
               Lists are comma-separated.
 
 Unknown keys and wrong types are errors (exit 2), reported with file:line:column.
+'relgap config init' writes a commented file to start from.
 
 ### Options
 
@@ -43,6 +44,7 @@ Unknown keys and wrong types are errors (exit 2), reported with file:line:column
 ### SEE ALSO
 
 * [relgap](relgap.md)	 - Release-notes digests and toolchain drift for the tools you pin
+* [relgap config init](relgap_config_init.md)	 - Write a commented config file
 * [relgap config path](relgap_config_path.md)	 - Print the config file locations relgap reads
 * [relgap config show](relgap_config_show.md)	 - Print the effective configuration
 * [relgap config validate](relgap_config_validate.md)	 - Validate config files against the schema

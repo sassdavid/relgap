@@ -1,6 +1,7 @@
 # Spec: configuration
 
-Files: user `$XDG_CONFIG_HOME/relgap/config.yaml`, project `.relgap.yaml` (walk up to the git root).
+Files: user `$XDG_CONFIG_HOME/relgap/config.yaml`, project `.relgap.yaml` (walk up to the git root;
+outside a repository only the working directory, and `relgap mcp` stops at its first `--root`).
 Precedence and provenance follow [engineering standards](../../engineering/engineering-standards.md#configuration).
 Schema: `schemas/config-v1.json` (generated from the Go struct).
 
@@ -48,7 +49,9 @@ llm:                            # only for digest --summarize
 
 ## Rules
 - Unknown keys → exit 2 with file:line (validated against the schema before unmarshal).
-- `relgap config init` writes a commented template. With a TTY and huh available (post-MVP) it becomes a wizard.
+- `relgap config init [path]` writes a template with every key commented out at its default, so it changes
+  nothing until edited. It writes `.relgap.yaml` in the working directory, the path, or with `--user` the
+  user file, and refuses to replace a file (exit 2) without `--force`. A wizard (huh, with a TTY) is post-MVP.
 - `ignore` rules drop pins in `drift`, `outdated` and `digest --from-mise|--all`. `tool` may be an alias. `path` is a glob on `repo/file` or the repo-relative file, with `**` for any directories. `pins` lists every pin.
 - Env vars: `RELGAP_GITHUB_CONCURRENCY`, `RELGAP_CACHE_DIR`, `RELGAP_LLM_PROVIDER`, and so on. Tokens are **never** read from config files, only from env, gh or the keyring.
 
@@ -56,3 +59,7 @@ llm:                            # only for digest --summarize
 - [x] `config show --sources` prints a key, its value and its source for every key (golden).
 - [x] Unknown key and wrong type each produce a precise error (testscript).
 - [x] Schema and struct stay in sync (generation test).
+- [x] The `config init` template validates, sets nothing as written, and lists every key at its default
+  once uncommented (`TestSpec_config_4`). `testdata/script/config_init.txtar` covers the command.
+- [x] The project-file search stops at the git root or `config.Options.StopDir` and reads only the
+  working directory outside both (`TestSpec_config_5`).

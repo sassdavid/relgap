@@ -37,5 +37,3 @@ stdout 'breaking 4, deprecation 4'
 
 exec expect-exit 2 relgap digest kubectl 1.36.0..1.37.2 --only fixes
 stderr 'invalid kind "fixes": want one of breaking, deprecation, security, feature, fix, other'
-exec expect-exit 2 relgap digest --from-mise --only breaking
-stderr 'none of the others can be'

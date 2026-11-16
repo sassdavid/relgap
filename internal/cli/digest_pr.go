@@ -12,7 +12,6 @@ import (
 	"golang.org/x/sync/errgroup"
 
 	"github.com/sassdavid/relgap/internal/app"
-	"github.com/sassdavid/relgap/internal/classify"
 	"github.com/sassdavid/relgap/internal/complete"
 	"github.com/sassdavid/relgap/internal/config"
 	"github.com/sassdavid/relgap/internal/render"
@@ -119,16 +118,12 @@ func runDigestPR(cmd *cobra.Command, d *app.Deps, g *globals, f digestFlags, roo
 	if f.base == "" && !f.pullRequest {
 		return usageError(fmt.Errorf("--%s needs --%s or --%s", flagHead, flagBase, flagPullRequest))
 	}
-	kinds := make([]classify.Kind, len(f.only))
-	for i, k := range f.only {
-		kinds[i] = classify.Kind(k)
-	}
-	if err := checkKinds(kinds); err != nil {
+	kinds, err := f.kinds()
+	if err != nil {
 		return err
 	}
 	in := prInput{}
 	if f.pullRequest {
-		var err error
 		if in, err = readPREvent(d); err != nil {
 			return err
 		}

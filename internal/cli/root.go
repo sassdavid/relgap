@@ -53,6 +53,7 @@ type globals struct {
 	started   bool
 	closers   []io.Closer
 	mcpServe  serveFunc // set by [ServeMCP]; nil serves stdio
+	stopDir   string    // ends the project-file search; relgap mcp sets its first --root
 }
 
 func (g *globals) close() {
@@ -198,6 +199,7 @@ func (g *globals) loadConfig(cmd *cobra.Command, d *app.Deps) (*config.Result, e
 		Environ:      d.Env,
 		Cwd:          cwd,
 		ExplicitFile: g.configFile,
+		StopDir:      g.stopDir,
 		Flags:        cmd.Flags(),
 		FlagKeys:     flagKeys(),
 	})

@@ -60,9 +60,10 @@ Agreed before coding, except where a point says it changed during the work.
   `--no-cache` on `relgap mcp` apply to every call. `drift` makes no network call unless
   `latest` is true.
 - Changed: the config file is read once at startup, from `--config`, `RELGAP_CONFIG` or the
-  server's working directory up to the git root, as for every command. Stopping the search at
-  the root needs an option in `internal/config/load.go`, which is shared with tfcensus and
-  wasn't in scope for this milestone. Tool arguments never choose a config file.
+  server's working directory up to the git root, as for every command. Since M16 the search
+  also stops at the first `--root` (`config.Options.StopDir` in the shared
+  `internal/config/load.go`). Client roots arrive after startup, so they don't limit it. Tool
+  arguments never choose a config file.
 - Errors: what the CLI exits 2 or 4 for (unknown tool, bad range or kind, a path outside the
   roots, a bad cursor, auth and rate-limit failures, offline misses) is a tool error with the
   CLI's message. A partial result is a normal result with the envelope's `errors` filled, as

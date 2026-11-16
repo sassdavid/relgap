@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"slices"
 	"strings"
+	"time"
 
 	"github.com/pelletier/go-toml/v2"
 	"go.yaml.in/yaml/v4"
@@ -30,7 +31,13 @@ func run() int {
 	aquaCommit := flag.String("aqua-commit", "", "commit of the aqua-registry checkout")
 	aquaDate := flag.String("aqua-date", "", "commit date of the aqua-registry checkout (RFC 3339)")
 	out := flag.String("out", filepath.Join("internal", "registry", "snapshot"), "output directory")
+	checkAge := flag.Bool("check-age", false,
+		"write nothing; exit 1 when an embedded snapshot's commit is older than the 30-day limit")
 	flag.Parse()
+
+	if *checkAge {
+		return checkSnapshotAge(time.Now())
+	}
 
 	err := writeMise(*miseDir, registry.SnapshotMeta{
 		Source: "https://github.com/jdx/mise", Commit: *miseCommit, CommitDate: *miseDate,
@@ -45,6 +52,40 @@ func run() int {
 		return 1
 	}
 	return 0
+}
+
+// checkSnapshotAge reports the age of each embedded snapshot and returns 1 when one is stale.
+func checkSnapshotAge(now time.Time) int {
+	mise, _, err := registry.MiseSnapshot()
+	if err != nil {
+		_, _ = fmt.Fprintf(os.Stderr, "regsnapshot: %v\n", err)
+		return 1
+	}
+	aqua, _, err := registry.AquaSnapshot()
+	if err != nil {
+		_, _ = fmt.Fprintf(os.Stderr, "regsnapshot: %v\n", err)
+		return 1
+	}
+	code := 0
+	for _, m := range []registry.SnapshotMeta{mise, aqua} {
+		if err = m.CheckAge(now, registry.MaxSnapshotAge); err != nil {
+			_, _ = fmt.Fprintf(
+				os.Stderr,
+				"regsnapshot: %v; run 'mise run registry:snapshot' and commit the result\n",
+				err,
+			)
+			code = 1
+			continue
+		}
+		_, _ = fmt.Fprintf(
+			os.Stderr,
+			"regsnapshot: %s at %s is from %s, within the limit\n",
+			m.Source,
+			m.Commit,
+			m.CommitDate,
+		)
+	}
+	return code
 }
 
 type miseTOML struct {

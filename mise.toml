@@ -73,6 +73,10 @@ run = "go run ./scripts/gendocs -out docs/cli"
 description = "Regenerate the embedded mise and aqua registry snapshots (review the diff, then commit)"
 run = "bash scripts/registry-snapshot.sh"
 
+[tasks."registry:age"]
+description = "Fail when the embedded mise or aqua snapshot is over 30 days old"
+run = "go run ./scripts/regsnapshot -check-age"
+
 [tasks."sibling:diff"]
 description = "Compare the files shared with the sibling repo (.claude/rules/siblings.md)"
 run = "bash scripts/sibling-diff.sh"
