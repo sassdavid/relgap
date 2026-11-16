@@ -76,6 +76,7 @@ github:
   host: github.com
 ignore: []
 llm:
+  api: ""
   api_key_env: ""
   aws_profile: ""
   base_url: ""

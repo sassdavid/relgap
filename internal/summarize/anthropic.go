@@ -24,13 +24,16 @@ const (
 type Anthropic struct {
 	hc      *http.Client
 	baseURL string
-	apiKey  string
+	apiKey  string // empty sends no X-Api-Key, for a transport that signs the request
 	model   string
+	version string // the anthropic-version header
 }
 
 // NewAnthropic returns a provider that posts to baseURL + "/v1/messages".
 func NewAnthropic(hc *http.Client, baseURL, apiKey, model string) *Anthropic {
-	return &Anthropic{hc: hc, baseURL: strings.TrimRight(baseURL, "/"), apiKey: apiKey, model: model}
+	return &Anthropic{
+		hc: hc, baseURL: strings.TrimRight(baseURL, "/"), apiKey: apiKey, model: model, version: anthropicVersion,
+	}
 }
 
 // Complete sends p and joins the text blocks of the answer.
@@ -58,8 +61,10 @@ func (a *Anthropic) Complete(ctx context.Context, p Prompt) (string, error) {
 		StopReason string `json:"stop_reason"`
 	}
 	h := http.Header{}
-	h.Set("X-Api-Key", a.apiKey)
-	h.Set("Anthropic-Version", anthropicVersion)
+	if a.apiKey != "" {
+		h.Set("X-Api-Key", a.apiKey)
+	}
+	h.Set("Anthropic-Version", a.version)
 	if err := postJSON(ctx, a.hc, a.baseURL+"/v1/messages", h, in, &out); err != nil {
 		return "", err
 	}
