@@ -1,0 +1,194 @@
+{
+  "schema_version": "1",
+  "tool": "relgap",
+  "version": "dev",
+  "generated_at": "2026-11-11T12:00:00Z",
+  "data": {
+    "repos": [
+      "tf-fleet/app",
+      "tf-fleet/edge",
+      "tf-fleet/edge:staging",
+      "tf-fleet/legacy",
+      "tf-fleet/network",
+      "tf-fleet/planned",
+      "tf-fleet/restricted",
+      "tf-fleet/secure",
+      "tf-fleet/shared"
+    ],
+    "tools": [
+      {
+        "tool": "opentofu",
+        "drift": false,
+        "reference": "1.10.6",
+        "versions": [
+          {
+            "version": "1.10.6",
+            "repos": [
+              "tf-fleet/edge",
+              "tf-fleet/edge:staging"
+            ]
+          }
+        ],
+        "pins": [
+          {
+            "location": {
+              "repo": "tf-fleet/edge",
+              "file": "terraform.tfstate",
+              "line": 0,
+              "detector": "tfcensus"
+            },
+            "value": "1.10.6",
+            "match": "exact",
+            "version": "1.10.6"
+          },
+          {
+            "location": {
+              "repo": "tf-fleet/edge:staging",
+              "file": "terraform.tfstate",
+              "line": 0,
+              "detector": "tfcensus"
+            },
+            "value": "1.10.6",
+            "match": "exact",
+            "version": "1.10.6"
+          }
+        ]
+      },
+      {
+        "tool": "terraform",
+        "drift": true,
+        "reference": "1.12.2",
+        "versions": [
+          {
+            "version": "0.11.14",
+            "repos": [
+              "tf-fleet/legacy"
+            ]
+          },
+          {
+            "version": "1.5.7",
+            "repos": [
+              "tf-fleet/network"
+            ]
+          },
+          {
+            "version": "1.11.4",
+            "repos": [
+              "tf-fleet/shared"
+            ]
+          },
+          {
+            "version": "1.12.2",
+            "repos": [
+              "tf-fleet/app"
+            ]
+          }
+        ],
+        "pins": [
+          {
+            "location": {
+              "repo": "tf-fleet/app",
+              "file": "terraform.tfstate",
+              "line": 0,
+              "detector": "tfcensus"
+            },
+            "value": "1.12.2",
+            "match": "exact",
+            "version": "1.12.2"
+          },
+          {
+            "location": {
+              "repo": "tf-fleet/legacy",
+              "file": "terraform.tfstate",
+              "line": 0,
+              "detector": "tfcensus"
+            },
+            "value": "0.11.14",
+            "match": "exact",
+            "version": "0.11.14"
+          },
+          {
+            "location": {
+              "repo": "tf-fleet/network",
+              "file": "terraform.tfstate",
+              "line": 0,
+              "detector": "tfcensus"
+            },
+            "value": "1.5.7",
+            "match": "exact",
+            "version": "1.5.7"
+          },
+          {
+            "location": {
+              "repo": "tf-fleet/shared",
+              "file": "terraform.tfstate",
+              "line": 0,
+              "detector": "tfcensus"
+            },
+            "value": "1.11.4",
+            "match": "exact",
+            "version": "1.11.4"
+          }
+        ]
+      },
+      {
+        "tool": "tfprovider:hashicorp/aws",
+        "drift": false,
+        "reference": "6.20.0",
+        "versions": [
+          {
+            "version": "6.20.0",
+            "repos": [
+              "tf-fleet/app"
+            ]
+          }
+        ],
+        "pins": [
+          {
+            "location": {
+              "repo": "tf-fleet/app",
+              "file": ".terraform.lock.hcl",
+              "line": 0,
+              "detector": "tfcensus"
+            },
+            "value": "6.20.0",
+            "match": "exact",
+            "version": "6.20.0"
+          }
+        ]
+      },
+      {
+        "tool": "tfprovider:hashicorp/random",
+        "drift": false,
+        "reference": "3.7.2",
+        "versions": [
+          {
+            "version": "3.7.2",
+            "repos": [
+              "tf-fleet/app"
+            ]
+          }
+        ],
+        "pins": [
+          {
+            "location": {
+              "repo": "tf-fleet/app",
+              "file": ".terraform.lock.hcl",
+              "line": 0,
+              "detector": "tfcensus"
+            },
+            "value": "3.7.2",
+            "match": "exact",
+            "version": "3.7.2"
+          }
+        ]
+      }
+    ]
+  },
+  "errors": [
+    {
+      "target": "tf-fleet/restricted",
+      "message": "tfcensus: access denied: s3:GetObject on s3://acme-restricted-tfstate/restricted/terraform.tfstate; the backend credentials need s3:GetObject, and kms:Decrypt when the bucket uses SSE-KMS"
+    }
+  ]
+}

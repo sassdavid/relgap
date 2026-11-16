@@ -47,6 +47,7 @@ const (
 	scriptDir   = "../../testdata/script"
 	cassetteDir = "../../testdata/cassettes"
 	goldenDir   = "../../testdata/golden"
+	testdataDir = "../../testdata"
 )
 
 // Test-only environment read by the relgap command of the test binary.
@@ -276,6 +277,11 @@ func scriptParams(t *testing.T, files ...string) testscript.Params {
 				return err
 			}
 			env.Setenv("GOLDEN", golden)
+			testdata, err := filepath.Abs(testdataDir)
+			if err != nil {
+				return err
+			}
+			env.Setenv("TESTDATA", testdata)
 			env.Setenv(envToken, ghtest.Token())
 			if vcr.Recording() {
 				env.Setenv(vcr.RecordEnv, "1")
@@ -591,7 +597,7 @@ func TestSpec_classification_4(t *testing.T) {
 }
 
 // TestSpec_pindiscovery_1: every detector has a testdata/script/pins_<detector>.txtar fixture
-// with golden JSON.
+// with golden JSON. tfcensus pins come from drift --from-tfcensus, so its golden is a drift report.
 func TestSpec_pindiscovery_1(t *testing.T) {
 	t.Parallel()
 	var files []string
@@ -602,7 +608,11 @@ func TestSpec_pindiscovery_1(t *testing.T) {
 			t.Errorf("detector %s has no fixture: %v", name, err)
 			continue
 		}
-		if !strings.Contains(string(data), "golden stdout pins/") {
+		golden := "golden stdout pins/"
+		if name == scan.DetectorTFCensus {
+			golden = "golden stdout drift/"
+		}
+		if !strings.Contains(string(data), golden) {
 			t.Errorf("%s has no golden JSON", file)
 		}
 		files = append(files, file)
@@ -655,6 +665,14 @@ func TestSpec_pindiscovery_3(t *testing.T) {
 func TestSpec_pindiscovery_4(t *testing.T) {
 	t.Parallel()
 	testscript.Run(t, scriptParams(t, filepath.Join(scriptDir, "spec_pindiscovery_4.txtar")))
+}
+
+// TestSpec_pindiscovery_7: drift --from-tfcensus reads a tfcensus inventory-v1 as rows per unit
+// and workspace, with exact terraform or opentofu and tfprovider pins, alone or next to scanned
+// roots, from a file or stdin. Another tool or schema_version exits 2.
+func TestSpec_pindiscovery_7(t *testing.T) {
+	t.Parallel()
+	testscript.Run(t, scriptParams(t, filepath.Join(scriptDir, "spec_pindiscovery_7.txtar")))
 }
 
 // TestSpec_output_and_ci_1: every format × command cell of the output-and-ci.md table has a golden

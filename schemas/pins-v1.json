@@ -55,7 +55,7 @@
             "file": { "description": "Relative to repo, slash-separated.", "type": "string", "minLength": 1 },
             "line": { "description": "1-based; 0 when the source has no lines (a Renovate report).", "type": "integer", "minimum": 0 },
             "detector": {
-              "enum": ["mise", "tool-versions", "aqua", "idiomatic", "terraform", "tf-lock", "terragrunt", "dockerfile", "ci", "helm", "generic", "renovate"]
+              "enum": ["mise", "tool-versions", "aqua", "idiomatic", "terraform", "tf-lock", "terragrunt", "dockerfile", "ci", "helm", "generic", "renovate", "tfcensus"]
             }
           }
         }

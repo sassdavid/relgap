@@ -15,6 +15,14 @@ that satisfies it, otherwise as its lower bound (1.15.0). Prefix (26) and channe
 pins aren't compared. --drift-ignore-constraints leaves constraint pins out of the
 comparison too. A version marked * differs from the version most repositories pin.
 
+--from-tfcensus reads the JSON of 'tfcensus inventory --format json' (schema_version 1)
+instead of scanning, or as well when roots are given. Each unit and workspace becomes a row
+named repo/path, with :workspace for a workspace other than default. The version that last
+wrote the unit's state is an exact terraform pin, or opentofu when tfcensus says OpenTofu
+applied it, and each provider version from the unit's lock file is an exact tfprovider pin.
+Units without a version add no pins. The inventory's errors make the report partial. An
+inventory from another tool or schema version exits 2. - reads it from stdin.
+
 Tools that agree everywhere, or that only one repository pins, are listed below the matrix.
 --tool limits the report to the named tools and gives each one a column, even when it
 doesn't drift. Ignore rules in the config drop matching pins.
@@ -31,7 +39,7 @@ tool whose latest version can't be listed.
 (default 1). Otherwise a file that doesn't parse, or a tool whose latest version can't be
 listed, exits 1 after printing the rest.
 
-Roots default to scan.roots, then the current directory.
+Roots default to scan.roots, then the current directory, unless --from-tfcensus is set.
 
 ```
 relgap drift [roots...] [flags]
@@ -41,6 +49,8 @@ relgap drift [roots...] [flags]
 
 ```
   relgap drift ~/src/infra
+  tfcensus inventory ~/src/infra/* --format json | relgap drift --from-tfcensus -
+  relgap drift ~/src/infra --from-tfcensus inventory.json --tool terraform
   relgap drift ~/src/infra --tool terraform --tool terragrunt
   relgap drift ~/src/infra ~/src/apps --latest --format md
   relgap drift --fail-on drift --drift-ignore-constraints
@@ -52,6 +62,7 @@ relgap drift [roots...] [flags]
 ```
       --drift-ignore-constraints[=true|false]   compare exact pins only; constraint pins are shown but don't count
       --fail-on strings                         exit 3 when this matches: drift; repeatable (config policy.fail_on)
+      --from-tfcensus string                    add the units of this tfcensus inventory JSON as rows (- for stdin); without roots, scan nothing
   -h, --help[=true|false]                       help for drift
       --latest[=true|false]                     add the newest stable version of each tool (needs the network or the cache)
       --md-max-chars int                        cut Markdown output to this many characters at a row or section boundary; 0 means no limit (default 60000)

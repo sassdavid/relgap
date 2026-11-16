@@ -19,6 +19,7 @@ from many repo roots. Used by `pins`, `outdated` and `drift`. Code: `internal/sc
 | `helm` | `Chart.yaml` | `dependencies[].version` (`chart:` pins), `appVersion` | |
 | `generic` | any text file listed in config `scan.extra_files` | regex `(?i)\b([a-z0-9_]+)_VERSION\s*(?:[:?+]?=\|:)\s*["']?(v?[0-9][^\s"']*)` | opt-in (`scan.detectors.generic`); maps names via aliases. Also accepts Make's `:=`, `?=` and `+=` |
 | `renovate` (input) | `--renovate-report <file.json>` | `packageFiles[].deps[]` from `renovate --platform=local --dry-run=extract --report-type=file` | optional, adds coverage for anything Renovate understands. `packageFiles` may sit at the top level or under `repositories.<name>`. Pins have line 0 |
+| `tfcensus` (input) | `drift --from-tfcensus <inventory.json>` (`-` for stdin) | `terraform_version` per unit and workspace (an `opentofu` pin when `engine` is `opentofu`), `providers[].version` with `version_source: lockfile` (`tfprovider:` pins) | tfcensus `schemas/inventory-v1.json`, `schema_version` "1" only, other versions exit 2 ([ADR-0014](../adr/0014-drift-from-tfcensus.md)). A unit is a repo named `repo/path[:workspace]`. Exact pins, line 0; the state pin's file is the state key's base name |
 
 ## Walking repos
 - `drift` and `pins` roots are directories. Every directory containing `.git` (a directory, or a file for worktrees and submodules) becomes a "repo" (no recursion into nested `.git`, except git submodules if `--submodules` is passed). A root with no `.git` at or below it is one repo itself.
@@ -43,3 +44,6 @@ from many repo roots. Used by `pins`, `outdated` and `drift`. Code: `internal/sc
 - [x] `.terraform.lock.hcl` produces `tfprovider:hashicorp/aws` pins with exact versions; `required_providers` produces constraint pins.
 - [x] `relgap pins` over 60 repos with no network takes under 5 s (benchmark test with a generated tree).
 - [x] Unknown `*_VERSION` names appear in `--unresolved` with file:line.
+- [x] `drift --from-tfcensus` over a copy of the tfcensus `tf-fleet` inventory golden gives a row per
+  unit and workspace with exact `terraform`, `opentofu` and `tfprovider:` pins, alone or next to
+  scanned roots and from a file or stdin. Another `tool` or `schema_version` exits 2.

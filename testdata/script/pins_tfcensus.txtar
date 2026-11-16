@@ -1,0 +1,8 @@
+# tfcensus: drift --from-tfcensus reads the units of a tfcensus inventory (a copy of a tfcensus
+# golden) as rows. The inventory's error for tf-fleet/restricted makes the report partial.
+env TEST_NOW=2026-11-11T12:00:00Z
+exec expect-exit 1 relgap drift --from-tfcensus $TESTDATA/tfcensus/tf-fleet.json --format json
+jsonschema drift-v1.json stdout
+golden stdout drift/tfcensus.json
+stderr 'can''t read pins.*repo=tf-fleet/restricted.*tfcensus: access denied'
+stderr '^relgap: 1 file or tool failed; the report is partial$'

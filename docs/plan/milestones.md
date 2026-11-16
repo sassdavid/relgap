@@ -316,8 +316,9 @@ Scope: relgap gets an opt-in `--summarize`. tfcensus gets MCP prompts but no bui
   paragraphs merge, and the MCP cursor works in Claude Code. (`TestSpec_mcp_and_llm_5`,
   `TestSpec_classification_5`; dogfood.md "Claude Code, 2026-11-16": argocd 3.1.0 to 3.6.1 in two
   pages of 52 and 6 entries with 8 and 1 versions.)
-- [ ] `drift --from-tfcensus` and the tfcensus pin detector from integration.md, using the
-  tfcensus v0.1 inventory schema.
+- [x] `drift --from-tfcensus` and the tfcensus pin detector from integration.md, using the
+  tfcensus v0.1 inventory schema. (`TestSpec_pindiscovery_7`, `TestSpec_pindiscovery_1`,
+  plan ADR-0014; fixture copied from tfcensus `testdata/golden/inventory/tf-fleet.json`.)
 
 ### M19: Package channels (shared, the owner picks the release)
 Scope: from the next release on, publish to Homebrew and Scoop as well as GitHub.

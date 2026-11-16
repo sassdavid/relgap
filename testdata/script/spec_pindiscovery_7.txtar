@@ -1,0 +1,114 @@
+# drift --from-tfcensus: a tfcensus inventory-v1 as pins (relgap plan ADR-0014). Nothing here
+# reaches the network: the proxy refuses every connection.
+env TEST_NOW=2026-11-11T12:00:00Z
+env HTTPS_PROXY=http://127.0.0.1:1
+env HTTP_PROXY=http://127.0.0.1:1
+
+# Alone, the inventory is the whole report: the mise.toml in the working directory isn't scanned.
+# A row per unit and workspace, opentofu where tfcensus says OpenTofu applied the state.
+exec expect-exit 1 relgap drift --from-tfcensus $TESTDATA/tfcensus/tf-fleet.json --format plain --tool terraform --tool opentofu --tool tfprovider:hashicorp/aws
+cmp stdout alone.txt
+! stdout node
+
+# Stdin works the same, and an inventory without errors exits 0.
+stdin clean.json
+exec relgap drift --from-tfcensus - --format plain
+cmp stdout clean.txt
+
+# Next to scanned roots: the code pins of tf-fleet and the applied versions share one matrix.
+exec relgap drift tf-fleet --from-tfcensus clean.json --format plain
+cmp stdout code.txt
+
+# --fail-on drift counts inventory pins like scanned ones.
+exec expect-exit 3 relgap drift --from-tfcensus clean.json --fail-on drift --format plain
+
+# Another tool or schema version, a file that isn't JSON or doesn't exist: usage errors.
+exec expect-exit 2 relgap drift --from-tfcensus v2.json
+stderr 'schema_version "2" isn''t supported; relgap reads "1"'
+! stdout .
+exec expect-exit 2 relgap drift --from-tfcensus relgap.json
+stderr 'tool is "relgap", want "tfcensus"'
+exec expect-exit 2 relgap drift --from-tfcensus mise.toml
+stderr 'read tfcensus inventory mise.toml: not a tfcensus inventory relgap reads'
+exec expect-exit 2 relgap drift --from-tfcensus missing.json
+stderr 'read tfcensus inventory: open missing.json'
+
+-- alone.txt --
+REPO                   opentofu  terraform  tfprovider:hashicorp/aws
+tf-fleet/app           -         1.12.2     6.20.0
+tf-fleet/edge          1.10.6    -          -
+tf-fleet/edge:staging  1.10.6    -          -
+tf-fleet/legacy        -         0.11.14*   -
+tf-fleet/network       -         1.5.7*     -
+tf-fleet/shared        -         1.11.4*    -
+
+≈ allows more than one version. A constraint counts as an exact pin it allows in the same repo, else as its lower bound.
+* differs from the version most repos pin.
+1 of 3 tools drift across 9 repos.
+-- clean.txt --
+REPO                   terraform  tfprovider:hashicorp/aws
+tf-fleet/app           1.12.2*    5.100.0*
+tf-fleet/network:prod  1.15.8     6.20.0
+
+≈ allows more than one version. A constraint counts as an exact pin it allows in the same repo, else as its lower bound.
+* differs from the version most repos pin.
+2 of 2 tools drift across 2 repos.
+-- code.txt --
+REPO                   terraform  tfprovider:hashicorp/aws
+tf-fleet               1.15.8     6.20.0
+tf-fleet/app           1.12.2*    5.100.0*
+tf-fleet/network:prod  1.15.8     6.20.0
+
+≈ allows more than one version. A constraint counts as an exact pin it allows in the same repo, else as its lower bound.
+* differs from the version most repos pin.
+2 of 2 tools drift across 3 repos.
+-- mise.toml --
+[tools]
+node = "24.11.0"
+-- tf-fleet/app/versions.tf --
+terraform {
+  required_version = "1.15.8"
+  required_providers {
+    aws = { source = "hashicorp/aws", version = "~> 6.20" }
+  }
+}
+-- tf-fleet/app/.terraform.lock.hcl --
+provider "registry.terraform.io/hashicorp/aws" {
+  version     = "6.20.0"
+  constraints = "~> 6.20"
+}
+-- clean.json --
+{
+  "schema_version": "1",
+  "tool": "tfcensus",
+  "version": "0.2.0",
+  "generated_at": "2026-11-10T12:00:00Z",
+  "data": {
+    "units": [
+      {
+        "repo": "tf-fleet", "path": "app", "workspace": "default", "status": "ok",
+        "key": "app/terraform.tfstate", "terraform_version": "1.12.2", "encrypted": false,
+        "providers": [
+          { "source": "hashicorp/aws", "version": "5.100.0", "version_source": "lockfile" }
+        ],
+        "resources": 1, "instances": 1, "data_sources": 0, "resource_types": { "aws_s3_bucket": 1 },
+        "warnings": []
+      },
+      {
+        "repo": "tf-fleet", "path": "network", "workspace": "prod", "status": "ok",
+        "key": "env:/prod/network/terraform.tfstate", "terraform_version": "1.15.8", "encrypted": false,
+        "providers": [
+          { "source": "registry.terraform.io/hashicorp/aws", "version": "6.20.0", "version_source": "lockfile" }
+        ],
+        "resources": 1, "instances": 1, "data_sources": 0, "resource_types": { "aws_vpc": 1 },
+        "warnings": []
+      }
+    ],
+    "double_managed": []
+  },
+  "errors": []
+}
+-- v2.json --
+{"schema_version": "2", "tool": "tfcensus", "version": "9.0.0", "generated_at": "2027-01-01T00:00:00Z", "data": {"units": []}, "errors": []}
+-- relgap.json --
+{"schema_version": "1", "tool": "relgap", "version": "0.4.0", "generated_at": "2026-11-10T12:00:00Z", "data": {"repos": [], "tools": []}, "errors": []}
