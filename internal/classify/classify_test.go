@@ -403,3 +403,35 @@ func TestJumps(t *testing.T) {
 	assert.Equal(t, "minor version jump 0.3.x → 0.4.x: review the upgrade guide", got[0].Text)
 	assert.Equal(t, "major version jump 0.x → 1.x: review the upgrade guide", got[1].Text)
 }
+
+// TestSpec_classification_5: an upgrade guide gives one entry per heading, with its paragraphs,
+// lists, pseudo-headings and code in the text. Other sources split the same Markdown per item.
+func TestSpec_classification_5(t *testing.T) {
+	t.Parallel()
+	md := "# Upgrade guide\n\n## Breaking Changes\n\n### Renamed variable\n\n" +
+		"The server reads `NEW_NAME` instead of `OLD_NAME`.\n\n**Impact:**\n\n" +
+		"- Default manifests are unaffected.\n- Rename `OLD_NAME` in your patches.\n\n" +
+		"```yaml\nenv:\n  - name: NEW_NAME\n```\n\n" +
+		"### Default paths\n\nThe two new entries:\n\n- `*.tpl`\n- `Chart.lock`\n"
+	c := newClassifier(t, classify.Options{})
+	n := notes(t, md)
+	n.Source = source.Ref{Adapter: source.KindUpgradeGuide, URL: "https://example.test/guide.md"}
+	got := c.Entries(n)
+	require.Len(t, got, 2)
+	want := []struct {
+		heading string
+		text    []string
+	}{
+		{"Renamed variable", []string{"reads `NEW_NAME`", "**Impact:**", "- Rename `OLD_NAME`", "name: NEW_NAME"}},
+		{"Default paths", []string{"The two new entries:", "- `Chart.lock`"}},
+	}
+	for i, w := range want {
+		assert.Equal(t, []string{"Upgrade guide", "Breaking Changes", w.heading}, got[i].Source.Heading)
+		assert.Equal(t, classify.KindBreaking, got[i].Kind, w.heading)
+		for _, s := range w.text {
+			assert.Contains(t, got[i].Text, s)
+		}
+	}
+	n.Source.Adapter = source.KindGHRelease
+	assert.Len(t, c.Entries(n), 6)
+}

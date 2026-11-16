@@ -100,3 +100,35 @@ by version, with a link for each." \
   deprecations and breaking entries. Grouping by kind inside each page would read better.
 - Every page repeats the 73-version list (the first follow-up above).
 
+
+## Claude Code, 2026-11-16 (M18)
+
+Setup: the relgap binary from the M18 branch, built into the checkout and registered for this
+project only, as on 2026-11-13. `claude mcp get relgap` showed Scope: Local config and Status:
+Connected. The question and the allowed tools were the same as on 2026-11-13, with
+`--output-format stream-json --verbose` so each tool result could be measured.
+
+This run checks two follow-ups from 2026-11-12. First, a page of a split digest lists only the
+versions its entries cite. Second, an upgrade guide gives one entry per heading instead of one
+per list item or paragraph.
+
+### Argo CD 3.1.0 to the latest, through the agent
+
+- The agent called `breaking_changes` with `tool: argocd, from: 3.1.0` and got 52 of 58 entries
+  (49,769 bytes), 8 versions and a cursor. Then it called the tool with only the cursor and got
+  the other 6 entries (5,893 bytes), 1 version and no cursor. On 2026-11-13 each page repeated
+  all 73 versions.
+- The whole answer is 58 entries instead of 99, because the upgrade guides now give 52 entries
+  instead of 93. The unsplit result is 63,818 bytes, so it still comes in two pages.
+- The run took 4 turns, 48 s and 0.66 USD (4,674 output tokens, 143,429 cached input tokens).
+  On 2026-11-13 it took 85 s and 0.85 USD.
+- The answer grouped the changes that need action by version, from 3.2.0 to 3.6.0, each with a
+  link to the upgrade guide or the release. It quoted whole sections, such as the 3.3.0
+  server-side apply steps with their sub-items, and named no upgrade-guide fragments as noise.
+  It left out sections that need no action, such as the hydrator rationale.
+
+### Follow-ups
+
+- The 2026-11-13 follow-ups from the agent are still open: tag-pinned upgrade-guide links with
+  heading anchors, one entry for a security fix backported to several release lines, and
+  grouping by kind inside a page.

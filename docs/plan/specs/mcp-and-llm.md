@@ -35,7 +35,9 @@ Agreed before coding, except where a point says it changed during the work.
   `breaking_changes` page entries, and breaking, deprecation, security, feature, fix and other
   fill the pages in that order. `outdated` pages pins: failed pins, then outdated pins, then the
   rest. `drift` pages tools: drifting tools first. Each page lists its items in their original
-  order, repeats the other fields, and holds at least one item. The envelope's optional `page`
+  order, repeats the other fields, and holds at least one item. Changed in M18: a page of a
+  split digest lists only the versions its entries cite, which left room for about 15 more
+  argocd entries per page. A result that fits in one page keeps every version. The envelope's optional `page`
   field (`items`, `returned`, `total`, `next_cursor`) is in `schemas/report-v1.json`, shared
   with tfcensus; CLI output never has it.
 - The cursor is URL-safe base64 of a random 128-bit ID and a page number. It names a result
@@ -185,5 +187,6 @@ amendment.
 ## Acceptance criteria
 - [x] An in-process MCP client test calls every tool and matches the `--format json` golden output. (`TestSpec_mcp_and_llm_1`)
 - [x] Response size caps are enforced (over 50 KB → truncated with a cursor). (`TestSpec_mcp_and_llm_2`)
+- [x] Each page of a split digest lists only the versions its entries cite. (`TestSpec_mcp_and_llm_5`)
 - [x] The summarizer is tested against a fake provider. It rejects uncited claims and respects the token budget. (`TestSpec_mcp_and_llm_3`)
 - [x] A Bedrock provider smoke test exists in the `live.yml` nightly only (skipped without credentials). (`TestSpec_mcp_and_llm_4`)

@@ -5,7 +5,7 @@ Turns `VersionNotes` Markdown into `[]Entry{Kind, Text, Confidence, Source}`.
 ## Steps
 1. **Parse** with goldmark. Code fences and HTML blocks are opaque: headings inside fences are never headings (terragrunt bodies contain `# root.hcl` in hcl fences).
 2. **Segment** into sections by heading path (e.g. `v1.37.0 › Changes by Kind › Deprecation`).
-3. **Itemize:** each list item (with nested children) is one entry. A paragraph-only section is one entry.
+3. **Itemize:** each list item (with nested children) is one entry. A paragraph-only section is one entry. An upgrade guide (the `upgrade-guide` source) gives one entry per heading instead: the paragraphs, lists, pseudo-headings and code under it stay in the entry's text, and only a real Markdown heading starts a new entry. Argo CD's 3.5 to 3.6 guide gives 17 entries instead of 48.
 4. **Classify** each entry, taking the first rule that matches.
 
 | Priority | Signal | Kind | Confidence |
@@ -53,3 +53,4 @@ exists for that version. Its source adapter is `version-jump` and its URL is the
 - [x] Kubernetes `Dependencies › Removed` is never classified breaking.
 - [x] Fenced `# comment` lines never become headings (terragrunt fixture).
 - [x] `--min-confidence` filtering is covered by a testscript.
+- [x] An upgrade guide gives one entry per heading, with its lists and pseudo-headings in the text, and other sources still split the same Markdown per item. (`TestSpec_classification_5`)

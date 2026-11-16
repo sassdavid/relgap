@@ -59,7 +59,7 @@ default.
 A template with `{minor}` or `{prev_minor}` names one document per minor transition; otherwise
 one per major (terraform-provider-aws, terraform-provider-kubernetes). The document goes to the
 first version of the new line, headings one level down under "Upgrade guide", HTML comments
-removed. A transition without a document is skipped. Terraform's own upgrade guides are left
+removed. The classifier makes one entry of each heading's section ([classification](classification.md) step 3). A transition without a document is skipped. Terraform's own upgrade guides are left
 out: they moved to hashicorp/web-unified-docs and are under 1 KB, mostly a link to the changelog.
 
 ## Auto-discovery (no registry entry)

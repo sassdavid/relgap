@@ -188,10 +188,10 @@ func plainStart(text string) string {
 	return line
 }
 
-// Entries splits n into entries: one per list item and one per run of other blocks. Entries
-// under an ignored section are dropped.
+// Entries splits n into entries: one per list item and one per run of other blocks. An upgrade
+// guide gives one entry per heading instead. Entries under an ignored section are dropped.
 func (c *Classifier) Entries(n source.VersionNotes) []Entry {
-	w := &walker{c: c, n: n, src: []byte(n.Markdown)}
+	w := &walker{c: c, n: n, src: []byte(n.Markdown), whole: n.Source.Adapter == source.KindUpgradeGuide}
 	w.base, _ = url.Parse(n.Source.URL)
 	for b := range c.parser.Parse(w.src).Children() {
 		w.block(b)
@@ -207,7 +207,8 @@ type walker struct {
 	src      []byte
 	base     *url.URL
 	headings []heading
-	run      []ast.Node // consecutive non-list blocks
+	run      []ast.Node // consecutive non-list blocks, or every block under the heading when whole
+	whole    bool       // one entry per heading: lists and pseudo-headings stay in the text
 	out      []Entry
 }
 
@@ -217,6 +218,10 @@ func (w *walker) block(b ast.Node) {
 		w.flush()
 		w.headings = push(w.headings, heading{level: node.Level, text: blockText(node, w.src)})
 	case *ast.List:
+		if w.whole {
+			w.run = append(w.run, b)
+			return
+		}
 		w.flush()
 		for item := range node.Children() {
 			li, ok := item.(*ast.ListItem)
@@ -232,7 +237,7 @@ func (w *walker) block(b ast.Node) {
 	case *ast.ThematicBreak:
 		w.flush()
 	default:
-		if text, ok := pseudoHeading(b, w.src); ok {
+		if text, ok := pseudoHeading(b, w.src); ok && !w.whole {
 			w.flush()
 			w.headings = push(w.headings, heading{level: pseudoLevel, text: text})
 			return
