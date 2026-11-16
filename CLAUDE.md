@@ -28,6 +28,8 @@ Go CLI: release-notes range digests, toolchain drift across repos, EOL/OSV enric
 - Logger comes from `Deps`, never `slog.Default()` (sloglint).
 - Every network call goes through `internal/httpx` (retry, rate limit, ETag cache). Never `http.Get`.
   The one exception is the Bedrock provider of `--summarize`, which uses the AWS SDK client (ADR-0004).
+- AWS SDK code follows `.claude/rules/aws-sdk.md`. Its one `aws.Config` loader is `internal/summarize/aws.go`.
+  Check the operation's API reference and the SDK guide through the AWS MCP server first.
 - GitHub large files: use the contents API with the raw Accept header, never raw.githubusercontent.com.
 - Sort versions with `version.Scheme`, never by publish date.
 - A changelog file is parsed once per digest (`mdindex`). Don't re-parse per version.
