@@ -102,6 +102,9 @@ field's layer names the service:
 | `npm:` | `registry.npmjs.org/<package>/latest` | `repository`, then `homepage`, then `bugs` |
 | `pypi:` | `pypi.org/pypi/<package>/json` | `project_urls` Source, Source Code, Repository, Code, GitHub, Homepage, then any GitHub URL, then `home_page` |
 
+A package registry only names the repository. relgap reads no changelog URL from it, such as PyPI's
+`project_urls.Changelog`; the changelog sources come from the tool's entry or the repository.
+
 A repository that a registry knows takes that tool's entry, as `github:` does. A chart never does:
 its repository can be the application's own, whose entry describes app versions, and a chart pin
 carries a chart version. Artifact Hub often lists both. relgap picks the link into a
