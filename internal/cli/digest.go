@@ -27,6 +27,7 @@ import (
 const unauthenticatedConcurrency = 2
 
 type digestFlags struct {
+	guess              bool
 	line               string
 	includePrereleases bool
 	fromMise           bool
@@ -63,8 +64,8 @@ const (
 const digestLong = `Lists the versions after <from> up to and including <to>, fetches their release notes and
 groups the entries by kind: breaking changes, deprecations, security, features, fixes, other.
 
-<tool> resolves as in 'relgap resolve'. Without <to> the range ends at the latest stable
-version on the release line (--line).
+<tool> resolves as in 'relgap resolve', --guess included. Without <to> the range ends at the
+latest stable version on the release line (--line).
 
 Notes come from the tool's registry sources: GitHub release bodies and changelog files, each
 file fetched and parsed once. A bullet that two sources share is shown once. Each entry has a
@@ -131,6 +132,9 @@ func newDigestCmd(d *app.Deps, g *globals) *cobra.Command {
 			return exactArgs(2)(cmd, args) //nolint:mnd // tool and range
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
+			if f.guess && (f.fromMise || f.all || f.prMode()) {
+				return usageError(errors.New("--guess works only for a single <tool>"))
+			}
 			if f.fromMise || f.all || f.prMode() {
 				root := "."
 				if len(args) == 1 {
@@ -147,6 +151,7 @@ func newDigestCmd(d *app.Deps, g *globals) *cobra.Command {
 	fl := cmd.Flags()
 	fl.StringVar(&f.line, flagLine, string(version.LineNone),
 		complete.Usage("release line the range stays on: {values}", lineChoices()))
+	addGuessFlag(cmd, &f.guess)
 	fl.BoolVar(&f.includePrereleases, "include-prereleases", false,
 		"include prereleases (on when <from> or <to> is a prerelease)")
 	fl.BoolVar(&f.fromMise, flagFromMise, false,
@@ -201,6 +206,7 @@ func runDigest(cmd *cobra.Command, d *app.Deps, g *globals, f digestFlags, tool,
 		return err
 	}
 	defer s.close(cmd.Context())
+	s.guess = f.guess
 	gate, err := newGate(cmd, d, digestValues())
 	if err != nil {
 		return err

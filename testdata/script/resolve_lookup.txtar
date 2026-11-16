@@ -1,0 +1,43 @@
+# tfprovider: and chart: names that no registry knows are looked up in the Terraform registry
+# and Artifact Hub, which name the source repository.
+env TEST_NOW=2026-11-16T12:00:00Z
+env GH_TOKEN=$TEST_GH_TOKEN
+env TEST_CASSETTE=$CASSETTES/resolve/tfprovider-github.yaml
+exec relgap resolve tfprovider:integrations/github
+stdout 'input +tfprovider:integrations/github \(terraform provider, found in terraform registry\)'
+stdout 'name +terraform-provider-github +terraform registry'
+stdout 'repo +integrations/terraform-provider-github +terraform registry'
+stdout 'sources +auto-discovery +default'
+
+# A chart resolves to the repository that holds the chart, with its <name>- tag prefix.
+env TEST_CASSETTE=$CASSETTES/resolve/chart-argo-cd.yaml
+exec relgap resolve chart:argo/argo-cd --format json
+golden stdout resolve/chart-argo-cd.json
+
+# A bare chart name that several Artifact Hub repositories publish, none of them officially,
+# lists the candidates.
+env TEST_CASSETTE=$CASSETTES/resolve/chart-external-dns.yaml
+exec expect-exit 2 relgap resolve chart:external-dns
+stderr '9 Artifact Hub repositories have a chart named "external-dns"; use one of chart:bitnami/external-dns, '
+
+# --guess searches GitHub for a name no registry knows and marks the result low-confidence.
+env TEST_CASSETTE=$CASSETTES/resolve/guess-tfcensus.yaml
+exec expect-exit 2 relgap resolve tfcensus
+stderr 'unknown tool "tfcensus"'
+exec relgap resolve tfcensus --guess
+stdout 'input +tfcensus \(guess, found in github search\)'
+stdout 'confidence +low'
+stdout 'repo +sassdavid/tfcensus +github search'
+stderr 'WRN guessed the repository from a GitHub search; check it, then set tools.tfcensus.repo in the config'
+
+# Curated tools need no lookup, so they resolve with --offline and an empty cache, where a
+# lookup fails.
+[recording] stop
+env TEST_CASSETTE=
+env RELGAP_CACHE_DIR=$WORK/empty-cache
+exec relgap resolve tfprovider:hashicorp/aws --offline
+stdout 'repo +hashicorp/terraform-provider-aws +relgap registry'
+exec relgap resolve npm:@anthropic-ai/claude-code --offline
+stdout 'input +npm:@anthropic-ai/claude-code \(npm package, found in relgap registry\)'
+exec expect-exit 1 relgap resolve tfprovider:integrations/github --offline
+stderr 'look up tfprovider:integrations/github: .*not in the cache'

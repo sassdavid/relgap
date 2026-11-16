@@ -81,7 +81,8 @@
         "relgap registry"
       ]
     },
-    "mise_source": "snapshot"
+    "mise_source": "snapshot",
+    "relgap_source": "embedded"
   },
   "errors": []
 }

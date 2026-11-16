@@ -40,7 +40,7 @@ stdout carries data, stderr carries logs. Use --format json for scripting.
 * [relgap notify](relgap_notify.md)	 - Publish saved digest, outdated and drift reports as a GitHub pull request comment
 * [relgap outdated](relgap_outdated.md)	 - Compare every pinned tool version in a project with the latest release
 * [relgap pins](relgap_pins.md)	 - List the tool versions pinned in your repositories, with file and line
-* [relgap registry](relgap_registry.md)	 - Check relgap registry entries
+* [relgap registry](relgap_registry.md)	 - Check, test and update relgap registry entries
 * [relgap resolve](relgap_resolve.md)	 - Show how a tool name resolves to a repository, version rules and changelog sources
 * [relgap version](relgap_version.md)	 - Print version and build information
 

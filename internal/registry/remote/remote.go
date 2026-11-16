@@ -1,0 +1,400 @@
+package remote
+
+import (
+	"context"
+	"encoding/json"
+	"fmt"
+	"io"
+	"maps"
+	"net/http"
+	"net/url"
+	"path"
+	"regexp"
+	"slices"
+	"strings"
+
+	"github.com/sassdavid/relgap/internal/registry"
+)
+
+var repoRe = regexp.MustCompile(`^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$`)
+
+// Hosts of the package registries that [Remote] asks.
+const (
+	TerraformRegistryHost = "registry.terraform.io"
+	ArtifactHubHost       = "artifacthub.io"
+	NPMHost               = "registry.npmjs.org"
+	PyPIHost              = "pypi.org"
+)
+
+// Hosts returns the hosts [Remote] sends requests to, other than the GitHub API.
+func Hosts() []string {
+	return []string{TerraformRegistryHost, ArtifactHubHost, NPMHost, PyPIHost}
+}
+
+// RepoHit is one repository in a GitHub search result.
+type RepoHit struct {
+	FullName string
+	Stars    int
+}
+
+// RepoSearcher searches GitHub repositories by name.
+type RepoSearcher interface {
+	SearchRepos(ctx context.Context, name string) ([]RepoHit, error)
+}
+
+// Remote is a [registry.Finder] that asks the Terraform registry, Artifact Hub, npm, PyPI and GitHub.
+type Remote struct {
+	hc     *http.Client
+	search RepoSearcher
+}
+
+// New returns a [Remote] that sends requests through hc and searches with search.
+func New(hc *http.Client, search RepoSearcher) *Remote {
+	return &Remote{hc: hc, search: search}
+}
+
+const maxLookupBody = 8 << 20
+
+// Find implements [registry.Finder].
+func (r *Remote) Find(ctx context.Context, kind, name string) (*registry.Found, error) {
+	switch kind {
+	case registry.KindTFProvider:
+		return r.provider(ctx, name)
+	case registry.KindChart:
+		return r.chart(ctx, name)
+	case registry.KindNPM:
+		return r.npm(ctx, name)
+	case registry.KindPyPI:
+		return r.pypi(ctx, name)
+	case registry.KindGuess:
+		return r.guess(ctx, name)
+	}
+	return nil, fmt.Errorf("%w: no lookup for %q", registry.ErrUnsupported, kind)
+}
+
+func (r *Remote) provider(ctx context.Context, name string) (*registry.Found, error) {
+	ns, provider, ok := strings.Cut(name, "/")
+	if !ok || ns == "" || provider == "" || strings.Contains(provider, "/") {
+		return nil, fmt.Errorf("%w: tfprovider:%s is not tfprovider:<namespace>/<name>", registry.ErrUnsupported, name)
+	}
+	var doc struct {
+		Source string `json:"source"`
+	}
+	u := "https://" + TerraformRegistryHost + "/v1/providers/" + url.PathEscape(ns) + "/" + url.PathEscape(provider)
+	if err := r.getJSON(ctx, u, "the Terraform registry has no provider "+name, &doc); err != nil {
+		return nil, err
+	}
+	repo, _, ok := ParseGitHubURL(doc.Source)
+	if !ok {
+		return nil, fmt.Errorf(
+			"%w for tfprovider:%s: its source %q isn't on GitHub",
+			registry.ErrNoRepo,
+			name,
+			doc.Source,
+		)
+	}
+	return &registry.Found{Repo: repo, Layer: registry.LayerTerraform}, nil
+}
+
+type chartLink struct {
+	Name string `json:"name"`
+	URL  string `json:"url"`
+}
+
+type chartPackage struct {
+	Name       string      `json:"name"`
+	Official   bool        `json:"official"`
+	HomeURL    string      `json:"home_url"`
+	Links      []chartLink `json:"links"`
+	Repository struct {
+		Name string `json:"name"`
+		URL  string `json:"url"`
+	} `json:"repository"`
+}
+
+func (r *Remote) chart(ctx context.Context, name string) (*registry.Found, error) {
+	repoName, chart, hasRepo := strings.Cut(name, "/")
+	if !hasRepo {
+		var err error
+		if repoName, err = r.chartRepo(ctx, name); err != nil {
+			return nil, err
+		}
+		chart = name
+	}
+	if repoName == "" || chart == "" || strings.Contains(chart, "/") {
+		return nil, fmt.Errorf("%w: chart:%s is not chart:<repo>/<name> or chart:<name>", registry.ErrUnsupported, name)
+	}
+	var pkg chartPackage
+	u := "https://" + ArtifactHubHost + "/api/v1/packages/helm/" + url.PathEscape(
+		repoName,
+	) + "/" + url.PathEscape(
+		chart,
+	)
+	if err := r.getJSON(ctx, u, "Artifact Hub has no chart "+repoName+"/"+chart, &pkg); err != nil {
+		return nil, err
+	}
+	f, ok := chartSource(pkg)
+	if !ok {
+		return nil, fmt.Errorf("%w for chart:%s/%s: Artifact Hub lists no GitHub source for it",
+			registry.ErrNoRepo, repoName, chart)
+	}
+	f.Name = chart
+	return f, nil
+}
+
+// chartRepo finds the Artifact Hub repository of the chart called name: the only one with such
+// a chart, or else the only one whose chart Artifact Hub marks official, which means the
+// project publishes it.
+func (r *Remote) chartRepo(ctx context.Context, name string) (string, error) {
+	var res struct {
+		Packages []chartPackage `json:"packages"`
+	}
+	q := url.Values{"ts_query_web": {name}, "kind": {"0"}, "limit": {"60"}}
+	u := "https://" + ArtifactHubHost + "/api/v1/packages/search?" + q.Encode()
+	if err := r.getJSON(ctx, u, "", &res); err != nil {
+		return "", err
+	}
+	var repos, official []string
+	for _, p := range res.Packages {
+		if strings.EqualFold(p.Name, name) && !slices.Contains(repos, p.Repository.Name) {
+			repos = append(repos, p.Repository.Name)
+			if p.Official {
+				official = append(official, p.Repository.Name)
+			}
+		}
+	}
+	switch {
+	case len(repos) == 0:
+		return "", fmt.Errorf("%w: Artifact Hub has no chart named %q", registry.ErrUnknownTool, name)
+	case len(repos) == 1:
+		return repos[0], nil
+	case len(official) == 1:
+		return official[0], nil
+	}
+	slices.Sort(repos)
+	for i, rp := range repos {
+		repos[i] = "chart:" + rp + "/" + name
+	}
+	return "", fmt.Errorf("%w: %d Artifact Hub repositories have a chart named %q; use one of %s",
+		registry.ErrAmbiguous, len(repos), name, strings.Join(repos, ", "))
+}
+
+// chartSource picks the repository that holds the chart itself, not the application it
+// installs: a link into a subdirectory, such as argo-helm/tree/main/charts/argo-cd, wins, and
+// such a repository tags each chart as <name>-<version>, as chart-releaser does.
+func chartSource(p chartPackage) (*registry.Found, bool) {
+	var plain []string
+	for _, l := range p.Links {
+		repo, sub, ok := ParseGitHubURL(l.URL)
+		if !ok {
+			continue
+		}
+		if sub != "" {
+			return &registry.Found{Repo: repo, TagPrefix: p.Name + "-", Layer: registry.LayerArtifactHub}, true
+		}
+		plain = append(plain, repo)
+	}
+	if repo, ok := githubPages(p.Repository.URL); ok {
+		return &registry.Found{Repo: repo, TagPrefix: p.Name + "-", Layer: registry.LayerArtifactHub}, true
+	}
+	for _, raw := range []string{p.HomeURL, p.Repository.URL} {
+		if repo, _, ok := ParseGitHubURL(raw); ok {
+			plain = append(plain, repo)
+		}
+	}
+	for _, repo := range plain {
+		if strings.EqualFold(path.Base(repo), p.Name) {
+			return &registry.Found{Repo: repo, Layer: registry.LayerArtifactHub}, true
+		}
+	}
+	if len(plain) > 0 {
+		return &registry.Found{Repo: plain[0], Layer: registry.LayerArtifactHub}, true
+	}
+	return nil, false
+}
+
+// githubPages maps a chart repository served by GitHub Pages, https://<owner>.github.io/<repo>,
+// to owner/repo.
+func githubPages(raw string) (string, bool) {
+	u, err := url.Parse(raw)
+	if err != nil {
+		return "", false
+	}
+	owner, ok := strings.CutSuffix(strings.ToLower(u.Hostname()), ".github.io")
+	repo, _, _ := strings.Cut(strings.Trim(u.Path, "/"), "/")
+	if !ok || owner == "" || repo == "" || !repoRe.MatchString(owner+"/"+repo) {
+		return "", false
+	}
+	return owner + "/" + repo, true
+}
+
+func (r *Remote) npm(ctx context.Context, name string) (*registry.Found, error) {
+	var doc struct {
+		Repository json.RawMessage `json:"repository"`
+		Homepage   string          `json:"homepage"`
+		Bugs       json.RawMessage `json:"bugs"`
+	}
+	escaped := strings.Replace(name, "/", "%2F", 1)
+	u := "https://" + NPMHost + "/" + escaped + "/latest"
+	if err := r.getJSON(ctx, u, "npm has no package "+name, &doc); err != nil {
+		return nil, err
+	}
+	for _, raw := range []string{npmURL(doc.Repository), doc.Homepage, npmURL(doc.Bugs)} {
+		if repo, _, ok := parseRepoRef(raw); ok {
+			return &registry.Found{Repo: repo, Layer: registry.LayerNPM}, nil
+		}
+	}
+	return nil, fmt.Errorf("%w for npm:%s: its repository, homepage and bugs fields name no GitHub repo",
+		registry.ErrNoRepo, name)
+}
+
+// npmURL reads a package.json field that is either a string or an object with a url.
+func npmURL(raw json.RawMessage) string {
+	var s string
+	if json.Unmarshal(raw, &s) == nil {
+		return s
+	}
+	var o struct {
+		URL string `json:"url"`
+	}
+	_ = json.Unmarshal(raw, &o) // a malformed field names no repository
+	return o.URL
+}
+
+// pypiURLKeys are the project_urls labels that name a source repository, best first.
+func pypiURLKeys() []string {
+	return []string{"source", "source code", "repository", "code", "github", "homepage", "home"}
+}
+
+func (r *Remote) pypi(ctx context.Context, name string) (*registry.Found, error) {
+	var doc struct {
+		Info struct {
+			ProjectURLs map[string]string `json:"project_urls"`
+			HomePage    string            `json:"home_page"`
+		} `json:"info"`
+	}
+	u := "https://" + PyPIHost + "/pypi/" + url.PathEscape(name) + "/json"
+	if err := r.getJSON(ctx, u, "PyPI has no project "+name, &doc); err != nil {
+		return nil, err
+	}
+	byKey := map[string]string{}
+	for k, v := range doc.Info.ProjectURLs {
+		byKey[strings.ToLower(strings.TrimSpace(k))] = v
+	}
+	candidates := make([]string, 0, len(byKey)+1)
+	for _, k := range pypiURLKeys() {
+		candidates = append(candidates, byKey[k])
+	}
+	for _, k := range slices.Sorted(maps.Keys(byKey)) {
+		candidates = append(candidates, byKey[k])
+	}
+	candidates = append(candidates, doc.Info.HomePage)
+	for _, raw := range candidates {
+		if repo, _, ok := ParseGitHubURL(raw); ok {
+			return &registry.Found{Repo: repo, Layer: registry.LayerPyPI}, nil
+		}
+	}
+	return nil, fmt.Errorf("%w for pypi:%s: its project URLs name no GitHub repo", registry.ErrNoRepo, name)
+}
+
+func (r *Remote) guess(ctx context.Context, name string) (*registry.Found, error) {
+	if r.search == nil {
+		return nil, fmt.Errorf("%w %q: no GitHub search available", registry.ErrUnknownTool, name)
+	}
+	hits, err := r.search.SearchRepos(ctx, name)
+	if err != nil {
+		return nil, fmt.Errorf("search GitHub for %s: %w", name, err)
+	}
+	var exact []RepoHit
+	for _, h := range hits {
+		if strings.EqualFold(path.Base(h.FullName), name) {
+			exact = append(exact, h)
+		}
+	}
+	if len(exact) == 0 {
+		return nil, fmt.Errorf("%w %q: no GitHub repository is named exactly %s", registry.ErrUnknownTool, name, name)
+	}
+	slices.SortStableFunc(exact, func(a, b RepoHit) int { return b.Stars - a.Stars })
+	f := &registry.Found{Repo: exact[0].FullName, Name: name, Layer: registry.LayerGuess}
+	for _, h := range exact[1:] {
+		f.Alternatives = append(f.Alternatives, h.FullName)
+	}
+	return f, nil
+}
+
+// getJSON decodes the JSON at u into v. A 404 wraps [registry.ErrUnknownTool] with notFound, or is an
+// ordinary error when notFound is empty.
+func (r *Remote) getJSON(ctx context.Context, u, notFound string, v any) error {
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, u, nil)
+	if err != nil {
+		return fmt.Errorf("build request: %w", err)
+	}
+	req.Header.Set("Accept", "application/json")
+	resp, err := r.hc.Do(req)
+	if err != nil {
+		return fmt.Errorf("get %s: %w", u, err)
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode == http.StatusNotFound && notFound != "" {
+		return fmt.Errorf("%w: %s", registry.ErrUnknownTool, notFound)
+	}
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("get %s: %s", u, resp.Status)
+	}
+	if err = json.NewDecoder(io.LimitReader(resp.Body, maxLookupBody)).Decode(v); err != nil {
+		return fmt.Errorf("decode %s: %w", u, err)
+	}
+	return nil
+}
+
+// ParseGitHubURL returns the owner/repo of a GitHub URL in any of the forms package metadata
+// uses (https, git+https, git+ssh, git@github.com:, github:) and the path inside the repository
+// that a /tree/<ref>/ or /blob/<ref>/ URL points to.
+func ParseGitHubURL(raw string) (string, string, bool) {
+	s := strings.TrimSpace(raw)
+	if rest, ok := strings.CutPrefix(s, "github:"); ok {
+		return cleanRepo(rest, "")
+	}
+	if rest, ok := strings.CutPrefix(s, "git@github.com:"); ok {
+		return cleanRepo(rest, "")
+	}
+	s = strings.TrimPrefix(s, "git+")
+	u, err := url.Parse(s)
+	if err != nil || u.Host == "" {
+		return "", "", false
+	}
+	host := strings.TrimPrefix(strings.ToLower(u.Hostname()), "www.")
+	if host != "github.com" {
+		return "", "", false
+	}
+	parts := strings.Split(strings.Trim(u.Path, "/"), "/")
+	const ownerRepo, treeRef = 2, 4
+	if len(parts) < ownerRepo {
+		return "", "", false
+	}
+	sub := ""
+	if len(parts) > treeRef && (parts[2] == "tree" || parts[2] == "blob") {
+		sub = strings.Join(parts[treeRef:], "/")
+	}
+	return cleanRepo(parts[0]+"/"+parts[1], sub)
+}
+
+// parseRepoRef is [ParseGitHubURL] plus npm's owner/repo shorthand.
+func parseRepoRef(raw string) (string, string, bool) {
+	if repo, sub, ok := ParseGitHubURL(raw); ok {
+		return repo, sub, true
+	}
+	if !strings.Contains(raw, ":") {
+		return cleanRepo(raw, "")
+	}
+	return "", "", false
+}
+
+func cleanRepo(s, sub string) (string, string, bool) {
+	s, _, _ = strings.Cut(s, "#")
+	s = strings.TrimSuffix(strings.TrimSuffix(s, "/"), ".git")
+	if !repoRe.MatchString(s) {
+		return "", "", false
+	}
+	return s, sub, true
+}

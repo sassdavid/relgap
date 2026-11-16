@@ -46,5 +46,5 @@ relgap registry lint [file...] [flags]
 
 ### SEE ALSO
 
-* [relgap registry](relgap_registry.md)	 - Check relgap registry entries
+* [relgap registry](relgap_registry.md)	 - Check, test and update relgap registry entries
 

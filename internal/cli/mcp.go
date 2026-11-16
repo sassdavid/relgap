@@ -13,7 +13,6 @@ import (
 	"github.com/sassdavid/relgap/internal/httpx"
 	"github.com/sassdavid/relgap/internal/mcpkit"
 	"github.com/sassdavid/relgap/internal/mcpserver"
-	"github.com/sassdavid/relgap/internal/registry"
 	"github.com/sassdavid/relgap/internal/render"
 	"github.com/sassdavid/relgap/internal/report"
 )
@@ -191,6 +190,6 @@ func (s *session) backend() mcpserver.Backend {
 			}
 			return out, driftErrors(res, out), nil
 		},
-		Resolve: func(name string) (*registry.Resolution, error) { return s.resolve(name) },
+		Resolve: s.resolve,
 	}
 }

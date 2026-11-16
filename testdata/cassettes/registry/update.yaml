@@ -1,0 +1,2001 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.github.com
+        form:
+            ref:
+                - main
+        headers:
+            Accept:
+                - application/vnd.github.v3+json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+            X-Github-Api-Version:
+                - "2022-11-28"
+        url: https://api.github.com/repos/sassdavid/relgap/contents/registry?ref=main
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 17597
+        body: '[{"name":"argocd.yaml","path":"registry/argocd.yaml","sha":"810d48cef17ed63a061c82a75b9ac1b3ae9a26d1","size":868,"url":"https://api.github.com/repos/sassdavid/relgap/contents/registry/argocd.yaml?ref=main","html_url":"https://github.com/sassdavid/relgap/blob/main/registry/argocd.yaml","git_url":"https://api.github.com/repos/sassdavid/relgap/git/blobs/810d48cef17ed63a061c82a75b9ac1b3ae9a26d1","download_url":"https://raw.githubusercontent.com/sassdavid/relgap/main/registry/argocd.yaml","type":"file","_links":{"self":"https://api.github.com/repos/sassdavid/relgap/contents/registry/argocd.yaml?ref=main","git":"https://api.github.com/repos/sassdavid/relgap/git/blobs/810d48cef17ed63a061c82a75b9ac1b3ae9a26d1","html":"https://github.com/sassdavid/relgap/blob/main/registry/argocd.yaml"}},{"name":"awscli.yaml","path":"registry/awscli.yaml","sha":"5586699ea53240252dfa66a4576bee79ca805456","size":527,"url":"https://api.github.com/repos/sassdavid/relgap/contents/registry/awscli.yaml?ref=main","html_url":"https://github.com/sassdavid/relgap/blob/main/registry/awscli.yaml","git_url":"https://api.github.com/repos/sassdavid/relgap/git/blobs/5586699ea53240252dfa66a4576bee79ca805456","download_url":"https://raw.githubusercontent.com/sassdavid/relgap/main/registry/awscli.yaml","type":"file","_links":{"self":"https://api.github.com/repos/sassdavid/relgap/contents/registry/awscli.yaml?ref=main","git":"https://api.github.com/repos/sassdavid/relgap/git/blobs/5586699ea53240252dfa66a4576bee79ca805456","html":"https://github.com/sassdavid/relgap/blob/main/registry/awscli.yaml"}},{"name":"claude-code.yaml","path":"registry/claude-code.yaml","sha":"bf0a6af445f2ac35a49c93c9ffa2f92acf93aea7","size":474,"url":"https://api.github.com/repos/sassdavid/relgap/contents/registry/claude-code.yaml?ref=main","html_url":"https://github.com/sassdavid/relgap/blob/main/registry/claude-code.yaml","git_url":"https://api.github.com/repos/sassdavid/relgap/git/blobs/bf0a6af445f2ac35a49c93c9ffa2f92acf93aea7","download_url":"https://raw.githubusercontent.com/sassdavid/relgap/main/registry/claude-code.yaml","type":"file","_links":{"self":"https://api.github.com/repos/sassdavid/relgap/contents/registry/claude-code.yaml?ref=main","git":"https://api.github.com/repos/sassdavid/relgap/git/blobs/bf0a6af445f2ac35a49c93c9ffa2f92acf93aea7","html":"https://github.com/sassdavid/relgap/blob/main/registry/claude-code.yaml"}},{"name":"doc.go","path":"registry/doc.go","sha":"0519908f2cdd7b29ae3c3a705e5b70fbe45a80e3","size":105,"url":"https://api.github.com/repos/sassdavid/relgap/contents/registry/doc.go?ref=main","html_url":"https://github.com/sassdavid/relgap/blob/main/registry/doc.go","git_url":"https://api.github.com/repos/sassdavid/relgap/git/blobs/0519908f2cdd7b29ae3c3a705e5b70fbe45a80e3","download_url":"https://raw.githubusercontent.com/sassdavid/relgap/main/registry/doc.go","type":"file","_links":{"self":"https://api.github.com/repos/sassdavid/relgap/contents/registry/doc.go?ref=main","git":"https://api.github.com/repos/sassdavid/relgap/git/blobs/0519908f2cdd7b29ae3c3a705e5b70fbe45a80e3","html":"https://github.com/sassdavid/relgap/blob/main/registry/doc.go"}},{"name":"gh.yaml","path":"registry/gh.yaml","sha":"e073d8c27535fae1ac307b3b3ca0f04f5572e7a4","size":338,"url":"https://api.github.com/repos/sassdavid/relgap/contents/registry/gh.yaml?ref=main","html_url":"https://github.com/sassdavid/relgap/blob/main/registry/gh.yaml","git_url":"https://api.github.com/repos/sassdavid/relgap/git/blobs/e073d8c27535fae1ac307b3b3ca0f04f5572e7a4","download_url":"https://raw.githubusercontent.com/sassdavid/relgap/main/registry/gh.yaml","type":"file","_links":{"self":"https://api.github.com/repos/sassdavid/relgap/contents/registry/gh.yaml?ref=main","git":"https://api.github.com/repos/sassdavid/relgap/git/blobs/e073d8c27535fae1ac307b3b3ca0f04f5572e7a4","html":"https://github.com/sassdavid/relgap/blob/main/registry/gh.yaml"}},{"name":"go.yaml","path":"registry/go.yaml","sha":"4981f35c2d421c0d2bc97e8571ac340210f1d5a5","size":589,"url":"https://api.github.com/repos/sassdavid/relgap/contents/registry/go.yaml?ref=main","html_url":"https://github.com/sassdavid/relgap/blob/main/registry/go.yaml","git_url":"https://api.github.com/repos/sassdavid/relgap/git/blobs/4981f35c2d421c0d2bc97e8571ac340210f1d5a5","download_url":"https://raw.githubusercontent.com/sassdavid/relgap/main/registry/go.yaml","type":"file","_links":{"self":"https://api.github.com/repos/sassdavid/relgap/contents/registry/go.yaml?ref=main","git":"https://api.github.com/repos/sassdavid/relgap/git/blobs/4981f35c2d421c0d2bc97e8571ac340210f1d5a5","html":"https://github.com/sassdavid/relgap/blob/main/registry/go.yaml"}},{"name":"golangci-lint.yaml","path":"registry/golangci-lint.yaml","sha":"f856a099063bebbbbea7f777db5e355ada561811","size":361,"url":"https://api.github.com/repos/sassdavid/relgap/contents/registry/golangci-lint.yaml?ref=main","html_url":"https://github.com/sassdavid/relgap/blob/main/registry/golangci-lint.yaml","git_url":"https://api.github.com/repos/sassdavid/relgap/git/blobs/f856a099063bebbbbea7f777db5e355ada561811","download_url":"https://raw.githubusercontent.com/sassdavid/relgap/main/registry/golangci-lint.yaml","type":"file","_links":{"self":"https://api.github.com/repos/sassdavid/relgap/contents/registry/golangci-lint.yaml?ref=main","git":"https://api.github.com/repos/sassdavid/relgap/git/blobs/f856a099063bebbbbea7f777db5e355ada561811","html":"https://github.com/sassdavid/relgap/blob/main/registry/golangci-lint.yaml"}},{"name":"helm.yaml","path":"registry/helm.yaml","sha":"c4ed973392ef7a157594013db7d81bdb51c0d407","size":377,"url":"https://api.github.com/repos/sassdavid/relgap/contents/registry/helm.yaml?ref=main","html_url":"https://github.com/sassdavid/relgap/blob/main/registry/helm.yaml","git_url":"https://api.github.com/repos/sassdavid/relgap/git/blobs/c4ed973392ef7a157594013db7d81bdb51c0d407","download_url":"https://raw.githubusercontent.com/sassdavid/relgap/main/registry/helm.yaml","type":"file","_links":{"self":"https://api.github.com/repos/sassdavid/relgap/contents/registry/helm.yaml?ref=main","git":"https://api.github.com/repos/sassdavid/relgap/git/blobs/c4ed973392ef7a157594013db7d81bdb51c0d407","html":"https://github.com/sassdavid/relgap/blob/main/registry/helm.yaml"}},{"name":"k9s.yaml","path":"registry/k9s.yaml","sha":"7940467c96b56ada99148d58bb20cff46233b857","size":457,"url":"https://api.github.com/repos/sassdavid/relgap/contents/registry/k9s.yaml?ref=main","html_url":"https://github.com/sassdavid/relgap/blob/main/registry/k9s.yaml","git_url":"https://api.github.com/repos/sassdavid/relgap/git/blobs/7940467c96b56ada99148d58bb20cff46233b857","download_url":"https://raw.githubusercontent.com/sassdavid/relgap/main/registry/k9s.yaml","type":"file","_links":{"self":"https://api.github.com/repos/sassdavid/relgap/contents/registry/k9s.yaml?ref=main","git":"https://api.github.com/repos/sassdavid/relgap/git/blobs/7940467c96b56ada99148d58bb20cff46233b857","html":"https://github.com/sassdavid/relgap/blob/main/registry/k9s.yaml"}},{"name":"kubectl.yaml","path":"registry/kubectl.yaml","sha":"08db5bfd428a72d24b1a3d61355f9d5f651f432e","size":690,"url":"https://api.github.com/repos/sassdavid/relgap/contents/registry/kubectl.yaml?ref=main","html_url":"https://github.com/sassdavid/relgap/blob/main/registry/kubectl.yaml","git_url":"https://api.github.com/repos/sassdavid/relgap/git/blobs/08db5bfd428a72d24b1a3d61355f9d5f651f432e","download_url":"https://raw.githubusercontent.com/sassdavid/relgap/main/registry/kubectl.yaml","type":"file","_links":{"self":"https://api.github.com/repos/sassdavid/relgap/contents/registry/kubectl.yaml?ref=main","git":"https://api.github.com/repos/sassdavid/relgap/git/blobs/08db5bfd428a72d24b1a3d61355f9d5f651f432e","html":"https://github.com/sassdavid/relgap/blob/main/registry/kubectl.yaml"}},{"name":"mise.yaml","path":"registry/mise.yaml","sha":"e6fe34a35574a5dba0862bd62d665592f535b2d5","size":425,"url":"https://api.github.com/repos/sassdavid/relgap/contents/registry/mise.yaml?ref=main","html_url":"https://github.com/sassdavid/relgap/blob/main/registry/mise.yaml","git_url":"https://api.github.com/repos/sassdavid/relgap/git/blobs/e6fe34a35574a5dba0862bd62d665592f535b2d5","download_url":"https://raw.githubusercontent.com/sassdavid/relgap/main/registry/mise.yaml","type":"file","_links":{"self":"https://api.github.com/repos/sassdavid/relgap/contents/registry/mise.yaml?ref=main","git":"https://api.github.com/repos/sassdavid/relgap/git/blobs/e6fe34a35574a5dba0862bd62d665592f535b2d5","html":"https://github.com/sassdavid/relgap/blob/main/registry/mise.yaml"}},{"name":"node.yaml","path":"registry/node.yaml","sha":"15a3ef31fdc1a584645b15b3b4411f750484c27d","size":537,"url":"https://api.github.com/repos/sassdavid/relgap/contents/registry/node.yaml?ref=main","html_url":"https://github.com/sassdavid/relgap/blob/main/registry/node.yaml","git_url":"https://api.github.com/repos/sassdavid/relgap/git/blobs/15a3ef31fdc1a584645b15b3b4411f750484c27d","download_url":"https://raw.githubusercontent.com/sassdavid/relgap/main/registry/node.yaml","type":"file","_links":{"self":"https://api.github.com/repos/sassdavid/relgap/contents/registry/node.yaml?ref=main","git":"https://api.github.com/repos/sassdavid/relgap/git/blobs/15a3ef31fdc1a584645b15b3b4411f750484c27d","html":"https://github.com/sassdavid/relgap/blob/main/registry/node.yaml"}},{"name":"opentofu.yaml","path":"registry/opentofu.yaml","sha":"26d2365b7f6cfea48dc09d3ae3b127e3a0e7daa4","size":599,"url":"https://api.github.com/repos/sassdavid/relgap/contents/registry/opentofu.yaml?ref=main","html_url":"https://github.com/sassdavid/relgap/blob/main/registry/opentofu.yaml","git_url":"https://api.github.com/repos/sassdavid/relgap/git/blobs/26d2365b7f6cfea48dc09d3ae3b127e3a0e7daa4","download_url":"https://raw.githubusercontent.com/sassdavid/relgap/main/registry/opentofu.yaml","type":"file","_links":{"self":"https://api.github.com/repos/sassdavid/relgap/contents/registry/opentofu.yaml?ref=main","git":"https://api.github.com/repos/sassdavid/relgap/git/blobs/26d2365b7f6cfea48dc09d3ae3b127e3a0e7daa4","html":"https://github.com/sassdavid/relgap/blob/main/registry/opentofu.yaml"}},{"name":"python.yaml","path":"registry/python.yaml","sha":"bf0f0d57d880a49626eb28b865f300c77daad9a2","size":619,"url":"https://api.github.com/repos/sassdavid/relgap/contents/registry/python.yaml?ref=main","html_url":"https://github.com/sassdavid/relgap/blob/main/registry/python.yaml","git_url":"https://api.github.com/repos/sassdavid/relgap/git/blobs/bf0f0d57d880a49626eb28b865f300c77daad9a2","download_url":"https://raw.githubusercontent.com/sassdavid/relgap/main/registry/python.yaml","type":"file","_links":{"self":"https://api.github.com/repos/sassdavid/relgap/contents/registry/python.yaml?ref=main","git":"https://api.github.com/repos/sassdavid/relgap/git/blobs/bf0f0d57d880a49626eb28b865f300c77daad9a2","html":"https://github.com/sassdavid/relgap/blob/main/registry/python.yaml"}},{"name":"registry.go","path":"registry/registry.go","sha":"06a25904aa9f81d273817b58fb6670a914abc60b","size":155,"url":"https://api.github.com/repos/sassdavid/relgap/contents/registry/registry.go?ref=main","html_url":"https://github.com/sassdavid/relgap/blob/main/registry/registry.go","git_url":"https://api.github.com/repos/sassdavid/relgap/git/blobs/06a25904aa9f81d273817b58fb6670a914abc60b","download_url":"https://raw.githubusercontent.com/sassdavid/relgap/main/registry/registry.go","type":"file","_links":{"self":"https://api.github.com/repos/sassdavid/relgap/contents/registry/registry.go?ref=main","git":"https://api.github.com/repos/sassdavid/relgap/git/blobs/06a25904aa9f81d273817b58fb6670a914abc60b","html":"https://github.com/sassdavid/relgap/blob/main/registry/registry.go"}},{"name":"ruff.yaml","path":"registry/ruff.yaml","sha":"a1e5caad4f8405e2d1bdf9eee8fe7826a50e4c87","size":456,"url":"https://api.github.com/repos/sassdavid/relgap/contents/registry/ruff.yaml?ref=main","html_url":"https://github.com/sassdavid/relgap/blob/main/registry/ruff.yaml","git_url":"https://api.github.com/repos/sassdavid/relgap/git/blobs/a1e5caad4f8405e2d1bdf9eee8fe7826a50e4c87","download_url":"https://raw.githubusercontent.com/sassdavid/relgap/main/registry/ruff.yaml","type":"file","_links":{"self":"https://api.github.com/repos/sassdavid/relgap/contents/registry/ruff.yaml?ref=main","git":"https://api.github.com/repos/sassdavid/relgap/git/blobs/a1e5caad4f8405e2d1bdf9eee8fe7826a50e4c87","html":"https://github.com/sassdavid/relgap/blob/main/registry/ruff.yaml"}},{"name":"temurin.yaml","path":"registry/temurin.yaml","sha":"0cafdb232762b30f380bf367f5dc5ec705cfad17","size":679,"url":"https://api.github.com/repos/sassdavid/relgap/contents/registry/temurin.yaml?ref=main","html_url":"https://github.com/sassdavid/relgap/blob/main/registry/temurin.yaml","git_url":"https://api.github.com/repos/sassdavid/relgap/git/blobs/0cafdb232762b30f380bf367f5dc5ec705cfad17","download_url":"https://raw.githubusercontent.com/sassdavid/relgap/main/registry/temurin.yaml","type":"file","_links":{"self":"https://api.github.com/repos/sassdavid/relgap/contents/registry/temurin.yaml?ref=main","git":"https://api.github.com/repos/sassdavid/relgap/git/blobs/0cafdb232762b30f380bf367f5dc5ec705cfad17","html":"https://github.com/sassdavid/relgap/blob/main/registry/temurin.yaml"}},{"name":"terraform-provider-aws.yaml","path":"registry/terraform-provider-aws.yaml","sha":"b6178a7de44bc0ed420fec9825b6b6b5acb20b56","size":673,"url":"https://api.github.com/repos/sassdavid/relgap/contents/registry/terraform-provider-aws.yaml?ref=main","html_url":"https://github.com/sassdavid/relgap/blob/main/registry/terraform-provider-aws.yaml","git_url":"https://api.github.com/repos/sassdavid/relgap/git/blobs/b6178a7de44bc0ed420fec9825b6b6b5acb20b56","download_url":"https://raw.githubusercontent.com/sassdavid/relgap/main/registry/terraform-provider-aws.yaml","type":"file","_links":{"self":"https://api.github.com/repos/sassdavid/relgap/contents/registry/terraform-provider-aws.yaml?ref=main","git":"https://api.github.com/repos/sassdavid/relgap/git/blobs/b6178a7de44bc0ed420fec9825b6b6b5acb20b56","html":"https://github.com/sassdavid/relgap/blob/main/registry/terraform-provider-aws.yaml"}},{"name":"terraform-provider-kubernetes.yaml","path":"registry/terraform-provider-kubernetes.yaml","sha":"88df0113ed4cf2048b1131c55a9806cf67a0a65e","size":524,"url":"https://api.github.com/repos/sassdavid/relgap/contents/registry/terraform-provider-kubernetes.yaml?ref=main","html_url":"https://github.com/sassdavid/relgap/blob/main/registry/terraform-provider-kubernetes.yaml","git_url":"https://api.github.com/repos/sassdavid/relgap/git/blobs/88df0113ed4cf2048b1131c55a9806cf67a0a65e","download_url":"https://raw.githubusercontent.com/sassdavid/relgap/main/registry/terraform-provider-kubernetes.yaml","type":"file","_links":{"self":"https://api.github.com/repos/sassdavid/relgap/contents/registry/terraform-provider-kubernetes.yaml?ref=main","git":"https://api.github.com/repos/sassdavid/relgap/git/blobs/88df0113ed4cf2048b1131c55a9806cf67a0a65e","html":"https://github.com/sassdavid/relgap/blob/main/registry/terraform-provider-kubernetes.yaml"}},{"name":"terraform.yaml","path":"registry/terraform.yaml","sha":"36834c4200579f3f4840c24cf13e826a9f5e5b0b","size":582,"url":"https://api.github.com/repos/sassdavid/relgap/contents/registry/terraform.yaml?ref=main","html_url":"https://github.com/sassdavid/relgap/blob/main/registry/terraform.yaml","git_url":"https://api.github.com/repos/sassdavid/relgap/git/blobs/36834c4200579f3f4840c24cf13e826a9f5e5b0b","download_url":"https://raw.githubusercontent.com/sassdavid/relgap/main/registry/terraform.yaml","type":"file","_links":{"self":"https://api.github.com/repos/sassdavid/relgap/contents/registry/terraform.yaml?ref=main","git":"https://api.github.com/repos/sassdavid/relgap/git/blobs/36834c4200579f3f4840c24cf13e826a9f5e5b0b","html":"https://github.com/sassdavid/relgap/blob/main/registry/terraform.yaml"}},{"name":"terragrunt.yaml","path":"registry/terragrunt.yaml","sha":"7227c0d8eb3c2196e7dbb6ad221f0d394d6bcc43","size":377,"url":"https://api.github.com/repos/sassdavid/relgap/contents/registry/terragrunt.yaml?ref=main","html_url":"https://github.com/sassdavid/relgap/blob/main/registry/terragrunt.yaml","git_url":"https://api.github.com/repos/sassdavid/relgap/git/blobs/7227c0d8eb3c2196e7dbb6ad221f0d394d6bcc43","download_url":"https://raw.githubusercontent.com/sassdavid/relgap/main/registry/terragrunt.yaml","type":"file","_links":{"self":"https://api.github.com/repos/sassdavid/relgap/contents/registry/terragrunt.yaml?ref=main","git":"https://api.github.com/repos/sassdavid/relgap/git/blobs/7227c0d8eb3c2196e7dbb6ad221f0d394d6bcc43","html":"https://github.com/sassdavid/relgap/blob/main/registry/terragrunt.yaml"}},{"name":"uv.yaml","path":"registry/uv.yaml","sha":"d4d5ed92c8130f2e5857b392dc1244e92f732f01","size":490,"url":"https://api.github.com/repos/sassdavid/relgap/contents/registry/uv.yaml?ref=main","html_url":"https://github.com/sassdavid/relgap/blob/main/registry/uv.yaml","git_url":"https://api.github.com/repos/sassdavid/relgap/git/blobs/d4d5ed92c8130f2e5857b392dc1244e92f732f01","download_url":"https://raw.githubusercontent.com/sassdavid/relgap/main/registry/uv.yaml","type":"file","_links":{"self":"https://api.github.com/repos/sassdavid/relgap/contents/registry/uv.yaml?ref=main","git":"https://api.github.com/repos/sassdavid/relgap/git/blobs/d4d5ed92c8130f2e5857b392dc1244e92f732f01","html":"https://github.com/sassdavid/relgap/blob/main/registry/uv.yaml"}}]'
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Cache-Control:
+                - private, max-age=60, s-maxage=60
+            Content-Length:
+                - "17597"
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/json; charset=utf-8
+            Date:
+                - Mon, 16 Nov 2026 11:17:39 GMT
+            Etag:
+                - '"0e23354d31875a936cc107a7d14843bc3d5d6082"'
+            Last-Modified:
+                - Thu, 12 Nov 2026 16:27:05 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept, Authorization, Cookie, X-GitHub-OTP, Accept-Encoding, Accept, X-Requested-With
+            X-Accepted-Github-Permissions:
+                - contents=read
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Api-Version-Selected:
+                - "2022-11-28"
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.v3; format=json
+            X-Ratelimit-Limit:
+                - "5000"
+            X-Ratelimit-Remaining:
+                - "4964"
+            X-Ratelimit-Reset:
+                - "1794829259"
+            X-Ratelimit-Resource:
+                - core
+            X-Ratelimit-Used:
+                - "36"
+            X-Xss-Protection:
+                - "0"
+        status: 200 OK
+        code: 200
+        duration: 396.975625ms
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.github.com
+        form:
+            ref:
+                - main
+        headers:
+            Accept:
+                - application/vnd.github.raw
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+            X-Github-Api-Version:
+                - "2022-11-28"
+        url: https://api.github.com/repos/sassdavid/relgap/contents/registry/argocd.yaml?ref=main
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 868
+        body: |
+            # yaml-language-server: $schema=../schemas/registry-v1.json
+            # CHANGELOG.md stopped at 2.4.8. Release bodies open with install steps; upgrade notes are one
+            # document per minor transition on master, named after the real previous minor (2.14-3.0).
+            name: argocd
+            aliases: [argo-cd]
+            repo: argoproj/argo-cd
+            version:
+              scheme: semver
+              tag_prefix: "v"
+              universe: releases
+            sources:
+              - kind: gh-release
+                ignore_sections: ["Quick Start", "Release Signatures and Provenance", "Release Notes Blog Post", "Upgrading"]
+              - kind: upgrade-guide
+                path_template: "docs/operator-manual/upgrading/{prev_minor}-{major}.{minor}.md"
+                ref: master
+            eol: { product: argo-cd, cycle: "{major}.{minor}" }
+            osv:
+              - { ecosystem: Go, name: github.com/argoproj/argo-cd/v3 }
+              - { ecosystem: Go, name: github.com/argoproj/argo-cd/v2 }
+              - { ecosystem: Go, name: github.com/argoproj/argo-cd }
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Cache-Control:
+                - private, max-age=60, s-maxage=60
+            Content-Length:
+                - "868"
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/vnd.github.raw; charset=utf-8
+            Date:
+                - Mon, 16 Nov 2026 11:17:39 GMT
+            Etag:
+                - '"810d48cef17ed63a061c82a75b9ac1b3ae9a26d1"'
+            Last-Modified:
+                - Mon, 16 Nov 2026 10:06:45 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept, Authorization, Cookie, X-GitHub-OTP, Accept-Encoding, Accept, X-Requested-With
+            X-Accepted-Github-Permissions:
+                - contents=read
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Api-Version-Selected:
+                - "2022-11-28"
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.v3; param=raw
+            X-Ratelimit-Limit:
+                - "5000"
+            X-Ratelimit-Remaining:
+                - "4963"
+            X-Ratelimit-Reset:
+                - "1794829259"
+            X-Ratelimit-Resource:
+                - core
+            X-Ratelimit-Used:
+                - "37"
+            X-Xss-Protection:
+                - "0"
+        status: 200 OK
+        code: 200
+        duration: 294.381917ms
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.github.com
+        form:
+            ref:
+                - main
+        headers:
+            Accept:
+                - application/vnd.github.raw
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+            X-Github-Api-Version:
+                - "2022-11-28"
+        url: https://api.github.com/repos/sassdavid/relgap/contents/registry/awscli.yaml?ref=main
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 527
+        body: |
+            # yaml-language-server: $schema=../schemas/registry-v1.json
+            # No GitHub releases; v1 and v2 share the repo. v2 notes are .changes/<version>.json on the v2
+            # branch: an array of {type, category, description}. PyPI's awscli is v1, so there is no OSV.
+            name: awscli
+            aliases: [aws-cli, aws]
+            repo: aws/aws-cli
+            version:
+              scheme: semver
+              universe: tags
+              line: major
+            sources:
+              - kind: structured-json
+                path_template: ".changes/{version}.json"
+                ref: v2
+                json: { heading: type, text: "{category}: {description}" }
+            bin: [aws]
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Cache-Control:
+                - private, max-age=60, s-maxage=60
+            Content-Length:
+                - "527"
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/vnd.github.raw; charset=utf-8
+            Date:
+                - Mon, 16 Nov 2026 11:17:40 GMT
+            Etag:
+                - '"5586699ea53240252dfa66a4576bee79ca805456"'
+            Last-Modified:
+                - Mon, 16 Nov 2026 10:06:45 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept, Authorization, Cookie, X-GitHub-OTP, Accept-Encoding, Accept, X-Requested-With
+            X-Accepted-Github-Permissions:
+                - contents=read
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Api-Version-Selected:
+                - "2022-11-28"
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.v3; param=raw
+            X-Ratelimit-Limit:
+                - "5000"
+            X-Ratelimit-Remaining:
+                - "4962"
+            X-Ratelimit-Reset:
+                - "1794829259"
+            X-Ratelimit-Resource:
+                - core
+            X-Ratelimit-Used:
+                - "38"
+            X-Xss-Protection:
+                - "0"
+        status: 200 OK
+        code: 200
+        duration: 278.447417ms
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.github.com
+        form:
+            ref:
+                - main
+        headers:
+            Accept:
+                - application/vnd.github.raw
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+            X-Github-Api-Version:
+                - "2022-11-28"
+        url: https://api.github.com/repos/sassdavid/relgap/contents/registry/claude-code.yaml?ref=main
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 474
+        body: |
+            # yaml-language-server: $schema=../schemas/registry-v1.json
+            # Release bodies repeat CHANGELOG.md (1.2 MB), and some are one line. The file is read once.
+            name: claude-code
+            aliases: [claude]
+            repo: anthropics/claude-code
+            version:
+              scheme: semver
+              tag_prefix: "v"
+              universe: releases
+            sources:
+              - kind: changelog-file
+                path_template: CHANGELOG.md
+                heading: "^{version}$"
+              - kind: gh-release
+            osv:
+              - { ecosystem: npm, name: "@anthropic-ai/claude-code" }
+            bin: [claude]
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Cache-Control:
+                - private, max-age=60, s-maxage=60
+            Content-Length:
+                - "474"
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/vnd.github.raw; charset=utf-8
+            Date:
+                - Mon, 16 Nov 2026 11:17:40 GMT
+            Etag:
+                - '"bf0a6af445f2ac35a49c93c9ffa2f92acf93aea7"'
+            Last-Modified:
+                - Mon, 16 Nov 2026 10:06:45 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept, Authorization, Cookie, X-GitHub-OTP, Accept-Encoding, Accept, X-Requested-With
+            X-Accepted-Github-Permissions:
+                - contents=read
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Api-Version-Selected:
+                - "2022-11-28"
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.v3; param=raw
+            X-Ratelimit-Limit:
+                - "5000"
+            X-Ratelimit-Remaining:
+                - "4961"
+            X-Ratelimit-Reset:
+                - "1794829259"
+            X-Ratelimit-Resource:
+                - core
+            X-Ratelimit-Used:
+                - "39"
+            X-Xss-Protection:
+                - "0"
+        status: 200 OK
+        code: 200
+        duration: 249.461458ms
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.github.com
+        form:
+            ref:
+                - main
+        headers:
+            Accept:
+                - application/vnd.github.raw
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+            X-Github-Api-Version:
+                - "2022-11-28"
+        url: https://api.github.com/repos/sassdavid/relgap/contents/registry/gh.yaml?ref=main
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 338
+        body: |
+            # yaml-language-server: $schema=../schemas/registry-v1.json
+            # The release bodies are the changelog. The entry adds the /v2 Go module for OSV.
+            name: gh
+            aliases: [github-cli]
+            repo: cli/cli
+            version:
+              scheme: semver
+              tag_prefix: "v"
+              universe: releases
+            sources:
+              - kind: gh-release
+            osv:
+              - { ecosystem: Go, name: github.com/cli/cli/v2 }
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Cache-Control:
+                - private, max-age=60, s-maxage=60
+            Content-Length:
+                - "338"
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/vnd.github.raw; charset=utf-8
+            Date:
+                - Mon, 16 Nov 2026 11:17:40 GMT
+            Etag:
+                - '"e073d8c27535fae1ac307b3b3ca0f04f5572e7a4"'
+            Last-Modified:
+                - Mon, 16 Nov 2026 10:06:45 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept, Authorization, Cookie, X-GitHub-OTP, Accept-Encoding, Accept, X-Requested-With
+            X-Accepted-Github-Permissions:
+                - contents=read
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Api-Version-Selected:
+                - "2022-11-28"
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.v3; param=raw
+            X-Ratelimit-Limit:
+                - "5000"
+            X-Ratelimit-Remaining:
+                - "4960"
+            X-Ratelimit-Reset:
+                - "1794829259"
+            X-Ratelimit-Resource:
+                - core
+            X-Ratelimit-Used:
+                - "40"
+            X-Xss-Protection:
+                - "0"
+        status: 200 OK
+        code: 200
+        duration: 314.776792ms
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.github.com
+        form:
+            ref:
+                - main
+        headers:
+            Accept:
+                - application/vnd.github.raw
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+            X-Github-Api-Version:
+                - "2022-11-28"
+        url: https://api.github.com/repos/sassdavid/relgap/contents/registry/go.yaml?ref=main
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 589
+        body: |
+            # yaml-language-server: $schema=../schemas/registry-v1.json
+            # Tags are go1.N, go1.N.P and go1.NrcK. Release notes are on go.dev, one page per minor, and one
+            # paragraph per point release on the release history page.
+            name: go
+            aliases: [golang]
+            repo: golang/go
+            version:
+              scheme: loose
+              tag_prefix: "go"
+              universe: tags
+            sources:
+              - kind: web-doc
+                url_template: "https://go.dev/doc/go{major}.{minor}"
+              - kind: web-doc
+                url_template: "https://go.dev/doc/devel/release"
+                anchor: "go{version}"
+            eol: { product: go, cycle: "{major}.{minor}" }
+            osv:
+              - { ecosystem: Go, name: stdlib }
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Cache-Control:
+                - private, max-age=60, s-maxage=60
+            Content-Length:
+                - "589"
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/vnd.github.raw; charset=utf-8
+            Date:
+                - Mon, 16 Nov 2026 11:17:40 GMT
+            Etag:
+                - '"4981f35c2d421c0d2bc97e8571ac340210f1d5a5"'
+            Last-Modified:
+                - Mon, 16 Nov 2026 10:06:45 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept, Authorization, Cookie, X-GitHub-OTP, Accept-Encoding, Accept, X-Requested-With
+            X-Accepted-Github-Permissions:
+                - contents=read
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Api-Version-Selected:
+                - "2022-11-28"
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.v3; param=raw
+            X-Ratelimit-Limit:
+                - "5000"
+            X-Ratelimit-Remaining:
+                - "4959"
+            X-Ratelimit-Reset:
+                - "1794829259"
+            X-Ratelimit-Resource:
+                - core
+            X-Ratelimit-Used:
+                - "41"
+            X-Xss-Protection:
+                - "0"
+        status: 200 OK
+        code: 200
+        duration: 294.263125ms
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.github.com
+        form:
+            ref:
+                - main
+        headers:
+            Accept:
+                - application/vnd.github.raw
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+            X-Github-Api-Version:
+                - "2022-11-28"
+        url: https://api.github.com/repos/sassdavid/relgap/contents/registry/golangci-lint.yaml?ref=main
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 361
+        body: |
+            # yaml-language-server: $schema=../schemas/registry-v1.json
+            # Release bodies are a commit list; CHANGELOG.md has the curated notes under ### v<version>.
+            name: golangci-lint
+            repo: golangci/golangci-lint
+            version:
+              scheme: semver
+              tag_prefix: "v"
+              universe: releases
+            sources:
+              - kind: changelog-file
+                path_template: CHANGELOG.md
+                heading: "^v{version}$"
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Cache-Control:
+                - private, max-age=60, s-maxage=60
+            Content-Length:
+                - "361"
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/vnd.github.raw; charset=utf-8
+            Date:
+                - Mon, 16 Nov 2026 11:17:41 GMT
+            Etag:
+                - '"f856a099063bebbbbea7f777db5e355ada561811"'
+            Last-Modified:
+                - Mon, 16 Nov 2026 10:06:45 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept, Authorization, Cookie, X-GitHub-OTP, Accept-Encoding, Accept, X-Requested-With
+            X-Accepted-Github-Permissions:
+                - contents=read
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Api-Version-Selected:
+                - "2022-11-28"
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.v3; param=raw
+            X-Ratelimit-Limit:
+                - "5000"
+            X-Ratelimit-Remaining:
+                - "4958"
+            X-Ratelimit-Reset:
+                - "1794829259"
+            X-Ratelimit-Resource:
+                - core
+            X-Ratelimit-Used:
+                - "42"
+            X-Xss-Protection:
+                - "0"
+        status: 200 OK
+        code: 200
+        duration: 377.581333ms
+    - id: 7
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.github.com
+        form:
+            ref:
+                - main
+        headers:
+            Accept:
+                - application/vnd.github.raw
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+            X-Github-Api-Version:
+                - "2022-11-28"
+        url: https://api.github.com/repos/sassdavid/relgap/contents/registry/helm.yaml?ref=main
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 377
+        body: |
+            # yaml-language-server: $schema=../schemas/registry-v1.json
+            # v3 and v4 are released side by side, so a range stays on its major line by default.
+            name: helm
+            repo: helm/helm
+            version:
+              scheme: semver
+              tag_prefix: "v"
+              universe: releases
+              line: major
+            sources:
+              - kind: gh-release
+            osv:
+              - { ecosystem: Go, name: helm.sh/helm/v3 }
+              - { ecosystem: Go, name: helm.sh/helm/v4 }
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Cache-Control:
+                - private, max-age=60, s-maxage=60
+            Content-Length:
+                - "377"
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/vnd.github.raw; charset=utf-8
+            Date:
+                - Mon, 16 Nov 2026 11:17:41 GMT
+            Etag:
+                - '"c4ed973392ef7a157594013db7d81bdb51c0d407"'
+            Last-Modified:
+                - Mon, 16 Nov 2026 10:06:45 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept, Authorization, Cookie, X-GitHub-OTP, Accept-Encoding, Accept, X-Requested-With
+            X-Accepted-Github-Permissions:
+                - contents=read
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Api-Version-Selected:
+                - "2022-11-28"
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.v3; param=raw
+            X-Ratelimit-Limit:
+                - "5000"
+            X-Ratelimit-Remaining:
+                - "4957"
+            X-Ratelimit-Reset:
+                - "1794829259"
+            X-Ratelimit-Resource:
+                - core
+            X-Ratelimit-Used:
+                - "43"
+            X-Xss-Protection:
+                - "0"
+        status: 200 OK
+        code: 200
+        duration: 306.748084ms
+    - id: 8
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.github.com
+        form:
+            ref:
+                - main
+        headers:
+            Accept:
+                - application/vnd.github.raw
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+            X-Github-Api-Version:
+                - "2022-11-28"
+        url: https://api.github.com/repos/sassdavid/relgap/contents/registry/k9s.yaml?ref=main
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 457
+        body: |
+            # yaml-language-server: $schema=../schemas/registry-v1.json
+            # Each version has change_logs/release_v<version>.md; the Notes section is a sponsor preamble.
+            name: k9s
+            repo: derailed/k9s
+            version:
+              scheme: semver
+              tag_prefix: "v"
+              universe: releases
+            sources:
+              - kind: changelog-file
+                path_template: "change_logs/release_v{version}.md"
+                heading: "^Release v{version}$"
+                ignore_sections: ["Notes"]
+              - kind: gh-release
+                ignore_sections: ["Notes"]
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Cache-Control:
+                - private, max-age=60, s-maxage=60
+            Content-Length:
+                - "457"
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/vnd.github.raw; charset=utf-8
+            Date:
+                - Mon, 16 Nov 2026 11:17:41 GMT
+            Etag:
+                - '"7940467c96b56ada99148d58bb20cff46233b857"'
+            Last-Modified:
+                - Mon, 16 Nov 2026 10:06:45 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept, Authorization, Cookie, X-GitHub-OTP, Accept-Encoding, Accept, X-Requested-With
+            X-Accepted-Github-Permissions:
+                - contents=read
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Api-Version-Selected:
+                - "2022-11-28"
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.v3; param=raw
+            X-Ratelimit-Limit:
+                - "5000"
+            X-Ratelimit-Remaining:
+                - "4956"
+            X-Ratelimit-Reset:
+                - "1794829259"
+            X-Ratelimit-Resource:
+                - core
+            X-Ratelimit-Used:
+                - "44"
+            X-Xss-Protection:
+                - "0"
+        status: 200 OK
+        code: 200
+        duration: 252.6ms
+    - id: 9
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.github.com
+        form:
+            ref:
+                - main
+        headers:
+            Accept:
+                - application/vnd.github.raw
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+            X-Github-Api-Version:
+                - "2022-11-28"
+        url: https://api.github.com/repos/sassdavid/relgap/contents/registry/kubectl.yaml?ref=main
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 690
+        body: |
+            # yaml-language-server: $schema=../schemas/registry-v1.json
+            # Releases are boilerplate; notes are in one CHANGELOG file per minor on master.
+            name: kubectl
+            aliases: [kubernetes, k8s]
+            repo: kubernetes/kubernetes
+            version:
+              scheme: semver
+              tag_prefix: "v"
+              exclude: "-(alpha|beta|rc)\\."
+              universe: tags
+            sources:
+              - kind: changelog-file
+                path_template: "CHANGELOG/CHANGELOG-{major}.{minor}.md"
+                ref: master
+                heading: "^v{version}$"
+                ignore_sections: ["Dependencies"]
+              - kind: upgrade-notes
+                from_heading: "Urgent Upgrade Notes"
+            eol: { product: kubernetes, cycle: "{major}.{minor}" }
+            osv:
+              - { ecosystem: Go, name: k8s.io/kubernetes }
+            breaking_markers: ["ACTION REQUIRED"]
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Cache-Control:
+                - private, max-age=60, s-maxage=60
+            Content-Length:
+                - "690"
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/vnd.github.raw; charset=utf-8
+            Date:
+                - Mon, 16 Nov 2026 11:17:42 GMT
+            Etag:
+                - '"08db5bfd428a72d24b1a3d61355f9d5f651f432e"'
+            Last-Modified:
+                - Mon, 16 Nov 2026 10:06:45 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept, Authorization, Cookie, X-GitHub-OTP, Accept-Encoding, Accept, X-Requested-With
+            X-Accepted-Github-Permissions:
+                - contents=read
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Api-Version-Selected:
+                - "2022-11-28"
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.v3; param=raw
+            X-Ratelimit-Limit:
+                - "5000"
+            X-Ratelimit-Remaining:
+                - "4955"
+            X-Ratelimit-Reset:
+                - "1794829259"
+            X-Ratelimit-Resource:
+                - core
+            X-Ratelimit-Used:
+                - "45"
+            X-Xss-Protection:
+                - "0"
+        status: 200 OK
+        code: 200
+        duration: 355.6745ms
+    - id: 10
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.github.com
+        form:
+            ref:
+                - main
+        headers:
+            Accept:
+                - application/vnd.github.raw
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+            X-Github-Api-Version:
+                - "2022-11-28"
+        url: https://api.github.com/repos/sassdavid/relgap/contents/registry/mise.yaml?ref=main
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 425
+        body: |
+            # yaml-language-server: $schema=../schemas/registry-v1.json
+            # Release bodies are an edited summary; CHANGELOG.md (1 MB, git-cliff) has every commit. The
+            # v tag prefix also keeps the vfox-v* tags out.
+            name: mise
+            repo: jdx/mise
+            version:
+              scheme: semver
+              tag_prefix: "v"
+              universe: releases
+            sources:
+              - kind: gh-release
+              - kind: changelog-file
+                path_template: CHANGELOG.md
+            osv:
+              - { ecosystem: crates.io, name: mise }
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Cache-Control:
+                - private, max-age=60, s-maxage=60
+            Content-Length:
+                - "425"
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/vnd.github.raw; charset=utf-8
+            Date:
+                - Mon, 16 Nov 2026 11:17:42 GMT
+            Etag:
+                - '"e6fe34a35574a5dba0862bd62d665592f535b2d5"'
+            Last-Modified:
+                - Mon, 16 Nov 2026 10:06:45 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept, Authorization, Cookie, X-GitHub-OTP, Accept-Encoding, Accept, X-Requested-With
+            X-Accepted-Github-Permissions:
+                - contents=read
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Api-Version-Selected:
+                - "2022-11-28"
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.v3; param=raw
+            X-Ratelimit-Limit:
+                - "5000"
+            X-Ratelimit-Remaining:
+                - "4954"
+            X-Ratelimit-Reset:
+                - "1794829259"
+            X-Ratelimit-Resource:
+                - core
+            X-Ratelimit-Used:
+                - "46"
+            X-Xss-Protection:
+                - "0"
+        status: 200 OK
+        code: 200
+        duration: 302.087791ms
+    - id: 11
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.github.com
+        form:
+            ref:
+                - main
+        headers:
+            Accept:
+                - application/vnd.github.raw
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+            X-Github-Api-Version:
+                - "2022-11-28"
+        url: https://api.github.com/repos/sassdavid/relgap/contents/registry/node.yaml?ref=main
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 537
+        body: |
+            # yaml-language-server: $schema=../schemas/registry-v1.json
+            # One changelog file per major in doc/changelogs; headings carry the date and the version.
+            name: node
+            aliases: [nodejs]
+            repo: nodejs/node
+            version:
+              scheme: semver
+              tag_prefix: "v"
+              universe: releases
+            sources:
+              - kind: changelog-file
+                path_template: "doc/changelogs/CHANGELOG_V{major}.md"
+                ref: main
+                heading: "^\\d{4}-\\d{2}-\\d{2}, Version {version} "
+            eol: { product: nodejs, cycle: "{major}" }
+            osv:
+              - { ecosystem: GIT, name: "https://github.com/nodejs/node" }
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Cache-Control:
+                - private, max-age=60, s-maxage=60
+            Content-Length:
+                - "537"
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/vnd.github.raw; charset=utf-8
+            Date:
+                - Mon, 16 Nov 2026 11:17:42 GMT
+            Etag:
+                - '"15a3ef31fdc1a584645b15b3b4411f750484c27d"'
+            Last-Modified:
+                - Mon, 16 Nov 2026 10:06:45 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept, Authorization, Cookie, X-GitHub-OTP, Accept-Encoding, Accept, X-Requested-With
+            X-Accepted-Github-Permissions:
+                - contents=read
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Api-Version-Selected:
+                - "2022-11-28"
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.v3; param=raw
+            X-Ratelimit-Limit:
+                - "5000"
+            X-Ratelimit-Remaining:
+                - "4953"
+            X-Ratelimit-Reset:
+                - "1794829259"
+            X-Ratelimit-Resource:
+                - core
+            X-Ratelimit-Used:
+                - "47"
+            X-Xss-Protection:
+                - "0"
+        status: 200 OK
+        code: 200
+        duration: 303.603708ms
+    - id: 12
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.github.com
+        form:
+            ref:
+                - main
+        headers:
+            Accept:
+                - application/vnd.github.raw
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+            X-Github-Api-Version:
+                - "2022-11-28"
+        url: https://api.github.com/repos/sassdavid/relgap/contents/registry/opentofu.yaml?ref=main
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 599
+        body: |
+            # yaml-language-server: $schema=../schemas/registry-v1.json
+            # Like terraform: each v<major>.<minor> branch has that minor's CHANGELOG.md, with bare version headings.
+            name: opentofu
+            aliases: [tofu]
+            repo: opentofu/opentofu
+            version:
+              scheme: semver
+              tag_prefix: "v"
+              universe: releases
+            sources:
+              - kind: changelog-file
+                path_template: CHANGELOG.md
+                ref: "v{major}.{minor}"
+                heading: "^{version}$"
+              - kind: gh-release
+                ignore_sections: ["Previous Releases"]
+            eol: { product: opentofu, cycle: "{major}.{minor}" }
+            osv:
+              - { ecosystem: Go, name: github.com/opentofu/opentofu }
+            bin: [tofu]
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Cache-Control:
+                - private, max-age=60, s-maxage=60
+            Content-Length:
+                - "599"
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/vnd.github.raw; charset=utf-8
+            Date:
+                - Mon, 16 Nov 2026 11:17:43 GMT
+            Etag:
+                - '"26d2365b7f6cfea48dc09d3ae3b127e3a0e7daa4"'
+            Last-Modified:
+                - Mon, 16 Nov 2026 10:06:45 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept, Authorization, Cookie, X-GitHub-OTP, Accept-Encoding, Accept, X-Requested-With
+            X-Accepted-Github-Permissions:
+                - contents=read
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Api-Version-Selected:
+                - "2022-11-28"
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.v3; param=raw
+            X-Ratelimit-Limit:
+                - "5000"
+            X-Ratelimit-Remaining:
+                - "4952"
+            X-Ratelimit-Reset:
+                - "1794829259"
+            X-Ratelimit-Resource:
+                - core
+            X-Ratelimit-Used:
+                - "48"
+            X-Xss-Protection:
+                - "0"
+        status: 200 OK
+        code: 200
+        duration: 302.511958ms
+    - id: 13
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.github.com
+        form:
+            ref:
+                - main
+        headers:
+            Accept:
+                - application/vnd.github.raw
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+            X-Github-Api-Version:
+                - "2022-11-28"
+        url: https://api.github.com/repos/sassdavid/relgap/contents/registry/python.yaml?ref=main
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 619
+        body: |
+            # yaml-language-server: $schema=../schemas/registry-v1.json
+            # No GitHub releases. "What's new" is one page per minor on docs.python.org; every heading ends
+            # in a permalink that the strip rule drops.
+            name: python
+            aliases: [cpython, python3]
+            repo: python/cpython
+            version:
+              scheme: python
+              tag_prefix: "v"
+              universe: tags
+            sources:
+              - kind: web-doc
+                url_template: "https://docs.python.org/3/whatsnew/{major}.{minor}.html"
+                content: div.body
+                strip: [a.headerlink]
+            eol: { product: python, cycle: "{major}.{minor}" }
+            osv:
+              - { ecosystem: GIT, name: "https://github.com/python/cpython" }
+            bin: [python3, python]
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Cache-Control:
+                - private, max-age=60, s-maxage=60
+            Content-Length:
+                - "619"
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/vnd.github.raw; charset=utf-8
+            Date:
+                - Mon, 16 Nov 2026 11:17:43 GMT
+            Etag:
+                - '"bf0f0d57d880a49626eb28b865f300c77daad9a2"'
+            Last-Modified:
+                - Mon, 16 Nov 2026 10:06:45 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept, Authorization, Cookie, X-GitHub-OTP, Accept-Encoding, Accept, X-Requested-With
+            X-Accepted-Github-Permissions:
+                - contents=read
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Api-Version-Selected:
+                - "2022-11-28"
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.v3; param=raw
+            X-Ratelimit-Limit:
+                - "5000"
+            X-Ratelimit-Remaining:
+                - "4951"
+            X-Ratelimit-Reset:
+                - "1794829259"
+            X-Ratelimit-Resource:
+                - core
+            X-Ratelimit-Used:
+                - "49"
+            X-Xss-Protection:
+                - "0"
+        status: 200 OK
+        code: 200
+        duration: 306.070375ms
+    - id: 14
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.github.com
+        form:
+            ref:
+                - main
+        headers:
+            Accept:
+                - application/vnd.github.raw
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+            X-Github-Api-Version:
+                - "2022-11-28"
+        url: https://api.github.com/repos/sassdavid/relgap/contents/registry/ruff.yaml?ref=main
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 456
+        body: |+
+            # yaml-language-server: $schema=../schemas/registry-v1.json
+            # CHANGELOG.md holds the current minor line; older lines are in changelogs/<major>.<minor>.x.md.
+            name: ruff
+            repo: astral-sh/ruff
+            version:
+              scheme: semver
+              universe: releases
+            sources:
+              - kind: changelog-file
+                path_template: CHANGELOG.md
+                heading: "^{version}$"
+              - kind: changelog-file
+                path_template: "changelogs/{major}.{minor}.x.md"
+                heading: "^{version}$"
+              - kind: gh-release
+
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Cache-Control:
+                - private, max-age=60, s-maxage=60
+            Content-Length:
+                - "456"
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/vnd.github.raw; charset=utf-8
+            Date:
+                - Mon, 16 Nov 2026 11:17:43 GMT
+            Etag:
+                - '"a1e5caad4f8405e2d1bdf9eee8fe7826a50e4c87"'
+            Last-Modified:
+                - Mon, 16 Nov 2026 10:06:45 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept, Authorization, Cookie, X-GitHub-OTP, Accept-Encoding, Accept, X-Requested-With
+            X-Accepted-Github-Permissions:
+                - contents=read
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Api-Version-Selected:
+                - "2022-11-28"
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.v3; param=raw
+            X-Ratelimit-Limit:
+                - "5000"
+            X-Ratelimit-Remaining:
+                - "4950"
+            X-Ratelimit-Reset:
+                - "1794829259"
+            X-Ratelimit-Resource:
+                - core
+            X-Ratelimit-Used:
+                - "50"
+            X-Xss-Protection:
+                - "0"
+        status: 200 OK
+        code: 200
+        duration: 302.724958ms
+    - id: 15
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.github.com
+        form:
+            ref:
+                - main
+        headers:
+            Accept:
+                - application/vnd.github.raw
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+            X-Github-Api-Version:
+                - "2022-11-28"
+        url: https://api.github.com/repos/sassdavid/relgap/contents/registry/temurin.yaml?ref=main
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 679
+        body: |
+            # yaml-language-server: $schema=../schemas/registry-v1.json
+            # Release bodies are one line. Adoptium's API has the notes of each build as JSON. This entry
+            # follows the 21 LTS line; other majors live in adoptium/temurin<major>-binaries.
+            name: temurin
+            aliases: [eclipse-temurin, temurin-21]
+            repo: adoptium/temurin21-binaries
+            version:
+              scheme: loose
+              tag_prefix: "jdk-"
+              exclude: "-(ea|beta)"
+              universe: releases
+            sources:
+              - kind: structured-json
+                url_template: "https://api.adoptium.net/v3/info/release_notes/{tag}"
+                json: { items: release_notes, heading: type, text: "{title} ({component})", link: link }
+            eol: { product: eclipse-temurin, cycle: "{major}" }
+            bin: [java]
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Cache-Control:
+                - private, max-age=60, s-maxage=60
+            Content-Length:
+                - "679"
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/vnd.github.raw; charset=utf-8
+            Date:
+                - Mon, 16 Nov 2026 11:17:44 GMT
+            Etag:
+                - '"0cafdb232762b30f380bf367f5dc5ec705cfad17"'
+            Last-Modified:
+                - Mon, 16 Nov 2026 10:06:45 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept, Authorization, Cookie, X-GitHub-OTP, Accept-Encoding, Accept, X-Requested-With
+            X-Accepted-Github-Permissions:
+                - contents=read
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Api-Version-Selected:
+                - "2022-11-28"
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.v3; param=raw
+            X-Ratelimit-Limit:
+                - "5000"
+            X-Ratelimit-Remaining:
+                - "4949"
+            X-Ratelimit-Reset:
+                - "1794829259"
+            X-Ratelimit-Resource:
+                - core
+            X-Ratelimit-Used:
+                - "51"
+            X-Xss-Protection:
+                - "0"
+        status: 200 OK
+        code: 200
+        duration: 304.661833ms
+    - id: 16
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.github.com
+        form:
+            ref:
+                - main
+        headers:
+            Accept:
+                - application/vnd.github.raw
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+            X-Github-Api-Version:
+                - "2022-11-28"
+        url: https://api.github.com/repos/sassdavid/relgap/contents/registry/terraform-provider-aws.yaml?ref=main
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 673
+        body: |
+            # yaml-language-server: $schema=../schemas/registry-v1.json
+            # CHANGELOG.md on main covers the current major; older majors are on release/<major>.x, so the
+            # release bodies fill in. Each major has an upgrade guide.
+            name: terraform-provider-aws
+            repo: hashicorp/terraform-provider-aws
+            version:
+              scheme: semver
+              tag_prefix: "v"
+              universe: releases
+            sources:
+              - kind: changelog-file
+                path_template: CHANGELOG.md
+                ref: main
+                heading: "^{version} \\("
+              - kind: gh-release
+              - kind: upgrade-guide
+                path_template: "website/docs/guides/version-{major}-upgrade.html.markdown"
+                ref: main
+            osv:
+              - { ecosystem: Go, name: github.com/hashicorp/terraform-provider-aws }
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Cache-Control:
+                - private, max-age=60, s-maxage=60
+            Content-Length:
+                - "673"
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/vnd.github.raw; charset=utf-8
+            Date:
+                - Mon, 16 Nov 2026 11:17:44 GMT
+            Etag:
+                - '"b6178a7de44bc0ed420fec9825b6b6b5acb20b56"'
+            Last-Modified:
+                - Mon, 16 Nov 2026 10:06:45 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept, Authorization, Cookie, X-GitHub-OTP, Accept-Encoding, Accept, X-Requested-With
+            X-Accepted-Github-Permissions:
+                - contents=read
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Api-Version-Selected:
+                - "2022-11-28"
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.v3; param=raw
+            X-Ratelimit-Limit:
+                - "5000"
+            X-Ratelimit-Remaining:
+                - "4948"
+            X-Ratelimit-Reset:
+                - "1794829259"
+            X-Ratelimit-Resource:
+                - core
+            X-Ratelimit-Used:
+                - "52"
+            X-Xss-Protection:
+                - "0"
+        status: 200 OK
+        code: 200
+        duration: 267.544333ms
+    - id: 17
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.github.com
+        form:
+            ref:
+                - main
+        headers:
+            Accept:
+                - application/vnd.github.raw
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+            X-Github-Api-Version:
+                - "2022-11-28"
+        url: https://api.github.com/repos/sassdavid/relgap/contents/registry/terraform-provider-kubernetes.yaml?ref=main
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 524
+        body: |
+            # yaml-language-server: $schema=../schemas/registry-v1.json
+            # Release bodies and CHANGELOG.md both carry the notes; each major has an upgrade guide.
+            name: terraform-provider-kubernetes
+            repo: hashicorp/terraform-provider-kubernetes
+            version:
+              scheme: semver
+              tag_prefix: "v"
+              universe: releases
+            sources:
+              - kind: gh-release
+              - kind: changelog-file
+                path_template: CHANGELOG.md
+                ref: main
+                heading: "^{version} \\("
+              - kind: upgrade-guide
+                path_template: "docs/guides/v{major}-upgrade-guide.md"
+                ref: main
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Cache-Control:
+                - private, max-age=60, s-maxage=60
+            Content-Length:
+                - "524"
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/vnd.github.raw; charset=utf-8
+            Date:
+                - Mon, 16 Nov 2026 11:17:44 GMT
+            Etag:
+                - '"88df0113ed4cf2048b1131c55a9806cf67a0a65e"'
+            Last-Modified:
+                - Mon, 16 Nov 2026 10:06:45 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept, Authorization, Cookie, X-GitHub-OTP, Accept-Encoding, Accept, X-Requested-With
+            X-Accepted-Github-Permissions:
+                - contents=read
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Api-Version-Selected:
+                - "2022-11-28"
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.v3; param=raw
+            X-Ratelimit-Limit:
+                - "5000"
+            X-Ratelimit-Remaining:
+                - "4947"
+            X-Ratelimit-Reset:
+                - "1794829259"
+            X-Ratelimit-Resource:
+                - core
+            X-Ratelimit-Used:
+                - "53"
+            X-Xss-Protection:
+                - "0"
+        status: 200 OK
+        code: 200
+        duration: 340.627083ms
+    - id: 18
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.github.com
+        form:
+            ref:
+                - main
+        headers:
+            Accept:
+                - application/vnd.github.raw
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+            X-Github-Api-Version:
+                - "2022-11-28"
+        url: https://api.github.com/repos/sassdavid/relgap/contents/registry/terraform.yaml?ref=main
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 582
+        body: |
+            # yaml-language-server: $schema=../schemas/registry-v1.json
+            # The release body links to CHANGELOG.md, which lives on the v<major>.<minor> release branch.
+            name: terraform
+            aliases: [tf]
+            repo: hashicorp/terraform
+            version:
+              scheme: semver
+              tag_prefix: "v"
+              universe: releases
+            sources:
+              - kind: changelog-file
+                path_template: CHANGELOG.md
+                ref: "v{major}.{minor}"
+                heading: "^{version} \\("
+              - kind: gh-release
+                ignore_sections: ["Previous Releases"]
+            eol: { product: terraform, cycle: "{major}.{minor}" }
+            osv:
+              - { ecosystem: Go, name: github.com/hashicorp/terraform }
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Cache-Control:
+                - private, max-age=60, s-maxage=60
+            Content-Length:
+                - "582"
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/vnd.github.raw; charset=utf-8
+            Date:
+                - Mon, 16 Nov 2026 11:17:44 GMT
+            Etag:
+                - '"36834c4200579f3f4840c24cf13e826a9f5e5b0b"'
+            Last-Modified:
+                - Mon, 16 Nov 2026 10:06:45 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept, Authorization, Cookie, X-GitHub-OTP, Accept-Encoding, Accept, X-Requested-With
+            X-Accepted-Github-Permissions:
+                - contents=read
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Api-Version-Selected:
+                - "2022-11-28"
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.v3; param=raw
+            X-Ratelimit-Limit:
+                - "5000"
+            X-Ratelimit-Remaining:
+                - "4946"
+            X-Ratelimit-Reset:
+                - "1794829259"
+            X-Ratelimit-Resource:
+                - core
+            X-Ratelimit-Used:
+                - "54"
+            X-Xss-Protection:
+                - "0"
+        status: 200 OK
+        code: 200
+        duration: 301.94425ms
+    - id: 19
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.github.com
+        form:
+            ref:
+                - main
+        headers:
+            Accept:
+                - application/vnd.github.raw
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+            X-Github-Api-Version:
+                - "2022-11-28"
+        url: https://api.github.com/repos/sassdavid/relgap/contents/registry/terragrunt.yaml?ref=main
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 377
+        body: |
+            # yaml-language-server: $schema=../schemas/registry-v1.json
+            # The release bodies are the changelog; the repo has no CHANGELOG file. The entry adds OSV.
+            name: terragrunt
+            aliases: [tg]
+            repo: gruntwork-io/terragrunt
+            version:
+              scheme: semver
+              tag_prefix: "v"
+              universe: releases
+            sources:
+              - kind: gh-release
+            osv:
+              - { ecosystem: Go, name: github.com/gruntwork-io/terragrunt }
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Cache-Control:
+                - private, max-age=60, s-maxage=60
+            Content-Length:
+                - "377"
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/vnd.github.raw; charset=utf-8
+            Date:
+                - Mon, 16 Nov 2026 11:17:45 GMT
+            Etag:
+                - '"7227c0d8eb3c2196e7dbb6ad221f0d394d6bcc43"'
+            Last-Modified:
+                - Mon, 16 Nov 2026 10:06:45 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept, Authorization, Cookie, X-GitHub-OTP, Accept-Encoding, Accept, X-Requested-With
+            X-Accepted-Github-Permissions:
+                - contents=read
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Api-Version-Selected:
+                - "2022-11-28"
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.v3; param=raw
+            X-Ratelimit-Limit:
+                - "5000"
+            X-Ratelimit-Remaining:
+                - "4945"
+            X-Ratelimit-Reset:
+                - "1794829259"
+            X-Ratelimit-Resource:
+                - core
+            X-Ratelimit-Used:
+                - "55"
+            X-Xss-Protection:
+                - "0"
+        status: 200 OK
+        code: 200
+        duration: 303.930959ms
+    - id: 20
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.github.com
+        form:
+            ref:
+                - main
+        headers:
+            Accept:
+                - application/vnd.github.raw
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+            X-Github-Api-Version:
+                - "2022-11-28"
+        url: https://api.github.com/repos/sassdavid/relgap/contents/registry/uv.yaml?ref=main
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 490
+        body: |
+            # yaml-language-server: $schema=../schemas/registry-v1.json
+            # CHANGELOG.md holds the current minor line; older lines are in changelogs/<major>.<minor>.x.md.
+            name: uv
+            repo: astral-sh/uv
+            version:
+              scheme: semver
+              universe: releases
+            sources:
+              - kind: changelog-file
+                path_template: CHANGELOG.md
+                heading: "^{version}$"
+              - kind: changelog-file
+                path_template: "changelogs/{major}.{minor}.x.md"
+                heading: "^{version}$"
+              - kind: gh-release
+            osv:
+              - { ecosystem: PyPI, name: uv }
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Cache-Control:
+                - private, max-age=60, s-maxage=60
+            Content-Length:
+                - "490"
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/vnd.github.raw; charset=utf-8
+            Date:
+                - Mon, 16 Nov 2026 11:17:45 GMT
+            Etag:
+                - '"d4d5ed92c8130f2e5857b392dc1244e92f732f01"'
+            Last-Modified:
+                - Mon, 16 Nov 2026 10:06:45 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept, Authorization, Cookie, X-GitHub-OTP, Accept-Encoding, Accept, X-Requested-With
+            X-Accepted-Github-Permissions:
+                - contents=read
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Api-Version-Selected:
+                - "2022-11-28"
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.v3; param=raw
+            X-Ratelimit-Limit:
+                - "5000"
+            X-Ratelimit-Remaining:
+                - "4944"
+            X-Ratelimit-Reset:
+                - "1794829259"
+            X-Ratelimit-Resource:
+                - core
+            X-Ratelimit-Used:
+                - "56"
+            X-Xss-Protection:
+                - "0"
+        status: 200 OK
+        code: 200
+        duration: 259.337833ms

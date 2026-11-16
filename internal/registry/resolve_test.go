@@ -50,7 +50,7 @@ func liveResolver(t *testing.T) *registry.Resolver {
 func TestSpec_tool_resolution_1(t *testing.T) {
 	t.Parallel()
 	r := snapshotResolver(t, registry.ConfigLayer{})
-	want, err := r.Resolve("terraform")
+	want, err := r.Resolve(t.Context(), "terraform", registry.ResolveOptions{})
 	require.NoError(t, err)
 	assert.Equal(t, "hashicorp/terraform", want.Tool.Repo)
 	assert.Equal(t, "semver", want.Tool.Version.Scheme)
@@ -64,7 +64,7 @@ func TestSpec_tool_resolution_1(t *testing.T) {
 	assert.Equal(t, []registry.Layer{registry.LayerDefault}, want.Provenance["version.line"])
 
 	for _, in := range []string{"tf", "TERRAFORM_VERSION", "aqua:hashicorp/terraform", "TF", "github:hashicorp/terraform"} {
-		got, resolveErr := r.Resolve(in)
+		got, resolveErr := r.Resolve(t.Context(), in, registry.ResolveOptions{})
 		require.NoError(t, resolveErr, in)
 		assert.Equal(t, want.Tool, got.Tool, in)
 		assert.Equal(t, want.Provenance, got.Provenance, in)
@@ -90,8 +90,8 @@ func TestSpec_tool_resolution_2(t *testing.T) {
 	absent, present := snapshotResolver(t, registry.ConfigLayer{}), liveResolver(t)
 	resolved := 0
 	for _, tool := range c.Tools {
-		snap, snapErr := absent.Resolve(tool.Tool)
-		live, liveErr := present.Resolve(tool.Tool)
+		snap, snapErr := absent.Resolve(t.Context(), tool.Tool, registry.ResolveOptions{})
+		live, liveErr := present.Resolve(t.Context(), tool.Tool, registry.ResolveOptions{})
 		if snapErr != nil || liveErr != nil {
 			require.Error(t, snapErr, tool.Tool)
 			require.Error(t, liveErr, tool.Tool)
@@ -242,7 +242,7 @@ func TestResolve(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.in, func(t *testing.T) {
 			t.Parallel()
-			res, err := r.Resolve(tt.in)
+			res, err := r.Resolve(t.Context(), tt.in, registry.ResolveOptions{})
 			if tt.repo == "" {
 				require.ErrorIs(t, err, registry.ErrNoRepo)
 				return
@@ -301,15 +301,19 @@ func TestResolveErrors(t *testing.T) {
 		{"", registry.ErrUnknownTool, "empty name"},
 		{"no-such-tool-anywhere", registry.ErrUnknownTool, "use github:owner/repo or aqua:package"},
 		{"X_VERSION", registry.ErrUnknownTool, "which no registry knows"},
-		{"tfprovider:hashicorp/random", registry.ErrUnsupported, "only curated providers resolve"},
-		{"chart:argo/argo-cd", registry.ErrUnsupported, "chart"},
-		{"core:node", registry.ErrUnsupported, `unknown prefix "core:" (relgap knows github and aqua)`},
+		{"tfprovider:hashicorp/random", registry.ErrUnsupported, "needs a lookup in the Terraform registry"},
+		{"chart:argo/argo-cd", registry.ErrUnsupported, "needs a lookup in Artifact Hub"},
+		{
+			"core:node",
+			registry.ErrUnsupported,
+			`unknown prefix "core:" (relgap knows github, aqua, tfprovider, chart, npm and pypi)`,
+		},
 		{"github:not-a-repo", registry.ErrUnsupported, "github:owner/repo"},
 		{"aqua:nope/nope", registry.ErrUnknownTool, "aqua registry snapshot"},
 		{"java", registry.ErrNoRepo, "core:java"},
 	}
 	for _, tt := range tests {
-		_, err := r.Resolve(tt.in)
+		_, err := r.Resolve(t.Context(), tt.in, registry.ResolveOptions{})
 		require.ErrorIs(t, err, tt.want, tt.in)
 		assert.ErrorContains(t, err, tt.msg, tt.in)
 	}
@@ -328,12 +332,12 @@ func TestMiseAliasEntries(t *testing.T) {
 	}
 	r := registry.NewResolver(in)
 	for _, name := range []string{"awscli", "aws", "aws-cli"} {
-		res, err := r.Resolve(name)
+		res, err := r.Resolve(t.Context(), name, registry.ResolveOptions{})
 		require.NoError(t, err)
 		assert.Equal(t, "aws-cli", res.Tool.Name, name)
 		assert.Equal(t, []string{"aws", "awscli"}, res.Tool.Aliases, name)
 	}
-	res, err := r.Resolve("tool")
+	res, err := r.Resolve(t.Context(), "tool", registry.ResolveOptions{})
 	require.NoError(t, err)
 	assert.Equal(t, "acme/tool", res.Tool.Repo)
 }
@@ -345,7 +349,7 @@ func TestLoadMiseFailure(t *testing.T) {
 	runner := execx.NewRunner(discard(), execx.WithEnviron(func() []string { return environ }))
 	r, err := registry.Load(t.Context(), discard(), misex.New(runner), registry.ConfigLayer{})
 	require.NoError(t, err)
-	res, err := r.Resolve("terragrunt")
+	res, err := r.Resolve(t.Context(), "terragrunt", registry.ResolveOptions{})
 	require.NoError(t, err)
 	assert.Equal(t, registry.MiseSourceSnapshot, res.MiseSource, "an old or broken mise falls back to the snapshot")
 }

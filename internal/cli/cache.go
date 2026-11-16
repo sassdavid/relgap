@@ -2,6 +2,8 @@ package cli
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
 	"runtime"
 	"slices"
 	"strconv"
@@ -17,6 +19,7 @@ import (
 	"github.com/sassdavid/relgap/internal/config"
 	"github.com/sassdavid/relgap/internal/github"
 	"github.com/sassdavid/relgap/internal/httpx"
+	"github.com/sassdavid/relgap/internal/registry/remote"
 	"github.com/sassdavid/relgap/internal/render"
 )
 
@@ -85,7 +88,9 @@ func newCacheClearCmd(d *app.Deps, g *globals) *cobra.Command {
 	return &cobra.Command{
 		Use:   "clear",
 		Short: "Delete every cache entry",
-		Args:  noArgs,
+		Long: `Deletes every HTTP cache entry and the registry entries 'relgap registry update'
+downloaded, so resolution falls back to the entries embedded in relgap.`,
+		Args: noArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			c, err := g.cacheForMaintenance(cmd, d)
 			if err != nil {
@@ -95,6 +100,9 @@ func newCacheClearCmd(d *app.Deps, g *globals) *cobra.Command {
 			r, err := c.Clear()
 			if err != nil {
 				return err //nolint:wrapcheck // httpx errors name the path
+			}
+			if err = clearRegistry(d, &r); err != nil {
+				return err
 			}
 			return writeRemoved(d, g, r)
 		},
@@ -172,13 +180,9 @@ func (g *globals) cacheForMaintenance(cmd *cobra.Command, d *app.Deps) (*httpx.C
 // newCache builds the HTTP cache from config and the cache mode flags. Config must be loaded.
 func (g *globals) newCache(d *app.Deps) (*httpx.Cache, error) {
 	cfg := d.Config.Config.Cache
-	dir := cfg.Dir
-	if dir == "" {
-		base, err := config.CacheDirPath(d.Env.Lookup, runtime.GOOS)
-		if err != nil {
-			return nil, fmt.Errorf("find cache dir: %w", err)
-		}
-		dir = base
+	dir, err := cacheDir(d)
+	if err != nil {
+		return nil, err
 	}
 	overrides, err := parseTTLOverride(cfg.TTLOverride)
 	if err != nil {
@@ -203,8 +207,49 @@ func (g *globals) newCache(d *app.Deps) (*httpx.Cache, error) {
 	}), nil
 }
 
-// enrichmentTTL is how long endoflife.date and OSV answers stay fresh unless the config says
-// otherwise. Neither tells relgap how old its data is.
+// cacheDir is the directory that holds the HTTP cache and the updated registry entries. Config
+// must be loaded.
+func cacheDir(d *app.Deps) (string, error) {
+	if dir := d.Config.Config.Cache.Dir; dir != "" {
+		return dir, nil
+	}
+	base, err := config.CacheDirPath(d.Env.Lookup, runtime.GOOS)
+	if err != nil {
+		return "", fmt.Errorf("find cache dir: %w", err)
+	}
+	return base, nil
+}
+
+// registryDir is where `relgap registry update` keeps entries. Config must be loaded.
+func registryDir(d *app.Deps) (string, error) {
+	dir, err := cacheDir(d)
+	if err != nil {
+		return "", err
+	}
+	return filepath.Join(dir, "registry"), nil
+}
+
+// clearRegistry deletes the entries of `relgap registry update` and adds them to r.
+func clearRegistry(d *app.Deps, r *httpx.Removed) error {
+	dir, err := registryDir(d)
+	if err != nil {
+		return err
+	}
+	files, _ := filepath.Glob(filepath.Join(dir, "*.yaml")) // the pattern is valid
+	for _, f := range files {
+		if fi, statErr := os.Stat(f); statErr == nil {
+			r.Entries++
+			r.Bytes += fi.Size()
+		}
+	}
+	if err = os.RemoveAll(dir); err != nil {
+		return fmt.Errorf("clear updated registry entries: %w", err)
+	}
+	return nil
+}
+
+// enrichmentTTL is how long endoflife.date, OSV and package registry answers stay fresh unless
+// the config says otherwise. None of them tells relgap how old its data is.
 const enrichmentTTL = 24 * time.Hour
 
 // parseTTLOverride turns cache.ttl_override into TTLs by host, on top of the 1-day default for
@@ -212,6 +257,9 @@ const enrichmentTTL = 24 * time.Hour
 func parseTTLOverride(in map[string]string) (map[string]time.Duration, error) {
 	sources := ttlSources()
 	out := map[string]time.Duration{sources["endoflife"]: enrichmentTTL, sources["osv"]: enrichmentTTL}
+	for _, host := range remote.Hosts() {
+		out[host] = enrichmentTTL
+	}
 	for key, val := range in {
 		ttl, err := time.ParseDuration(val)
 		if err != nil || ttl <= 0 {

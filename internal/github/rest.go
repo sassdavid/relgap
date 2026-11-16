@@ -122,17 +122,63 @@ type File struct {
 
 // RootFiles lists the top directory of repo on its default branch through the contents API.
 func (c *Client) RootFiles(ctx context.Context, repo string) ([]File, error) {
+	return c.listDir(ctx, repo, "", "")
+}
+
+// Dir returns the names of the files, not directories, in dir of repo at ref.
+func (c *Client) Dir(ctx context.Context, repo, ref, dir string) ([]string, error) {
+	files, err := c.listDir(ctx, repo, ref, dir)
+	if err != nil {
+		return nil, err
+	}
+	out := make([]string, 0, len(files))
+	for _, f := range files {
+		if !f.Dir {
+			out = append(out, f.Name)
+		}
+	}
+	return out, nil
+}
+
+func (c *Client) listDir(ctx context.Context, repo, ref, dir string) ([]File, error) {
 	owner, name, err := splitRepo(repo)
 	if err != nil {
 		return nil, err
 	}
-	_, dir, _, err := c.rest.Repositories.GetContents(ctx, owner, name, "", nil)
+	var opts *gogithub.RepositoryContentGetOptions
+	if ref != "" {
+		opts = &gogithub.RepositoryContentGetOptions{Ref: ref}
+	}
+	_, list, _, err := c.rest.Repositories.GetContents(ctx, owner, name, dir, opts)
 	if err != nil {
 		return nil, fmt.Errorf("list files of %s: %w", repo, mapRESTError(err))
 	}
-	out := make([]File, 0, len(dir))
-	for _, f := range dir {
+	out := make([]File, 0, len(list))
+	for _, f := range list {
 		out = append(out, File{Name: f.GetName(), Size: f.GetSize(), Dir: f.GetType() == "dir"})
+	}
+	return out, nil
+}
+
+// Repo is one repository of a search result.
+type Repo struct {
+	FullName string
+	Stars    int
+}
+
+const searchPageSize = 30
+
+// SearchRepos returns up to 30 repositories whose name contains name, most stars first.
+func (c *Client) SearchRepos(ctx context.Context, name string) ([]Repo, error) {
+	res, _, err := c.rest.Search.Repositories(ctx, name+" in:name", &gogithub.SearchOptions{
+		Sort: "stars", Order: "desc", PerPage: searchPageSize,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("search repositories for %s: %w", name, mapRESTError(err))
+	}
+	out := make([]Repo, 0, len(res.Repositories))
+	for _, r := range res.Repositories {
+		out = append(out, Repo{FullName: r.GetFullName(), Stars: r.GetStargazersCount()})
 	}
 	return out, nil
 }

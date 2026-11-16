@@ -16,6 +16,7 @@ import (
 	"github.com/sassdavid/relgap/internal/github"
 	"github.com/sassdavid/relgap/internal/httpx"
 	"github.com/sassdavid/relgap/internal/registry"
+	"github.com/sassdavid/relgap/internal/registry/remote"
 	"github.com/sassdavid/relgap/internal/report"
 	"github.com/sassdavid/relgap/internal/scan"
 	"github.com/sassdavid/relgap/internal/source"
@@ -37,6 +38,8 @@ type session struct {
 	// tokenRunner runs `gh auth token`; nil skips it.
 	tokenRunner github.Runner
 	newCache    func() (*httpx.Cache, error)
+	// guess lets resolve search GitHub for names no registry knows (--guess).
+	guess bool
 
 	once  sync.Once
 	cache *httpx.Cache
@@ -84,9 +87,53 @@ func (s *session) close(ctx context.Context) {
 	}
 }
 
-// resolve resolves a tool name. Unknown tools are usage errors.
-func (s *session) resolve(name string) (*registry.Resolution, error) {
-	return resolveName(s.resolver, name)
+// resolve resolves a tool name, asking package registries for tfprovider:, chart:, npm: and
+// pypi: names that the registries don't know. Unknown tools are usage errors.
+func (s *session) resolve(ctx context.Context, name string) (*registry.Resolution, error) {
+	res, err := resolveName(ctx, s.resolver, name, registry.ResolveOptions{Finder: sessionFinder{s}, Guess: s.guess})
+	if err != nil {
+		return nil, err
+	}
+	if res.Confidence == registry.ConfidenceLow {
+		args := []any{"tool", name, "repo", res.Tool.Repo}
+		if len(res.Alternatives) > 0 {
+			args = append(args, "alternatives", strings.Join(res.Alternatives, ", "))
+		}
+		s.d.Logger.WarnContext(ctx, "guessed the repository from a GitHub search; check it, then set "+
+			"tools."+res.Tool.Name+".repo in the config", args...)
+	}
+	return res, nil
+}
+
+// sessionFinder builds the HTTP clients only when a lookup is needed, so names the registries
+// know resolve without a token or the network.
+type sessionFinder struct{ s *session }
+
+func (f sessionFinder) Find(ctx context.Context, kind, name string) (*registry.Found, error) {
+	gh, hc, err := f.s.clients(ctx)
+	if err != nil {
+		return nil, err
+	}
+	found, err := remote.New(hc, repoSearcher{gh}).Find(ctx, kind, name)
+	if err != nil {
+		return nil, fmt.Errorf("look up %s:%s: %w", kind, name, err)
+	}
+	return found, nil
+}
+
+// repoSearcher adapts the GitHub client's search to [remote.RepoSearcher].
+type repoSearcher struct{ gh *github.Client }
+
+func (r repoSearcher) SearchRepos(ctx context.Context, name string) ([]remote.RepoHit, error) {
+	repos, err := r.gh.SearchRepos(ctx, name)
+	if err != nil {
+		return nil, err //nolint:wrapcheck // the client names the search
+	}
+	out := make([]remote.RepoHit, len(repos))
+	for i, rp := range repos {
+		out[i] = remote.RepoHit{FullName: rp.FullName, Stars: rp.Stars}
+	}
+	return out, nil
 }
 
 // digestArgs says what one digest covers.
@@ -103,7 +150,7 @@ func (s *session) digest(ctx context.Context, a digestArgs) (*report.ToolDigest,
 	if err := checkKinds(a.kinds); err != nil {
 		return nil, err
 	}
-	resolution, err := s.resolve(a.tool)
+	resolution, err := s.resolve(ctx, a.tool)
 	if err != nil {
 		return nil, err
 	}

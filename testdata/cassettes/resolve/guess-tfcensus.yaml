@@ -1,0 +1,83 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.github.com
+        form:
+            order:
+                - desc
+            per_page:
+                - "30"
+            q:
+                - tfcensus in:name
+            sort:
+                - stars
+        headers:
+            Accept:
+                - application/vnd.github.mercy-preview+json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+            X-Github-Api-Version:
+                - "2022-11-28"
+        url: https://api.github.com/search/repositories?order=desc&per_page=30&q=tfcensus+in%3Aname&sort=stars
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"total_count":2,"incomplete_results":false,"items":[{"id":1451648978,"node_id":"R_kgDOVoZn0g","name":"tfcensus","full_name":"sassdavid/tfcensus","private":false,"owner":{"login":"sassdavid","id":51000212,"node_id":"MDQ6VXNlcjUxMDAwMjEy","avatar_url":"https://avatars.githubusercontent.com/u/51000212?v=4","gravatar_id":"","url":"https://api.github.com/users/sassdavid","html_url":"https://github.com/sassdavid","followers_url":"https://api.github.com/users/sassdavid/followers","following_url":"https://api.github.com/users/sassdavid/following{/other_user}","gists_url":"https://api.github.com/users/sassdavid/gists{/gist_id}","starred_url":"https://api.github.com/users/sassdavid/starred{/owner}{/repo}","subscriptions_url":"https://api.github.com/users/sassdavid/subscriptions","organizations_url":"https://api.github.com/users/sassdavid/orgs","repos_url":"https://api.github.com/users/sassdavid/repos","events_url":"https://api.github.com/users/sassdavid/events{/privacy}","received_events_url":"https://api.github.com/users/sassdavid/received_events","type":"User","user_view_type":"public","site_admin":false},"html_url":"https://github.com/sassdavid/tfcensus","description":null,"fork":false,"url":"https://api.github.com/repos/sassdavid/tfcensus","forks_url":"https://api.github.com/repos/sassdavid/tfcensus/forks","keys_url":"https://api.github.com/repos/sassdavid/tfcensus/keys{/key_id}","collaborators_url":"https://api.github.com/repos/sassdavid/tfcensus/collaborators{/collaborator}","teams_url":"https://api.github.com/repos/sassdavid/tfcensus/teams","hooks_url":"https://api.github.com/repos/sassdavid/tfcensus/hooks","issue_events_url":"https://api.github.com/repos/sassdavid/tfcensus/issues/events{/number}","events_url":"https://api.github.com/repos/sassdavid/tfcensus/events","assignees_url":"https://api.github.com/repos/sassdavid/tfcensus/assignees{/user}","branches_url":"https://api.github.com/repos/sassdavid/tfcensus/branches{/branch}","tags_url":"https://api.github.com/repos/sassdavid/tfcensus/tags","blobs_url":"https://api.github.com/repos/sassdavid/tfcensus/git/blobs{/sha}","git_tags_url":"https://api.github.com/repos/sassdavid/tfcensus/git/tags{/sha}","git_refs_url":"https://api.github.com/repos/sassdavid/tfcensus/git/refs{/sha}","trees_url":"https://api.github.com/repos/sassdavid/tfcensus/git/trees{/sha}","statuses_url":"https://api.github.com/repos/sassdavid/tfcensus/statuses/{sha}","languages_url":"https://api.github.com/repos/sassdavid/tfcensus/languages","stargazers_url":"https://api.github.com/repos/sassdavid/tfcensus/stargazers","contributors_url":"https://api.github.com/repos/sassdavid/tfcensus/contributors","subscribers_url":"https://api.github.com/repos/sassdavid/tfcensus/subscribers","subscription_url":"https://api.github.com/repos/sassdavid/tfcensus/subscription","commits_url":"https://api.github.com/repos/sassdavid/tfcensus/commits{/sha}","git_commits_url":"https://api.github.com/repos/sassdavid/tfcensus/git/commits{/sha}","comments_url":"https://api.github.com/repos/sassdavid/tfcensus/comments{/number}","issue_comment_url":"https://api.github.com/repos/sassdavid/tfcensus/issues/comments{/number}","contents_url":"https://api.github.com/repos/sassdavid/tfcensus/contents/{+path}","compare_url":"https://api.github.com/repos/sassdavid/tfcensus/compare/{base}...{head}","merges_url":"https://api.github.com/repos/sassdavid/tfcensus/merges","archive_url":"https://api.github.com/repos/sassdavid/tfcensus/{archive_format}{/ref}","downloads_url":"https://api.github.com/repos/sassdavid/tfcensus/downloads","issues_url":"https://api.github.com/repos/sassdavid/tfcensus/issues{/number}","pulls_url":"https://api.github.com/repos/sassdavid/tfcensus/pulls{/number}","milestones_url":"https://api.github.com/repos/sassdavid/tfcensus/milestones{/number}","notifications_url":"https://api.github.com/repos/sassdavid/tfcensus/notifications{?since,all,participating}","labels_url":"https://api.github.com/repos/sassdavid/tfcensus/labels{/name}","releases_url":"https://api.github.com/repos/sassdavid/tfcensus/releases{/id}","deployments_url":"https://api.github.com/repos/sassdavid/tfcensus/deployments","created_at":"2026-11-09T17:06:09Z","updated_at":"2026-11-12T14:12:27Z","pushed_at":"2026-11-16T11:13:44Z","git_url":"git://github.com/sassdavid/tfcensus.git","ssh_url":"git@github.com:sassdavid/tfcensus.git","clone_url":"https://github.com/sassdavid/tfcensus.git","svn_url":"https://github.com/sassdavid/tfcensus","homepage":null,"size":1275,"stargazers_count":0,"watchers_count":0,"language":"Go","has_issues":true,"has_projects":false,"has_downloads":false,"has_wiki":false,"has_pages":false,"has_discussions":false,"forks_count":0,"mirror_url":null,"archived":false,"disabled":false,"open_issues_count":3,"license":{"key":"apache-2.0","name":"Apache License 2.0","spdx_id":"Apache-2.0","url":"https://api.github.com/licenses/apache-2.0","node_id":"MDc6TGljZW5zZTI="},"allow_forking":true,"is_template":false,"web_commit_signoff_required":false,"has_pull_requests":true,"pull_request_creation_policy":"all","topics":[],"visibility":"public","forks":0,"open_issues":3,"watchers":0,"default_branch":"main","permissions":{"admin":true,"maintain":true,"push":true,"triage":true,"pull":true},"score":1.0},{"id":1456305751,"node_id":"R_kgDOVs12Vw","name":"tfcensus-action","full_name":"sassdavid/tfcensus-action","private":false,"owner":{"login":"sassdavid","id":51000212,"node_id":"MDQ6VXNlcjUxMDAwMjEy","avatar_url":"https://avatars.githubusercontent.com/u/51000212?v=4","gravatar_id":"","url":"https://api.github.com/users/sassdavid","html_url":"https://github.com/sassdavid","followers_url":"https://api.github.com/users/sassdavid/followers","following_url":"https://api.github.com/users/sassdavid/following{/other_user}","gists_url":"https://api.github.com/users/sassdavid/gists{/gist_id}","starred_url":"https://api.github.com/users/sassdavid/starred{/owner}{/repo}","subscriptions_url":"https://api.github.com/users/sassdavid/subscriptions","organizations_url":"https://api.github.com/users/sassdavid/orgs","repos_url":"https://api.github.com/users/sassdavid/repos","events_url":"https://api.github.com/users/sassdavid/events{/privacy}","received_events_url":"https://api.github.com/users/sassdavid/received_events","type":"User","user_view_type":"public","site_admin":false},"html_url":"https://github.com/sassdavid/tfcensus-action","description":null,"fork":false,"url":"https://api.github.com/repos/sassdavid/tfcensus-action","forks_url":"https://api.github.com/repos/sassdavid/tfcensus-action/forks","keys_url":"https://api.github.com/repos/sassdavid/tfcensus-action/keys{/key_id}","collaborators_url":"https://api.github.com/repos/sassdavid/tfcensus-action/collaborators{/collaborator}","teams_url":"https://api.github.com/repos/sassdavid/tfcensus-action/teams","hooks_url":"https://api.github.com/repos/sassdavid/tfcensus-action/hooks","issue_events_url":"https://api.github.com/repos/sassdavid/tfcensus-action/issues/events{/number}","events_url":"https://api.github.com/repos/sassdavid/tfcensus-action/events","assignees_url":"https://api.github.com/repos/sassdavid/tfcensus-action/assignees{/user}","branches_url":"https://api.github.com/repos/sassdavid/tfcensus-action/branches{/branch}","tags_url":"https://api.github.com/repos/sassdavid/tfcensus-action/tags","blobs_url":"https://api.github.com/repos/sassdavid/tfcensus-action/git/blobs{/sha}","git_tags_url":"https://api.github.com/repos/sassdavid/tfcensus-action/git/tags{/sha}","git_refs_url":"https://api.github.com/repos/sassdavid/tfcensus-action/git/refs{/sha}","trees_url":"https://api.github.com/repos/sassdavid/tfcensus-action/git/trees{/sha}","statuses_url":"https://api.github.com/repos/sassdavid/tfcensus-action/statuses/{sha}","languages_url":"https://api.github.com/repos/sassdavid/tfcensus-action/languages","stargazers_url":"https://api.github.com/repos/sassdavid/tfcensus-action/stargazers","contributors_url":"https://api.github.com/repos/sassdavid/tfcensus-action/contributors","subscribers_url":"https://api.github.com/repos/sassdavid/tfcensus-action/subscribers","subscription_url":"https://api.github.com/repos/sassdavid/tfcensus-action/subscription","commits_url":"https://api.github.com/repos/sassdavid/tfcensus-action/commits{/sha}","git_commits_url":"https://api.github.com/repos/sassdavid/tfcensus-action/git/commits{/sha}","comments_url":"https://api.github.com/repos/sassdavid/tfcensus-action/comments{/number}","issue_comment_url":"https://api.github.com/repos/sassdavid/tfcensus-action/issues/comments{/number}","contents_url":"https://api.github.com/repos/sassdavid/tfcensus-action/contents/{+path}","compare_url":"https://api.github.com/repos/sassdavid/tfcensus-action/compare/{base}...{head}","merges_url":"https://api.github.com/repos/sassdavid/tfcensus-action/merges","archive_url":"https://api.github.com/repos/sassdavid/tfcensus-action/{archive_format}{/ref}","downloads_url":"https://api.github.com/repos/sassdavid/tfcensus-action/downloads","issues_url":"https://api.github.com/repos/sassdavid/tfcensus-action/issues{/number}","pulls_url":"https://api.github.com/repos/sassdavid/tfcensus-action/pulls{/number}","milestones_url":"https://api.github.com/repos/sassdavid/tfcensus-action/milestones{/number}","notifications_url":"https://api.github.com/repos/sassdavid/tfcensus-action/notifications{?since,all,participating}","labels_url":"https://api.github.com/repos/sassdavid/tfcensus-action/labels{/name}","releases_url":"https://api.github.com/repos/sassdavid/tfcensus-action/releases{/id}","deployments_url":"https://api.github.com/repos/sassdavid/tfcensus-action/deployments","created_at":"2026-11-13T07:43:02Z","updated_at":"2026-11-15T15:45:30Z","pushed_at":"2026-11-16T08:01:37Z","git_url":"git://github.com/sassdavid/tfcensus-action.git","ssh_url":"git@github.com:sassdavid/tfcensus-action.git","clone_url":"https://github.com/sassdavid/tfcensus-action.git","svn_url":"https://github.com/sassdavid/tfcensus-action","homepage":null,"size":84,"stargazers_count":0,"watchers_count":0,"language":"Shell","has_issues":true,"has_projects":true,"has_downloads":false,"has_wiki":true,"has_pages":false,"has_discussions":false,"forks_count":0,"mirror_url":null,"archived":false,"disabled":false,"open_issues_count":3,"license":{"key":"apache-2.0","name":"Apache License 2.0","spdx_id":"Apache-2.0","url":"https://api.github.com/licenses/apache-2.0","node_id":"MDc6TGljZW5zZTI="},"allow_forking":true,"is_template":false,"web_commit_signoff_required":false,"has_pull_requests":true,"pull_request_creation_policy":"all","topics":[],"visibility":"public","forks":0,"open_issues":3,"watchers":0,"default_branch":"main","permissions":{"admin":true,"maintain":true,"push":true,"triage":true,"pull":true},"score":1.0}]}'
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Cache-Control:
+                - no-cache
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/json; charset=utf-8
+            Date:
+                - Mon, 16 Nov 2026 11:17:40 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept, Authorization, Cookie, X-GitHub-OTP,Accept-Encoding, Accept, X-Requested-With
+            X-Accepted-Github-Permissions:
+                - allows_permissionless_access=true
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Api-Version-Selected:
+                - "2022-11-28"
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.mercy-preview; format=json
+            X-Ratelimit-Limit:
+                - "30"
+            X-Ratelimit-Remaining:
+                - "29"
+            X-Ratelimit-Reset:
+                - "1794827920"
+            X-Ratelimit-Resource:
+                - search
+            X-Ratelimit-Used:
+                - "1"
+            X-Xss-Protection:
+                - "0"
+        status: 200 OK
+        code: 200
+        duration: 561.991959ms

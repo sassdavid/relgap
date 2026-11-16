@@ -303,9 +303,9 @@ Scope: relgap gets an opt-in `--summarize`. tfcensus gets MCP prompts but no bui
   (tool-resolution.md): `registry.yml`, weekly and on snapshot changes.
 
 ### M17: Resolution gaps → v0.5.0 (relgap only) ([tool-resolution](specs/tool-resolution.md))
-- [ ] `tfprovider:` resolves any registry.terraform.io provider, not only curated ones.
-- [ ] `chart:` (Artifact Hub), `npm:` and `pypi:` resolve, and argo-cd joins the live corpus.
-- [ ] `relgap registry update` and `--guess` from the resolution order in tool-resolution.md.
+- [x] `tfprovider:` resolves any registry.terraform.io provider, not only curated ones.
+- [x] `chart:` (Artifact Hub), `npm:` and `pypi:` resolve, and argo-cd joins the live corpus.
+- [x] `relgap registry update` and `--guess` from the resolution order in tool-resolution.md.
 
 ### M18: Performance and integration → v0.5.0 (relgap only)
 - [ ] `BenchmarkScan60Repos` and `BenchmarkIndex1MB` from testing.md exist. The overview targets

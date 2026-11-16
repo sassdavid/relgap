@@ -1,0 +1,209 @@
+{
+  "schema_version": "1",
+  "tool": "relgap",
+  "version": "dev",
+  "generated_at": "2026-11-16T12:00:00Z",
+  "data": {
+    "tools": [
+      {
+        "tool": "argo-cd",
+        "repo": "argoproj/argo-helm",
+        "from": "10.16.0",
+        "to": "10.18.0",
+        "versions": [
+          {
+            "version": "10.17.0",
+            "tag": "argo-cd-10.17.0",
+            "published_at": "2026-11-08T17:57:57Z",
+            "url": "https://github.com/argoproj/argo-helm/releases/tag/argo-cd-10.17.0"
+          },
+          {
+            "version": "10.17.1",
+            "tag": "argo-cd-10.17.1",
+            "published_at": "2026-11-09T12:53:51Z",
+            "url": "https://github.com/argoproj/argo-helm/releases/tag/argo-cd-10.17.1"
+          },
+          {
+            "version": "10.17.2",
+            "tag": "argo-cd-10.17.2",
+            "published_at": "2026-11-11T02:26:07Z",
+            "url": "https://github.com/argoproj/argo-helm/releases/tag/argo-cd-10.17.2"
+          },
+          {
+            "version": "10.18.0",
+            "tag": "argo-cd-10.18.0",
+            "published_at": "2026-11-11T15:05:40Z",
+            "url": "https://github.com/argoproj/argo-helm/releases/tag/argo-cd-10.18.0"
+          }
+        ],
+        "entries": [
+          {
+            "id": "e-f3576411",
+            "version": "10.17.0",
+            "kind": "other",
+            "confidence": 0.8,
+            "text": "chore(deps): bump the dependencies group across 1 directory with 2 updates by @dependabot[bot] in https://github.com/argoproj/argo-helm/pull/4211",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/argoproj/argo-helm/releases/tag/argo-cd-10.17.0",
+              "heading": [
+                "What's Changed"
+              ]
+            }
+          },
+          {
+            "id": "e-a915e2e7",
+            "version": "10.17.0",
+            "kind": "fix",
+            "confidence": 0.8,
+            "text": "fix(argo-cd): keep the chart version out of the pod labels by @DrFaust92 in https://github.com/argoproj/argo-helm/pull/4205",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/argoproj/argo-helm/releases/tag/argo-cd-10.17.0",
+              "heading": [
+                "What's Changed"
+              ]
+            }
+          },
+          {
+            "id": "e-13e6a907",
+            "version": "10.17.1",
+            "kind": "fix",
+            "confidence": 0.8,
+            "text": "fix(argo-events): render maxUnavailable 0 correctly in PodDisruptionBudget by @imansabet in https://github.com/argoproj/argo-helm/pull/4115",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/argoproj/argo-helm/releases/tag/argo-cd-10.17.1",
+              "heading": [
+                "What's Changed"
+              ]
+            }
+          },
+          {
+            "id": "e-4c93ee7d",
+            "version": "10.17.1",
+            "kind": "other",
+            "confidence": 0.8,
+            "text": "chore(deps): update renovatebot/github-action action to v46.3.13 by @octo-sts[bot] in https://github.com/argoproj/argo-helm/pull/4217",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/argoproj/argo-helm/releases/tag/argo-cd-10.17.1",
+              "heading": [
+                "What's Changed"
+              ]
+            }
+          },
+          {
+            "id": "e-72bafd15",
+            "version": "10.17.1",
+            "kind": "other",
+            "confidence": 0.8,
+            "text": "chore(deps): update step-security/harden-runner action to v2.22.4 by @octo-sts[bot] in https://github.com/argoproj/argo-helm/pull/4215",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/argoproj/argo-helm/releases/tag/argo-cd-10.17.1",
+              "heading": [
+                "What's Changed"
+              ]
+            }
+          },
+          {
+            "id": "e-506ea216",
+            "version": "10.17.1",
+            "kind": "fix",
+            "confidence": 0.8,
+            "text": "fix(argo-cd): correct typos in chart docs and value descriptions by @sarankumar1325 in https://github.com/argoproj/argo-helm/pull/4179",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/argoproj/argo-helm/releases/tag/argo-cd-10.17.1",
+              "heading": [
+                "What's Changed"
+              ]
+            }
+          },
+          {
+            "id": "e-bea0f0cc",
+            "version": "10.17.2",
+            "kind": "fix",
+            "confidence": 0.8,
+            "text": "fix(argo-rollouts): correct dashboard typo in createClusterRole description by @sarankumar1325 in https://github.com/argoproj/argo-helm/pull/4180",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/argoproj/argo-helm/releases/tag/argo-cd-10.17.2",
+              "heading": [
+                "What's Changed"
+              ]
+            }
+          },
+          {
+            "id": "e-7165df7f",
+            "version": "10.17.2",
+            "kind": "fix",
+            "confidence": 0.8,
+            "text": "fix(argocd-apps): correct instability typo in extensions comment by @sarankumar1325 in https://github.com/argoproj/argo-helm/pull/4181",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/argoproj/argo-helm/releases/tag/argo-cd-10.17.2",
+              "heading": [
+                "What's Changed"
+              ]
+            }
+          },
+          {
+            "id": "e-f55f889d",
+            "version": "10.17.2",
+            "kind": "other",
+            "confidence": 0.8,
+            "text": "docs(github): state the SBOM position in SECURITY.md by @jmeridth in https://github.com/argoproj/argo-helm/pull/4218",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/argoproj/argo-helm/releases/tag/argo-cd-10.17.2",
+              "heading": [
+                "What's Changed"
+              ]
+            }
+          },
+          {
+            "id": "e-bb51008f",
+            "version": "10.17.2",
+            "kind": "fix",
+            "confidence": 0.8,
+            "text": "fix(argo-cd): leave the extraObjects default empty by @newbenji in https://github.com/argoproj/argo-helm/pull/4216",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/argoproj/argo-helm/releases/tag/argo-cd-10.17.2",
+              "heading": [
+                "What's Changed"
+              ]
+            }
+          },
+          {
+            "id": "e-4ed6973a",
+            "version": "10.18.0",
+            "kind": "feature",
+            "confidence": 0.8,
+            "text": "feat(argo-cd): configurable Dex replicas with Kubernetes storage RBAC by @fernandezcuesta in https://github.com/argoproj/argo-helm/pull/4223",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/argoproj/argo-helm/releases/tag/argo-cd-10.18.0",
+              "heading": [
+                "What's Changed"
+              ]
+            }
+          }
+        ],
+        "counts": {
+          "breaking": 0,
+          "deprecation": 0,
+          "feature": 1,
+          "fix": 6,
+          "other": 4,
+          "security": 0
+        },
+        "hidden": 4,
+        "warnings": []
+      }
+    ]
+  },
+  "errors": []
+}

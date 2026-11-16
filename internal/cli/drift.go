@@ -161,7 +161,7 @@ func (s *session) drift(ctx context.Context, a driftArgs) (*scan.Result, *report
 	out, err := report.NewDrifter(s.d.Logger, recent).Drift(ctx, report.DriftRequest{
 		Repos:             res.Repos,
 		Pins:              pins,
-		Resolve:           resolveFunc(s.resolver),
+		Resolve:           offlineResolveFunc(ctx, s.resolver),
 		IgnoreConstraints: a.ignoreConstraints,
 		Latest:            a.latest,
 	})
@@ -169,6 +169,18 @@ func (s *session) drift(ctx context.Context, a driftArgs) (*scan.Result, *report
 		return nil, nil, nil, digestError(err)
 	}
 	return res, out, tools, nil
+}
+
+// offlineResolveFunc resolves pins from the registries alone, since drift reads only version
+// rules and makes no request without --latest.
+func offlineResolveFunc(ctx context.Context, resolver *registry.Resolver) report.ResolveFunc {
+	return func(tool string) (registry.ToolSpec, error) {
+		r, err := resolver.Resolve(ctx, tool, registry.ResolveOptions{})
+		if err != nil {
+			return registry.ToolSpec{}, err //nolint:wrapcheck // the resolver names the tool
+		}
+		return r.Tool, nil
+	}
 }
 
 // toolNames names each --tool value the way pins do, so --tool tf selects terraform pins.

@@ -7,16 +7,25 @@ Show how a tool name resolves to a repository, version rules and changelog sourc
 Resolves a tool name and prints the result with the layer that supplied each field.
 
 <tool> is a name or alias (terraform, tf), a NAME_VERSION variable (TERRAFORM_VERSION),
-github:owner/repo or aqua:package. github: and aqua: identify a tool; when a registry knows it,
-the result is the same as for its name.
+github:owner/repo, aqua:package, tfprovider:namespace/name, chart:repo/name, chart:name,
+npm:package or pypi:package. When a registry knows the tool, the result is the same as for its
+name.
+
+tfprovider:, chart:, npm: and pypi: names that no registry knows are looked up in the Terraform
+registry, Artifact Hub, the npm registry or PyPI, which name the source repository. chart:name
+without a repository resolves only when one Artifact Hub repository has a chart of that name.
 
 Layers, highest precedence first:
 
   config           tools.<name> and aliases in the config file
-  relgap registry  curated entries embedded in relgap (registry/*.yaml)
+  relgap registry  curated entries embedded in relgap (registry/*.yaml), or the newer copies
+                   from 'relgap registry update'
   mise registry    mise registry --json when mise is on PATH, otherwise an embedded snapshot
   aqua registry    an embedded index of the aqua registry
   default          built-in defaults
+
+With --guess, a name that no layer knows is searched on GitHub. The repository whose name
+matches exactly and has the most stars wins, and the result is marked low-confidence.
 
 ```
 relgap resolve <tool> [flags]
@@ -28,12 +37,16 @@ relgap resolve <tool> [flags]
   relgap resolve terraform
   relgap resolve TERRAFORM_VERSION
   relgap resolve aqua:hashicorp/terraform --format json
+  relgap resolve tfprovider:integrations/github
+  relgap resolve chart:argo/argo-cd
+  relgap resolve some-tool --guess
 ```
 
 ### Options
 
 ```
-  -h, --help[=true|false]   help for resolve
+      --guess[=true|false]   search GitHub for a tool no registry knows and use the exact name match with the most stars
+  -h, --help[=true|false]    help for resolve
 ```
 
 ### Options inherited from parent commands

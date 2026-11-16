@@ -4,8 +4,7 @@ Strategy and layers: [engineering ADR-0006](../engineering/adr/0006-testing-stra
 
 ## The 30-tool corpus (`testdata/corpus.yaml`)
 Each entry: tool, range, adapters expected, expected breaking count (± tolerance, default 2), golden digest path,
-or `skip` with the reason a tool isn't digested yet (chart:argo/argo-cd needs the Artifact Hub lookup;
-1password-cli has no public repository).
+or `skip` with the reason a tool isn't digested yet (1password-cli has no public repository).
 
 | Group | Tools |
 |---|---|

@@ -29,7 +29,8 @@ relgap registry test <tool|file.yaml> <from>..[<to>] [flags]
 ### Options
 
 ```
-  -h, --help[=true|false]   help for test
+      --guess[=true|false]   search GitHub for a tool no registry knows and use the exact name match with the most stars
+  -h, --help[=true|false]    help for test
 ```
 
 ### Options inherited from parent commands
@@ -52,5 +53,5 @@ relgap registry test <tool|file.yaml> <from>..[<to>] [flags]
 
 ### SEE ALSO
 
-* [relgap registry](relgap_registry.md)	 - Check relgap registry entries
+* [relgap registry](relgap_registry.md)	 - Check, test and update relgap registry entries
 

@@ -1,0 +1,22 @@
+# Resolution uses an entry from 'relgap registry update' in place of the embedded one, and
+# 'cache clear' removes it. A development build accepts every min_relgap, so the unit tests
+# cover that check.
+env RELGAP_CACHE_DIR=$WORK/cache
+exec relgap resolve gh
+stdout 'relgap registry +embedded'
+stdout 'repo +cli/cli +relgap registry'
+
+mkdir $WORK/cache/registry
+cp gh.yaml $WORK/cache/registry/gh.yaml
+exec relgap resolve gh
+stdout 'relgap registry +updated'
+stdout 'repo +acme/gh-fork +relgap registry'
+
+exec relgap cache clear
+stdout 'removed +1'
+exec relgap resolve gh
+stdout 'relgap registry +embedded'
+
+-- gh.yaml --
+name: gh
+repo: acme/gh-fork

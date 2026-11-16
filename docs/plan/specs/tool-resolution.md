@@ -80,10 +80,64 @@ The 20 entries in `registry/` (checked live on 2026-11-12 with `relgap registry 
 | terraform-provider-kubernetes | gh-release, changelog-file `CHANGELOG.md`, upgrade-guide `docs/guides/v{major}-upgrade-guide.md` | | | per-major guides |
 | golangci-lint | changelog-file `CHANGELOG.md` (`^v{version}$`) | | | release bodies are a commit list |
 
-`tfprovider:<namespace>/<name>` resolves to the curated entry whose repo is
-`<namespace>/terraform-provider-<name>`. Other providers still need the Terraform registry lookup.
 1password-cli has no public repository and stays unresolved; atlascli's notes are one mongodb.com
 page for all versions, which web-doc doesn't split yet.
+
+## Package registry lookups (`tfprovider:`, `chart:`, `npm:`, `pypi:`)
+
+The registries answer first, so a curated tool resolves offline and gets its entry:
+
+- `tfprovider:<namespace>/<name>` matches the tool whose repo is `<namespace>/terraform-provider-<name>`.
+- `npm:<package>` and `pypi:<package>` match a curated entry that lists the package in `osv`
+  (`npm:@anthropic-ai/claude-code` is claude-code), then a mise entry with an `npm:` or `pipx:`
+  backend that also names a repository.
+
+Otherwise `internal/registry/remote` asks the package registry through `httpx`, and the `repo`
+field's layer names the service:
+
+| Prefix | Request | Repository from |
+|---|---|---|
+| `tfprovider:` | `registry.terraform.io/v1/providers/<ns>/<name>` | `source` |
+| `chart:<repo>/<name>` | `artifacthub.io/api/v1/packages/helm/<repo>/<name>` | the chart's own source (below) |
+| `npm:` | `registry.npmjs.org/<package>/latest` | `repository`, then `homepage`, then `bugs` |
+| `pypi:` | `pypi.org/pypi/<package>/json` | `project_urls` Source, Source Code, Repository, Code, GitHub, Homepage, then any GitHub URL, then `home_page` |
+
+A repository that a registry knows takes that tool's entry, as `github:` does. A chart never does:
+its repository can be the application's own, whose entry describes app versions, and a chart pin
+carries a chart version. Artifact Hub often lists both. relgap picks the link into a
+subdirectory (`argoproj/argo-helm/tree/main/charts/argo-cd`), or a GitHub Pages repository URL,
+and sets `tag_prefix: <name>-` because such repositories tag each chart as `<name>-<version>`, as
+chart-releaser does. Otherwise it picks the link whose repository is named like the chart.
+
+`chart:<name>` without a repository, which pin discovery writes for `Chart.yaml` dependencies,
+searches Artifact Hub. It resolves when one repository has a chart of that name, or when exactly
+one of them is marked official (the project publishes it: argo-cd is argo's). Otherwise it fails
+with the `chart:<repo>/<name>` candidates. On 2026-11-16, argo-cd was in 11 repositories,
+external-dns in 9 and kube-state-metrics in 18.
+
+Responses stay fresh for 24h (`cache.ttl_override` changes it). `--offline` fails a lookup that
+isn't in the cache. `relgap drift` resolves from the registries alone, since it reads only version
+rules and sends no request without `--latest`.
+
+## `relgap registry update`
+
+Lists `registry/` on the `main` branch of sassdavid/relgap through the contents API and downloads
+each `.yaml` file there, with the HTTP cache's ETags. Each file is linted. One with problems, or
+with a `min_relgap` newer than the binary, is skipped (development builds accept every
+`min_relgap`). The files that differ from the embedded entries go to `<cache dir>/registry/`,
+replacing the previous run's. Resolution loads them in place of the embedded entry of the same
+name and lints them again, so a file edited by hand that fails is skipped with a warning.
+`resolve` shows `relgap registry  updated` or `embedded` (`relgap_source` in JSON).
+`relgap cache clear` deletes the directory.
+
+## `--guess`
+
+`resolve`, `digest <tool>` and `registry test` take `--guess`. For a plain name that no layer
+knows, it searches GitHub (`<name> in:name`, 30 results by stars) and keeps repositories named
+exactly `<name>`, ignoring case. The most-starred one wins and the others are listed as
+`alternatives`. The result has `match.layer: github search` and `confidence: low`, and stderr
+gets a warning that says to set `tools.<name>.repo`. Prefixed names, `outdated`, `drift` and the
+MCP server never guess.
 
 Entries also take `bin` (executable names for `outdated --binaries`), and sources take `content`,
 `strip`, `anchor` and `json` (schema `schemas/registry-v1.json`, details in
@@ -94,7 +148,8 @@ each.
 ## Acceptance criteria
 - [x] `relgap resolve tf`, `terraform`, `TERRAFORM_VERSION` and `aqua:hashicorp/terraform` all print the same ToolSpec, and the output shows which layer supplied each field.
 - [x] Works with mise absent (embedded snapshot) and present (live `mise registry --json`), with the same results for the 30-tool corpus.
-- [ ] `tfprovider:hashicorp/aws` resolves to `hashicorp/terraform-provider-aws` with `CHANGELOG.md` as the source.
+- [x] `tfprovider:hashicorp/aws` resolves to `hashicorp/terraform-provider-aws` with `CHANGELOG.md` as the source
+  (`TestSpec_tool_resolution_3`, without a lookup).
 - [x] `registry lint` rejects unknown keys and bad regexes with file:line errors.
 - [x] Snapshot staleness check fails CI when the snapshot is over 30 days old (`registry.yml`,
   `TestSnapshotMeta_CheckAge`).

@@ -7,8 +7,8 @@ Merge the release notes of every version in a range into one digest
 Lists the versions after <from> up to and including <to>, fetches their release notes and
 groups the entries by kind: breaking changes, deprecations, security, features, fixes, other.
 
-<tool> resolves as in 'relgap resolve'. Without <to> the range ends at the latest stable
-version on the release line (--line).
+<tool> resolves as in 'relgap resolve', --guess included. Without <to> the range ends at the
+latest stable version on the release line (--line).
 
 Notes come from the tool's registry sources: GitHub release bodies and changelog files, each
 file fetched and parsed once. A bullet that two sources share is shown once. Each entry has a
@@ -78,6 +78,7 @@ relgap digest <tool> <from>..[<to>] | --from-mise [path] | --all [path] | --base
       --base string                        digest the pins upgraded since this git ref (branch, tag or commit), against the working tree
       --fail-on strings                    exit 3 when this matches: breaking or deprecation; repeatable (config policy.fail_on)
       --from-mise[=true|false]             digest every outdated tool pinned in the project's mise config, pin to latest
+      --guess[=true|false]                 search GitHub for a tool no registry knows and use the exact name match with the most stars
       --head string                        compare --base or --pull-request with this git ref instead of the working tree
   -h, --help[=true|false]                  help for digest
       --include-prereleases[=true|false]   include prereleases (on when <from> or <to> is a prerelease)

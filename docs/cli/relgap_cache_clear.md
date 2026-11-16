@@ -2,6 +2,11 @@
 
 Delete every cache entry
 
+### Synopsis
+
+Deletes every HTTP cache entry and the registry entries 'relgap registry update'
+downloaded, so resolution falls back to the entries embedded in relgap.
+
 ```
 relgap cache clear [flags]
 ```
