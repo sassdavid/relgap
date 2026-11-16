@@ -40,3 +40,17 @@ later work:
   refresh), as tfcensus does, with `app.Deps.HTTPTransport` injected for tests. The other two
   providers use `internal/httpx` without the cache, and a POST is sent again only after a 429 or
   a Retry-After.
+
+## Amendment (2026-11-16)
+A fourth provider, `bedrock-mantle`, calls the Amazon Bedrock `bedrock-mantle` endpoint. AWS
+serves the Claude models that Converse doesn't support there, and open-weight models that only
+it hosts. The details are in mcp-and-llm.md. The decisions:
+
+- It is a new `llm.provider` value, not a mode of `bedrock`, because it has a different wire
+  protocol and transport. `llm.api` picks `messages` or `chat-completions`.
+- It reuses the Anthropic and OpenAI-compatible request code on `internal/httpx`, so its retry
+  rule is the same as theirs. No new module: SigV4 signing comes from
+  `aws-sdk-go-v2/aws/signer/v4`, part of the core module relgap already pins. `internal/httpx`
+  is unchanged and stays shared with tfcensus; the signer is the transport relgap passes in.
+- Both Bedrock providers sign with SigV4 by default. `llm.api_key_env` opts into an Amazon
+  Bedrock API key, which AWS recommends only as a short-term key.

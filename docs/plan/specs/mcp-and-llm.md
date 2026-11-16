@@ -105,7 +105,9 @@ Default **off**. When on:
    - `openai-compatible`: `base_url` + key env var. Covers OpenAI, LiteLLM, Ollama and vLLM.
    - `anthropic`: Messages API.
    - `bedrock`: Converse API via aws-sdk-go-v2, using a profile. Fits the author's Bedrock setup.
-4. Config: `llm.provider`, `llm.model`, `llm.base_url`, `llm.api_key_env`, `llm.aws_profile`, `llm.max_input_tokens` (default 30k; entries are trimmed lowest confidence first), `llm.timeout` (default 120s).
+   - `bedrock-mantle`: the Anthropic Messages or OpenAI Chat Completions API on the
+     `bedrock-mantle` endpoint, signed with SigV4 from the same profile.
+4. Config: `llm.provider`, `llm.model`, `llm.base_url`, `llm.api_key_env`, `llm.api`, `llm.aws_profile`, `llm.max_input_tokens` (default 30k; entries are trimmed lowest confidence first), `llm.timeout` (default 120s).
 5. Output: an extra `summary` block in every format, clearly labelled "LLM-generated, verify against cited sources".
 
 Non-goals: no chat loop, no embedding store, no LLM in the default path, no sending of local file content.
@@ -155,7 +157,25 @@ amendment.
   `bedrock` calls Converse through aws-sdk-go-v2 and its own HTTP client and retries, as tfcensus
   does. Anthropic's Bedrock docs list Converse support up to Claude Opus 4.6, Sonnet 4.6 and
   Haiku 4.5; the newer Claude models are listed for InvokeModel only, so a Converse call to them
-  is untested.
+  is untested. Use `bedrock-mantle` for those.
+- `bedrock-mantle` (added after M15, see the second ADR-0004 amendment) posts to
+  `https://bedrock-mantle.<region>.api.aws`. `llm.api: messages` posts to
+  `/anthropic/v1/messages` with `anthropic-version: 2023-06-01`, the version the endpoint
+  documents. `llm.api: chat-completions` posts to `/v1/chat/completions`. An empty `llm.api`
+  means `messages` for model IDs that start with `anthropic.` and `chat-completions` for the
+  rest. Some Mantle models are served under `/openai/v1`; set `llm.base_url` to that URL, which
+  is also how a PrivateLink endpoint is used. The provider uses the thin HTTP clients on
+  `internal/httpx`, with a transport under the retries that signs every attempt with SigV4
+  (`aws-sdk-go-v2/aws/signer/v4`, signing name `bedrock-mantle`, credentials from the AWS
+  default chain or `llm.aws_profile`). The principal needs `bedrock-mantle:CreateInference`.
+- Bedrock API keys: both Bedrock providers sign with SigV4 unless `llm.api_key_env` names an
+  env var. Then `bedrock` sends the key as a bearer token, and `bedrock-mantle` sends it as
+  `x-api-key` (messages) or `Authorization: Bearer` (chat-completions); a Mantle key also needs
+  `bedrock-mantle:CallWithBearerToken`. With an empty `llm.api_key_env`, the AWS SDK still reads
+  `AWS_BEARER_TOKEN_BEDROCK` for `bedrock` and then prefers it over the profile. AWS recommends
+  IAM credentials or short-term keys over long-term API keys.
+- The AWS SDK logs through relgap's logger: SDK warnings at Warn, the rest at Debug, never
+  straight to stderr.
 - The Bedrock smoke test (`TestSpec_mcp_and_llm_4`, `mise run test:live:bedrock`) runs in the
   `bedrock` job of `live.yml`, only when the repository variables `RELGAP_BEDROCK_ROLE_ARN` and
   `RELGAP_BEDROCK_MODEL` are set. It assumes the role with OIDC and skips without credentials, so

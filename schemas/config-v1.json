@@ -180,7 +180,8 @@
             "",
             "openai-compatible",
             "anthropic",
-            "bedrock"
+            "bedrock",
+            "bedrock-mantle"
           ],
           "description": "Empty disables the summarizer."
         },
@@ -193,6 +194,15 @@
         "api_key_env": {
           "type": "string",
           "description": "Name of the env var holding the API key. Keys are never read from files."
+        },
+        "api": {
+          "type": "string",
+          "enum": [
+            "",
+            "messages",
+            "chat-completions"
+          ],
+          "description": "bedrock-mantle only. Empty means messages for anthropic.* model IDs and chat-completions otherwise."
         },
         "aws_profile": {
           "type": "string"

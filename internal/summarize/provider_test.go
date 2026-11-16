@@ -31,7 +31,7 @@ type captured struct {
 func fakeEndpoint(t *testing.T, status int, answer string) (*httptest.Server, *captured) {
 	t.Helper()
 	c := &captured{}
-	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	srv := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		b, _ := io.ReadAll(r.Body)
 		c.method, c.path, c.header = r.Method, r.URL.Path, r.Header.Clone()
 		_ = json.Unmarshal(b, &c.body)
@@ -138,6 +138,15 @@ func bedrockConfig(srv *httptest.Server) aws.Config {
 	}
 }
 
+// bedrockEndpoint points the client at srv and signs with SigV4 even when the developer's
+// environment sets AWS_BEARER_TOKEN_BEDROCK, which the SDK reads by itself.
+func bedrockEndpoint(srv *httptest.Server) func(*bedrockruntime.Options) {
+	return func(o *bedrockruntime.Options) {
+		o.BaseEndpoint = aws.String(srv.URL)
+		o.AuthSchemePreference = []string{"sigv4"}
+	}
+}
+
 func TestBedrock(t *testing.T) {
 	t.Parallel()
 	srv, c := fakeEndpoint(
@@ -147,11 +156,7 @@ func TestBedrock(t *testing.T) {
 			`"stopReason":"end_turn","usage":{"inputTokens":3,"outputTokens":4,"totalTokens":7},"metrics":{"latencyMs":5}}`,
 	)
 	model := "global.anthropic.claude-sonnet-4-6"
-	p := summarize.NewBedrock(
-		bedrockConfig(srv),
-		model,
-		func(o *bedrockruntime.Options) { o.BaseEndpoint = aws.String(srv.URL) },
-	)
+	p := summarize.NewBedrock(bedrockConfig(srv), model, bedrockEndpoint(srv))
 	got, err := p.Complete(t.Context(), testPrompt())
 	require.NoError(t, err)
 	assert.Equal(t, "RISKS\n- none", got)
@@ -169,13 +174,19 @@ func TestBedrock_blocked(t *testing.T) {
 	t.Parallel()
 	srv, _ := fakeEndpoint(t, http.StatusOK, `{"output":{"message":{"role":"assistant","content":[]}},`+
 		`"stopReason":"guardrail_intervened","usage":{"inputTokens":1,"outputTokens":0,"totalTokens":1},"metrics":{"latencyMs":1}}`)
-	p := summarize.NewBedrock(
-		bedrockConfig(srv),
-		"m",
-		func(o *bedrockruntime.Options) { o.BaseEndpoint = aws.String(srv.URL) },
-	)
+	p := summarize.NewBedrock(bedrockConfig(srv), "m", bedrockEndpoint(srv))
 	_, err := p.Complete(t.Context(), testPrompt())
 	require.ErrorContains(t, err, "blocked (stopReason guardrail_intervened)")
+}
+
+func TestBedrock_apiKey(t *testing.T) {
+	t.Parallel()
+	srv, c := fakeEndpoint(t, http.StatusOK, `{"output":{"message":{"role":"assistant","content":[{"text":"ok"}]}},`+
+		`"stopReason":"end_turn","usage":{"inputTokens":1,"outputTokens":1,"totalTokens":2},"metrics":{"latencyMs":1}}`)
+	p := summarize.NewBedrock(bedrockConfig(srv), "m", bedrockEndpoint(srv), summarize.WithBedrockAPIKey("bk"))
+	_, err := p.Complete(t.Context(), testPrompt())
+	require.NoError(t, err)
+	assert.Equal(t, "Bearer bk", c.header.Get("Authorization"))
 }
 
 // failTransport fails the test on any request.
@@ -218,6 +229,36 @@ func TestNew(t *testing.T) {
 			config.LLM{Provider: "openai-compatible", Model: "m", BaseURL: "http://x", APIKeyEnv: "MY_KEY"},
 			&summarize.OpenAI{},
 			"",
+		},
+		{
+			"bedrock empty key",
+			config.LLM{Provider: "bedrock", Model: "m", APIKeyEnv: "EMPTY_KEY"},
+			nil,
+			"EMPTY_KEY is empty",
+		},
+		{
+			"mantle empty key",
+			config.LLM{Provider: "bedrock-mantle", Model: "m", APIKeyEnv: "EMPTY_KEY"},
+			nil,
+			"EMPTY_KEY is empty",
+		},
+		{
+			"mantle key and base_url load no AWS config",
+			config.LLM{Provider: "bedrock-mantle", Model: "m", APIKeyEnv: "MY_KEY", BaseURL: "https://x/v1"},
+			&summarize.Mantle{},
+			"",
+		},
+		{
+			"mantle unknown api",
+			config.LLM{
+				Provider:  "bedrock-mantle",
+				Model:     "m",
+				API:       "responses",
+				APIKeyEnv: "MY_KEY",
+				BaseURL:   "https://x/v1",
+			},
+			nil,
+			`unknown llm.api "responses"`,
 		},
 		{"unknown", config.LLM{Provider: "gemini", Model: "m"}, nil, `unknown llm.provider "gemini"`},
 	}

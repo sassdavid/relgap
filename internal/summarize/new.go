@@ -17,6 +17,7 @@ const (
 	ProviderOpenAI    = "openai-compatible"
 	ProviderAnthropic = "anthropic"
 	ProviderBedrock   = "bedrock"
+	ProviderMantle    = "bedrock-mantle"
 )
 
 // MaxTimeout caps llm.timeout: it is the longest single attempt httpx allows.
@@ -67,14 +68,45 @@ func New(ctx context.Context, c config.LLM, e Env) (Provider, error) {
 		}
 		return NewAnthropic(newHTTPClient(e), base, key, c.Model), nil
 	case ProviderBedrock:
-		cfg, err := LoadAWSConfig(ctx, c.AWSProfile, e.Transport)
+		key, err := apiKey(c.APIKeyEnv, "", e.Lookup)
+		if err != nil {
+			return nil, err
+		}
+		cfg, err := LoadAWSConfig(ctx, c.AWSProfile, e.Transport, e.Logger)
 		if err != nil {
 			return nil, fmt.Errorf("%w: %w", ErrNotConfigured, err)
 		}
+		if key != "" {
+			return NewBedrock(cfg, c.Model, WithBedrockAPIKey(key)), nil
+		}
 		return NewBedrock(cfg, c.Model), nil
+	case ProviderMantle:
+		return newMantle(ctx, c, e)
 	default:
 		return nil, fmt.Errorf("%w: unknown llm.provider %q", ErrNotConfigured, c.Provider)
 	}
+}
+
+// newMantle reads the region and credentials from the AWS config. With an API key and
+// llm.base_url it needs neither, so it doesn't load the config.
+func newMantle(ctx context.Context, c config.LLM, e Env) (Provider, error) {
+	key, err := apiKey(c.APIKeyEnv, "", e.Lookup)
+	if err != nil {
+		return nil, err
+	}
+	o := MantleOptions{Model: c.Model, API: c.API, BaseURL: c.BaseURL, APIKey: key}
+	if key == "" || c.BaseURL == "" {
+		cfg, loadErr := LoadAWSConfig(ctx, c.AWSProfile, e.Transport, e.Logger)
+		if loadErr != nil {
+			return nil, fmt.Errorf("%w: %w", ErrNotConfigured, loadErr)
+		}
+		o.Region, o.Credentials = cfg.Region, cfg.Credentials
+	}
+	m, err := NewMantle(o, e)
+	if err != nil {
+		return nil, fmt.Errorf("%w: %w", ErrNotConfigured, err)
+	}
+	return m, nil
 }
 
 // Timeout returns llm.timeout, capped at [MaxTimeout].

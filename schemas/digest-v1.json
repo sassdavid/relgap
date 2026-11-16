@@ -34,7 +34,7 @@
       "required": ["notice", "provider", "model", "risks", "actions", "entries", "trimmed", "dropped"],
       "properties": {
         "notice": { "const": "LLM-generated, verify against cited sources" },
-        "provider": { "enum": ["openai-compatible", "anthropic", "bedrock"] },
+        "provider": { "enum": ["openai-compatible", "anthropic", "bedrock", "bedrock-mantle"] },
         "model": { "type": "string", "minLength": 1 },
         "risks": { "description": "Upgrade risks, at most 5.", "type": "array", "maxItems": 5, "items": { "$ref": "#/$defs/claim" } },
         "actions": { "description": "Actions the entries require before or during the upgrade.", "type": "array", "items": { "$ref": "#/$defs/claim" } },

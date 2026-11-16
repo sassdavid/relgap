@@ -35,11 +35,13 @@ policy:                         # defaults for --fail-on in CI
   min_confidence: 0.5
   vuln_severity: high          # empty counts every advisory
 llm:                            # only for digest --summarize
-  provider: ""                 # off; openai-compatible, anthropic or bedrock
+  provider: ""                 # off; openai-compatible, anthropic, bedrock or bedrock-mantle
   model: ""                    # required, e.g. claude-sonnet-5-5 or global.anthropic.claude-sonnet-4-6
   base_url: ""                 # required for openai-compatible; anthropic: https://api.anthropic.com
-  api_key_env: ""              # anthropic: ANTHROPIC_API_KEY; openai-compatible: no key
-  aws_profile: ""              # bedrock; empty means the AWS default chain
+                               # bedrock-mantle: https://bedrock-mantle.<region>.api.aws/anthropic or /v1
+  api_key_env: ""              # anthropic: ANTHROPIC_API_KEY; openai-compatible and bedrock*: no key
+  api: ""                      # bedrock-mantle: messages or chat-completions; empty picks by model ID
+  aws_profile: ""              # bedrock*; empty means the AWS default chain
   max_input_tokens: 30000
   timeout: 120s                # at most 2m
 ```

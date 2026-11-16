@@ -69,13 +69,14 @@ type Policy struct {
 
 // LLM configures the optional, off-by-default summarizer.
 type LLM struct {
-	Provider       string `json:"provider"         jsonschema:"enum=,enum=openai-compatible,enum=anthropic,enum=bedrock" jsonschema_description:"Empty disables the summarizer."`
+	Provider       string `json:"provider"         jsonschema:"enum=,enum=openai-compatible,enum=anthropic,enum=bedrock,enum=bedrock-mantle" jsonschema_description:"Empty disables the summarizer."`
 	Model          string `json:"model"`
 	BaseURL        string `json:"base_url"`
-	APIKeyEnv      string `json:"api_key_env"                                                                            jsonschema_description:"Name of the env var holding the API key. Keys are never read from files."`
+	APIKeyEnv      string `json:"api_key_env"                                                                                                jsonschema_description:"Name of the env var holding the API key. Keys are never read from files."`
+	API            string `json:"api"              jsonschema:"enum=,enum=messages,enum=chat-completions"                                    jsonschema_description:"bedrock-mantle only. Empty means messages for anthropic.* model IDs and chat-completions otherwise."`
 	AWSProfile     string `json:"aws_profile"`
 	MaxInputTokens int    `json:"max_input_tokens" jsonschema:"minimum=1"`
-	Timeout        string `json:"timeout"          jsonschema:"pattern=^([0-9]+(\\.[0-9]+)?(ns|us|µs|ms|s|m|h))+$"       jsonschema_description:"Hard limit on the model call, as a Go duration. A timeout is a warning."`
+	Timeout        string `json:"timeout"          jsonschema:"pattern=^([0-9]+(\\.[0-9]+)?(ns|us|µs|ms|s|m|h))+$"                           jsonschema_description:"Hard limit on the model call, as a Go duration. A timeout is a warning."`
 }
 
 const (

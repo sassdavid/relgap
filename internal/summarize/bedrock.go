@@ -3,17 +3,13 @@ package summarize
 import (
 	"context"
 	"fmt"
-	"net/http"
 	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	awsconfig "github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/bedrockruntime"
 	"github.com/aws/aws-sdk-go-v2/service/bedrockruntime/types"
+	"github.com/aws/smithy-go/auth/bearer"
 )
-
-// bedrockAppID is sent in the AWS user agent.
-const bedrockAppID = "relgap"
 
 // Bedrock calls the Amazon Bedrock Converse API.
 type Bedrock struct {
@@ -26,25 +22,13 @@ func NewBedrock(cfg aws.Config, model string, optFns ...func(*bedrockruntime.Opt
 	return &Bedrock{client: bedrockruntime.NewFromConfig(cfg, optFns...), model: model}
 }
 
-// LoadAWSConfig reads the shared AWS config and credentials for profile (empty means the
-// default chain). It makes no request; credentials are fetched on the first call. A non-nil
-// transport carries every request.
-func LoadAWSConfig(ctx context.Context, profile string, transport http.RoundTripper) (aws.Config, error) {
-	opts := []func(*awsconfig.LoadOptions) error{awsconfig.WithAppID(bedrockAppID)}
-	if profile != "" {
-		opts = append(opts, awsconfig.WithSharedConfigProfile(profile))
+// WithBedrockAPIKey makes the client send key, an Amazon Bedrock API key, as a bearer token
+// instead of signing with SigV4.
+func WithBedrockAPIKey(key string) func(*bedrockruntime.Options) {
+	return func(o *bedrockruntime.Options) {
+		o.BearerAuthTokenProvider = bearer.StaticTokenProvider{Token: bearer.Token{Value: key}}
+		o.AuthSchemePreference = []string{"httpBearerAuth"}
 	}
-	if transport != nil {
-		opts = append(opts, awsconfig.WithHTTPClient(&http.Client{Transport: transport}))
-	}
-	cfg, err := awsconfig.LoadDefaultConfig(ctx, opts...)
-	if err != nil {
-		return aws.Config{}, fmt.Errorf("load AWS config: %w", err)
-	}
-	if cfg.Region == "" {
-		return aws.Config{}, fmt.Errorf("load AWS config: no region; set AWS_REGION or region in the profile")
-	}
-	return cfg, nil
 }
 
 // Complete sends p with Converse and joins the text blocks of the answer.
