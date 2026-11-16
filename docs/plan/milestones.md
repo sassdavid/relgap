@@ -10,8 +10,11 @@ SBOMs, the cosign bundle and attestations) until M19 turns the package channels 
 item), v0.4.0 = M15-M18, and the rest of M14 releases the separate action repo
 (revised 2026-11-13: v0.3.0 ships before M15; revised 2026-11-16: M17-M18 ship in v0.4.0, with no
 v0.5.0). M19 has no fixed version or place in the order: the owner runs it when the
-GitHub releases look right. M20 waits for external users. The research and decisions behind
-M11-M20 are in [roadmap-research.md](roadmap-research.md).
+GitHub releases look right. M20 waits for external users. M22-M26 (docs site, added
+2026-11-17) have no version: the site deploys with each release once M22 is done. They share
+their numbers with tfcensus's docs milestones, so there is no M21 here, and M22, M23 and M26 run
+in the same session in both repos. The research and decisions behind M11-M20 are in
+[roadmap-research.md](roadmap-research.md).
 
 ---
 
@@ -348,3 +351,107 @@ Earlier versions stay GitHub only; the tap and the bucket start at that version.
 - [ ] An aqua-registry PR for `sassdavid/relgap` is merged (any time after v0.1.0).
 - [ ] A mise registry PR is merged, once there are 3 or more external users. mise's `packslip:`
   backend, which carries completions and man pages, is checked again for goreleaser support.
+
+### M22: Docs site foundation (shared) ([docs-site](specs/docs-site.md), [docs-design](specs/docs-design.md))
+Scope: the site builds in CI, deploys on release to `https://relgap.sasskovacs.dev`, has its
+theme, fonts and home page, and serves the existing user docs. The CLI reference stays excluded
+until M23. Decisions: engineering [ADR-0016](../engineering/adr/0016-docs-site.md) (proposed
+2026-11-17; this milestone accepts it in both repos). tfcensus does the same milestone with its
+own theme in the same session.
+- [ ] ADR-0016 is accepted in both repos and listed in `docs/engineering/README.md`.
+- [ ] `mise.docs.toml` pins node 26.13.1, aube 2.10.1, lychee and oxfmt, `mise.lock` has their
+  entries, and `MISE_ENV=docs mise install` works on a clean checkout.
+- [ ] `docs/package.json` (exact versions), `docs/aube-lock.yaml` and `docs/aube-workspace.yaml`
+  exist. `aube install --frozen-lockfile` passes with lifecycle scripts denied, or each allowed
+  package is listed with a reason.
+- [ ] `docs/.vitepress/config.mts` follows docs-site.md "Site configuration": cleanUrls,
+  lastUpdated, sitemap, local search, editLink, srcExclude (including `cli/**` for now), the
+  version nav item from `.release-please-manifest.json`, and the `description` check in
+  `transformPageData`.
+- [ ] `theme/tokens.css` has every token in docs-design.md for both themes, fonts load from the
+  Fontsource packages, and the contrast check passes (docs-design criterion 1).
+- [ ] `HomeHero`, `StrataStack`, `EntryMark`, `VersionRange`, `AnswerRows` and `SiteFooter` exist.
+  The stack reads `home-strata.json`, written by a generator from the kubectl digest golden. The home page matches the
+  wireframe at 1280 px and 400 px (screenshots in the PR).
+- [ ] The existing user pages (install, CI) build and have a `description`. The
+  build has no dead links.
+- [ ] mise tasks `docs:dev`, `docs:build`, `docs:preview` and `lint:docs` exist. `docs:build` runs
+  the checks in docs-site.md "Checks" that exist at this point (stale check, unit tests, build,
+  lychee). `mise run check` includes `lint:docs`.
+- [ ] `.github/workflows/docs.yml` builds on pull requests and deploys through `workflow_call`
+  from `release-please.yml` and through `workflow_dispatch`. jactionlint passes. A dispatch run
+  from the latest tag deployed the site: `curl -sI https://relgap.sasskovacs.dev/` shows 200 and
+  the `http://` URL redirects. "Enforce HTTPS" is on.
+- [ ] `.github/workflows/aube-lock.yml` and the `aube-lock` environment exist. A test Renovate
+  branch that bumps a docs dependency gets a lockfile commit and green CI. `renovate.json` covers
+  `docs/package.json`, and `docs/ci/` stays out of scope as before.
+- [ ] `lint:prose` covers the published pages, with a test that it doesn't skip them.
+- [ ] `scripts/sibling-diff.sh` lists the new files as docs-site.md "Sibling sharing" says, and
+  `mise run sibling:diff` passes in both repos.
+
+### M23: Generated reference (shared) ([docs-site](specs/docs-site.md#generated-content-shared-generators))
+Scope: every fact the code can state reaches the site from code, with a test per page. The
+generators are shared with tfcensus; tool-specific catalogues wait for M24.
+- [ ] `scripts/gendocs` writes the nested CLI reference with frontmatter, flag tables, formats,
+  `--fail-on` values, exit codes, examples, subcommands and related links; one global flags page;
+  one completion page; escaped `Long` text with indented blocks as fences; `commands.json`. The
+  flat `relgap_*.md` files are gone, links to them are updated, and `cli/**` leaves
+  `srcExclude`. (docs-site criterion 4)
+- [ ] `Annotations["formats"]`, `["fail-on"]` and `["exit-codes"]` are set on every command, with
+  tests that run the commands and compare. The stale help texts in docs-content.md (`registry lint`,
+  `outdated` skip list after its cassette check, `--concurrency`, `scan.detectors.ci_actions`,
+  `github.host`, `--no-input`) are fixed.
+- [ ] A test fails for a non-hidden command without `Long` or `Example` outside the allowlist,
+  and the missing texts listed in docs-content.md are written.
+- [ ] `/reference/config`, `/reference/environment`, `/reference/exit-codes`,
+  `/reference/fail-on`, `/reference/schemas` and `/reference/mcp` are generated, each with the test docs-site.md names.
+  Schemas are served at `/schemas/<name>.json` and their `$id` matches. (docs-site criterion 5)
+- [ ] `internal/docsurl` exists, and help texts, runtime messages and the config template use it.
+  A test checks every path against the built site. (docs-site criterion 6)
+- [ ] The snippet check runs in `docs:build` and finds nothing. (docs-site criterion 7)
+- [ ] `sidebar.mts` builds the CLI section from `commands.json`, and `llms.txt` is generated and
+  stale-checked.
+- [ ] `mise run docs` regenerates everything and exits 1 on any change. A PR that changes a flag
+  without regenerating fails CI. (docs-site criterion 3)
+
+### M24: Getting started and tool reference (relgap only) ([docs-content](specs/docs-content.md))
+Scope: the tutorial, install and every relgap-specific reference and concept table. Rerun the
+audit for the pages this milestone writes before writing them.
+- [ ] `scripts/gensite` generates supported tools, registry snapshots, the registry entry schema,
+  SARIF rules, the detector table, source kinds with placeholders and allowed hosts, the
+  classification confidence table and the network host list, each with a stale check in
+  `mise run docs`. Constants the tables need are exported or covered by a doc test, so no
+  generator parses Go source.
+- [ ] The relgap-action inputs and outputs table is generated from the action repo's `action.yml`
+  at its pinned release.
+- [ ] Getting started runs a first digest and a repo scan against cassettes, with every output
+  included from goldens. Install, `/concepts/network` and the changelog page are written.
+- [ ] `SentToModel` lists what `--summarize` sends, read from the code that builds the request.
+- [ ] The never-on-the-site checks pass. (docs-content criterion 4)
+
+### M25: Guides and concepts (relgap only) ([docs-content](specs/docs-content.md))
+Scope: every guide, concept, help and project page in docs-content.md, and every gap closed.
+If one session can't finish, the open pages carry over to a follow-up session before M26.
+- [ ] Every guide and concept page in docs-content.md exists with a `description` and passes the
+  snippet check. The CI guides embed `docs/ci/*.yml`. (docs-content criteria 1 and 2)
+- [ ] Every row in "wrong or stale statements" is fixed, each with its commit in the evidence.
+  (docs-content criterion 3)
+- [ ] README is reduced to the introduction, install and links. (docs-content criterion 5)
+- [ ] Troubleshooting, FAQ, security and contributing pages exist, and this site and tfcensus's
+  inventory guide link to each other.
+
+### M26: Polish and launch (shared) ([docs-site](specs/docs-site.md), [docs-design](specs/docs-design.md))
+Scope: social cards, icons, accessibility and performance, then the first deploy by a real
+release.
+- [ ] `social.mjs` and `social-check.mjs` generate and check a card per page with the bundled
+  font and its license file. The glyph, favicons and manifest are in place. (docs-design
+  criterion 4, docs-site criterion 8)
+- [ ] axe shows no WCAG 2.2 AA violation on the pages docs-site.md lists in both themes, and
+  Lighthouse gives accessibility 100 and best practices at least 95 on the home page and a CLI
+  page. (docs-site criterion 9, docs-design criterion 5)
+- [ ] The built site makes no third-party request. (docs-site criterion 10)
+- [ ] `docs/README.md` is the contributor guide for the site: tasks, where pages go, generated
+  files, voice.
+- [ ] A release created by release-please deployed the site through `workflow_call`, with the run
+  ID in the evidence. (docs-site criterion 2)
+- [ ] `mise run sibling:diff` passes in both repos. (docs-site criterion 11)
