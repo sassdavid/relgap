@@ -76,7 +76,7 @@ Following Renovate and Dependabot:
   of scope for v0.x and would be new adapters behind the same interface.
 - Files over 1 MB: `Accept: application/vnd.github.raw` on the contents API, never raw.githubusercontent.com.
 - Huge release bodies (terragrunt v1.2.0 is 96 KB): fetch bodies in small GraphQL pages; never `first:100` with bodies for big repos (adaptive).
-- One GraphQL query aliases up to 25 repos for "latest release + tags" (`outdated` over 45 tools = 2 queries).
+- The "latest release + tags" lookup sends one GraphQL query per concurrent request, each aliasing 10 to 25 repos (`outdated` over 45 tools = 5 queries, [ADR-0013](../adr/0013-parallel-latest-lookup.md)).
 - A file that doesn't exist (404) is remembered for an hour, so per-version files cost no request in a second run and work with `--offline` ([ADR-0011](../adr/0011-enrichment-and-web-sources.md)).
 
 ## Acceptance criteria
@@ -85,4 +85,4 @@ Following Renovate and Dependabot:
 - [x] A changelog file is fetched exactly once per digest regardless of how many versions it contains (asserted via the request counter).
 - [x] The stale-changelog guard is covered by an argocd fixture. (`TestSpec_source_adapters_4`, with the head of argocd's real `CHANGELOG.md` in `testdata/autodiscovery/argocd/`.)
 - [x] Auto-discovery picks `HISTORY.md` / `CHANGES.rst` / `RELEASE_NOTES.md` in fixtures and rejects `changelog.json`. (`TestSpec_source_adapters_5`; `TestAutoUsesFreshChangelog` reads a `CHANGES.rst`.)
-- [x] The "latest version" lookup for 45 tools sends at most 2 GraphQL queries (request counter on a cassette, `TestSpec_source_adapters_6`).
+- [x] The "latest version" lookup for 45 tools sends at most 5 GraphQL queries (request counter on a cassette, `TestSpec_source_adapters_6`; 2 before [ADR-0013](../adr/0013-parallel-latest-lookup.md)).

@@ -56,7 +56,28 @@ func recent45() []github.RecentQuery {
 	return qs
 }
 
-// TestSpec_source_adapters_6: the latest versions of 45 tools take at most 2 GraphQL queries.
+func TestRecentBatchSize(t *testing.T) {
+	t.Parallel()
+	tests := []struct {
+		name           string
+		n, concurrency int
+		want           int
+	}{
+		{"a small project sends one query", 9, 8, github.RecentBatchMin},
+		{"one query per concurrent request", 50, 4, 13},
+		{"high concurrency keeps the minimum", 50, 64, github.RecentBatchMin},
+		{"few concurrent requests keep the maximum", 200, 2, github.RecentBatchMax},
+		{"the default concurrency splits 45 tools into 5 queries", 45, 8, 10},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tt.want, github.RecentBatchSize(tt.n, tt.concurrency))
+		})
+	}
+}
+
+// TestSpec_source_adapters_6: the latest versions of 45 tools take at most 5 GraphQL queries.
 func TestSpec_source_adapters_6(t *testing.T) {
 	t.Parallel()
 	rt := vcr.ForTest(t, filepath.Join("..", "..", "testdata", "cassettes", "github", "recent-45"), ghtest.Scrubber())
@@ -71,7 +92,7 @@ func TestSpec_source_adapters_6(t *testing.T) {
 	got, err := c.Recent(t.Context(), qs)
 	require.NoError(t, err)
 
-	assert.LessOrEqual(t, int(counter.count.Load()), 2, "GraphQL queries for 45 repositories")
+	assert.LessOrEqual(t, int(counter.count.Load()), 5, "GraphQL queries for 45 repositories")
 	assert.Len(t, got, len(qs))
 	for _, q := range qs {
 		r := got[q.Repo]

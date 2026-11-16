@@ -27,6 +27,8 @@ digested. mise also needs trusted config files, which a scanned project may not 
 - Latest is the newest stable version on the tool's registry line, sorted by `version.Scheme`.
   One GraphQL query per 25 repositories reads the 30 newest releases (or tags, by tag commit
   date) of each. 45 tools take 2 queries (`TestSpec_source_adapters_6`).
+  Amended by [ADR-0013](0013-parallel-latest-lookup.md): one query per concurrent request, 10 to
+  25 repositories each, so 45 tools take 5 queries.
 - A pin behind latest gets the full digest `current..latest` from the same `report.Digester`
   that `relgap digest` uses. BEHIND, BREAKING and DEPRECATION are read from that digest. There
   is no second, lighter count. Pins with the same tool and current version share one digest.

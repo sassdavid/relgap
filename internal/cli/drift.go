@@ -47,8 +47,8 @@ Tools that agree everywhere, or that only one repository pins, are listed below 
 --tool limits the report to the named tools and gives each one a column, even when it
 doesn't drift. Ignore rules in the config drop matching pins.
 
---latest adds a latest row with the newest stable version of each tool, from one GraphQL
-query per 25 tools.
+--latest adds a latest row with the newest stable version of each tool, from GraphQL
+queries of 10 to 25 tools, sent in parallel.
 
 --format sarif writes a SARIF 2.1.0 log for GitHub code scanning with a result per drifted
 pin (a compared pin whose version differs from the version most repositories pin, the cells

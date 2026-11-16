@@ -29,7 +29,7 @@ columns, which neither a terminal nor a GitHub comment shows well.
   the newest on a tie.
 - Repository labels are the paths `relgap pins` prints. Several roots make one matrix.
 - `--latest` adds a latest row from one `Client.Recent` lookup (one GraphQL query per 25
-  tools), on the registry line of each tool's reference version. The comparison doesn't change.
+  tools; 10 to 25 in parallel since [ADR-0013](0013-parallel-latest-lookup.md)), on the registry line of each tool's reference version. The comparison doesn't change.
 - Config ignore rules drop pins in `drift`, `outdated` and `digest --from-mise|--all`. `pins`
   keeps listing every pin.
 - Exit codes follow ADR-0009: a file that doesn't parse, or a tool whose latest version can't be

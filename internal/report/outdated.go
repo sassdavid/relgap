@@ -128,6 +128,15 @@ func (o *Outdater) Outdated(ctx context.Context, req OutdatedRequest) (*Outdated
 			})
 		}
 	}
+	// Prefix and constraint pins always need the full version list, so it loads while the
+	// batched lookup runs instead of after it. compare reads the same memoized list.
+	var prefetch sync.WaitGroup
+	defer prefetch.Wait()
+	for _, t := range tools {
+		if t.err == nil && t.needsFullList(req.Pins) {
+			prefetch.Go(func() { _, _, _ = o.digester.list(ctx, t.spec) })
+		}
+	}
 	recent, err := o.recent.Recent(ctx, queries)
 	if err != nil {
 		return nil, err //nolint:wrapcheck // Recent names what it listed
@@ -166,6 +175,17 @@ func (o *Outdater) Outdated(ctx context.Context, req OutdatedRequest) (*Outdated
 		)
 	})
 	return out, nil
+}
+
+// needsFullList reports whether a pin of t is a prefix or a constraint, which [comparer.current]
+// resolves against every version of the tool.
+func (t *toolPins) needsFullList(pins []scan.Pin) bool {
+	for _, i := range t.pins {
+		if m := pins[i].Match; m == scan.MatchPrefix || m == scan.MatchConstraint {
+			return true
+		}
+	}
+	return false
 }
 
 func groupTools(req OutdatedRequest) []*toolPins {

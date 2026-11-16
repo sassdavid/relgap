@@ -17,8 +17,9 @@ compared.
 BEHIND, BREAKING and DEPRECATION come from the digest of CURRENT..LATEST, the same digest
 'relgap digest <tool> <current>..' prints. Entries below --min-confidence aren't counted.
 
-relgap finds the latest versions with one GraphQL query per 25 tools. Only pins that are
-behind, and constraint and prefix pins, need a tool's full release list.
+relgap finds the latest versions with GraphQL queries of 10 to 25 tools, sent in parallel.
+Only pins that are behind, and constraint and prefix pins, need a tool's full release list;
+constraint and prefix pins start loading it at the same time.
 
 Pins of tools without a GitHub repository, and tfprovider, chart and image pins, are
 skipped; --format json lists them with the reason.

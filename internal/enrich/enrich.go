@@ -59,19 +59,20 @@ func NewEnricher(logger *slog.Logger, eol *EOLClient, osv *OSVClient, concurrenc
 	return &Enricher{logger: logger, eol: eol, osv: osv, concurrency: max(concurrency, 1)}
 }
 
-// Enrich answers every request. It fetches each product's cycles once, sends all OSV queries in
-// batches and fetches each record once. A failed source becomes a [Problem]; only a canceled
-// context is an error.
+// Enrich answers every request. It asks endoflife.date and OSV at the same time, fetches each
+// product's cycles once, sends all OSV queries in batches and fetches each record once. A failed
+// source becomes a [Problem]; only a canceled context is an error.
 func (e *Enricher) Enrich(ctx context.Context, reqs []Request) (map[string]Result, []Problem, error) {
 	out := make(map[string]Result, len(reqs))
-	for _, r := range reqs {
-		out[r.Key] = Result{}
-	}
-	var problems []Problem
-	eols, eolProblems := e.eolResults(ctx, reqs)
-	problems = append(problems, eolProblems...)
+	var (
+		eols        map[string]*EOL
+		eolProblems []Problem
+		wg          sync.WaitGroup
+	)
+	wg.Go(func() { eols, eolProblems = e.eolResults(ctx, reqs) })
 	vulns, osvProblems := e.osvResults(ctx, reqs)
-	problems = append(problems, osvProblems...)
+	wg.Wait()
+	problems := slices.Concat(eolProblems, osvProblems)
 	if err := ctx.Err(); err != nil {
 		return nil, nil, err //nolint:wrapcheck // the caller matches context errors
 	}

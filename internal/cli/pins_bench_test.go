@@ -132,17 +132,24 @@ func TestSpec_pindiscovery_5(t *testing.T) {
 	}
 }
 
-func BenchmarkPins(b *testing.B) {
-	git := lookGit()
-	root := genTree(b, git)
-	for b.Loop() {
-		var stdout bytes.Buffer
-		if code := cli.Execute(
-			b.Context(),
-			pinsDeps(b, git, &stdout),
-			[]string{"pins", root, "--format", "json"},
-		); code != 0 {
-			b.Fatalf("exit %d", code)
-		}
+// BenchmarkScan60Repos runs `relgap pins` over the generated tree, once with the scanner walking
+// the files and once with git listing them.
+func BenchmarkScan60Repos(b *testing.B) {
+	modes := []struct{ name, git string }{{"walk", ""}}
+	if git := lookGit(); git != "" {
+		modes = append(modes, struct{ name, git string }{"git", git})
+	}
+	for _, m := range modes {
+		b.Run(m.name, func(b *testing.B) {
+			root := genTree(b, m.git)
+			b.ReportAllocs()
+			for b.Loop() {
+				var stdout bytes.Buffer
+				d := pinsDeps(b, m.git, &stdout)
+				if code := cli.Execute(b.Context(), d, []string{"pins", root, "--format", "json"}); code != cli.ExitOK {
+					b.Fatalf("exit %d: %s", code, d.Stderr)
+				}
+			}
+		})
 	}
 }

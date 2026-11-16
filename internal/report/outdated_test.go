@@ -192,6 +192,59 @@ func TestOutdated(t *testing.T) {
 	assert.Contains(t, got.Pins[7].Note, "no GitHub repository")
 }
 
+// listFirstGitHub answers Recent only after a full release list has started.
+type listFirstGitHub struct {
+	*multiGitHub
+
+	once    sync.Once
+	listing chan struct{}
+}
+
+func (f *listFirstGitHub) Releases(ctx context.Context, repo string) ([]github.Release, error) {
+	f.once.Do(func() { close(f.listing) })
+	return f.multiGitHub.Releases(ctx, repo)
+}
+
+func (f *listFirstGitHub) Recent(ctx context.Context, qs []github.RecentQuery) (map[string]github.Recent, error) {
+	select {
+	case <-f.listing:
+		return f.multiGitHub.Recent(ctx, qs)
+	case <-ctx.Done():
+		return nil, fmt.Errorf("recent: %w", ctx.Err())
+	}
+}
+
+func TestOutdatedListsDuringRecent(t *testing.T) {
+	t.Parallel()
+	for _, match := range []scan.Match{scan.MatchPrefix, scan.MatchConstraint} {
+		t.Run(string(match), func(t *testing.T) {
+			t.Parallel()
+			multi, resolve := outdatedFixture()
+			gh := &listFirstGitHub{multiGitHub: multi, listing: make(chan struct{})}
+			value := "1.1"
+			if match == scan.MatchConstraint {
+				value = "~> 1.1"
+			}
+			ctx, cancel := context.WithTimeout(t.Context(), 10*time.Second)
+			defer cancel()
+			got, err := report.NewOutdater(report.NewDigester(slog.New(slog.DiscardHandler), gh, nil), gh).Outdated(
+				ctx,
+				report.OutdatedRequest{
+					Pins: []scan.Pin{
+						pin("a", value, match, ".", "f", 1),
+						pin("b", "v3.0.0", scan.MatchExact, ".", "f", 2),
+					},
+					Resolve: resolve, MinConfidence: 0.5, Concurrency: 4,
+				},
+			)
+			require.NoError(t, err, "the full list of a starts before the batched lookup returns")
+			assert.Equal(t, "1.1.0", got.Pins[0].Current)
+			assert.Equal(t, 1, multi.listed["o/a"], "the prefetched list is the one compare reads")
+			assert.Zero(t, multi.listed["o/b"], "an exact pin is not prefetched")
+		})
+	}
+}
+
 func TestOutdatedAuth(t *testing.T) {
 	t.Parallel()
 	gh, resolve := outdatedFixture()
