@@ -83,7 +83,8 @@ Precedence: **flags > env (`RELGAP_*`) > project file > user file > defaults**.
 ## Code quality
 
 - `golangci-lint` with the config from [ADR-0008](adr/0008-lint-config.md); `gofumpt` + `goimports`.
-- `go test -race ./...` must pass on Linux and macOS; Windows also runs in CI.
+- `go test -race ./...` must pass on Linux and macOS. Windows support is best-effort, but CI runs the
+  tests and the completion scripts there too.
 - Every bug fix adds a regression test. Every new parser or adapter adds fixtures and golden files.
 - Exported identifiers need doc comments; package docs live in `doc.go`.
 - Commits follow Conventional Commits, which drives release notes ([ci-and-release.md](ci-and-release.md)).
@@ -94,5 +95,5 @@ Precedence: **flags > env (`RELGAP_*`) > project file > user file > defaults**.
 - `govulncheck` runs in CI. GitHub Actions are pinned by SHA. `zizmor` audits workflows.
 - Releases are signed (cosign keyless), ship an SBOM (syft) and GitHub build-provenance attestations.
 - Every release archive carries the license notices of the code compiled into it, and CI rejects forbidden, restricted or unknown dependency licenses ([ADR-0012](adr/0012-third-party-notices.md)).
-- No telemetry, ever. Network calls go only to the documented endpoints for each tool.
+- No telemetry, ever. Network calls go only to the documented endpoints for each tool. The only usage signals are GitHub stars and issues.
 - Read-only by default. Any write to cloud or state is opt-in, explicit and logged.
