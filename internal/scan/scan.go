@@ -127,10 +127,14 @@ func (s *Scanner) Scan(ctx context.Context, roots []string) (*Result, error) {
 		res.Pins = append(res.Pins, p)
 	}
 	slices.SortFunc(res.Pins, comparePins)
-	slices.SortFunc(res.Problems, func(a, b Problem) int {
+	sortProblems(res.Problems)
+	return res, nil
+}
+
+func sortProblems(ps []Problem) {
+	slices.SortFunc(ps, func(a, b Problem) int {
 		return cmp.Or(cmp.Compare(a.Repo, b.Repo), cmp.Compare(a.File, b.File), cmp.Compare(a.Message, b.Message))
 	})
-	return res, nil
 }
 
 // plan lists every repository's files, adds submodules as repositories and picks the detectors

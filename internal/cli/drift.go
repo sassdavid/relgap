@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"os"
 	"path"
 	"slices"
 
@@ -25,6 +26,7 @@ type driftFlags struct {
 	latest            bool
 	ignoreConstraints bool
 	submodules        bool
+	tfcensus          string
 }
 
 func newDriftCmd(d *app.Deps, g *globals) *cobra.Command {
@@ -43,6 +45,14 @@ that satisfies it, otherwise as its lower bound (1.15.0). Prefix (26) and channe
 pins aren't compared. --drift-ignore-constraints leaves constraint pins out of the
 comparison too. A version marked * differs from the version most repositories pin.
 
+--from-tfcensus reads the JSON of 'tfcensus inventory --format json' (schema_version 1)
+instead of scanning, or as well when roots are given. Each unit and workspace becomes a row
+named repo/path, with :workspace for a workspace other than default. The version that last
+wrote the unit's state is an exact terraform pin, or opentofu when tfcensus says OpenTofu
+applied it, and each provider version from the unit's lock file is an exact tfprovider pin.
+Units without a version add no pins. The inventory's errors make the report partial. An
+inventory from another tool or schema version exits 2. - reads it from stdin.
+
 Tools that agree everywhere, or that only one repository pins, are listed below the matrix.
 --tool limits the report to the named tools and gives each one a column, even when it
 doesn't drift. Ignore rules in the config drop matching pins.
@@ -59,8 +69,10 @@ tool whose latest version can't be listed.
 (default 1). Otherwise a file that doesn't parse, or a tool whose latest version can't be
 listed, exits 1 after printing the rest.
 
-Roots default to scan.roots, then the current directory.`,
+Roots default to scan.roots, then the current directory, unless --from-tfcensus is set.`,
 		Example: `  relgap drift ~/src/infra
+  tfcensus inventory ~/src/infra/* --format json | relgap drift --from-tfcensus -
+  relgap drift ~/src/infra --from-tfcensus inventory.json --tool terraform
   relgap drift ~/src/infra --tool terraform --tool terragrunt
   relgap drift ~/src/infra ~/src/apps --latest --format md
   relgap drift --fail-on drift --drift-ignore-constraints
@@ -80,9 +92,12 @@ Roots default to scan.roots, then the current directory.`,
 	fl.BoolVar(&f.ignoreConstraints, "drift-ignore-constraints", false,
 		"compare exact pins only; constraint pins are shown but don't count")
 	fl.BoolVar(&f.submodules, "submodules", false, "scan checked-out git submodules as repositories")
+	fl.StringVar(&f.tfcensus, "from-tfcensus", "",
+		"add the units of this tfcensus inventory JSON as rows (- for stdin); without roots, scan nothing")
 	addGateFlags(cmd, driftValues())
 	addOutputFlags(cmd, g, driftFormats()...)
 	_ = cmd.RegisterFlagCompletionFunc("tool", completeToolList(d, g))
+	_ = cmd.RegisterFlagCompletionFunc("from-tfcensus", complete.Files("json"))
 	cmd.ValidArgsFunction = complete.Dirs()
 	return cmd
 }
@@ -100,14 +115,21 @@ func runDrift(cmd *cobra.Command, d *app.Deps, g *globals, f driftFlags, args []
 	if err != nil {
 		return err
 	}
-	roots := args
-	if len(roots) == 0 {
-		roots = d.Config.Config.Scan.Roots
+	var inventory *scan.Result
+	if f.tfcensus != "" {
+		if inventory, err = readTFCensus(d, f.tfcensus); err != nil {
+			return err
+		}
 	}
-	if len(roots) == 0 {
-		roots = []string{"."}
+	roots := args
+	if len(roots) == 0 && inventory == nil {
+		roots = d.Config.Config.Scan.Roots
+		if len(roots) == 0 {
+			roots = []string{"."}
+		}
 	}
 	res, out, tools, err := s.drift(cmd.Context(), driftArgs{
+		inventory:         inventory,
 		roots:             roots,
 		tools:             f.tools,
 		latest:            f.latest,
@@ -126,8 +148,30 @@ func runDrift(cmd *cobra.Command, d *app.Deps, g *globals, f driftFlags, args []
 	return gateExit(cmd, d, gate.Matches(gate.CheckDrift(out)), driftPartial(res, out))
 }
 
+// readTFCensus reads a tfcensus inventory from a file, or from stdin for -.
+func readTFCensus(d *app.Deps, file string) (*scan.Result, error) {
+	var (
+		data []byte
+		err  error
+	)
+	if file == "-" {
+		data, err = io.ReadAll(d.Stdin)
+	} else {
+		data, err = os.ReadFile(file)
+	}
+	if err != nil {
+		return nil, usageError(fmt.Errorf("read tfcensus inventory: %w", err))
+	}
+	inv, err := scan.TFCensusInventory(data)
+	if err != nil {
+		return nil, usageError(fmt.Errorf("read tfcensus inventory %s: %w", file, err))
+	}
+	return inv, nil
+}
+
 // driftArgs says what a drift report covers.
 type driftArgs struct {
+	inventory         *scan.Result // pins from a tfcensus inventory; roots may then be empty
 	roots, tools      []string
 	latest            bool
 	ignoreConstraints bool
@@ -138,9 +182,15 @@ type driftArgs struct {
 // drift scans the roots and compares the pins of each tool across repositories. It returns
 // the tools named as pins name them.
 func (s *session) drift(ctx context.Context, a driftArgs) (*scan.Result, *report.Drift, []string, error) {
-	res, err := s.scan(ctx, a.roots, a.submodules, a.base)
-	if err != nil {
-		return nil, nil, nil, err
+	res := &scan.Result{Repos: []string{}, Pins: []scan.Pin{}}
+	if len(a.roots) > 0 {
+		var err error
+		if res, err = s.scan(ctx, a.roots, a.submodules, a.base); err != nil {
+			return nil, nil, nil, err
+		}
+	}
+	if a.inventory != nil {
+		res.Merge(a.inventory)
 	}
 	tools := toolNames(s.resolver, a.tools)
 	ignore := ignoreRules(s.resolver, s.d.Config.Config.Ignore)

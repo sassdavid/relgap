@@ -19,15 +19,16 @@ const (
 	DetectorHelm         = "helm"
 	DetectorGeneric      = "generic"
 	DetectorRenovate     = "renovate"
+	DetectorTFCensus     = "tfcensus"
 )
 
-// Detectors returns every detector name, sorted. renovate reads --renovate-report instead of
-// repository files.
+// Detectors returns every detector name, sorted. renovate reads --renovate-report and tfcensus
+// reads drift --from-tfcensus instead of repository files.
 func Detectors() []string {
 	return []string{
 		DetectorAqua, DetectorCI, DetectorDockerfile, DetectorGeneric, DetectorHelm, DetectorIdiomatic,
 		DetectorMise, DetectorRenovate, DetectorTerraform, DetectorTerragrunt, DetectorTFLock,
-		DetectorToolVersions,
+		DetectorTFCensus, DetectorToolVersions,
 	}
 }
 
@@ -50,7 +51,7 @@ func (o *Options) detectors() []detector {
 		{DetectorAqua, isAquaConfig, detectAqua},
 		{DetectorIdiomatic, isIdiomatic, detectIdiomatic},
 		{DetectorTerraform, isTerraform, detectTerraform},
-		{DetectorTFLock, baseIs(".terraform.lock.hcl"), detectTFLock},
+		{DetectorTFLock, baseIs(tfLockFile), detectTFLock},
 		{DetectorTerragrunt, isTerragrunt, detectTerragrunt},
 		{DetectorDockerfile, isDockerfile, detectDockerfile},
 		{DetectorCI, isCI, o.detectCI},

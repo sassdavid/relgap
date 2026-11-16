@@ -15,7 +15,8 @@ need it (rule of three).
 | Both MCP servers | an agent (Claude Code) | read-only structured answers | "List units on terraform < 1.15 (tfcensus), then summarize the breaking changes to 1.17 (relgap)" in one conversation |
 
 `relgap` reads the tfcensus inventory schema (`schemas/inventory-v1.json`, published by tfcensus) as one more pin
-source (detector `tfcensus`). The coupling is one-way and versioned.
+source (detector `tfcensus`). The coupling is one-way and versioned: relgap reads `schema_version` "1"
+only, and [ADR-0014](adr/0014-drift-from-tfcensus.md) records how units and versions become pins.
 
 ## Shared conventions (copied, not linked)
 - The same JSON envelope (`schema_version`, `tool`, `version`, `generated_at`, `data`, `errors`).
