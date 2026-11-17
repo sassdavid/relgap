@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.7.0](https://github.com/sassdavid/relgap/compare/v0.6.0...v0.7.0) (2026-11-17)
+
+
+### Features
+
+* **docs:** add getting started and the generated tool reference (M24) ([#71](https://github.com/sassdavid/relgap/issues/71)) ([6e9b7e6](https://github.com/sassdavid/relgap/commit/6e9b7e69d026e74ea84192d7530e684838cbef6b))
+
+
+### Bug Fixes
+
+* **httpx:** redact X-Api-Key in trace logs ([#70](https://github.com/sassdavid/relgap/issues/70)) ([9edb12c](https://github.com/sassdavid/relgap/commit/9edb12cd16a1f3ab38c38be57d87e1e166991878))
+
 ## [0.6.0](https://github.com/sassdavid/relgap/compare/v0.5.0...v0.6.0) (2026-11-17)
 
 
