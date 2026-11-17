@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.5.0](https://github.com/sassdavid/relgap/compare/v0.4.0...v0.5.0) (2026-11-17)
+
+
+### Features
+
+* **docs:** build the docs site foundation (M22) ([#61](https://github.com/sassdavid/relgap/issues/61)) ([65b9a37](https://github.com/sassdavid/relgap/commit/65b9a374151c15a1c6322a7dff52ba52369c9e1c))
+
+
+### Bug Fixes
+
+* **render:** stop digest Markdown from mentioning users ([#63](https://github.com/sassdavid/relgap/issues/63)) ([8cdfbad](https://github.com/sassdavid/relgap/commit/8cdfbade96af68f444be8991c89a085cb39ca815))
+
 ## [0.4.0](https://github.com/sassdavid/relgap/compare/v0.3.0...v0.4.0) (2026-11-16)
 
 
