@@ -9,7 +9,8 @@ description: How to report a vulnerability in relgap, how to verify a release, w
 Report it privately through GitHub's private vulnerability reporting:
 [github.com/sassdavid/relgap/security/advisories/new](https://github.com/sassdavid/relgap/security/advisories/new).
 Don't open a public issue for a vulnerability. The report stays visible to you and the
-maintainer only until an advisory is published.
+maintainer only until an advisory is published. The repository's
+[SECURITY.md](https://github.com/sassdavid/relgap/blob/main/SECURITY.md) has the same policy.
 
 ## Verify a release
 
