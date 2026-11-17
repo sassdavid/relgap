@@ -480,22 +480,23 @@ If one session can't finish, the open pages carry over to a follow-up session be
   are written too: `/reference/notify` and `/reference/output`. Shell completion moved from
   `install.md` to `/guides/completion`. Command pages link their guides through `setRelated`,
   which showed that gendocs titled every Related link with the generated-file comment: fixed in
-  its own commit (ef32fd8, `TestTitleOf`), paired with tfcensus.
+  its own PR (7c94f11, #73, `TestTitleOf`), paired with tfcensus#90.
 - [x] Every row in "wrong or stale statements" is fixed, each with its commit in the evidence.
   (docs-content criterion 3)
   `scan.detectors.ci_actions`, `github.host`, `--no-input`, the `outdated` skip list,
   `registry lint` and `--concurrency`: 8cae757 (M23). README's kind order and its dogfood and
   plan links, the cache directory (said once on `/guides/cache`), `docs/plan/cli.md`,
-  `specs/config.md` and the `specs/mcp-and-llm.md` tool table: b4ec086. `docs/README.md` stays
-  with M26, as the row says. Checking the new pages against the code fixed four more in b4ec086:
+  `specs/config.md` and the `specs/mcp-and-llm.md` tool table: b1e6a8e (#74). `docs/README.md` stays
+  with M26, as the row says. Checking the new pages against the code fixed four more in b1e6a8e:
   the `digest --line` default, the cache help's 1-day list, the `breaking_markers` schema text
   (regular expressions, not literal text), and the version-jump row in `classify.Signals`.
 - [x] README is reduced to the introduction, install and links. (docs-content criterion 5)
-- [ ] Troubleshooting, FAQ, security and contributing pages exist, and this site and tfcensus's
+- [x] Troubleshooting, FAQ, security and contributing pages exist, and this site and tfcensus's
   inventory guide link to each other.
   The four pages exist. `/guides/from-tfcensus` links tfcensus's `/concepts/state#feed-relgap`
-  (tfcensus has no inventory guide; its M25 session chose that section). Its link back, and its
-  FAQ entry on relgap, land with tfcensus M25; tick this box once that is on its main.
+  (tfcensus has no inventory guide; its M25 session chose that section). tfcensus#91 (e676d37)
+  put the link back on its main: the "Feed relgap" section of `docs/concepts/state.md` and the
+  FAQ entry "Can relgap read its inventory?" both link `/guides/from-tfcensus`.
   Evidence (2026-11-17): `mise run docs` exits 0. `mise run docs:build` passes: snippet check,
   transcripts, vitepress build, `TestPaths`, `TestNeverOnSite`, and lychee with 0 errors.
   `mise run check` passes.
