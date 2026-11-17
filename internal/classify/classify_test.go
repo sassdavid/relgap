@@ -435,3 +435,21 @@ func TestSpec_classification_5(t *testing.T) {
 	n.Source.Adapter = source.KindGHRelease
 	assert.Len(t, c.Entries(n), 6)
 }
+
+// TestSignals checks that the documented evidence table has a row for every rule's confidence,
+// highest first, so the docs site's confidence table can't miss one.
+func TestSignals(t *testing.T) {
+	t.Parallel()
+	signals := classify.Signals()
+	listed := map[float64]bool{}
+	for i, s := range signals {
+		listed[s.Confidence] = true
+		assert.NotEmpty(t, s.Evidence)
+		if i > 0 {
+			assert.LessOrEqual(t, s.Confidence, signals[i-1].Confidence, "row %d is out of order", i)
+		}
+	}
+	for _, c := range classify.RuleConfidences() {
+		assert.True(t, listed[c], "no signal has confidence %v", c)
+	}
+}

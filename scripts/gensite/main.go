@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"errors"
 	"flag"
@@ -24,11 +25,24 @@ func main() {
 
 func run() int {
 	root := flag.String("root", ".", "repository root")
+	fetch := flag.Bool("fetch-action", false,
+		"copy relgap-action's action.yml at the commit "+actionPinFile+" pins, then regenerate")
 	flag.Parse()
-	stale, err := writeStrata(*root)
+	if *fetch {
+		if err := fetchAction(context.Background(), *root); err != nil {
+			_, _ = fmt.Fprintf(os.Stderr, "gensite: %v\n", err)
+			return 1
+		}
+	}
+	stale, problems, err := generate(*root)
 	switch {
 	case err != nil:
 		_, _ = fmt.Fprintf(os.Stderr, "gensite: %v\n", err)
+		return 1
+	case len(problems) > 0:
+		for _, p := range problems {
+			_, _ = fmt.Fprintln(os.Stderr, p)
+		}
 		return 1
 	case len(stale) > 0:
 		for _, f := range stale {
@@ -40,9 +54,39 @@ func run() int {
 	}
 }
 
-// writeStrata writes the home page strata from the kubectl digest golden and returns the paths
-// it changed.
-func writeStrata(root string) ([]string, error) {
+// generate writes every file gensite owns and returns the ones it changed, and the problems the
+// transcript check found.
+func generate(root string) ([]string, []string, error) {
+	files := map[string][]byte{}
+	strata, err := strataFile(root)
+	if err != nil {
+		return nil, nil, err
+	}
+	files["docs/.vitepress/theme/data/home-strata.json"] = strata
+	for _, gen := range []func(string, map[string][]byte) error{
+		toolsPage, snapshotsPage, registrySchemaPage, sarifRulesPage, partsFiles, actionPart, sentToModelFile,
+	} {
+		if err = gen(root, files); err != nil {
+			return nil, nil, err
+		}
+	}
+	var stale []string
+	for _, rel := range sortedKeys(files) {
+		changed, werr := writeIfChanged(root, rel, files[rel])
+		if werr != nil {
+			return nil, nil, werr
+		}
+		stale = append(stale, changed...)
+	}
+	problems, err := checkTranscripts(root)
+	if err != nil {
+		return nil, nil, err
+	}
+	return stale, problems, nil
+}
+
+// strataFile returns the home page strata from the kubectl digest golden.
+func strataFile(root string) ([]byte, error) {
 	golden, err := os.ReadFile(filepath.Join(root, filepath.FromSlash(strataSource)))
 	if err != nil {
 		return nil, fmt.Errorf("read %s: %w", strataSource, err)
@@ -51,11 +95,15 @@ func writeStrata(root string) ([]string, error) {
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", strataSource, err)
 	}
-	b, err := json.MarshalIndent(s, "", "  ")
+	return jsonFile(s)
+}
+
+func jsonFile(v any) ([]byte, error) {
+	b, err := json.MarshalIndent(v, "", "  ")
 	if err != nil {
-		return nil, fmt.Errorf("encode strata: %w", err)
+		return nil, fmt.Errorf("encode json: %w", err)
 	}
-	return writeIfChanged(root, "docs/.vitepress/theme/data/home-strata.json", append(b, '\n'))
+	return append(b, '\n'), nil
 }
 
 type strata struct {

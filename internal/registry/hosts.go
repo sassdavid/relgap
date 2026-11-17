@@ -44,6 +44,15 @@ const (
 	PlaceholderPrevMajor = "{prev_major}"
 )
 
+// Placeholders returns every template placeholder. [PlaceholderPrevMinor] and
+// [PlaceholderPrevMajor] work only in upgrade-guide sources.
+func Placeholders() []string {
+	return []string{
+		PlaceholderVersion, PlaceholderMajor, PlaceholderMinor, PlaceholderTag, PlaceholderPrevMinor,
+		PlaceholderPrevMajor,
+	}
+}
+
 var placeholder = regexp.MustCompile(`\{[^{}]*\}`)
 
 // checkTemplate reports placeholders a template of kind can't use.

@@ -18,6 +18,31 @@ const (
 	confidenceKeyword    = 0.4  // keyword anywhere
 )
 
+// Signal is one kind of evidence the classifier reads and the confidence an entry gets from it.
+type Signal struct {
+	Confidence float64 `json:"confidence"`
+	Evidence   string  `json:"evidence"`
+}
+
+// Signals returns the evidence the classifier reads, highest confidence first.
+func Signals() []Signal {
+	return []Signal{
+		{confidenceMarker, "A breaking marker (the entry's breaking_markers or SEMVER-MAJOR), or a heading " +
+			"about breaking changes, upgrade notes, incompatibilities or security"},
+		{confidenceHeading, "A heading for another kind: deprecations, removals, features, fixes, or " +
+			"dependencies and other maintenance"},
+		{confidenceBang, "A conventional commit with ! (such as feat!:) or a BREAKING CHANGE: footer"},
+		{confidenceCommit, "A conventional commit type (feat:, fix:, security: and the rest), a (SEMVER-MINOR) " +
+			"tag, or a node SEMVER-MAJOR commit whose scopes are all internal"},
+		{confidenceVerb, "The first word: Added, Fixed, Deprecated, Removed or Dropped with an interface, " +
+			"or a Breaking: or Security: prefix"},
+		{confidenceHighlights, "Under a Notable changes or Highlights heading, with no other rule matching"},
+		{confidenceKeyword, "A keyword anywhere in the text: CVE-, deprecat, no longer, removed, must now, " +
+			"renamed or dropped support"},
+		{ConfidenceOther, "No rule matched, or the entry is a lead-in line ending in a colon; the kind is other"},
+	}
+}
+
 type rule struct {
 	re         *regexp.Regexp
 	kind       Kind

@@ -19,7 +19,7 @@ func isTerraform(rel string) bool {
 
 // isTerragrunt matches every .hcl file except the provider lock file.
 func isTerragrunt(rel string) bool {
-	return path.Ext(rel) == ".hcl" && path.Base(rel) != ".terraform.lock.hcl"
+	return path.Ext(rel) == ".hcl" && path.Base(rel) != tfLockFile
 }
 
 func parseHCL(f file) (*hcl.File, error) {

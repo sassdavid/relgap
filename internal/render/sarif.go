@@ -31,8 +31,16 @@ const (
 // itself; other SARIF consumers can match results across runs with it.
 const fingerprintKey = "relgapFinding/v1"
 
-// fixedRule returns the rule with id, one of the Rule constants.
-func fixedRule(id string) sarif.Rule {
+// OutdatedRules returns the IDs of the fixed rules in outdated's SARIF, in their order there.
+func OutdatedRules() []string {
+	return []string{RuleBreaking, RuleDeprecation, RuleEOL, RuleOutdated, RuleFailed}
+}
+
+// DriftRules returns the IDs of the rules in drift's SARIF, in their order there.
+func DriftRules() []string { return []string{RuleDrift, RuleFailed} }
+
+// SARIFRule returns the rule with id, one of the Rule constants, or a zero rule.
+func SARIFRule(id string) sarif.Rule {
 	return map[string]sarif.Rule{
 		RuleBreaking: {
 			ID:               RuleBreaking,
@@ -99,7 +107,7 @@ type sarifRun struct {
 func newSARIFRun(version string, rules ...string) *sarifRun {
 	r := &sarifRun{log: sarif.New(ToolName, version, InfoURI), index: map[string]int{}}
 	for _, id := range rules {
-		r.addRule(fixedRule(id))
+		r.addRule(SARIFRule(id))
 	}
 	return r
 }
@@ -137,7 +145,7 @@ func (r *sarifRun) add(rule, level, msg string, loc scan.Location, tool, subject
 // and per pin or file that failed. Results don't depend on --fail-on. Rules are in --fail-on
 // order, then failed, then one rule per OSV ID.
 func OutdatedSARIF(o *report.Outdated, problems []scan.Problem, version string) *sarif.Log {
-	r := newSARIFRun(version, RuleBreaking, RuleDeprecation, RuleEOL, RuleOutdated, RuleFailed)
+	r := newSARIFRun(version, OutdatedRules()...)
 	for _, rule := range vulnRules(o) {
 		r.addRule(rule)
 	}
@@ -290,7 +298,7 @@ func kindNoun(k classify.Kind, n int) string {
 // differs from its tool's reference version), per file that didn't parse and per tool whose
 // latest version couldn't be listed.
 func DriftSARIF(d *report.Drift, problems []scan.Problem, version string) *sarif.Log {
-	r := newSARIFRun(version, RuleDrift, RuleFailed)
+	r := newSARIFRun(version, DriftRules()...)
 	for i := range d.Tools {
 		t := &d.Tools[i]
 		refRepos := 0

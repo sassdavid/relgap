@@ -246,3 +246,20 @@ func TestIgnored(t *testing.T) {
 	}
 	assert.False(t, scan.Ignored(nil, pin("java", ".", "mise.toml")))
 }
+
+// TestDetectorDocs checks the detector table of the docs site: one row per detector, in the
+// order of Detectors, and every example path read by its detector and no other.
+func TestDetectorDocs(t *testing.T) {
+	t.Parallel()
+	docs := scan.DetectorDocs()
+	names := make([]string, 0, len(docs))
+	for _, d := range docs {
+		names = append(names, d.Name)
+		assert.NotEmpty(t, d.Files, d.Name)
+		assert.NotEmpty(t, d.Pins, d.Name)
+		for _, ex := range d.Examples {
+			assert.Equal(t, []string{d.Name}, scan.MatchingDetectors(ex), "%s: example %s", d.Name, ex)
+		}
+	}
+	assert.Equal(t, scan.Detectors(), names)
+}

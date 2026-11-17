@@ -30,6 +30,12 @@ jsonschema digest-v1.json stdout
 ! stdout '"kind": "(fix|feature|other|security)"'
 stdout '"fix": 193'
 
+# The first digest on the getting started page.
+exec relgap digest kubectl 1.36.0..1.37.2 --only breaking --only deprecation --format plain
+golden stdout digest/kubectl-breaking.txt
+! stderr .
+! stdout '^(Features|Fixes|Other changes|Security)$'
+
 exec relgap digest kubectl 1.36.0..1.37.2 --only breaking --format plain
 stdout 'Breaking changes'
 ! stdout '^(Deprecations|Fixes|Features|Other)$'

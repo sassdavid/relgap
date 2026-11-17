@@ -31,7 +31,8 @@ export default defineConfig({
   cleanUrls: true,
   lastUpdated: true,
   sitemap: { hostname: site },
-  srcExclude: ["plan/**", "engineering/**", "validation/**", "dogfood.md", "README.md"],
+  // parts/ holds generated fragments that pages include; they are not pages of their own.
+  srcExclude: ["plan/**", "engineering/**", "validation/**", "dogfood.md", "README.md", "parts/**"],
   head: [["link", { rel: "icon", type: "image/svg+xml", href: "/glyph.svg" }]],
   markdown: {
     theme: { light: "github-light", dark: "github-dark" },
@@ -54,11 +55,14 @@ export default defineConfig({
     logo: { light: "/glyph.svg", dark: "/glyph-dark.svg", alt: "" },
     siteTitle: tool,
     nav: [
-      { text: "Guide", link: "/install", activeMatch: "^/install" },
+      {
+        text: "Guide",
+        link: "/getting-started",
+        activeMatch: "^/(getting-started|install|concepts/)",
+      },
       { text: "Reference", link: "/reference/config", activeMatch: "^/reference/" },
       { text: "CLI", link: "/cli/", activeMatch: "^/cli/" },
-      // M24 points this at /changelog.
-      { text: `v${version}`, link: `${repo}/releases/tag/v${version}` },
+      { text: `v${version}`, link: "/changelog" },
     ],
     sidebar,
     socialLinks: [{ icon: "github", link: repo, ariaLabel: `${tool} on GitHub` }],

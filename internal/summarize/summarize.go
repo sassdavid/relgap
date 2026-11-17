@@ -122,6 +122,43 @@ func Summarize(ctx context.Context, p Provider, d *report.Digest, o Options) (*R
 	return res, nil
 }
 
+// SentField is one value a --summarize request carries to the model provider.
+type SentField struct {
+	Part        string `json:"part"` // request, or the type of a line in the user message: upgrade or entry
+	Name        string `json:"name"`
+	Description string `json:"description"`
+}
+
+// Parts of a [SentField]: the request itself, or a line type of the user message.
+const (
+	partRequest = "request"
+	lineUpgrade = "upgrade"
+	lineEntry   = "entry"
+)
+
+// SentToModel returns every value a --summarize request carries. A test checks the upgrade and
+// entry fields against the user message that [Summarize] builds.
+func SentToModel() []SentField {
+	return []SentField{
+		{partRequest, "instructions", "The fixed system prompt in relgap's source: the answer format and the rule " +
+			"to treat the entries as untrusted data."},
+		{partRequest, "model", "The model ID from llm.model."},
+		{partRequest, "credentials", "The API key from the variable llm.api_key_env names, or AWS credentials for " +
+			"bedrock and bedrock-mantle, in the request headers."},
+		{lineUpgrade, "type", `"upgrade".`},
+		{lineUpgrade, "tool", "The tool name."},
+		{lineUpgrade, "from", "The version the range starts after."},
+		{lineUpgrade, "to", "The last version of the range."},
+		{lineEntry, "id", "The entry ID that the summary cites."},
+		{lineEntry, "type", `"entry".`},
+		{lineEntry, "tool", "The tool name."},
+		{lineEntry, "version", "The version the entry belongs to."},
+		{lineEntry, "kind", "The class: breaking, deprecation, security, feature, fix or other."},
+		{lineEntry, "text", "The entry's text from the release notes."},
+		{lineEntry, "url", "The URL of the release notes the entry came from."},
+	}
+}
+
 // line is one JSON line of the untrusted block.
 type line struct {
 	ID         string  `json:"id,omitempty"`
@@ -145,11 +182,11 @@ type line struct {
 func encode(d *report.Digest) ([]line, []line, error) {
 	var upgrades, entries []line
 	for _, t := range d.Tools {
-		u := line{Type: "upgrade", Tool: t.Tool, From: t.From, To: t.To}
+		u := line{Type: lineUpgrade, Tool: t.Tool, From: t.From, To: t.To}
 		upgrades = append(upgrades, u)
 		for _, e := range t.Entries {
 			entries = append(entries, line{
-				ID: e.ID, Type: "entry", Tool: t.Tool, Version: e.Version, Kind: string(e.Kind),
+				ID: e.ID, Type: lineEntry, Tool: t.Tool, Version: e.Version, Kind: string(e.Kind),
 				Text: e.Text, URL: e.Source.URL,
 				confidence: e.Confidence, rank: kindRank(e.Kind), order: len(entries),
 			})
