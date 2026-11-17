@@ -11,7 +11,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/credentials v1.21.0
 	github.com/aws/aws-sdk-go-v2/service/bedrockruntime v1.63.13
 	github.com/aws/smithy-go v1.28.9
-	github.com/carapace-sh/carapace v1.18.1
+	github.com/carapace-sh/carapace v1.18.2
 	github.com/cli/go-gh/v2 v2.17.0
 	github.com/google/go-cmp v0.7.0
 	github.com/google/go-github/v93 v93.0.0
