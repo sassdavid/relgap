@@ -24,6 +24,8 @@ func detectToolVersions(f file) ([]Pin, error) {
 	return pins, nil
 }
 
+const goMod = "go.mod"
+
 // idiomaticTool returns the tool a single-version file pins.
 func idiomaticTool(base string) (string, bool) {
 	switch base {
@@ -44,7 +46,7 @@ func idiomaticTool(base string) (string, bool) {
 func isIdiomatic(rel string) bool {
 	base := path.Base(rel)
 	_, ok := idiomaticTool(base)
-	return ok || base == "go.mod"
+	return ok || base == goMod
 }
 
 var (

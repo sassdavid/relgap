@@ -2,6 +2,7 @@ package summarize_test
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"slices"
 	"strings"
@@ -226,4 +227,46 @@ func TestSummarize_untrustedData(t *testing.T) {
 	assert.NotContains(t, user, "/home/me")
 	assert.NotContains(t, user, "hashicorp/terraform\"", "the repo field isn't sent")
 	assert.Contains(t, p.got[0].System, "untrusted data")
+}
+
+// TestSentToModel checks the list the docs site shows against the user message Summarize builds
+// from a digest with every field set: each upgrade and entry field is listed, and nothing else.
+func TestSentToModel(t *testing.T) {
+	t.Parallel()
+	d := &report.Digest{Tools: []report.ToolDigest{{
+		Tool: "kubectl", Repo: "kubernetes/kubernetes", From: "1.30.0", To: "1.31.0",
+		Versions: []report.Version{{Version: "1.31.0"}},
+		Entries: []classify.Entry{{
+			ID: "e-1a2b3c4d", Version: "1.31.0", Kind: classify.KindBreaking, Confidence: 0.9, Text: "Removed x.",
+			Source: source.Ref{
+				Adapter: source.KindChangelogFile, URL: "https://github.com/k/k/blob/m/C.md",
+				Heading: []string{"v1.31.0"},
+			},
+		}},
+		Warnings: []string{"w"},
+	}}}
+	prompt, err := summarize.UserPrompt(d)
+	require.NoError(t, err)
+	got := map[string][]string{}
+	for l := range strings.Lines(prompt) {
+		var fields map[string]any
+		if json.Unmarshal([]byte(l), &fields) != nil {
+			continue
+		}
+		typ, _ := fields["type"].(string)
+		for k := range fields {
+			got[typ] = append(got[typ], k)
+		}
+	}
+	want := map[string][]string{}
+	for _, f := range summarize.SentToModel() {
+		assert.NotEmpty(t, f.Description, f.Name)
+		if f.Part != "request" {
+			want[f.Part] = append(want[f.Part], f.Name)
+		}
+	}
+	for typ := range want {
+		assert.ElementsMatch(t, want[typ], got[typ], "fields of %s lines", typ)
+	}
+	assert.Len(t, got, len(want), "line types")
 }

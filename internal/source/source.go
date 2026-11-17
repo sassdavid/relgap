@@ -21,6 +21,29 @@ const (
 	KindUpgradeNotes   = "upgrade-notes"
 )
 
+// KindDoc says what one adapter kind reads.
+type KindDoc struct {
+	Kind  string `json:"kind"`
+	Reads string `json:"reads"`
+}
+
+// Kinds returns every adapter kind with what it reads, in the order of the registry schema.
+func Kinds() []KindDoc {
+	return []KindDoc{
+		{KindGHRelease, "The GitHub release body of each version."},
+		{KindChangelogFile, "The section of each version in a changelog file of the tool's repository. " +
+			"Each file is fetched and parsed once per digest."},
+		{KindStructuredJSON, "One JSON document per version, from a repository file or an allowed URL, " +
+			"turned into a list grouped by a heading field."},
+		{KindWebDoc, "Release notes on an allowed web page. With an anchor, each version gets the element " +
+			"with its id; without one, a page holds a whole release line."},
+		{KindUpgradeGuide, "A whole upgrade document, attached to the first version of each new release line " +
+			"in the range: one per minor when the template has {minor} or {prev_minor}, else one per major."},
+		{KindUpgradeNotes, "The section under a heading such as Urgent Upgrade Notes inside each version's " +
+			"section of the changelog-file source, so its entries count as upgrade notes."},
+	}
+}
+
 // ErrNotFound is wrapped by [Web] errors for pages that don't exist.
 var ErrNotFound = errors.New("page not found")
 

@@ -1,0 +1,115 @@
+# sassdavid/relgap-action action.yml at 28d7a84b3070faa38338522a5e83e427eeae80b5 (v1.1.0). Written by go run ./scripts/gensite -fetch-action; don't edit.
+name: relgap
+description: Install a verified relgap release, report to code scanning, or keep one pull request comment.
+author: sassdavid
+branding:
+  icon: package
+  color: blue
+
+inputs:
+  version:
+    description: relgap version to install (X.Y.Z, vX.Y.Z or latest). Empty installs the version this action release pins in scripts/tool.env.
+    required: false
+    default: ""
+  verify:
+    description: >-
+      The check after sha256 against checksums.txt. attestation runs gh attestation verify,
+      pinned to relgap's release workflow. cosign runs cosign verify-blob on checksums.txt and
+      needs cosign or mise on PATH. checksum adds nothing.
+    required: false
+    default: attestation
+  mode:
+    description: >-
+      install puts relgap on PATH. report runs the command once, writes JSON, Markdown, SARIF and
+      annotations, uploads the SARIF and writes the step summary. comment does the same on a
+      pull_request event and keeps one comment on the pull request.
+    required: false
+    default: install
+  command:
+    description: >-
+      The command that report and comment mode run. Empty runs the first one scripts/tool.env
+      lists for the mode.
+    required: false
+    default: ""
+  args:
+    description: More arguments for the command, one per line.
+    required: false
+    default: ""
+  from:
+    description: >-
+      A directory of results from an earlier step, passed with the flag that scripts/tool.env
+      names. Only a tool that sets that flag takes it; see the README.
+    required: false
+    default: ""
+  fail-on:
+    description: >-
+      Values for --fail-on, separated by commas or newlines. A match exits 3 and fails the step
+      after the files, the SARIF upload and the comment.
+    required: false
+    default: ""
+  sarif:
+    description: Upload the SARIF file to code scanning (true or false). The job needs security-events write.
+    required: false
+    default: "true"
+  step-summary:
+    description: Append the Markdown report to the step summary (true or false).
+    required: false
+    default: "true"
+  github-token:
+    description: >-
+      Token for gh attestation verify, the GitHub API calls of relgap, the SARIF upload and the
+      pull request comment.
+    required: false
+    default: ${{ github.token }}
+  working-directory:
+    description: Directory the command runs in. SARIF locations are relative to it.
+    required: false
+    default: "."
+
+outputs:
+  version:
+    description: The installed relgap version, without a leading v.
+    value: ${{ steps.run.outputs.version }}
+  path:
+    description: Absolute path of the relgap binary.
+    value: ${{ steps.run.outputs.path }}
+  exit-code:
+    description: Exit code of the command in report and comment mode (0, 1, 2, 3 or 4).
+    value: ${{ steps.run.outputs.exit-code }}
+  json-file:
+    description: Absolute path of the JSON report; empty when the command wrote none.
+    value: ${{ steps.run.outputs.json-file }}
+  sarif-file:
+    description: Absolute path of the SARIF file; empty when the command writes no SARIF.
+    value: ${{ steps.run.outputs.sarif-file }}
+  md-file:
+    description: Absolute path of the Markdown report; empty when the command wrote none.
+    value: ${{ steps.run.outputs.md-file }}
+
+runs:
+  using: composite
+  steps:
+    - id: run
+      shell: bash
+      env:
+        VERSION: ${{ inputs.version }}
+        VERIFY: ${{ inputs.verify }}
+        MODE: ${{ inputs.mode }}
+        COMMAND: ${{ inputs.command }}
+        ARGS: ${{ inputs.args }}
+        FROM: ${{ inputs.from }}
+        FAIL_ON: ${{ inputs.fail-on }}
+        SARIF: ${{ inputs.sarif }}
+        STEP_SUMMARY: ${{ inputs.step-summary }}
+        WORKING_DIRECTORY: ${{ inputs.working-directory }}
+        HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+        GH_TOKEN: ${{ inputs.github-token }}
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+      run: bash "$GITHUB_ACTION_PATH/scripts/run.sh"
+    # Runs after a failed gate too, so code scanning shows what failed it.
+    - if: ${{ !cancelled() && inputs.sarif == 'true' && steps.run.outputs.sarif-file != '' }}
+      uses: github/codeql-action/upload-sarif@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
+      with:
+        sarif_file: ${{ steps.run.outputs.sarif-file }}
+        category: ${{ steps.run.outputs.sarif-category }}
+        token: ${{ inputs.github-token }}

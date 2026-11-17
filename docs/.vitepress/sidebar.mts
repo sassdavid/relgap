@@ -27,7 +27,14 @@ function cliItem(node: CommandNode): DefaultTheme.SidebarItem {
 export const sidebar: DefaultTheme.SidebarItem[] = [
   {
     text: "Start",
-    items: [{ text: "Install", link: "/install" }],
+    items: [
+      { text: "Getting started", link: "/getting-started" },
+      { text: "Install", link: "/install" },
+    ],
+  },
+  {
+    text: "Concepts",
+    items: [{ text: "Network, privacy and tokens", link: "/concepts/network" }],
   },
   {
     text: "Reference",
@@ -38,6 +45,11 @@ export const sidebar: DefaultTheme.SidebarItem[] = [
       { text: "Fail-on values", link: "/reference/fail-on" },
       { text: "JSON schemas", link: "/reference/schemas" },
       { text: "MCP tools and prompts", link: "/reference/mcp" },
+      { text: "SARIF rules", link: "/reference/sarif-rules" },
+      { text: "Supported tools", link: "/reference/tools" },
+      { text: "Registry entry schema", link: "/reference/registry-schema" },
+      { text: "Registry snapshots", link: "/reference/snapshots" },
+      { text: "Changelog", link: "/changelog" },
     ],
   },
   {

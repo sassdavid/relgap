@@ -7,7 +7,7 @@ env TEST_CASSETTE=$CASSETTES/outdated/project.yaml,$CASSETTES/outdated/project-a
 cd project
 
 exec relgap pins --format plain
-cmp stdout ../pins.txt
+golden stdout pins/project.txt
 
 exec relgap outdated --format json
 jsonschema outdated-v1.json stdout
@@ -54,18 +54,6 @@ env TEST_CASSETTE=$CASSETTES/outdated/project.yaml,$CASSETTES/outdated/project-a
 [!recording] cp stdout $WORK/terraform.json
 [!recording] countsmatch -every $WORK/outdated.json $WORK/go.json $WORK/helm.json $WORK/k9s.json $WORK/terraform.json
 
--- pins.txt --
-TOOL          VALUE       DETECTOR    LOCATION
-go            ≈1.25       ci          .github/workflows/ci.yml:9
-image:alpine  ≈3.22       dockerfile  Dockerfile:1
-k9s           0.50.16     dockerfile  Dockerfile:2
-terraform     ≈~> 1.15.0  terraform   main.tf:2
-terraform     1.15.8      mise        mise.toml:2
-helm          3.21.0      mise        mise.toml:3
-gh            2.103.3     mise        mise.toml:4
-uv            ≈0.13       mise        mise.toml:5
-ruff          ≈latest     mise        mise.toml:6
-node          ≈lts        mise        mise.toml:7
 -- all.stderr --
 relgap: at the latest version, no digest: gh 2.103.3, ruff 0.17.4, uv 0.13.7
 relgap: not digested: node lts (mise.toml:7): can't compare: "lts" is a channel

@@ -4,7 +4,12 @@
 
 ## Start
 
+- [Getting started](https://relgap.sasskovacs.dev/getting-started): Install relgap, give it a GitHub token, read what changed between two kubectl versions, then check the pins of a repository.
 - [Install](https://relgap.sasskovacs.dev/install): Install relgap from a release archive, with mise or with go install, verify the signature, and set up shell completion and man pages.
+
+## Concepts
+
+- [Network, privacy and tokens](https://relgap.sasskovacs.dev/concepts/network): Every host relgap sends requests to, the programs it runs, where the GitHub token goes, what the cache keeps and what --summarize sends to a model.
 
 ## Reference
 
@@ -14,6 +19,11 @@
 - [Fail-on values](https://relgap.sasskovacs.dev/reference/fail-on): The --fail-on values of each relgap command, which make it exit 3.
 - [JSON schemas](https://relgap.sasskovacs.dev/reference/schemas): The JSON schemas of relgap's config file and JSON output, with the URL each is served at.
 - [MCP tools and prompts](https://relgap.sasskovacs.dev/reference/mcp): The tools and prompts that relgap mcp serves, with their input schemas.
+- [SARIF rules](https://relgap.sasskovacs.dev/reference/sarif-rules): The SARIF rules relgap outdated and drift report to code scanning, with their levels and help text.
+- [Supported tools](https://relgap.sasskovacs.dev/reference/tools): The tools relgap's curated registry describes: aliases, repository, release-note sources, EOL product and OSV packages.
+- [Registry entry schema](https://relgap.sasskovacs.dev/reference/registry-schema): Every key of a relgap registry entry, its type, allowed values and the keys each source kind needs.
+- [Registry snapshots](https://relgap.sasskovacs.dev/reference/snapshots): The mise and aqua registry copies embedded in relgap: source commit, date and entry count.
+- [Changelog](https://relgap.sasskovacs.dev/changelog): What changed in each relgap release, from release-please's CHANGELOG.md.
 
 ## CLI
 

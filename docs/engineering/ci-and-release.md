@@ -14,7 +14,8 @@
 | `mise run fuzz` | runs every Go fuzz target (`func FuzzXxx`) for 60 s each; `mise run fuzz -- 10s` sets another duration. Passes when a repo has no targets |
 | `mise run docs` | regenerates the CLI reference (`docs/cli/`), the generated `docs/reference/` pages and `docs/public/schemas/` with `scripts/gendocs`, and the site data files with `scripts/gensite`, and fails if a checked-in copy differs |
 | `mise run lint:docs` | `oxfmt --check` on the docs site's config, theme and components (part of `lint`; tools from `mise.docs.toml`) |
-| `mise run docs:build` | the docs site checks in order: `mise run docs`, the `llms.txt` stale check, the snippet check (`gendocs -snippets`), the contrast and unit tests (`node --test`), `vitepress build`, the docs URL check against the built site and `lychee --offline`. Needs `MISE_ENV=docs mise install` and `aube install --frozen-lockfile` in `docs/` first. `docs:dev` and `docs:preview` serve the site |
+| `mise run docs:build` | the docs site checks in order: `mise run docs`, the `llms.txt` stale check, the snippet check (`gendocs -snippets`), the contrast and unit tests (`node --test`), `vitepress build`, the docs URL check against the built site, the never-on-the-site check (`TestNeverOnSite` in `scripts/gensite` with `DOCS_DIST`) and `lychee --offline`. Needs `MISE_ENV=docs mise install` and `aube install --frozen-lockfile` in `docs/` first. `docs:dev` and `docs:preview` serve the site |
+| `mise run docs:action` | copies relgap-action's `action.yml` at the commit `docs/ci/relgap-action.yml` pins to `scripts/gensite/relgap-action.yml`, through the GitHub API, then regenerates the site files. Run it on a Renovate branch that moves that pin; `mise run docs` fails until then |
 | `mise run snapshot` | `goreleaser release --snapshot --clean --skip=sign`. Keyless cosign needs CI's OIDC token, and goreleaser OSS can't make `signs:` conditional, so local snapshots skip signing |
 
 ## GitHub Actions workflows
@@ -82,6 +83,11 @@ How to check a run:
 `sassdavid/action-test`, and `renovate.json` matches the sibling repo (`mise run sibling:diff`).
 Renovate opens the same update in each repo on its own run. Merge the pair together:
 `mise run sibling:diff` fails on `mise.lock`, `go.mod` or a workflow while only one side has it.
+
+`docs/ci/relgap-action.yml` pins relgap-action by commit SHA, and the site's inputs and outputs
+table comes from a copy of the action's `action.yml` at that commit. When Renovate moves the pin,
+`mise run docs` fails on the pull request until someone runs `mise run docs:action` on the branch
+and commits the new copy.
 
 In tfcensus every run logs `MetadataLookupWarning: received unexpected error ... ENOTFOUND`. The
 Dockerfile's `gcr.io` image makes Renovate try Google credentials, which probes the GCP metadata

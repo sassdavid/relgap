@@ -1,0 +1,72 @@
+[
+  {
+    "part": "request",
+    "name": "instructions",
+    "description": "The fixed system prompt in relgap's source: the answer format and the rule to treat the entries as untrusted data."
+  },
+  {
+    "part": "request",
+    "name": "model",
+    "description": "The model ID from llm.model."
+  },
+  {
+    "part": "request",
+    "name": "credentials",
+    "description": "The API key from the variable llm.api_key_env names, or AWS credentials for bedrock and bedrock-mantle, in the request headers."
+  },
+  {
+    "part": "upgrade",
+    "name": "type",
+    "description": "\"upgrade\"."
+  },
+  {
+    "part": "upgrade",
+    "name": "tool",
+    "description": "The tool name."
+  },
+  {
+    "part": "upgrade",
+    "name": "from",
+    "description": "The version the range starts after."
+  },
+  {
+    "part": "upgrade",
+    "name": "to",
+    "description": "The last version of the range."
+  },
+  {
+    "part": "entry",
+    "name": "id",
+    "description": "The entry ID that the summary cites."
+  },
+  {
+    "part": "entry",
+    "name": "type",
+    "description": "\"entry\"."
+  },
+  {
+    "part": "entry",
+    "name": "tool",
+    "description": "The tool name."
+  },
+  {
+    "part": "entry",
+    "name": "version",
+    "description": "The version the entry belongs to."
+  },
+  {
+    "part": "entry",
+    "name": "kind",
+    "description": "The class: breaking, deprecation, security, feature, fix or other."
+  },
+  {
+    "part": "entry",
+    "name": "text",
+    "description": "The entry's text from the release notes."
+  },
+  {
+    "part": "entry",
+    "name": "url",
+    "description": "The URL of the release notes the entry came from."
+  }
+]
