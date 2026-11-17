@@ -12,6 +12,7 @@ import (
 
 	"go.yaml.in/yaml/v4"
 
+	"github.com/sassdavid/relgap/internal/docsurl"
 	"github.com/sassdavid/relgap/internal/htmlmd"
 	"github.com/sassdavid/relgap/internal/version"
 	"github.com/sassdavid/relgap/internal/yamlschema"
@@ -21,10 +22,7 @@ import (
 // ErrInvalid is wrapped by every registry entry error.
 var ErrInvalid = errors.New("invalid registry entry")
 
-const (
-	schemaFile = "registry-v1.json"
-	schemaURL  = "https://github.com/sassdavid/relgap/schemas/" + schemaFile
-)
+const schemaFile = "registry-v1.json"
 
 // LintError lists every problem found in one or more entries. It unwraps to [ErrInvalid].
 type LintError struct {
@@ -59,7 +57,7 @@ func NewLinter() (*Linter, error) {
 	if err != nil {
 		return nil, fmt.Errorf("load registry schema: %w", err)
 	}
-	s, err := yamlschema.Compile(schemaURL, b)
+	s, err := yamlschema.Compile(docsurl.Schema(schemaFile), b)
 	if err != nil {
 		return nil, fmt.Errorf("load registry schema: %w", err)
 	}

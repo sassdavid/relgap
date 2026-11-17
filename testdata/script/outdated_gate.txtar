@@ -13,7 +13,7 @@ stderr 'fail-on drift isn''t checked by outdated: relgap outdated checks breakin
 ! exec relgap digest --from-mise --fail-on eol
 stderr 'fail-on eol isn''t checked by digest: relgap digest checks breaking or deprecation'
 ! exec relgap outdated --fail-on unknown
-stderr 'flag --fail-on: policy.fail_on.0: value must be one of'
+stderr 'fail-on unknown isn''t checked by outdated: relgap outdated checks breaking, deprecation, eol, vuln or outdated'
 ! exec relgap outdated --vuln-severity severe
 stderr 'policy.vuln_severity'
 ! exec relgap outdated --min-count 0

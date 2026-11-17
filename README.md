@@ -21,7 +21,8 @@ relgap is pre-release, and its commands and output can still change before 1.0.
 - `mcp` serves `digest`, `breaking_changes`, `outdated`, `drift` and `resolve` to agents such as
   Claude Code ([docs/dogfood.md](docs/dogfood.md)).
 
-The plan is in [docs/plan](docs/plan/) and the CLI reference in [docs/cli](docs/cli/relgap.md).
+The plan is in [docs/plan](docs/plan/) and the CLI reference at
+[relgap.sasskovacs.dev/cli](https://relgap.sasskovacs.dev/cli/).
 
 ## CI
 
@@ -78,7 +79,7 @@ against [schemas/registry-v1.json](schemas/registry-v1.json).
 mise install                         # pinned toolchain (mise.toml)
 mise run check                       # linters (Go, prose, workflows) + go test -race + govulncheck
 mise run test:golden -- -update      # regenerate golden files, then review the diff
-mise run docs                        # regenerate docs/cli
+mise run docs                        # regenerate the generated docs pages
 mise run fuzz                        # every fuzz target, 60s each
 mise run registry:snapshot           # refresh the embedded mise and aqua registry snapshots
 mise run snapshot                    # local goreleaser build into dist/

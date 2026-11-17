@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/sassdavid/relgap/schemas/pins-v1.json",
+  "$id": "https://relgap.sasskovacs.dev/schemas/pins-v1.json",
   "title": "relgap pins --format json",
   "description": "The report-v1.json envelope with pins data: the scanned repositories and every pin found, sorted by repo, file and line.",
   "allOf": [{ "$ref": "report-v1.json" }],

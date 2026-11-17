@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/sassdavid/relgap/schemas/digest-v1.json",
+  "$id": "https://relgap.sasskovacs.dev/schemas/digest-v1.json",
   "title": "relgap digest --format json",
   "description": "The report-v1.json envelope with digest data: per tool, the versions in the range and the classified entries of their release notes.",
   "allOf": [{ "$ref": "report-v1.json" }],

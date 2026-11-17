@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/sassdavid/relgap/schemas/registry-v1.json",
+  "$id": "https://relgap.sasskovacs.dev/schemas/registry-v1.json",
   "title": "relgap registry entry",
   "description": "One file per tool in registry/<name>.yaml. Check an entry with `relgap registry lint`.",
   "type": "object",

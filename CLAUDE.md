@@ -5,7 +5,7 @@ Go CLI: release-notes range digests, toolchain drift across repos, EOL/OSV enric
 ## Verify (run before claiming anything works)
 - `mise run check`: lint (golangci-lint, prose, jactionlint) + `go test -race ./...` + govulncheck. Must pass before every commit.
 - `mise run test:golden -- -update` regenerates goldens. Review the diff and never update blindly.
-- `mise run docs` regenerates `docs/cli/`. CI fails if it's stale.
+- `mise run docs` regenerates `docs/cli/`, the generated `docs/reference/` pages and `docs/public/schemas/`. CI fails if they're stale.
 
 ## Plan
 - Milestones: `docs/plan/milestones.md`. Work on **one milestone per session**, the one named in the prompt.

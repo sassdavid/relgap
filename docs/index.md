@@ -12,16 +12,16 @@ actions:
 answers:
   - question: What breaks if I upgrade terraform to latest?
     command: relgap digest
-    link: https://github.com/sassdavid/relgap/blob/v0.4.0/docs/cli/relgap_digest.md
+    link: /cli/digest
   - question: Which pins in this repo are behind or EOL?
     command: relgap outdated
-    link: https://github.com/sassdavid/relgap/blob/v0.4.0/docs/cli/relgap_outdated.md
+    link: /cli/outdated
   - question: Which repos pin different versions of a tool?
     command: relgap drift
-    link: https://github.com/sassdavid/relgap/blob/v0.4.0/docs/cli/relgap_drift.md
+    link: /cli/drift
   - question: What should this Renovate PR's review say?
     command: relgap digest --pull-request
-    link: https://github.com/sassdavid/relgap/blob/v0.4.0/docs/cli/relgap_digest.md
+    link: /cli/digest
 ---
 
 <HomeHero />

@@ -79,9 +79,6 @@ repository or the pull request is unknown, and 1 for any other failure.`,
   relgap notify --from digest.json --from drift.json --notify github-pr-comment --dry-run-notify`,
 		Args: noArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
-			if err := g.outFormat.Check(render.FormatTTY, render.FormatPlain, render.FormatJSON); err != nil {
-				return usageError(err)
-			}
 			if len(from) == 0 {
 				return usageError(fmt.Errorf("pass at least one --%s file", flagFrom))
 			}
@@ -113,6 +110,8 @@ repository or the pull request is unknown, and 1 for any other failure.`,
 		flagNotify:     complete.List(choices),
 		flagMDMaxChars: complete.NoFiles,
 	})
+	setFormats(cmd, textFormats()...)
+	setExitCodes(cmd, ExitAuth)
 	return cmd
 }
 

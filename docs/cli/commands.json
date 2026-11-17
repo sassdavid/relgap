@@ -1,0 +1,146 @@
+{
+  "name": "relgap",
+  "path": "/cli/",
+  "short": "Release-notes digests and toolchain drift for the tools you pin",
+  "hidden": false,
+  "children": [
+    {
+      "name": "cache",
+      "path": "/cli/cache/",
+      "short": "Inspect or clear the HTTP cache",
+      "hidden": false,
+      "children": [
+        {
+          "name": "clear",
+          "path": "/cli/cache/clear",
+          "short": "Delete every cache entry",
+          "hidden": false
+        },
+        {
+          "name": "info",
+          "path": "/cli/cache/info",
+          "short": "Show the cache directory, entry count, size and freshness",
+          "hidden": false
+        },
+        {
+          "name": "prune",
+          "path": "/cli/cache/prune",
+          "short": "Delete entries not used for a while",
+          "hidden": false
+        }
+      ]
+    },
+    {
+      "name": "completion",
+      "path": "/cli/completion",
+      "short": "Generate the autocompletion script for the specified shell",
+      "hidden": false
+    },
+    {
+      "name": "config",
+      "path": "/cli/config/",
+      "short": "Inspect and validate configuration",
+      "hidden": false,
+      "children": [
+        {
+          "name": "init",
+          "path": "/cli/config/init",
+          "short": "Write a commented config file",
+          "hidden": false
+        },
+        {
+          "name": "path",
+          "path": "/cli/config/path",
+          "short": "Print the config file locations relgap reads",
+          "hidden": false
+        },
+        {
+          "name": "show",
+          "path": "/cli/config/show",
+          "short": "Print the effective configuration",
+          "hidden": false
+        },
+        {
+          "name": "validate",
+          "path": "/cli/config/validate",
+          "short": "Validate config files against the schema",
+          "hidden": false
+        }
+      ]
+    },
+    {
+      "name": "digest",
+      "path": "/cli/digest",
+      "short": "Merge the release notes of every version in a range into one digest",
+      "hidden": false
+    },
+    {
+      "name": "drift",
+      "path": "/cli/drift",
+      "short": "Show which repositories pin different versions of the same tool",
+      "hidden": false
+    },
+    {
+      "name": "mcp",
+      "path": "/cli/mcp",
+      "short": "Serve digest, breaking_changes, outdated, drift and resolve to an MCP client over stdio",
+      "hidden": false
+    },
+    {
+      "name": "notify",
+      "path": "/cli/notify",
+      "short": "Publish saved digest, outdated and drift reports as a GitHub pull request comment",
+      "hidden": false
+    },
+    {
+      "name": "outdated",
+      "path": "/cli/outdated",
+      "short": "Compare every pinned tool version in a project with the latest release",
+      "hidden": false
+    },
+    {
+      "name": "pins",
+      "path": "/cli/pins",
+      "short": "List the tool versions pinned in your repositories, with file and line",
+      "hidden": false
+    },
+    {
+      "name": "registry",
+      "path": "/cli/registry/",
+      "short": "Check, test and update relgap registry entries",
+      "hidden": false,
+      "children": [
+        {
+          "name": "lint",
+          "path": "/cli/registry/lint",
+          "short": "Validate registry entries against the schema",
+          "hidden": false
+        },
+        {
+          "name": "test",
+          "path": "/cli/registry/test",
+          "short": "Run each source of a registry entry live and show what it produced",
+          "hidden": false
+        },
+        {
+          "name": "update",
+          "path": "/cli/registry/update",
+          "short": "Download the newest registry entries from relgap's repository",
+          "hidden": false
+        }
+      ]
+    },
+    {
+      "name": "resolve",
+      "path": "/cli/resolve",
+      "short": "Show how a tool name resolves to a repository, version rules and changelog sources",
+      "hidden": false
+    },
+    {
+      "name": "version",
+      "path": "/cli/version",
+      "short": "Print version and build information",
+      "hidden": false
+    }
+  ]
+}

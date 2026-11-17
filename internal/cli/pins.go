@@ -61,13 +61,11 @@ Roots default to scan.roots, then the current directory.`,
 	_ = cmd.RegisterFlagCompletionFunc("renovate-report", complete.Files("json"))
 	addOutputFlags(cmd, g, pinsFormats()...)
 	cmd.ValidArgsFunction = complete.Dirs()
+	setExitCodes(cmd)
 	return cmd
 }
 
 func runPins(cmd *cobra.Command, d *app.Deps, g *globals, f pinsFlags, args []string) error {
-	if err := g.checkFormats(pinsFormats()...); err != nil {
-		return usageError(err)
-	}
 	resolver, cfg, err := g.loadResolver(cmd, d)
 	if err != nil {
 		return err

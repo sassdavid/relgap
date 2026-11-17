@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/sassdavid/relgap/schemas/drift-v1.json",
+  "$id": "https://relgap.sasskovacs.dev/schemas/drift-v1.json",
   "title": "relgap drift --format json",
   "description": "The report-v1.json envelope with drift data: every resolved pin of the scanned repositories, grouped by tool, with the distinct versions they stand for.",
   "allOf": [{ "$ref": "report-v1.json" }],

@@ -96,8 +96,8 @@ commit is missing, the comment's target branch and then the pull request's base 
 
 --fail-on breaking exits 3 when a digest has a breaking entry at or above --min-confidence,
 and --fail-on deprecation when it has a deprecation. A single digest counts once; --from-mise
-and --all count each pin, as 'relgap outdated' does, and --base and --pull-request each digest, and a value exits 3 once its count
-reaches --min-count. With --from-mise or --all, a pin that fails exits 1 when no value
+and --all count each pin, as 'relgap outdated' does, and --base and --pull-request each
+digest, and a value exits 3 once its count reaches --min-count. With --from-mise or --all, a pin that fails exits 1 when no value
 matched. The other --fail-on values belong to 'relgap outdated' and 'relgap drift'.
 
 --summarize adds an upgrade-risk summary from the model the llm config names: up to 5 risks and
@@ -185,13 +185,12 @@ func newDigestCmd(d *app.Deps, g *globals) *cobra.Command {
 	cmd.MarkFlagsMutuallyExclusive(flagAll, flagLine)
 	cmd.MarkFlagsMutuallyExclusive(flagFromMise, "include-prereleases")
 	cmd.MarkFlagsMutuallyExclusive(flagAll, "include-prereleases")
+	setExitCodes(cmd, ExitFindings, ExitAuth)
+	setRelated(cmd, "reference/fail-on")
 	return cmd
 }
 
 func runDigest(cmd *cobra.Command, d *app.Deps, g *globals, f digestFlags, tool, rangeArg string) error {
-	if err := g.checkFormats(digestFormats()...); err != nil {
-		return usageError(err)
-	}
 	from, to, err := parseRange(rangeArg)
 	if err != nil {
 		return usageError(err)
@@ -261,9 +260,6 @@ func writeDigest(cmd *cobra.Command, d *app.Deps, g *globals, data *report.Diges
 // runDigestProject digests the outdated pins of the project at root, using the comparison
 // 'relgap outdated' makes, so both commands report the same ranges and counts.
 func runDigestProject(cmd *cobra.Command, d *app.Deps, g *globals, f digestFlags, root string) error {
-	if err := g.checkFormats(digestFormats()...); err != nil {
-		return usageError(err)
-	}
 	kinds, err := f.kinds()
 	if err != nil {
 		return err

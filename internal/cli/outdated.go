@@ -48,7 +48,8 @@ relgap finds the latest versions with GraphQL queries of 10 to 25 tools, sent in
 Only pins that are behind, and constraint and prefix pins, need a tool's full release list;
 constraint and prefix pins start loading it at the same time.
 
-Pins of tools without a GitHub repository, and tfprovider, chart and image pins, are
+tfprovider and chart pins are looked up in the Terraform registry and Artifact Hub, which name
+the repository. Pins of tools without a GitHub repository, and image and action pins, are
 skipped; --format json lists them with the reason.
 
 EOL shows whether CURRENT's release cycle has reached its end on endoflife.date (yes, no, or
@@ -82,7 +83,6 @@ since a pass on partial data proves nothing.`,
   relgap outdated --fail-on eol --fail-on vuln --vuln-severity high
   relgap outdated --fail-on outdated --min-count 5 --format sarif > relgap.sarif
   relgap outdated --binaries --format json | jq '.data.binaries[]'
-
   relgap outdated --format json | jq '.data.pins[] | select(.status == "outdated")'`,
 		Args: maxArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -98,13 +98,12 @@ since a pass on partial data proves nothing.`,
 	cmd.Flags().Bool(flagBinaries, false,
 		"also check the Go version and main module of the pinned tools' installed executables against OSV")
 	cmd.ValidArgsFunction = complete.Files()
+	setExitCodes(cmd, ExitFindings, ExitAuth)
+	setRelated(cmd, "reference/fail-on")
 	return cmd
 }
 
 func runOutdated(cmd *cobra.Command, d *app.Deps, g *globals, root string) error {
-	if err := g.checkFormats(outdatedFormats()...); err != nil {
-		return usageError(err)
-	}
 	s, err := g.newSession(cmd, d)
 	if err != nil {
 		return err

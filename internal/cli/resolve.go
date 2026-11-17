@@ -61,9 +61,6 @@ matches exactly and has the most stars wins, and the result is marked low-confid
 			return completeTools(d, g)(cmd, args, toComplete)
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
-			if err := g.outFormat.Check(render.FormatTTY, render.FormatPlain, render.FormatJSON); err != nil {
-				return usageError(err)
-			}
 			s, err := g.newSession(cmd, d)
 			if err != nil {
 				return err
@@ -81,6 +78,8 @@ matches exactly and has the most stars wins, and the result is marked low-confid
 		},
 	}
 	addGuessFlag(cmd, &guess)
+	setFormats(cmd, textFormats()...)
+	setExitCodes(cmd)
 	return cmd
 }
 

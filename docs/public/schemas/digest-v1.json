@@ -1,0 +1,116 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://relgap.sasskovacs.dev/schemas/digest-v1.json",
+  "title": "relgap digest --format json",
+  "description": "The report-v1.json envelope with digest data: per tool, the versions in the range and the classified entries of their release notes.",
+  "allOf": [{ "$ref": "report-v1.json" }],
+  "properties": {
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tools"],
+      "properties": {
+        "tools": { "type": "array", "items": { "$ref": "#/$defs/tool" } },
+        "summary": { "$ref": "#/$defs/summary" }
+      }
+    }
+  },
+  "$defs": {
+    "count": { "type": "integer", "minimum": 0 },
+    "entryID": { "type": "string", "pattern": "^e-[0-9a-f]{8}(-[0-9]+)?$" },
+    "claim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["text", "cites"],
+      "properties": {
+        "text": { "type": "string", "minLength": 1 },
+        "cites": { "description": "IDs of the entries the claim rests on; each is in data.tools[].entries.", "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/entryID" } }
+      }
+    },
+    "summary": {
+      "description": "Only with --summarize: an LLM summary of the entries. Advisory; --fail-on and the exit code never read it.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["notice", "provider", "model", "risks", "actions", "entries", "trimmed", "dropped"],
+      "properties": {
+        "notice": { "const": "LLM-generated, verify against cited sources" },
+        "provider": { "enum": ["openai-compatible", "anthropic", "bedrock", "bedrock-mantle"] },
+        "model": { "type": "string", "minLength": 1 },
+        "risks": { "description": "Upgrade risks, at most 5.", "type": "array", "maxItems": 5, "items": { "$ref": "#/$defs/claim" } },
+        "actions": { "description": "Actions the entries require before or during the upgrade.", "type": "array", "items": { "$ref": "#/$defs/claim" } },
+        "entries": { "description": "Entries sent to the model.", "$ref": "#/$defs/count" },
+        "trimmed": { "description": "Entries left out, lowest confidence first, to fit llm.max_input_tokens.", "$ref": "#/$defs/count" },
+        "dropped": { "description": "Claims removed because they cited no entry ID or one the model wasn't sent.", "$ref": "#/$defs/count" }
+      }
+    },
+    "kind": { "enum": ["breaking", "deprecation", "security", "feature", "fix", "other"] },
+    "tool": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tool", "repo", "from", "to", "versions", "entries", "counts", "hidden", "warnings"],
+      "properties": {
+        "tool": { "description": "Canonical tool name.", "type": "string", "minLength": 1 },
+        "repo": { "description": "GitHub owner/repo.", "type": "string", "minLength": 1 },
+        "from": { "description": "Start of the range, excluded.", "type": "string", "minLength": 1 },
+        "to": { "description": "End of the range, included.", "type": "string", "minLength": 1 },
+        "versions": {
+          "description": "Versions in the range, oldest first. A page of a split MCP result lists only the versions its entries cite.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["version", "tag"],
+            "properties": {
+              "version": { "type": "string", "minLength": 1 },
+              "tag": { "type": "string", "minLength": 1 },
+              "published_at": { "type": "string", "format": "date-time" },
+              "url": { "description": "GitHub release page.", "type": "string", "format": "uri" }
+            }
+          }
+        },
+        "entries": {
+          "description": "Entries at or above the minimum confidence, by version, then in document order.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "version", "kind", "confidence", "text", "source"],
+            "properties": {
+              "id": { "description": "Stable entry ID: e- and 8 hex digits of a hash over the tool, the version and the normalized text, with -2, -3 on a collision. The same in every page, filter and run.", "$ref": "#/$defs/entryID" },
+              "version": { "type": "string", "minLength": 1 },
+              "kind": { "$ref": "#/$defs/kind" },
+              "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+              "text": { "description": "Markdown.", "type": "string", "minLength": 1 },
+              "source": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["adapter", "url"],
+                "properties": {
+                  "adapter": { "description": "The source adapter; version-jump marks the synthetic entry for a major version jump.", "enum": ["gh-release", "changelog-file", "structured-json", "web-doc", "upgrade-guide", "upgrade-notes", "version-jump"] },
+                  "url": { "type": "string" },
+                  "heading": { "description": "Heading path inside the source document.", "type": "array", "items": { "type": "string" } }
+                }
+              }
+            }
+          }
+        },
+        "counts": {
+          "description": "Number of entries at or above the minimum confidence, per kind, including kinds that --only leaves out of entries.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["breaking", "deprecation", "security", "feature", "fix", "other"],
+          "properties": {
+            "breaking": { "$ref": "#/$defs/count" },
+            "deprecation": { "$ref": "#/$defs/count" },
+            "security": { "$ref": "#/$defs/count" },
+            "feature": { "$ref": "#/$defs/count" },
+            "fix": { "$ref": "#/$defs/count" },
+            "other": { "$ref": "#/$defs/count" }
+          }
+        },
+        "hidden": { "description": "Entries below the minimum confidence.", "type": "integer", "minimum": 0 },
+        "warnings": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}
