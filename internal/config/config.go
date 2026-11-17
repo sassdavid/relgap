@@ -24,7 +24,7 @@ type Config struct {
 
 // GitHub configures the GitHub API client.
 type GitHub struct {
-	Host        string `json:"host"        jsonschema:"minLength=1"          jsonschema_description:"GitHub host. Only github.com is supported in v0.x."`
+	Host        string `json:"host"        jsonschema:"minLength=1"          jsonschema_description:"Reserved for GitHub Enterprise Server. relgap doesn't read it yet and always calls github.com."`
 	Concurrency int    `json:"concurrency" jsonschema:"minimum=1,maximum=64" jsonschema_description:"Maximum concurrent requests per tool."`
 }
 
@@ -44,7 +44,7 @@ type Scan struct {
 
 // Detectors toggles opt-in pin detectors.
 type Detectors struct {
-	CIActions bool `json:"ci_actions" jsonschema_description:"Detect tool versions in CI workflow files."`
+	CIActions bool `json:"ci_actions" jsonschema_description:"Also report the uses: pins of GitHub Actions in workflow files. Tool versions in CI files are read either way."`
 	Generic   bool `json:"generic"    jsonschema_description:"Detect NAME_VERSION=x.y.z assignments in extra_files."`
 }
 
@@ -55,13 +55,13 @@ type ToolOverride struct {
 
 // IgnoreRule suppresses a tool, optionally only under matching paths.
 type IgnoreRule struct {
-	Tool string `json:"tool"           jsonschema:"required,minLength=1"`
+	Tool string `json:"tool"           jsonschema:"required,minLength=1" jsonschema_description:"Tool name, as pins and digests show it, to leave out of reports."`
 	Path string `json:"path,omitempty"                                   jsonschema_description:"Glob; when set, the tool is ignored only under matching paths."`
 }
 
 // Policy holds CI defaults for --fail-on and related flags.
 type Policy struct {
-	FailOn        []string `json:"fail_on"        jsonschema:"enum=breaking,enum=deprecation,enum=eol,enum=vuln,enum=drift,enum=outdated"`
+	FailOn        []string `json:"fail_on"        jsonschema:"enum=breaking,enum=deprecation,enum=eol,enum=vuln,enum=drift,enum=outdated" jsonschema_description:"--fail-on values each command uses when the flag is not given; a command ignores the values it doesn't check."`
 	MaxBehind     string   `json:"max_behind"     jsonschema:"pattern=^((major|minor|patch|releases|days):[0-9]+)?$"                      jsonschema_description:"e.g. minor:2, releases:10, days:90."`
 	MinConfidence float64  `json:"min_confidence" jsonschema:"minimum=0,maximum=1"                                                        jsonschema_description:"Entries below this confidence are hidden."`
 	VulnSeverity  string   `json:"vuln_severity"  jsonschema:"enum=,enum=low,enum=medium,enum=high,enum=critical"                         jsonschema_description:"Lowest OSV rating --fail-on vuln counts; empty counts every advisory."`
@@ -70,12 +70,12 @@ type Policy struct {
 // LLM configures the optional, off-by-default summarizer.
 type LLM struct {
 	Provider       string `json:"provider"         jsonschema:"enum=,enum=openai-compatible,enum=anthropic,enum=bedrock,enum=bedrock-mantle" jsonschema_description:"Empty disables the summarizer."`
-	Model          string `json:"model"`
-	BaseURL        string `json:"base_url"`
+	Model          string `json:"model"                                                                                                      jsonschema_description:"Model ID the provider runs. Required when provider is set."`
+	BaseURL        string `json:"base_url"                                                                                                   jsonschema_description:"API base URL. Required for openai-compatible; anthropic and bedrock-mantle have a default."`
 	APIKeyEnv      string `json:"api_key_env"                                                                                                jsonschema_description:"Name of the env var holding the API key. Keys are never read from files."`
 	API            string `json:"api"              jsonschema:"enum=,enum=messages,enum=chat-completions"                                    jsonschema_description:"bedrock-mantle only. Empty means messages for anthropic.* model IDs and chat-completions otherwise."`
-	AWSProfile     string `json:"aws_profile"`
-	MaxInputTokens int    `json:"max_input_tokens" jsonschema:"minimum=1"`
+	AWSProfile     string `json:"aws_profile"                                                                                                jsonschema_description:"AWS profile for bedrock and bedrock-mantle. Empty means the default credentials."`
+	MaxInputTokens int    `json:"max_input_tokens" jsonschema:"minimum=1"                                                                    jsonschema_description:"Largest prompt, in estimated tokens. Lower-confidence entries are dropped first to fit."`
 	Timeout        string `json:"timeout"          jsonschema:"pattern=^([0-9]+(\\.[0-9]+)?(ns|us|µs|ms|s|m|h))+$"                           jsonschema_description:"Hard limit on the model call, as a Go duration. A timeout is a warning."`
 }
 

@@ -2,12 +2,13 @@
 # Each key below is commented out and shows its default. Uncomment a key to change it.
 # Later layers win: defaults < user file < project file < env (RELGAP_*) < flags.
 # 'relgap config show --sources' prints every effective value and where it came from, and
-# 'relgap config validate' checks this file. Unknown keys are errors.
+# 'relgap config validate' checks this file. Unknown keys are errors. Every key is described
+# at {{docs}}/reference/config.
 schema_version: 1
 #
 # github:
-#   host: github.com              # only github.com in v0.x
-#   concurrency: 8                # concurrent requests per tool, 1 to 64
+#   host: github.com              # reserved; relgap always calls github.com for now
+#   concurrency: 8                # GitHub requests in flight, 1 to 64; 2 at most without a token
 #
 # cache:
 #   dir: ""                       # empty means $XDG_CACHE_HOME/relgap
@@ -19,7 +20,7 @@ schema_version: 1
 #     - '**/node_modules/**'
 #     - '**/.terragrunt-cache/**'
 #   detectors:
-#     ci_actions: false           # read tool versions from CI workflow files
+#     ci_actions: false           # also report GitHub Actions uses: pins in workflow files
 #     generic: false              # read NAME_VERSION=x.y.z lines in extra_files
 #   extra_files: []               # globs the generic detector reads, for example ["Makefile", "**/*.env"]
 #

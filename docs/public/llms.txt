@@ -1,0 +1,43 @@
+# relgap
+
+> See everything between your pin and latest: merged, classified release notes with breaking changes first.
+
+## Start
+
+- [Install](https://relgap.sasskovacs.dev/install): Install relgap from a release archive, with mise or with go install, verify the signature, and set up shell completion and man pages.
+
+## Reference
+
+- [Configuration](https://relgap.sasskovacs.dev/reference/config): Every relgap config key with its type, default, environment variable and flag.
+- [Environment variables](https://relgap.sasskovacs.dev/reference/environment): The environment variables relgap reads, and the ones it passes to child processes.
+- [Exit codes](https://relgap.sasskovacs.dev/reference/exit-codes): What each relgap exit code means, and which commands return it.
+- [Fail-on values](https://relgap.sasskovacs.dev/reference/fail-on): The --fail-on values of each relgap command, which make it exit 3.
+- [JSON schemas](https://relgap.sasskovacs.dev/reference/schemas): The JSON schemas of relgap's config file and JSON output, with the URL each is served at.
+- [MCP tools and prompts](https://relgap.sasskovacs.dev/reference/mcp): The tools and prompts that relgap mcp serves, with their input schemas.
+
+## CLI
+
+- [relgap](https://relgap.sasskovacs.dev/cli/): Release-notes digests and toolchain drift for the tools you pin
+- [Global flags](https://relgap.sasskovacs.dev/cli/global-flags): Flags that every relgap command accepts.
+- [relgap cache](https://relgap.sasskovacs.dev/cli/cache/): Inspect or clear the HTTP cache
+- [relgap cache clear](https://relgap.sasskovacs.dev/cli/cache/clear): Delete every cache entry
+- [relgap cache info](https://relgap.sasskovacs.dev/cli/cache/info): Show the cache directory, entry count, size and freshness
+- [relgap cache prune](https://relgap.sasskovacs.dev/cli/cache/prune): Delete entries not used for a while
+- [relgap completion](https://relgap.sasskovacs.dev/cli/completion): Generate the autocompletion script for the specified shell
+- [relgap config](https://relgap.sasskovacs.dev/cli/config/): Inspect and validate configuration
+- [relgap config init](https://relgap.sasskovacs.dev/cli/config/init): Write a commented config file
+- [relgap config path](https://relgap.sasskovacs.dev/cli/config/path): Print the config file locations relgap reads
+- [relgap config show](https://relgap.sasskovacs.dev/cli/config/show): Print the effective configuration
+- [relgap config validate](https://relgap.sasskovacs.dev/cli/config/validate): Validate config files against the schema
+- [relgap digest](https://relgap.sasskovacs.dev/cli/digest): Merge the release notes of every version in a range into one digest
+- [relgap drift](https://relgap.sasskovacs.dev/cli/drift): Show which repositories pin different versions of the same tool
+- [relgap mcp](https://relgap.sasskovacs.dev/cli/mcp): Serve digest, breaking_changes, outdated, drift and resolve to an MCP client over stdio
+- [relgap notify](https://relgap.sasskovacs.dev/cli/notify): Publish saved digest, outdated and drift reports as a GitHub pull request comment
+- [relgap outdated](https://relgap.sasskovacs.dev/cli/outdated): Compare every pinned tool version in a project with the latest release
+- [relgap pins](https://relgap.sasskovacs.dev/cli/pins): List the tool versions pinned in your repositories, with file and line
+- [relgap registry](https://relgap.sasskovacs.dev/cli/registry/): Check, test and update relgap registry entries
+- [relgap registry lint](https://relgap.sasskovacs.dev/cli/registry/lint): Validate registry entries against the schema
+- [relgap registry test](https://relgap.sasskovacs.dev/cli/registry/test): Run each source of a registry entry live and show what it produced
+- [relgap registry update](https://relgap.sasskovacs.dev/cli/registry/update): Download the newest registry entries from relgap's repository
+- [relgap resolve](https://relgap.sasskovacs.dev/cli/resolve): Show how a tool name resolves to a repository, version rules and changelog sources
+- [relgap version](https://relgap.sasskovacs.dev/cli/version): Print version and build information

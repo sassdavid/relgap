@@ -11,6 +11,7 @@ import (
 	"github.com/sassdavid/relgap/internal/app"
 	"github.com/sassdavid/relgap/internal/buildinfo"
 	"github.com/sassdavid/relgap/internal/complete"
+	"github.com/sassdavid/relgap/internal/docsurl"
 	"github.com/sassdavid/relgap/internal/registry"
 	"github.com/sassdavid/relgap/internal/render"
 	"github.com/sassdavid/relgap/internal/report"
@@ -25,7 +26,10 @@ func newRegistryCmd(d *app.Deps, g *globals) *cobra.Command {
 		Use:   "registry",
 		Short: "Check, test and update relgap registry entries",
 		Long: `relgap's registry has one file per tool, registry/<name>.yaml, for tools whose versions or
-changelogs need rules that auto-discovery gets wrong. The schema is schemas/registry-v1.json.`,
+changelogs need rules that auto-discovery gets wrong. The schema is ` + docsurl.Schema("registry-v1.json") + `.`,
+		Example: `  relgap registry lint registry/terraform.yaml
+  relgap registry test terraform 1.9.0..1.10.0
+  relgap registry update`,
 		Args: noArgs,
 	}
 	cmd.AddCommand(newRegistryLintCmd(d, g), newRegistryTestCmd(d, g), newRegistryUpdateCmd(d, g))
@@ -61,13 +65,12 @@ the range isn't an error: an upgrade guide only has notes where a new release li
 		},
 	}
 	addGuessFlag(cmd, &guess)
+	setFormats(cmd, textFormats()...)
+	setExitCodes(cmd, ExitAuth)
 	return cmd
 }
 
 func runRegistryTest(cmd *cobra.Command, d *app.Deps, g *globals, tool, rangeArg string, guess bool) error {
-	if err := g.outFormat.Check(render.FormatTTY, render.FormatPlain, render.FormatJSON); err != nil {
-		return usageError(err)
-	}
 	from, to, err := parseRange(rangeArg)
 	if err != nil {
 		return usageError(err)
@@ -139,20 +142,21 @@ func testSpec(cmd *cobra.Command, s *session, tool string) (registry.ToolSpec, e
 }
 
 func newRegistryLintCmd(d *app.Deps, g *globals) *cobra.Command {
-	return &cobra.Command{
+	cmd := &cobra.Command{
 		Use:               "lint [file...]",
 		Short:             "Validate registry entries against the schema",
 		ValidArgsFunction: complete.Files("yaml", "yml"),
 		Long: `Without arguments, checks the entries embedded in relgap. With arguments, checks those files.
 
-Reports unknown keys, wrong types, bad regular expressions and a name that doesn't match the
-file name, each with file:line:column, and exits 2 when there is any.`,
+Reports unknown keys and wrong types; regular expressions that don't compile (version.exclude,
+version.extract and source headings); version.scheme regex without version.extract and the
+reverse; unknown placeholders in path_template, url_template, ref and anchor; a url_template
+host relgap doesn't fetch from; CSS selectors in content and strip that don't parse; and a name
+that doesn't match the file name. Each problem has file:line:column, and lint exits 2 when there
+is any.`,
 		Example: `  relgap registry lint
   relgap registry lint registry/terraform.yaml`,
 		RunE: func(_ *cobra.Command, args []string) error {
-			if err := g.outFormat.Check(render.FormatTTY, render.FormatPlain, render.FormatJSON); err != nil {
-				return usageError(err)
-			}
 			valid, err := lintEntries(args)
 			if err != nil {
 				return err
@@ -171,6 +175,9 @@ file name, each with file:line:column, and exits 2 when there is any.`,
 			return nil
 		},
 	}
+	setFormats(cmd, textFormats()...)
+	setExitCodes(cmd)
+	return cmd
 }
 
 func lintEntries(paths []string) ([]string, error) {
@@ -209,7 +216,7 @@ func lintEntries(paths []string) ([]string, error) {
 }
 
 func newRegistryUpdateCmd(d *app.Deps, g *globals) *cobra.Command {
-	return &cobra.Command{
+	cmd := &cobra.Command{
 		Use:   "update",
 		Short: "Download the newest registry entries from relgap's repository",
 		Long: `Downloads registry/*.yaml from the main branch of ` + registry.UpdateRepo + ` through the
@@ -225,9 +232,6 @@ them.`,
   relgap registry update --format json`,
 		Args: noArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
-			if err := g.outFormat.Check(render.FormatTTY, render.FormatPlain, render.FormatJSON); err != nil {
-				return usageError(err)
-			}
 			s, err := g.newSession(cmd, d)
 			if err != nil {
 				return err
@@ -251,6 +255,9 @@ them.`,
 			return writeUpdate(d.Stdout, res)
 		},
 	}
+	setFormats(cmd, textFormats()...)
+	setExitCodes(cmd, ExitAuth)
+	return cmd
 }
 
 func writeUpdate(w io.Writer, res *registry.UpdateResult) error {

@@ -8,6 +8,7 @@ import (
 	"github.com/invopop/jsonschema"
 
 	"github.com/sassdavid/relgap/internal/config"
+	"github.com/sassdavid/relgap/internal/docsurl"
 	"github.com/sassdavid/relgap/internal/testutil"
 	"github.com/sassdavid/relgap/schemas"
 )
@@ -21,7 +22,7 @@ func generateSchema(t *testing.T) []byte {
 		Anonymous:                  true,
 	}
 	s := r.Reflect(&config.Config{})
-	s.ID = "https://github.com/sassdavid/relgap/schemas/" + schemas.ConfigV1
+	s.ID = jsonschema.ID(docsurl.Schema(schemas.ConfigV1))
 	s.Title = "relgap configuration"
 	s.Description = "Schema for $XDG_CONFIG_HOME/relgap/config.yaml and .relgap.yaml. " +
 		"Generated from internal/config by `mise run test:golden -- -update`; do not edit."

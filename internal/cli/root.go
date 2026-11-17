@@ -12,6 +12,7 @@ import (
 	"github.com/sassdavid/relgap/internal/app"
 	"github.com/sassdavid/relgap/internal/complete"
 	"github.com/sassdavid/relgap/internal/config"
+	"github.com/sassdavid/relgap/internal/docsurl"
 	"github.com/sassdavid/relgap/internal/render"
 )
 
@@ -80,7 +81,13 @@ func newRoot(d *app.Deps) (*cobra.Command, *globals) {
 first, with source links), and reports toolchain drift, EOL and known vulnerabilities across
 your repositories.
 
-stdout carries data, stderr carries logs. Use --format json for scripting.`,
+stdout carries data, stderr carries logs. Use --format json for scripting.
+
+Docs: ` + docsurl.Base + `.`,
+		Example: `  relgap digest terraform 1.9.0..1.10.0
+  relgap outdated --fail-on breaking
+  relgap pins ~/src/infra
+  relgap drift ~/src/infra ~/src/apps`,
 		SilenceErrors:     true,
 		SilenceUsage:      true,
 		DisableAutoGenTag: true,
@@ -105,9 +112,9 @@ stdout carries data, stderr carries logs. Use --format json for scripting.`,
 	pf.StringVar(&g.logFile, "log-file", "", "write logs to this file instead of stderr")
 	pf.StringVar(&g.color, "color", string(render.ColorAuto),
 		complete.Usage("colorize output: {values}", colorChoices()))
-	pf.BoolVar(&g.noInput, "no-input", false, "never prompt for input")
+	pf.BoolVar(&g.noInput, "no-input", false, "never prompt for input; relgap has no prompts yet, so it has no effect")
 	pf.IntVar(&g.concurrency, flagConcurrency, def.GitHub.Concurrency,
-		"maximum concurrent requests per tool (config github.concurrency)")
+		"GitHub requests in flight at once, 2 at most without a token (config github.concurrency)")
 	pf.Float64Var(&g.minConfidence, flagMinConfidence, def.Policy.MinConfidence,
 		"hide entries below this confidence, 0..1 (config policy.min_confidence)")
 	pf.BoolVar(&g.offline, "offline", false, "answer from the HTTP cache only and fail on a miss")
@@ -185,6 +192,9 @@ func (g *globals) setup(cmd *cobra.Command, d *app.Deps) error {
 		Color:   render.UseColor(colorMode, d.Env.Lookup, logTTY) && app.EnableVirtualTerminal(logW),
 	})
 	g.outFormat = format.Resolve(app.IsTerminal(d.Stdout))
+	if err = g.checkAnnotated(cmd); err != nil {
+		return err
+	}
 	g.started = true
 	d.Logger.DebugContext(cmd.Context(), "starting", "command", cmd.CommandPath(), "format", string(g.outFormat))
 	return nil

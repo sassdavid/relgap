@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/sassdavid/relgap/schemas/config-v1.json",
+  "$id": "https://relgap.sasskovacs.dev/schemas/config-v1.json",
   "properties": {
     "schema_version": {
       "type": "integer",
@@ -14,7 +14,7 @@
         "host": {
           "type": "string",
           "minLength": 1,
-          "description": "GitHub host. Only github.com is supported in v0.x."
+          "description": "Reserved for GitHub Enterprise Server. relgap doesn't read it yet and always calls github.com."
         },
         "concurrency": {
           "type": "integer",
@@ -63,7 +63,7 @@
           "properties": {
             "ci_actions": {
               "type": "boolean",
-              "description": "Detect tool versions in CI workflow files."
+              "description": "Also report the uses: pins of GitHub Actions in workflow files. Tool versions in CI files are read either way."
             },
             "generic": {
               "type": "boolean",
@@ -114,7 +114,8 @@
         "properties": {
           "tool": {
             "type": "string",
-            "minLength": 1
+            "minLength": 1,
+            "description": "Tool name, as pins and digests show it, to leave out of reports."
           },
           "path": {
             "type": "string",
@@ -144,7 +145,8 @@
               "outdated"
             ]
           },
-          "type": "array"
+          "type": "array",
+          "description": "--fail-on values each command uses when the flag is not given; a command ignores the values it doesn't check."
         },
         "max_behind": {
           "type": "string",
@@ -186,10 +188,12 @@
           "description": "Empty disables the summarizer."
         },
         "model": {
-          "type": "string"
+          "type": "string",
+          "description": "Model ID the provider runs. Required when provider is set."
         },
         "base_url": {
-          "type": "string"
+          "type": "string",
+          "description": "API base URL. Required for openai-compatible; anthropic and bedrock-mantle have a default."
         },
         "api_key_env": {
           "type": "string",
@@ -205,11 +209,13 @@
           "description": "bedrock-mantle only. Empty means messages for anthropic.* model IDs and chat-completions otherwise."
         },
         "aws_profile": {
-          "type": "string"
+          "type": "string",
+          "description": "AWS profile for bedrock and bedrock-mantle. Empty means the default credentials."
         },
         "max_input_tokens": {
           "type": "integer",
-          "minimum": 1
+          "minimum": 1,
+          "description": "Largest prompt, in estimated tokens. Lower-confidence entries are dropped first to fit."
         },
         "timeout": {
           "type": "string",

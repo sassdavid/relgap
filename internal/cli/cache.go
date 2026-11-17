@@ -49,6 +49,9 @@ stay fresh for 1 day, and a 404 for 1 hour. cache.ttl_override sets a fixed TTL 
 authenticated 304 from GitHub doesn't count against the rate limit.
 
 --offline answers from the cache only, --refresh revalidates everything, --no-cache skips it.`,
+		Example: `  relgap cache info
+  relgap cache prune --older-than 720h
+  relgap cache clear`,
 		Args: noArgs,
 	}
 	cmd.AddCommand(newCacheInfoCmd(d, g), newCacheClearCmd(d, g), newCachePruneCmd(d, g))
@@ -56,10 +59,14 @@ authenticated 304 from GitHub doesn't count against the rate limit.
 }
 
 func newCacheInfoCmd(d *app.Deps, g *globals) *cobra.Command {
-	return &cobra.Command{
+	cmd := &cobra.Command{
 		Use:   "info",
 		Short: "Show the cache directory, entry count, size and freshness",
-		Args:  noArgs,
+		Long: `info prints the cache directory, the number of entries, their size in bytes, and how many
+are still fresh and how many are stale. It reads each entry's metadata, never the response bodies.`,
+		Example: `  relgap cache info
+  relgap cache info --format json`,
+		Args: noArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			c, err := g.cacheForMaintenance(cmd, d)
 			if err != nil {
@@ -82,14 +89,19 @@ func newCacheInfoCmd(d *app.Deps, g *globals) *cobra.Command {
 			})
 		},
 	}
+	setFormats(cmd, textFormats()...)
+	setExitCodes(cmd)
+	return cmd
 }
 
 func newCacheClearCmd(d *app.Deps, g *globals) *cobra.Command {
-	return &cobra.Command{
+	cmd := &cobra.Command{
 		Use:   "clear",
 		Short: "Delete every cache entry",
 		Long: `Deletes every HTTP cache entry and the registry entries 'relgap registry update'
 downloaded, so resolution falls back to the entries embedded in relgap.`,
+		Example: `  relgap cache clear
+  relgap cache clear --format json`,
 		Args: noArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			c, err := g.cacheForMaintenance(cmd, d)
@@ -107,6 +119,9 @@ downloaded, so resolution falls back to the entries embedded in relgap.`,
 			return writeRemoved(d, g, r)
 		},
 	}
+	setFormats(cmd, textFormats()...)
+	setExitCodes(cmd)
+	return cmd
 }
 
 func newCachePruneCmd(d *app.Deps, g *globals) *cobra.Command {
@@ -142,6 +157,8 @@ Expired entries stay: their ETags let the next run revalidate them for free.`,
 		{Value: "168h", Desc: "a week"},
 		{Value: "720h", Desc: "30 days"},
 	}))
+	setFormats(cmd, textFormats()...)
+	setExitCodes(cmd)
 	return cmd
 }
 
@@ -168,9 +185,6 @@ func writeTable(d *app.Deps, rows [][2]string) error {
 }
 
 func (g *globals) cacheForMaintenance(cmd *cobra.Command, d *app.Deps) (*httpx.Cache, error) {
-	if err := g.outFormat.Check(render.FormatTTY, render.FormatPlain, render.FormatJSON); err != nil {
-		return nil, usageError(err)
-	}
 	if _, err := g.loadConfig(cmd, d); err != nil {
 		return nil, err
 	}

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/sassdavid/relgap/schemas/outdated-v1.json",
+  "$id": "https://relgap.sasskovacs.dev/schemas/outdated-v1.json",
   "title": "relgap outdated --format json",
   "description": "The report-v1.json envelope with outdated data: every resolved pin of the project compared with the latest version of its tool, sorted by tool, repo, file and line.",
   "allOf": [{ "$ref": "report-v1.json" }],

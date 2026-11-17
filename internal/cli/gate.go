@@ -42,6 +42,7 @@ func addGateFlags(cmd *cobra.Command, values []string) {
 	def := config.Default().Policy
 	fl := cmd.Flags()
 	failOn := failOnChoices(values)
+	setFailOn(cmd, failOn)
 	fl.StringSlice(flagFailOn, def.FailOn,
 		complete.Usage("exit 3 when this matches: {values}; repeatable (config policy.fail_on)", failOn))
 	fl.Int(flagMinCount, 1, "findings a --fail-on value needs before it exits 3")

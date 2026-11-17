@@ -84,7 +84,7 @@ extension filter.
 ## nushell, elvish, xonsh, tcsh, oil and clink
 
 carapace, built into relgap, writes these scripts. Nothing else needs installing. Each script
-calls `relgap _carapace` back, so relgap must be on `PATH`.
+calls relgap back to get the completions, so relgap must be on `PATH`.
 
 | Shell | Setup |
 |---|---|

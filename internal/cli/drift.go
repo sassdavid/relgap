@@ -99,13 +99,12 @@ Roots default to scan.roots, then the current directory, unless --from-tfcensus 
 	_ = cmd.RegisterFlagCompletionFunc("tool", completeToolList(d, g))
 	_ = cmd.RegisterFlagCompletionFunc("from-tfcensus", complete.Files("json"))
 	cmd.ValidArgsFunction = complete.Dirs()
+	setExitCodes(cmd, ExitFindings, ExitAuth)
+	setRelated(cmd, "reference/fail-on")
 	return cmd
 }
 
 func runDrift(cmd *cobra.Command, d *app.Deps, g *globals, f driftFlags, args []string) error {
-	if err := g.checkFormats(driftFormats()...); err != nil {
-		return usageError(err)
-	}
 	s, err := g.newSession(cmd, d)
 	if err != nil {
 		return err

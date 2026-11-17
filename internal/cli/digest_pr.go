@@ -112,9 +112,6 @@ type prDigest struct {
 // runDigestPR digests the pins that a pull request or a pair of refs upgrades: the pins at
 // the base ref against the head ref, or the working tree when --head is empty.
 func runDigestPR(cmd *cobra.Command, d *app.Deps, g *globals, f digestFlags, root string) error {
-	if err := g.checkFormats(digestFormats()...); err != nil {
-		return usageError(err)
-	}
 	if f.base == "" && !f.pullRequest {
 		return usageError(fmt.Errorf("--%s needs --%s or --%s", flagHead, flagBase, flagPullRequest))
 	}

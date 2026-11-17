@@ -84,6 +84,9 @@ An entry keeps its id in every page, filter and run. Claude Code offers the prom
 		"root":             complete.Dirs(),
 		"max-result-bytes": complete.NoFiles,
 	})
+	setRelated(cmd, "reference/mcp")
+	setFormats(cmd)
+	setExitCodes(cmd)
 	return cmd
 }
 

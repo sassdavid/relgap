@@ -1,0 +1,38 @@
+# outdated looks up tfprovider: and chart: pins in the Terraform registry and Artifact Hub, and
+# skips image: and action: pins. With --offline and an empty cache every lookup fails without
+# a request, so an error status shows that the lookup was tried.
+[recording] stop
+env RELGAP_CACHE_DIR=$WORK/empty-cache
+env RELGAP_SCAN_DETECTORS_CI_ACTIONS=true
+cd repo
+exec expect-exit 1 relgap outdated --offline --format json
+stdout '"tool": "image:node",\s+"pin": \{[^{}]*"location": \{[^{}]*\}\s*\},\s+"status": "skipped"'
+stdout '"tool": "action:actions/checkout",\s+"pin": \{[^{}]*"location": \{[^{}]*\}\s*\},\s+"status": "skipped"'
+stdout '"tool": "tfprovider:hashicorp/aws",\s+"repo": "hashicorp/terraform-provider-aws",\s+"pin": \{[^{}]*"location": \{[^{}]*\}\s*\},\s+"status": "error"'
+stdout '"tool": "chart:argo-cd",\s+"pin": \{[^{}]*"location": \{[^{}]*\}\s*\},\s+"status": "error"'
+
+-- repo/main.tf --
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "5.0.0"
+    }
+  }
+}
+-- repo/Chart.yaml --
+apiVersion: v2
+name: demo
+version: 0.1.0
+dependencies:
+  - name: argo-cd
+    version: 5.0.0
+    repository: https://argoproj.github.io/argo-helm
+-- repo/.github/workflows/ci.yml --
+on: push
+jobs:
+  a:
+    runs-on: ubuntu-latest
+    container: node:20.11.0
+    steps:
+      - uses: actions/checkout@v4.1.0

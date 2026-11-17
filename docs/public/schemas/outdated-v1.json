@@ -1,0 +1,172 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://relgap.sasskovacs.dev/schemas/outdated-v1.json",
+  "title": "relgap outdated --format json",
+  "description": "The report-v1.json envelope with outdated data: every resolved pin of the project compared with the latest version of its tool, sorted by tool, repo, file and line.",
+  "allOf": [{ "$ref": "report-v1.json" }],
+  "properties": {
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repos", "pins"],
+      "properties": {
+        "repos": {
+          "description": "Scanned repository directories, slash-separated.",
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "pins": { "type": "array", "items": { "$ref": "#/$defs/pin" } },
+        "binaries": {
+          "description": "With --binaries: the Go executables of the pinned tools and the OSV vulnerabilities of the Go version and main module they were built with. Matched by version only, without symbol reachability.",
+          "type": "array",
+          "items": { "$ref": "#/$defs/binary" }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "count": { "type": "integer", "minimum": 0 },
+    "pin": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tool", "pin", "status"],
+      "properties": {
+        "tool": { "description": "The pin's tool, as relgap digest accepts it.", "type": "string", "minLength": 1 },
+        "repo": { "description": "GitHub owner/repo of the tool. Absent when the pin was skipped.", "type": "string", "minLength": 1 },
+        "pin": { "$ref": "pins-v1.json#/$defs/pin" },
+        "current": { "description": "The version the pin stands for.", "type": "string", "minLength": 1 },
+        "via": {
+          "description": "How a non-exact pin became current.",
+          "enum": [
+            "highest installed or locked version",
+            "lowest satisfying version",
+            "highest stable version with this prefix",
+            "latest channel"
+          ]
+        },
+        "latest": { "description": "Newest stable version on the tool's release line.", "type": "string", "minLength": 1 },
+        "behind": {
+          "description": "Distance from current to latest, counted over the versions of the digest current..latest.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["releases", "major", "minor", "patch"],
+          "properties": {
+            "releases": { "description": "Stable versions after current up to latest.", "$ref": "#/$defs/count" },
+            "major": { "description": "Newer major lines among them.", "$ref": "#/$defs/count" },
+            "minor": { "description": "Newer minor lines among them.", "$ref": "#/$defs/count" },
+            "patch": { "description": "Those on current's own minor line.", "$ref": "#/$defs/count" },
+            "since": { "description": "When the first of them was published. Absent for tag-only tools.", "type": "string", "format": "date-time" }
+          }
+        },
+        "counts": {
+          "description": "Entries of the digest current..latest at or above the minimum confidence, per kind. Present when the pin was compared.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["breaking", "deprecation", "security", "feature", "fix", "other"],
+          "properties": {
+            "breaking": { "$ref": "#/$defs/count" },
+            "deprecation": { "$ref": "#/$defs/count" },
+            "security": { "$ref": "#/$defs/count" },
+            "feature": { "$ref": "#/$defs/count" },
+            "fix": { "$ref": "#/$defs/count" },
+            "other": { "$ref": "#/$defs/count" }
+          }
+        },
+        "hidden": { "description": "Entries below the minimum confidence.", "$ref": "#/$defs/count" },
+        "status": {
+          "description": "current, outdated, unknown (a channel other than latest, or a value no version matches), skipped (no GitHub repository relgap can read) or error.",
+          "enum": ["current", "outdated", "unknown", "skipped", "error"]
+        },
+        "note": { "description": "Why the pin is unknown, skipped or failed.", "type": "string", "minLength": 1 },
+        "eol": {
+          "description": "End-of-life state on endoflife.date of the current version's cycle and of the latest version's. Absent when the tool has no endoflife.date product or endoflife.date failed.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["product", "current"],
+          "properties": {
+            "product": { "type": "string", "minLength": 1 },
+            "current": { "$ref": "#/$defs/eolStatus" },
+            "target": { "$ref": "#/$defs/eolStatus" }
+          }
+        },
+        "vulns": {
+          "description": "OSV vulnerabilities of the current version. Absent when the tool has no OSV package or OSV failed.",
+          "type": "array",
+          "items": { "$ref": "#/$defs/vuln" }
+        }
+      }
+    },
+    "eolStatus": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["version", "cycle"],
+      "properties": {
+        "version": { "type": "string", "minLength": 1 },
+        "cycle": { "description": "The release cycle, from the registry's cycle template.", "type": "string", "minLength": 1 },
+        "is_eol": { "description": "Absent when endoflife.date doesn't list the cycle.", "type": "boolean" },
+        "eol_from": { "description": "Date the cycle reaches or reached its end.", "type": "string", "format": "date" },
+        "latest_in_cycle": { "type": "string", "minLength": 1 },
+        "note": { "type": "string", "minLength": 1 }
+      }
+    },
+    "osvPackage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ecosystem", "name"],
+      "properties": {
+        "ecosystem": { "type": "string", "minLength": 1 },
+        "name": { "type": "string", "minLength": 1 }
+      }
+    },
+    "vuln": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "package", "affects_current"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "aliases": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "summary": { "type": "string" },
+        "package": { "$ref": "#/$defs/osvPackage" },
+        "severity": {
+          "description": "The highest CVSS base score among the record's vectors, or only the advisory's own rating.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["rating"],
+          "properties": {
+            "score": { "type": "number", "minimum": 0, "maximum": 10 },
+            "rating": { "enum": ["none", "low", "medium", "high", "critical"] },
+            "vector": { "type": "string", "minLength": 1 }
+          }
+        },
+        "fixed_in": { "description": "Lowest fixed version above the current one.", "type": "string", "minLength": 1 },
+        "affects_current": { "type": "boolean" },
+        "fixed_by_target": { "description": "Whether the latest version is outside every affected range. Absent without a target or when the ranges can't be compared locally.", "type": "boolean" }
+      }
+    },
+    "binary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tool", "path", "go_version", "queries", "vulns"],
+      "properties": {
+        "tool": { "type": "string", "minLength": 1 },
+        "path": { "type": "string", "minLength": 1 },
+        "go_version": { "type": "string", "minLength": 1 },
+        "module": { "type": "string", "minLength": 1 },
+        "module_version": { "description": "Absent for (devel) builds.", "type": "string", "minLength": 1 },
+        "queries": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["package", "version"],
+            "properties": {
+              "package": { "$ref": "#/$defs/osvPackage" },
+              "version": { "type": "string", "minLength": 1 }
+            }
+          }
+        },
+        "vulns": { "type": "array", "items": { "$ref": "#/$defs/vuln" } }
+      }
+    }
+  }
+}
