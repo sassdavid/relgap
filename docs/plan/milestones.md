@@ -493,8 +493,9 @@ If one session can't finish, the open pages carry over to a follow-up session be
 - [x] README is reduced to the introduction, install and links. (docs-content criterion 5)
 - [ ] Troubleshooting, FAQ, security and contributing pages exist, and this site and tfcensus's
   inventory guide link to each other.
-  The four pages exist. `/guides/from-tfcensus` links tfcensus's `/concepts/state` (tfcensus has
-  no inventory guide; its M25 session chose that page). The link back lands with tfcensus M25.
+  The four pages exist. `/guides/from-tfcensus` links tfcensus's `/concepts/state#feed-relgap`
+  (tfcensus has no inventory guide; its M25 session chose that section). Its link back, and its
+  FAQ entry on relgap, land with tfcensus M25; tick this box once that is on its main.
   Evidence (2026-11-17): `mise run docs` exits 0. `mise run docs:build` passes: snippet check,
   transcripts, vitepress build, `TestPaths`, `TestNeverOnSite`, and lychee with 0 errors.
   `mise run check` passes.

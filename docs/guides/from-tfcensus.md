@@ -24,8 +24,8 @@ relgap drift --from-tfcensus inventory.json
 
 relgap reads the JSON of `tfcensus inventory --format json` with `schema_version` 1. Input from
 another tool or another schema version exits 2. tfcensus's
-[How state is read](https://tfcensus.sasskovacs.dev/concepts/state) describes what the inventory
-holds.
+[How state is read](https://tfcensus.sasskovacs.dev/concepts/state#feed-relgap) describes what
+the inventory holds and how it feeds relgap.
 
 ## Rows and pins
 
