@@ -13,8 +13,10 @@ latest stable version on the release line (--line).
 Notes come from the tool's registry sources: GitHub release bodies and changelog files, each
 file fetched and parsed once. A bullet that two sources share is shown once. Each entry has a
 confidence between 0 and 1; entries below --min-confidence (default 0.5) are hidden and counted.
---format md writes PR-ready Markdown with one <details> block per version. --only lists
-the entries of the named kinds; the counts still cover every kind.
+--format md writes PR-ready Markdown with one <details> block per version. It puts a zero-width
+space after each @ and # that would mention a user or reference an issue, and sends github.com
+issue links through redirect.github.com, so a comment that quotes the notes notifies nobody.
+--only lists the entries of the named kinds; the counts still cover every kind.
 
 --from-mise digests every tool pinned in the project's mise config files that is behind
 its latest version, from the pinned version to the latest. --all does the same for every pin

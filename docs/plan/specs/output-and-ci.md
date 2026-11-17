@@ -119,6 +119,13 @@ reasoning; tfcensus shares the code.
   edits the comment to "Nothing to report" and creates none. The token comes from GH_TOKEN,
   GITHUB_TOKEN or gh, the repository from `GITHUB_REPOSITORY` and the pull request from the
   `GITHUB_EVENT_PATH` event. Exit 2 when either is missing, 4 when GitHub refuses the token.
+- Digest Markdown silences the release notes it quotes, as Renovate's `sanitizeMarkdown` does
+  for its pull request bodies: a zero-width space (`&#8203;`) follows each `@`, `#` and `GH-`
+  that would mention a user or reference an issue, and github.com issue, pull request and
+  discussion links go through `redirect.github.com`, which GitHub's autolink docs give for links
+  without a backlink. Code spans and code blocks stay as they are, and JSON keeps the original
+  text. A comment on sassdavid/action-test#1 quoted jq's notes and notified about 50 authors
+  (sassdavid/relgap-action#13).
 - `docs/ci/outdated.yml` is the example workflow: one `outdated` run with `--out`, the step
   summary, the SARIF upload and the comment on pull requests from the same repository.
 
@@ -186,6 +193,9 @@ the exit codes.
   (`TestDigestMarkdownTruncation` renders 300 generated digests and cuts each at its own length,
   one character less, and random limits; `TestTruncateMarkdownLimit` in the shared
   `internal/render` checks the footer counts. `out.txtar` checks `--md-max-chars` end to end.)
+- [x] Digest Markdown mentions nobody and references no issue: mentions, `#123`, `GH-123` and
+  `owner/repo#123` get a zero-width space, issue links go through `redirect.github.com`, and code,
+  emails and other URLs stay as they are (`TestDigestMarkdownSilence`; the digest goldens).
 - [x] `outdated` over a fixture project with 10 pins matches golden files in tty, plain, md and json, and each pin's counts equal those of the full digest `current..latest` (`TestSpec_output_and_ci_5`).
 - [x] `drift` over a generated tree of 60 repos matches golden files in tty, plain, md and json, marks constraint pins `≈`, sends no request (a refusing proxy and an empty request log), and `--fail-on drift` exits 3 (`TestSpec_output_and_ci_6`).
 - [x] `drift --latest` over the same tree adds the latest versions of 10 tools (8 until M8 added the node and terraform-provider-aws entries) from 1 GraphQL request, and a second run answers from the cache with 0 requests (`TestSpec_output_and_ci_7`).
