@@ -1,43 +1,97 @@
-# relgap docs
+# Working on the relgap docs site
 
-**Status:** draft plan, 2026-11-09. Not started. Language: Go ([ADR-0001](engineering/adr/0001-language-go.md)).
+This folder is the source of `https://relgap.sasskovacs.dev`, a VitePress site. The site
+describes the latest release: a release deploys it, and `docs.yml` can redeploy a ref by hand.
+This file is not published (`srcExclude` in `.vitepress/config.mts`). The spec is
+[docs-site](plan/specs/docs-site.md), the design is [docs-design](plan/specs/docs-design.md), and
+the page list is [docs-content](plan/specs/docs-content.md). The plan and the engineering docs
+sit next to the site in [plan/](plan/milestones.md) and [engineering/](engineering/README.md),
+and the site never publishes them.
 
-`relgap` shows everything that changed between the version you pin and the version you're moving to:
-merged, classified release notes for any version range, drift of the same tool across many repos, and EOL and
-vulnerability status. Output goes to the terminal, Markdown, JSON, SARIF and MCP.
+## Tasks
 
-Contributor and agent rules: [CLAUDE.md](../CLAUDE.md).
+The site's tools (node, aube, lychee, oxfmt) come from `mise.docs.toml`, so install them once
+with `MISE_ENV=docs`. Run the tasks from the repo root.
 
-## Plan (`plan/`): reading order
-1. [overview.md](plan/overview.md): problem, users, goals, non-goals, success criteria, demand risk
-2. [architecture.md](plan/architecture.md): pipeline, packages, data model
-3. [cli.md](plan/cli.md): commands, flags, exit codes
-4. specs (feature contracts with acceptance criteria):
-   [pin-discovery](plan/specs/pin-discovery.md) ·
-   [tool-resolution](plan/specs/tool-resolution.md) ·
-   [versions-and-ranges](plan/specs/versions-and-ranges.md) ·
-   [source-adapters](plan/specs/source-adapters.md) ·
-   [classification](plan/specs/classification.md) ·
-   [enrichment](plan/specs/enrichment.md) ·
-   [output-and-ci](plan/specs/output-and-ci.md) ·
-   [mcp-and-llm](plan/specs/mcp-and-llm.md) ·
-   [config](plan/specs/config.md) ·
-   [docs-site](plan/specs/docs-site.md) ·
-   [docs-design](plan/specs/docs-design.md) ·
-   [docs-content](plan/specs/docs-content.md)
-5. [milestones.md](plan/milestones.md): M0–M12, each one session with checkable "done when" items
-6. [testing.md](plan/testing.md) · [risks.md](plan/risks.md) · [open-questions.md](plan/open-questions.md) · [research.md](plan/research.md)
-7. Tool ADRs: [0001 goldmark section index](plan/adr/0001-goldmark-section-index.md) ·
-   [0002 override registry](plan/adr/0002-override-registry-in-repo.md) ·
-   [0003 integrate with mise](plan/adr/0003-integrate-with-mise.md) ·
-   [0004 optional cited LLM](plan/adr/0004-llm-optional-cited.md) ·
-   [0005 token lookup](plan/adr/0005-token-lookup-without-go-gh-auth.md) ·
-   [0006 HTTP cache](plan/adr/0006-http-cache.md) ·
-   [0007 pins read mise config files](plan/adr/0007-parse-mise-config-for-pins.md) ·
-   [0008 HCL and Dockerfile parsers](plan/adr/0008-hcl-and-dockerfile-parsers.md) ·
-   [0009 outdated current and latest](plan/adr/0009-outdated-current-and-latest.md)
-8. [reference-repos.md](plan/reference-repos.md): local clones to read (never copy) during implementation
-9. [integration.md](plan/integration.md): how relgap connects to its sibling tool [tfcensus](https://github.com/sassdavid/tfcensus)
+```sh
+MISE_ENV=docs mise install
+cd docs && aube install --frozen-lockfile && cd ..
+mise run docs:dev        # live reload on localhost
+mise run docs            # regenerate the generated pages and data; exits 1 when one changed
+mise run docs:build      # every check CI runs, then the build in docs/.vitepress/dist
+mise run docs:a11y       # axe in both themes on the built site; needs Chrome
+mise run docs:preview    # serve docs/.vitepress/dist
+mise run docs:action     # refresh the relgap-action inputs after Renovate moves its pin
+mise run lint:docs       # oxfmt --check and oxlint on .vitepress
+mise run lint:prose      # the writing rules, on every published page
+```
 
-## Engineering (`engineering/`)
-Stack, standards, CI/release pipeline and engineering ADRs (shared with tfcensus): [engineering/README.md](engineering/README.md).
+`docs:build` runs, in order: the generators' stale check (with the transcript check), the
+`llms.txt` and icon stale checks, the snippet check, the node unit tests, `vitepress build`
+(it renders one social card per page), the social card check, the third-party request check, the
+docs URL check, the never-on-the-site check and `lychee --offline`. `docs:a11y` takes Chrome from
+`CHROME_PATH`, or `google-chrome` or `chromium` on `PATH`. It also checks reduced motion and
+fails on any request that leaves the site. CI runs both in `docs.yml`.
+
+`mise run docs` exits 1 after it rewrote a stale file. Review the diff, commit it, and run it
+again to see exit 0.
+
+## Where pages go
+
+| Path | What goes there |
+|---|---|
+| `index.md` | the home page: frontmatter for `HomeHero` and `AnswerRows` |
+| `getting-started.md`, `install.md` | the Start section |
+| `guides/` | one task per page, named for what the reader wants to do |
+| `concepts/` | how relgap works: ranges, resolution, sources, classification, enrichment, pins, drift, network |
+| `reference/` | generated pages plus the hand-written `notify` and `output` |
+| `cli/` | generated, one page per command |
+| `troubleshooting.md`, `faq.md`, `security.md`, `contributing.md` | the Help section |
+| `ci/` | the GitHub Actions examples; guides include them with `<<<` |
+| `public/` | files served as they are: glyph, favicons, manifest, `llms.txt`, schemas |
+| `.vitepress/` | config, sidebar, theme, the build scripts and their tests |
+| `plan/`, `engineering/`, `dogfood.md` | internal, never published |
+
+A new page needs frontmatter with `title` and `description` (the build fails without a
+description, because search, social cards and `llms.txt` use it) and an entry in
+`.vitepress/sidebar.mts`. Command pages link guides through `cmd.Annotations["docs.related"]`, and
+help text links the site through `internal/docsurl`, never through a repo path.
+
+## Generated files
+
+The table lists every generated file. The Markdown ones say so in their first lines. Change the
+code a file comes from, then run `mise run docs`. Don't edit the file.
+
+| Files | Written by | From |
+|---|---|---|
+| `cli/**`, `cli/commands.json` | `scripts/gendocs` | the cobra tree, flags, annotations |
+| `reference/` config, environment, exit codes, fail-on, schemas, MCP | `scripts/gendocs` | the config schema and defaults, `run.go`, `schemas/`, the MCP server |
+| `reference/` tools, snapshots, registry schema, SARIF rules; `parts/*.md` | `scripts/gensite` | the registry, the embedded snapshots, the classifier and the detectors |
+| `parts/relgap-action.md` | `scripts/gensite` | relgap-action's `action.yml` at the pinned commit |
+| `.vitepress/theme/data/*.json` | `scripts/gensite` | the kubectl digest golden and `summarize.SentToModel` |
+| `public/schemas/*.json` | `scripts/gendocs` | `schemas/` |
+| `public/llms.txt` | `.vitepress/llms.mts` | the sidebar and each page's description |
+| `public/favicon.ico`, `public/apple-touch-icon.png`, `public/icon-192.png`, `public/icon-512.png` | `.vitepress/social.mjs` | `public/glyph.svg` |
+
+Output on a page is never typed by hand. Include a golden with `<<< @/../testdata/golden/...` and
+put the command that produced it on the `relgap` line above the include: the transcript check
+fails when no test script runs that command against that golden.
+
+Social cards are not committed. `vitepress build` renders them into `dist/social/` with
+`@napi-rs/canvas`, the variable font file of `@fontsource-variable/atkinson-hyperlegible-next` (the package carries its
+OFL text) and the strata from `theme/card.mjs`. A card's file name is the hash of its PNG.
+
+## Voice
+
+Pages follow [.claude/rules/writing.md](../.claude/rules/writing.md), and `mise run lint:prose`
+checks the word list, dashes, quotes and emoji. In short:
+
+- Write for an engineer who reviews upgrades: give the command, the flag or the file, and say
+  what it does.
+- Use "you", active voice and the present tense. Use sentence-case headings.
+- Every `relgap` command in a `sh` block must parse: the snippet check runs each one against the
+  command tree and checks flags and values.
+- Breaking changes come first, then deprecation, security, feature, fix and other, the order
+  relgap prints.
+- Mark an entry class with `<EntryMark kind="breaking" />` and its text label, never with colour
+  alone. A page about `--summarize` shows the `SentToModel` note.

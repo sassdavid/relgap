@@ -58,8 +58,10 @@ cd docs && aube install --frozen-lockfile && cd ..
 mise run docs:dev
 ```
 
-`mise run docs:build` runs every check the site has: the stale check, the snippet check that
-parses each `relgap` command on the site, the build, and an offline link check. Pages under
+`mise run docs:build` runs the stale checks, the snippet check that parses each `relgap` command
+on the site, the build with its social cards, the card and third-party request checks, and an
+offline link check. `mise run docs:a11y` then runs axe on the built site in both themes; it
+needs Chrome, from `CHROME_PATH` or on `PATH`. Pages under
 `docs/cli/` and most of `docs/reference/` are generated, so change the help text or schema they
 come from and run `mise run docs`. Text follows the writing rules that `mise run lint:prose`
 checks: plain words, sentence-case headings and no dashes as punctuation.

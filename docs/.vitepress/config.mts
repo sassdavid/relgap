@@ -3,6 +3,7 @@
 import { readFileSync } from "node:fs";
 import { defineConfig, type HeadConfig } from "vitepress";
 import { sidebar } from "./sidebar.mts";
+import { socialCards } from "./social.mjs";
 import { readTokens } from "./tokens.mjs";
 
 const tool = "relgap";
@@ -15,6 +16,8 @@ const manifest = JSON.parse(
   readFileSync(new URL("../../.release-please-manifest.json", import.meta.url), "utf8"),
 ) as Record<string, string>;
 const version = manifest["."];
+
+const cards = socialCards({ site, tool, sidebar });
 
 // github-dark's comment colour is under 4.5:1 on the dark surface, so code comments take the
 // ink-muted token of each theme (docs-design.md "Code blocks").
@@ -33,7 +36,7 @@ export default defineConfig({
   sitemap: { hostname: site },
   // parts/ holds generated fragments that pages include; they are not pages of their own.
   srcExclude: ["plan/**", "engineering/**", "validation/**", "dogfood.md", "README.md", "parts/**"],
-  head: [["link", { rel: "icon", type: "image/svg+xml", href: "/glyph.svg" }]],
+  head: cards.head(),
   markdown: {
     theme: { light: "github-light", dark: "github-dark" },
     shikiSetup(highlighter) {
@@ -81,7 +84,7 @@ export default defineConfig({
       );
     }
   },
-  transformHead({ pageData, title }) {
+  async transformHead({ pageData, title }) {
     const path = pageData.relativePath.replace(/(^|\/)index\.md$/, "$1").replace(/\.md$/, "");
     const url = `${site}/${path}`;
     const text = (pageData.frontmatter.description as string | undefined) ?? description;
@@ -92,10 +95,13 @@ export default defineConfig({
       ["meta", { property: "og:title", content: title }],
       ["meta", { property: "og:description", content: text }],
       ["meta", { property: "og:url", content: url }],
-      ["meta", { name: "twitter:card", content: "summary" }],
       ["meta", { name: "twitter:title", content: title }],
       ["meta", { name: "twitter:description", content: text }],
+      ...(await cards.meta(pageData)),
     ];
     return head;
+  },
+  async buildEnd(siteConfig) {
+    await cards.write(siteConfig.outDir);
   },
 });
