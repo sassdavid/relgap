@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.6.0](https://github.com/sassdavid/relgap/compare/v0.5.0...v0.6.0) (2026-11-17)
+
+
+### Features
+
+* **docs:** generate the CLI and reference pages from code ([#69](https://github.com/sassdavid/relgap/issues/69)) ([8cae757](https://github.com/sassdavid/relgap/commit/8cae7576dc6cbbfa77eda6d53ac45d3b49f1f03a))
+
+
+### Bug Fixes
+
+* **deps:** update module github.com/carapace-sh/carapace to v1.18.2 ([#65](https://github.com/sassdavid/relgap/issues/65)) ([97bf39b](https://github.com/sassdavid/relgap/commit/97bf39b91fdeeb6d77f616afc6a9e23b2713bfd1))
+
 ## [0.5.0](https://github.com/sassdavid/relgap/compare/v0.4.0...v0.5.0) (2026-11-17)
 
 
