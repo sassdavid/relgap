@@ -528,9 +528,10 @@ release.
   playwright-core 1.65.1, WCAG 2.0 to 2.2 A and AA plus best practices) reports 0 violations on
   `/`, `/guides/digest`, `/cli/digest` and `/reference/config` in light and dark, and the home
   page has 11 animations with motion and 0 with `prefers-reduced-motion: reduce`. `docs.yml` runs
-  it after `docs:build`. Lighthouse 13.6.0, run by hand against `vitepress preview` (2026-11-17,
-  chrome-headless-shell), gives accessibility 100 and best practices 100 on `/` and `/cli/digest`,
-  desktop and mobile. Fixed on the way, in both repos: the search button's K key moved into CSS
+  it after `docs:build`, where it passed on the runner's Chrome. Lighthouse 13.6.0, run by hand
+  against `vitepress preview` (2026-11-17, chrome-headless-shell), gives accessibility 100 and
+  best practices 100 on `/` and `/cli/digest`, desktop and mobile. Fixed on the way, in both
+  repos: the search button's K key moved into CSS
   (axe `label-content-name-mismatch`), the CLI sidebar group links `/cli/` (`nested-interactive`),
   the home page wraps its components in `<main>` (Lighthouse `landmark-one-main`), and tfcensus's
   hidden tally table no longer scrolls (`scrollable-region-focusable`).
