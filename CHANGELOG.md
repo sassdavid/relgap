@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.8.0](https://github.com/sassdavid/relgap/compare/v0.7.0...v0.8.0) (2026-11-17)
+
+
+### Features
+
+* **docs:** add the guides, concepts and help pages (M25) ([#74](https://github.com/sassdavid/relgap/issues/74)) ([b1e6a8e](https://github.com/sassdavid/relgap/commit/b1e6a8e967aaf45364f8075b9f487e277334cfd1))
+
+
+### Bug Fixes
+
+* **docs:** check comma lists in snippets and add SECURITY.md ([#76](https://github.com/sassdavid/relgap/issues/76)) ([d1ea325](https://github.com/sassdavid/relgap/commit/d1ea32513c92cb4b03ad117010ba3afe21a3dfb1))
+* **docs:** take related link titles from the frontmatter title ([#73](https://github.com/sassdavid/relgap/issues/73)) ([7c94f11](https://github.com/sassdavid/relgap/commit/7c94f11452d8e9842eef7fd13c3befc875a27fed))
+
 ## [0.7.0](https://github.com/sassdavid/relgap/compare/v0.6.0...v0.7.0) (2026-11-17)
 
 
