@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.0](https://github.com/sassdavid/relgap/compare/v0.8.0...v0.9.0) (2026-11-17)
+
+
+### Features
+
+* **docs:** add social cards, icons and the accessibility checks (M26) ([#80](https://github.com/sassdavid/relgap/issues/80)) ([6a511bf](https://github.com/sassdavid/relgap/commit/6a511bf59cce100fdbc02e9b85a841ae203c7dfe))
+
 ## [0.8.0](https://github.com/sassdavid/relgap/compare/v0.7.0...v0.8.0) (2026-11-17)
 
 
