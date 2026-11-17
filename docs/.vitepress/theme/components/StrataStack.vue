@@ -44,7 +44,7 @@ const rows = computed(() =>
         .map((c) => ({ kind: c, n: layer.counts[c] })),
       breaks: props.breaking.includes(layer.version),
     }))
-    .reverse(),
+    .toReversed(),
 );
 
 function summary(layer: Layer): string {

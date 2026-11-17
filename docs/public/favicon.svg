@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
+  <style>
+    .b { fill: #7a2e63 } .m { fill: #5e5568 } .f { fill: #c0334a }
+    @media (prefers-color-scheme: dark) { .b { fill: #e59bcb } .m { fill: #a99fb4 } .f { fill: #ff8a9a } }
+  </style>
+  <rect class="b" x="1" y="2" width="14" height="4"/>
+  <rect class="m" x="1" y="10" width="9" height="4"/>
+  <rect class="f" x="6" y="7.5" width="5" height="1"/>
+</svg>
