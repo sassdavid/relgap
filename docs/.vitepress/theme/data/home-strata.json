@@ -1,0 +1,119 @@
+{
+  "source": "testdata/golden/digest/kubectl.json",
+  "tool": "kubectl",
+  "from": "1.36.0",
+  "to": "1.37.2",
+  "layers": [
+    {
+      "version": "1.36.1",
+      "counts": {
+        "breaking": 0,
+        "deprecation": 0,
+        "feature": 0,
+        "fix": 8,
+        "other": 0,
+        "security": 0
+      },
+      "total": 8
+    },
+    {
+      "version": "1.36.2",
+      "counts": {
+        "breaking": 0,
+        "deprecation": 0,
+        "feature": 2,
+        "fix": 9,
+        "other": 0,
+        "security": 0
+      },
+      "total": 11
+    },
+    {
+      "version": "1.36.3",
+      "counts": {
+        "breaking": 0,
+        "deprecation": 0,
+        "feature": 1,
+        "fix": 8,
+        "other": 1,
+        "security": 0
+      },
+      "total": 10
+    },
+    {
+      "version": "1.36.4",
+      "counts": {
+        "breaking": 0,
+        "deprecation": 0,
+        "feature": 0,
+        "fix": 5,
+        "other": 0,
+        "security": 0
+      },
+      "total": 5
+    },
+    {
+      "version": "1.36.5",
+      "counts": {
+        "breaking": 0,
+        "deprecation": 0,
+        "feature": 1,
+        "fix": 3,
+        "other": 1,
+        "security": 0
+      },
+      "total": 5
+    },
+    {
+      "version": "1.36.6",
+      "counts": {
+        "breaking": 0,
+        "deprecation": 0,
+        "feature": 2,
+        "fix": 5,
+        "other": 1,
+        "security": 0
+      },
+      "total": 8
+    },
+    {
+      "version": "1.37.0",
+      "counts": {
+        "breaking": 4,
+        "deprecation": 4,
+        "feature": 113,
+        "fix": 147,
+        "other": 120,
+        "security": 0
+      },
+      "total": 388
+    },
+    {
+      "version": "1.37.1",
+      "counts": {
+        "breaking": 0,
+        "deprecation": 0,
+        "feature": 1,
+        "fix": 4,
+        "other": 1,
+        "security": 0
+      },
+      "total": 6
+    },
+    {
+      "version": "1.37.2",
+      "counts": {
+        "breaking": 0,
+        "deprecation": 0,
+        "feature": 2,
+        "fix": 4,
+        "other": 1,
+        "security": 0
+      },
+      "total": 7
+    }
+  ],
+  "breaking": [
+    "1.37.0"
+  ]
+}

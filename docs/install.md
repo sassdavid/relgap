@@ -1,3 +1,7 @@
+---
+description: Install relgap from a release archive, with mise or with go install, verify the signature, and set up shell completion and man pages.
+---
+
 # Install and shell completion
 
 ## Channels

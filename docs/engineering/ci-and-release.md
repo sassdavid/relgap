@@ -12,7 +12,9 @@
 | `mise run test` | `go test -race -count=1 ./...` |
 | `mise run test:golden -- -update` | regenerates golden files (review the diff!). Sets `GOLDEN_UPDATE=1`, which `internal/testutil.Golden` and testscript's `UpdateScripts` honour |
 | `mise run fuzz` | runs every Go fuzz target (`func FuzzXxx`) for 60 s each; `mise run fuzz -- 10s` sets another duration. Passes when a repo has no targets |
-| `mise run docs` | regenerates `docs/cli/` via cobra/doc and fails if the checked-in copy differs |
+| `mise run docs` | regenerates `docs/cli/` via cobra/doc and the site data files (`scripts/gensite`), and fails if a checked-in copy differs |
+| `mise run lint:docs` | `oxfmt --check` on the docs site's config, theme and components (part of `lint`; tools from `mise.docs.toml`) |
+| `mise run docs:build` | the docs site checks in order: `mise run docs`, the contrast and unit tests (`node --test`), `vitepress build` and `lychee --offline`. Needs `MISE_ENV=docs mise install` and `aube install --frozen-lockfile` in `docs/` first. `docs:dev` and `docs:preview` serve the site |
 | `mise run snapshot` | `goreleaser release --snapshot --clean --skip=sign`. Keyless cosign needs CI's OIDC token, and goreleaser OSS can't make `signs:` conditional, so local snapshots skip signing |
 
 ## GitHub Actions workflows
@@ -23,9 +25,11 @@
 | `security.yml` | PR, weekly | govulncheck (SARIF), zizmor, dependency review |
 | `live.yml` | nightly (04:41 UTC), manual | live corpus against GitHub and the web with `GITHUB_TOKEN` (read-only job), then a job with `issues: write` that opens, updates or closes "corpus drift: <tool>" issues. Never writes goldens ([testing.md](../plan/testing.md)) |
 | `registry.yml` (relgap only) | weekly (Mondays 05:23 UTC), PRs that change the snapshots, manual | `mise run registry:age` fails when the embedded mise or aqua snapshot's commit is over 30 days old ([tool-resolution.md](../plan/specs/tool-resolution.md)) |
-| `release-please.yml` | push main | opens or updates the release PR (version bump + CHANGELOG.md from Conventional Commits). On merge it creates the tag and a draft release (`draft` + `force-tag-creation`) |
+| `release-please.yml` | push main | opens or updates the release PR (version bump + CHANGELOG.md from Conventional Commits). On merge it creates the tag and a draft release (`draft` + `force-tag-creation`), then calls `release.yml` and `docs.yml` |
 | `release.yml` | called by `release-please.yml` when a release is created (tags pushed with `GITHUB_TOKEN` don't trigger workflows); also tag `v*` | goreleaser: binaries, checksums, SBOM, cosign keyless signature, attestations. The Homebrew cask and the Scoop manifest are kept as the `package-manifests` workflow artifact until M19 publishes them. Secrets: `HOMEBREW_TAP_TOKEN`, `SCOOP_BUCKET_TOKEN` (unused until M19) |
 | `renovate.yml` | weekly (Mondays 01:17 UTC, inside the lock file maintenance window), manual | self-hosted Renovate as the `sassdavid-renovate` GitHub App, from the `renovate` environment (deployment branch `main`, secret `RENOVATE_APP_PRIVATE_KEY`, variable `RENOVATE_APP_CLIENT_ID`). Rules in `renovate.json`. Commits through the API, so they're signed; `mise lock` is allowed, so `mise.lock` follows `mise.toml` |
+| `docs.yml` | PRs that change the site or its generators; called by `release-please.yml` after a release; manual (a ref, the latest release tag by default) | with `MISE_ENV=docs`: `aube install --frozen-lockfile`, `mise run lint:docs` and `mise run docs:build`, then on a release or a manual run `actions/deploy-pages` to the `github-pages` environment (engineering ADR-0016). The custom domain and "Enforce HTTPS" are in the repository's Pages settings |
+| `aube-lock.yml` | pushes by the Renovate app to `renovate-self-hosted/**` that change `docs/package.json` | `aube install` in `docs/`, then commits `docs/aube-lock.yaml` through the API with a `sassdavid-renovate` token from the `aube-lock` environment (deployment branches `renovate-self-hosted/**`, the same secret and variable names as `renovate`), so CI runs on the signed commit |
 | `renovate-config.yml` | PR and push main that change `renovate.json` | `renovate-config-validator --strict` with the Renovate version that `renovate.yml` runs |
 
 Rules:

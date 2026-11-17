@@ -132,8 +132,9 @@ Home, wide screen. Left-aligned. The stack is the one bold element.
 
 - The numbers in the wireframe are placeholders.
 - The stack reads a committed fixture (`docs/.vitepress/theme/data/home-strata.json`, written by
-  a generator from `testdata/golden/digest/kubectl-breaking.json`), so the layers are a real
-  relgap output. The caption names the tool and range.
+  `scripts/gensite` from `testdata/golden/digest/kubectl.json`), so the layers are a real relgap
+  output. The caption names the tool and range. (Changed in M22 from `kubectl-breaking.json`,
+  which holds only breaking and deprecation entries, so only 1.37.0 would have had a layer.)
 - "What it answers" is a list of rows, question then command then link. No card grid and no
   numbers, because the rows are not a sequence.
 - The getting-started page is a sequence (install, token, first digest, scan a repo), so its

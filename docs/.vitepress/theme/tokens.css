@@ -1,0 +1,89 @@
+/* Colours, fonts and the VitePress variable mapping for relgap (docs/plan/specs/docs-design.md).
+   The contrast test (contrast.test.mjs) reads this file: every token except paper, surface and
+   rule is text and needs 4.5:1 on paper and surface, control needs 3:1. */
+@import "@fontsource-variable/atkinson-hyperlegible-next/wght.css";
+@import "@fontsource-variable/atkinson-hyperlegible-mono/wght.css";
+@import "./site.css";
+
+:root {
+  --rg-paper: #f7f7fa;
+  --rg-surface: #ffffff;
+  --rg-ink: #221b2b;
+  --rg-ink-muted: #5e5568;
+  --rg-rule: #d6d0dc;
+  --rg-control: #7a7088;
+  --rg-brand: #7a2e63;
+  --rg-breaking: #c0334a;
+  --rg-deprecation: #66661a;
+  --rg-security: #975e00;
+  --rg-feature: #2f6fb5;
+  --rg-fix: #2b7a5f;
+  --rg-other: #6f6878;
+}
+
+.dark {
+  --rg-paper: #17131c;
+  --rg-surface: #211b28;
+  --rg-ink: #ece6f0;
+  --rg-ink-muted: #a99fb4;
+  --rg-rule: #3a3142;
+  --rg-control: #8c8299;
+  --rg-brand: #e59bcb;
+  --rg-breaking: #ff8a9a;
+  --rg-deprecation: #cfcb6a;
+  --rg-security: #f2b54b;
+  --rg-feature: #8ab8f0;
+  --rg-fix: #6cc7a2;
+  --rg-other: #a79fb0;
+}
+
+:root,
+.dark {
+  --vp-font-family-base:
+    "Atkinson Hyperlegible Next Variable", ui-sans-serif, system-ui, sans-serif;
+  --vp-font-family-mono:
+    "Atkinson Hyperlegible Mono Variable", ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+  --vp-c-brand-1: var(--rg-brand);
+  --vp-c-brand-2: var(--rg-ink);
+  --vp-c-brand-3: var(--rg-brand);
+  --vp-c-brand-soft: color-mix(in srgb, var(--rg-brand) 14%, transparent);
+
+  --vp-c-bg: var(--rg-paper);
+  --vp-c-bg-alt: var(--rg-paper);
+  --vp-c-bg-elv: var(--rg-surface);
+  --vp-c-bg-soft: var(--rg-surface);
+  --vp-c-text-1: var(--rg-ink);
+  --vp-c-text-2: var(--rg-ink-muted);
+  --vp-c-text-3: var(--rg-ink-muted);
+  --vp-c-divider: var(--rg-rule);
+  --vp-c-gutter: var(--rg-rule);
+  --vp-c-border: var(--rg-control);
+
+  --vp-code-block-bg: var(--rg-surface);
+  --vp-code-bg: var(--rg-surface);
+  --vp-code-color: var(--rg-ink);
+  --vp-code-copy-code-bg: var(--rg-surface);
+
+  --vp-button-brand-bg: var(--rg-brand);
+  --vp-button-brand-border: var(--rg-brand);
+  --vp-button-brand-text: var(--rg-paper);
+  --vp-button-brand-hover-bg: var(--rg-ink);
+  --vp-button-brand-hover-border: var(--rg-ink);
+  --vp-button-brand-hover-text: var(--rg-paper);
+  --vp-button-brand-active-bg: var(--rg-ink);
+  --vp-button-brand-active-border: var(--rg-ink);
+  --vp-button-brand-active-text: var(--rg-paper);
+  --vp-button-alt-bg: var(--rg-surface);
+  --vp-button-alt-border: var(--rg-control);
+  --vp-button-alt-text: var(--rg-ink);
+  --vp-button-alt-hover-bg: var(--rg-surface);
+  --vp-button-alt-hover-border: var(--rg-brand);
+  --vp-button-alt-hover-text: var(--rg-brand);
+
+  --vp-local-search-bg: var(--rg-paper);
+  --vp-local-search-result-bg: var(--rg-surface);
+  --vp-local-search-result-border: var(--rg-rule);
+  --vp-local-search-highlight-bg: var(--rg-brand);
+  --vp-local-search-highlight-text: var(--rg-paper);
+}
