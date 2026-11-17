@@ -500,12 +500,12 @@ If one session can't finish, the open pages carry over to a follow-up session be
   transcripts, vitepress build, `TestPaths`, `TestNeverOnSite`, and lychee with 0 errors.
   `mise run check` passes.
 
-Shared follow-ups found during M25 (also listed under tfcensus's M25):
-- The snippet check (`checkValue` in `scripts/gendocs/snippets.go`) splits a value on commas only
-  for `stringSlice` flags. A flag whose help takes a comma list but has another type fails the
-  check. relgap's documented comma lists (`--fail-on`, `--only`) are `stringSlice` and pass.
-- Neither tool repo has a `SECURITY.md`, which docs-content.md names as the source of `/security`.
-  Adding one is a shared change (both repos). `/security` links GitHub's private advisory form.
+Shared follow-ups found during M25 (also listed under tfcensus's M25), now fixed in both repos:
+- The snippet check (`checkValue` in `scripts/gendocs/snippets.go`) splits values on commas for
+  every flag that completes a comma-separated list, not only for `stringSlice` flags
+  (`TestCheckValue`).
+- `SECURITY.md` is in both tool repos, with the same text once the tool name is swapped, and
+  `/security` links it.
 
 ### M26: Polish and launch (shared) ([docs-site](specs/docs-site.md), [docs-design](specs/docs-design.md))
 Scope: social cards, icons, accessibility and performance, then the first deploy by a real
