@@ -117,13 +117,14 @@ func markdownVersion(mw *textWriter, v report.Version, entries []classify.Entry)
 }
 
 // entry writes e as a list item with a link to its source. A multi-line entry gets the link on
-// its own line, so it can't land inside a code block.
+// its own line, so it can't land inside a code block. The text is silenced: release notes name
+// their authors and issues, and a pull request comment that quotes them must not notify them.
 func (tw *textWriter) entry(e classify.Entry, prefix string) {
 	link := ""
 	if e.Source.URL != "" {
 		link = "([source](" + e.Source.URL + "))"
 	}
-	lines := strings.Split(e.Text, "\n")
+	lines := strings.Split(silence(e.Text), "\n")
 	if len(lines) == 1 {
 		tw.line(strings.TrimRight("- "+prefix+lines[0]+" "+link, " "))
 		return

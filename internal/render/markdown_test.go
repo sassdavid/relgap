@@ -155,3 +155,66 @@ func TestDigestMarkdownTruncation(t *testing.T) {
 		}
 	}
 }
+
+// TestDigestMarkdownSilence checks that quoted release notes mention nobody and reference no
+// issue: a zero-width space follows each @, # and GH- that would, and github.com issue links go
+// through redirect.github.com. Code, emails, other URLs and HTML entities stay as they are.
+func TestDigestMarkdownSilence(t *testing.T) {
+	t.Parallel()
+	tests := []struct {
+		name, text, want string
+	}{
+		{"mention", "Fix overflow. @itchyny #3324", "Fix overflow. @&#8203;itchyny #&#8203;3324"},
+		{
+			"generated notes",
+			"Add trim by @wader in https://github.com/jqlang/jq/pull/3056",
+			"Add trim by @&#8203;wader in [https://github.com/jqlang/jq/pull/3056](https://redirect.github.com/jqlang/jq/pull/3056)",
+		},
+		{"team and parens", "(thanks @org/team, @a-b)", "(thanks @&#8203;org/team, @&#8203;a-b)"},
+		{
+			"cross-repo and GH",
+			"see jqlang/jq#12 and GH-7, gh-8",
+			"see jqlang/jq#&#8203;12 and GH-&#8203;7, gh-&#8203;8",
+		},
+		{
+			"link destination",
+			"[#12](https://github.com/o/r/issues/12) [d](http://www.github.com/o/r/discussions/3#c)",
+			"[#&#8203;12](https://redirect.github.com/o/r/issues/12) [d](https://redirect.github.com/o/r/discussions/3#c)",
+		},
+		{
+			"trailing period",
+			"Fixed in https://github.com/o/r/pull/9.",
+			"Fixed in [https://github.com/o/r/pull/9](https://redirect.github.com/o/r/pull/9).",
+		},
+		{"autolink", "<https://github.com/o/r/issues/1>", "<https://redirect.github.com/o/r/issues/1>"},
+		{
+			"html",
+			`<a href="https://github.com/o/r/pull/2">@x</a>`,
+			`<a href="https://redirect.github.com/o/r/pull/2">@&#8203;x</a>`,
+		},
+		{
+			"other URLs", "https://github.com/o/r/releases/tag/v1 https://x.test/@me/#1 [a](#2)",
+			"https://github.com/o/r/releases/tag/v1 https://x.test/@me/#1 [a](#2)",
+		},
+		{"not a mention", "mail a@b.test, pkg@1.2.3, &#123; C# @ #x", "mail a@b.test, pkg@1.2.3, &#123; C# @ #x"},
+		{"code span", "use `@types/node` and `#1` @x", "use `@types/node` and `#1` @&#8203;x"},
+		{
+			"code block", "removed x\n\n```sh\n# @x #1 https://github.com/o/r/pull/1\n```\n\n@y",
+			"removed x\n\n  ```sh\n  # @x #1 https://github.com/o/r/pull/1\n  ```\n\n  @&#8203;y",
+		},
+		{"already silenced", "@&#8203;x #&#8203;1", "@&#8203;x #&#8203;1"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			d := &report.Digest{Tools: []report.ToolDigest{{
+				Tool: "tool", Repo: "o/r", From: "1.0.0", To: "1.1.0",
+				Versions: []report.Version{{Version: "1.1.0"}},
+				Entries:  []classify.Entry{{Version: "1.1.0", Kind: classify.KindFix, Text: tt.text}},
+			}}}
+			var buf bytes.Buffer
+			require.NoError(t, render.DigestMarkdown(&buf, d))
+			assert.Contains(t, buf.String(), "\n- "+tt.want+"\n")
+		})
+	}
+}

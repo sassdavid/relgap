@@ -71,7 +71,7 @@ func (tw *textWriter) summaryMarkdown(s *report.Summary, urls map[string]string)
 					ids[i] = "[`" + id + "`](" + u + ")"
 				}
 			}
-			tw.line("- " + c.Text + " (" + strings.Join(ids, ", ") + ")")
+			tw.line("- " + silence(c.Text) + " (" + strings.Join(ids, ", ") + ")")
 		}
 	}
 }
