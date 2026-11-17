@@ -77,3 +77,8 @@ relgap resolve tfprovider:integrations/github
 relgap resolve chart:argo/argo-cd
 relgap resolve some-tool --guess
 ```
+
+## Related
+
+- [Tool resolution](/concepts/resolution)
+- [Map unresolved pins and private tools](/guides/unresolved)

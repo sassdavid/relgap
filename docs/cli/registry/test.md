@@ -61,3 +61,8 @@ relgap registry test kubectl 1.36.0..1.37.2
 relgap registry test registry/argocd.yaml 3.5.0..3.6.1
 relgap registry test python 3.13.5..3.14.0 --format json
 ```
+
+## Related
+
+- [Write or fix a registry entry](/guides/registry-entry)
+- [Registry entry schema](/reference/registry-schema)

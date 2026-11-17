@@ -58,7 +58,8 @@ export default defineConfig({
       {
         text: "Guide",
         link: "/getting-started",
-        activeMatch: "^/(getting-started|install|concepts/)",
+        activeMatch:
+          "^/(getting-started|install|guides|concepts|troubleshooting|faq|security|contributing)(/|$)",
       },
       { text: "Reference", link: "/reference/config", activeMatch: "^/reference/" },
       { text: "CLI", link: "/cli/", activeMatch: "^/cli/" },

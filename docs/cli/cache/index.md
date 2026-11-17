@@ -12,8 +12,9 @@ env RELGAP\_CACHE\_DIR). Each entry holds the response body and a few response h
 type, ETag, Last-Modified, Link); request headers and tokens are never stored.
 
 An entry is fresh for a time that depends on the age of the newest release it describes:
-1 hour under 7 days, 1 day under 6 months, 10 days when older. endoflife.date and OSV answers
-stay fresh for 1 day, and a 404 for 1 hour. cache.ttl\_override sets a fixed TTL per source
+1 hour under 7 days, 1 day under 6 months, 10 days when older. Answers from endoflife.date,
+OSV, the Terraform registry, Artifact Hub, npm and PyPI stay fresh for 1 day, and a 404 for
+1 hour. cache.ttl\_override sets a fixed TTL per source
 (github, endoflife, osv) or host. A stale GET is revalidated with If-None-Match, and an
 authenticated 304 from GitHub doesn't count against the rate limit.
 
@@ -42,3 +43,7 @@ relgap cache clear
 | [relgap cache clear](/cli/cache/clear) | Delete every cache entry |
 | [relgap cache info](/cli/cache/info) | Show the cache directory, entry count, size and freshness |
 | [relgap cache prune](/cli/cache/prune) | Delete entries not used for a while |
+
+## Related
+
+- [Work offline and manage the cache](/guides/cache)

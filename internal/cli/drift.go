@@ -100,7 +100,8 @@ Roots default to scan.roots, then the current directory, unless --from-tfcensus 
 	_ = cmd.RegisterFlagCompletionFunc("from-tfcensus", complete.Files("json"))
 	cmd.ValidArgsFunction = complete.Dirs()
 	setExitCodes(cmd, ExitFindings, ExitAuth)
-	setRelated(cmd, "reference/fail-on")
+	setRelated(cmd, "guides/drift", "guides/from-tfcensus", "concepts/drift", "reference/fail-on",
+		"reference/sarif-rules")
 	return cmd
 }
 

@@ -112,6 +112,7 @@ repository or the pull request is unknown, and 1 for any other failure.`,
 	})
 	setFormats(cmd, textFormats()...)
 	setExitCodes(cmd, ExitAuth)
+	setRelated(cmd, "reference/notify", "guides/renovate-pr")
 	return cmd
 }
 

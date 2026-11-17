@@ -123,4 +123,9 @@ relgap outdated --format json | jq '.data.pins[] | select(.status == "outdated")
 
 ## Related
 
+- [Find pins behind latest or past EOL](/guides/outdated)
+- [Gate CI on breaking changes, EOL and vulnerabilities](/guides/ci-gate)
+- [Upload SARIF to code scanning](/guides/sarif)
+- [EOL and vulnerabilities](/concepts/enrichment)
 - [Fail-on values](/reference/fail-on)
+- [SARIF rules](/reference/sarif-rules)

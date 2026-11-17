@@ -73,3 +73,9 @@ relgap pins ~/src/infra --format json
 relgap pins . --unresolved
 relgap pins . --renovate-report renovate-report.json
 ```
+
+## Related
+
+- [Pins and detectors](/concepts/pins)
+- [Map unresolved pins and private tools](/guides/unresolved)
+- [Use Renovate's extract report as a pin source](/guides/renovate-report)

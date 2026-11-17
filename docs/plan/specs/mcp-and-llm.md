@@ -1,13 +1,18 @@
 # Spec: MCP server and optional LLM summary
 
 ## MCP (`relgap mcp`, stdio, official go-sdk)
-| Tool | Input | Output (JSON envelope, size-capped) |
+| Tool | Input | Output (JSON envelope of the matching command) |
 |---|---|---|
-| `digest` | `tool`, `from?`, `to?`, `only?[]`, `min_confidence?` | `ToolReport` (entries truncated to N per kind, `cursor` for more) |
-| `outdated` | `path?` | table rows |
-| `drift` | `roots[]`, `tools?[]` | matrix |
-| `resolve` | `tool` | ToolSpec |
-| `breaking_changes` | `tool`, `from`, `to` | breaking + deprecation entries only (the most common agent question) |
+| `digest` | `tool`, `from`, `to?`, `only?[]`, `min_confidence?`, `line?`, `include_prereleases?`, `cursor?` | the digest of `relgap digest <tool> <from>..[<to>]` |
+| `breaking_changes` | `tool`, `from`, `to?`, `min_confidence?`, `cursor?` | the same digest with only the breaking and deprecation entries (the most common agent question) |
+| `outdated` | `path?`, `cursor?` | the report of `relgap outdated <path>` |
+| `drift` | `roots[]`, `tools?[]`, `latest?`, `ignore_constraints?`, `cursor?` | the report of `relgap drift <roots...>` |
+| `resolve` | `tool` | the resolution of `relgap resolve <tool>` |
+
+`tool` and `from` (and `roots` for drift) are required unless `cursor` is set; a cursor call
+ignores the other arguments. A result larger than `--max-result-bytes` (default 50,000 bytes of
+JSON) is split into pages by size, not by entry count: the envelope's `page.next_cursor` returns
+the rest. The generated `/reference/mcp` page has the input schemas.
 
 - Read-only. `server_info` names relgap and its version. Tool descriptions are one sentence each.
 - Filesystem access is limited to paths the client passes. No implicit home-dir scanning.
