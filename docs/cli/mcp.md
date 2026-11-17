@@ -83,4 +83,5 @@ relgap mcp --offline
 
 ## Related
 
+- [Use relgap from Claude Code or another MCP client](/guides/mcp)
 - [MCP tools and prompts](/reference/mcp)

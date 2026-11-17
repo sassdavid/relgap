@@ -18,7 +18,7 @@ editors that read the `yaml-language-server` comment check an entry as you type.
 |---|---|---|---|---|
 | `aliases` | list of strings |  |  | Other names that resolve to this tool, such as tf or KUBECTL_VERSION. |
 | `bin` | list of strings |  | pattern `^[A-Za-z0-9._-]+$` | Executable names that outdated --binaries looks for. Empty means the tool name. |
-| `breaking_markers` | list of strings |  |  | Literal text that marks an entry as breaking. |
+| `breaking_markers` | list of strings |  |  | Regular expressions; an entry whose text matches one is breaking, such as ACTION REQUIRED. |
 | [`eol`](#eol) | object |  |  |  |
 | `min_relgap` | string |  | pattern `^[0-9]+\.[0-9]+\.[0-9]+$` | Oldest relgap version that understands this entry. |
 | `name` | string | yes | pattern `^[a-z0-9][a-z0-9._-]*$` | Canonical tool name; must match the file name. |

@@ -187,7 +187,7 @@
     "breaking_markers": {
       "type": "array",
       "items": { "type": "string", "minLength": 1 },
-      "description": "Literal text that marks an entry as breaking."
+      "description": "Regular expressions; an entry whose text matches one is breaking, such as ACTION REQUIRED."
     }
   }
 }

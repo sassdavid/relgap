@@ -473,13 +473,39 @@ audit for the pages this milestone writes before writing them.
 ### M25: Guides and concepts (relgap only) ([docs-content](specs/docs-content.md))
 Scope: every guide, concept, help and project page in docs-content.md, and every gap closed.
 If one session can't finish, the open pages carry over to a follow-up session before M26.
-- [ ] Every guide and concept page in docs-content.md exists with a `description` and passes the
+- [x] Every guide and concept page in docs-content.md exists with a `description` and passes the
   snippet check. The CI guides embed `docs/ci/*.yml`. (docs-content criteria 1 and 2)
-- [ ] Every row in "wrong or stale statements" is fixed, each with its commit in the evidence.
+  15 guides in `docs/guides/` and 7 new concept pages; ci-gate, renovate-pr and action embed
+  `outdated.yml`, `digest.yml` and `relgap-action.yml`. Two structure pages no milestone owned
+  are written too: `/reference/notify` and `/reference/output`. Shell completion moved from
+  `install.md` to `/guides/completion`. Command pages link their guides through `setRelated`,
+  which showed that gendocs titled every Related link with the generated-file comment: fixed in
+  its own commit (ef32fd8, `TestTitleOf`), paired with tfcensus.
+- [x] Every row in "wrong or stale statements" is fixed, each with its commit in the evidence.
   (docs-content criterion 3)
-- [ ] README is reduced to the introduction, install and links. (docs-content criterion 5)
+  `scan.detectors.ci_actions`, `github.host`, `--no-input`, the `outdated` skip list,
+  `registry lint` and `--concurrency`: 8cae757 (M23). README's kind order and its dogfood and
+  plan links, the cache directory (said once on `/guides/cache`), `docs/plan/cli.md`,
+  `specs/config.md` and the `specs/mcp-and-llm.md` tool table: b4ec086. `docs/README.md` stays
+  with M26, as the row says. Checking the new pages against the code fixed four more in b4ec086:
+  the `digest --line` default, the cache help's 1-day list, the `breaking_markers` schema text
+  (regular expressions, not literal text), and the version-jump row in `classify.Signals`.
+- [x] README is reduced to the introduction, install and links. (docs-content criterion 5)
 - [ ] Troubleshooting, FAQ, security and contributing pages exist, and this site and tfcensus's
   inventory guide link to each other.
+  The four pages exist. `/guides/from-tfcensus` links tfcensus's `/concepts/state#feed-relgap`
+  (tfcensus has no inventory guide; its M25 session chose that section). Its link back, and its
+  FAQ entry on relgap, land with tfcensus M25; tick this box once that is on its main.
+  Evidence (2026-11-17): `mise run docs` exits 0. `mise run docs:build` passes: snippet check,
+  transcripts, vitepress build, `TestPaths`, `TestNeverOnSite`, and lychee with 0 errors.
+  `mise run check` passes.
+
+Shared follow-ups found during M25 (also listed under tfcensus's M25):
+- The snippet check (`checkValue` in `scripts/gendocs/snippets.go`) splits a value on commas only
+  for `stringSlice` flags. A flag whose help takes a comma list but has another type fails the
+  check. relgap's documented comma lists (`--fail-on`, `--only`) are `stringSlice` and pass.
+- Neither tool repo has a `SECURITY.md`, which docs-content.md names as the source of `/security`.
+  Adding one is a shared change (both repos). `/security` links GitHub's private advisory form.
 
 ### M26: Polish and launch (shared) ([docs-site](specs/docs-site.md), [docs-design](specs/docs-design.md))
 Scope: social cards, icons, accessibility and performance, then the first deploy by a real

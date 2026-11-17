@@ -5,7 +5,7 @@ package classify
 func RuleConfidences() []float64 {
 	out := []float64{
 		ConfidenceOther, confidenceMarker, confidenceHeading, confidenceBang, confidenceCommit,
-		confidenceHighlights,
+		confidenceHighlights, confidenceJump,
 	}
 	for _, rs := range [][]rule{headingRules(), verbRules(), keywordRules()} {
 		for _, r := range rs {

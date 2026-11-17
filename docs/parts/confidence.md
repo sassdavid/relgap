@@ -8,5 +8,6 @@
 | 0.8 | A conventional commit type (feat:, fix:, security: and the rest), a (SEMVER-MINOR) tag, or a node SEMVER-MAJOR commit whose scopes are all internal |
 | 0.7 | The first word: Added, Fixed, Deprecated, Removed or Dropped with an interface, or a Breaking: or Security: prefix |
 | 0.6 | Under a Notable changes or Highlights heading, with no other rule matching |
+| 0.6 | A version that starts a new major line (a new minor line in 0.x) and has no breaking entry of its own gets one breaking entry that says so |
 | 0.4 | A keyword anywhere in the text: CVE-, deprecat, no longer, removed, must now, renamed or dropped support |
 | 0.3 | No rule matched, or the entry is a lead-in line ending in a colon; the kind is other |

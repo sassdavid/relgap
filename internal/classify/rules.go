@@ -37,6 +37,8 @@ func Signals() []Signal {
 		{confidenceVerb, "The first word: Added, Fixed, Deprecated, Removed or Dropped with an interface, " +
 			"or a Breaking: or Security: prefix"},
 		{confidenceHighlights, "Under a Notable changes or Highlights heading, with no other rule matching"},
+		{confidenceJump, "A version that starts a new major line (a new minor line in 0.x) and has no breaking " +
+			"entry of its own gets one breaking entry that says so"},
 		{confidenceKeyword, "A keyword anywhere in the text: CVE-, deprecat, no longer, removed, must now, " +
 			"renamed or dropped support"},
 		{ConfidenceOther, "No rule matched, or the entry is a lead-in line ending in a colon; the kind is other"},

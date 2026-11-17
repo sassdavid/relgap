@@ -80,6 +80,7 @@ matches exactly and has the most stars wins, and the result is marked low-confid
 	addGuessFlag(cmd, &guess)
 	setFormats(cmd, textFormats()...)
 	setExitCodes(cmd)
+	setRelated(cmd, "concepts/resolution", "guides/unresolved")
 	return cmd
 }
 

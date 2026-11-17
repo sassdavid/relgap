@@ -19,7 +19,7 @@ scan:
   exclude: ["**/node_modules/**", "**/.terragrunt-cache/**"]
   detectors: { ci_actions: false, generic: false }
   extra_files: ["Makefile", "**/*.env"]
-tools:                         # local overrides / additions (same schema as registry entries)
+tools:                         # local additions: repo (GitHub owner/repo) is the only field
   hk:
     repo: jdx/hk
   internal-cli:
@@ -52,7 +52,8 @@ llm:                            # only for digest --summarize
 - `relgap config init [path]` writes a template with every key commented out at its default, so it changes
   nothing until edited. It writes `.relgap.yaml` in the working directory, the path, or with `--user` the
   user file, and refuses to replace a file (exit 2) without `--force`. A wizard (huh, with a TTY) is post-MVP.
-- `ignore` rules drop pins in `drift`, `outdated` and `digest --from-mise|--all`. `tool` may be an alias. `path` is a glob on `repo/file` or the repo-relative file, with `**` for any directories. `pins` lists every pin.
+- `tools.<name>` takes only `repo`. It wins over every registry layer for that field; versions, sources, EOL and OSV come from the lower layers or the defaults.
+- `ignore` rules drop pins in `drift`, `outdated`, `digest --from-mise|--all` and `digest --base|--pull-request`. `tool` may be an alias. `path` is a glob on `repo/file` or the repo-relative file, with `**` for any directories. `pins` lists every pin.
 - Env vars: `RELGAP_GITHUB_CONCURRENCY`, `RELGAP_CACHE_DIR`, `RELGAP_LLM_PROVIDER`, and so on. Tokens are **never** read from config files, only from env, gh or the keyring.
 
 ## Acceptance criteria

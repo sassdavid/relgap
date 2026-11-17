@@ -11,7 +11,8 @@ Lists the versions after &lt;from&gt; up to and including &lt;to&gt;, fetches th
 groups the entries by kind: breaking changes, deprecations, security, features, fixes, other.
 
 &lt;tool&gt; resolves as in 'relgap resolve', --guess included. Without &lt;to&gt; the range ends at the
-latest stable version on the release line (--line).
+latest stable version on the release line: --line, else the tool's registry version.line
+(none for most tools).
 
 Notes come from the tool's registry sources: GitHub release bodies and changelog files, each
 file fetched and parsed once. A bullet that two sources share is shown once. Each entry has a
@@ -139,4 +140,10 @@ relgap digest terraform 1.15.8..1.17.1 --format json | jq '.data.tools[].entries
 
 ## Related
 
+- [Read the changes between two versions](/guides/digest)
+- [Comment upgrade notes on Renovate pull requests](/guides/renovate-pr)
+- [Add an LLM summary](/guides/summarize)
+- [Versions, ranges and release lines](/concepts/ranges)
+- [Classification and confidence](/concepts/classification)
+- [Release-note sources](/concepts/sources)
 - [Fail-on values](/reference/fail-on)

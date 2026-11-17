@@ -111,4 +111,8 @@ relgap drift ~/src/infra --fail-on drift --min-count 3 --format sarif > drift.sa
 
 ## Related
 
+- [Find version drift across repos](/guides/drift)
+- [Feed tfcensus inventory into drift](/guides/from-tfcensus)
+- [Drift](/concepts/drift)
 - [Fail-on values](/reference/fail-on)
+- [SARIF rules](/reference/sarif-rules)

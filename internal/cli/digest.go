@@ -65,7 +65,8 @@ const digestLong = `Lists the versions after <from> up to and including <to>, fe
 groups the entries by kind: breaking changes, deprecations, security, features, fixes, other.
 
 <tool> resolves as in 'relgap resolve', --guess included. Without <to> the range ends at the
-latest stable version on the release line (--line).
+latest stable version on the release line: --line, else the tool's registry version.line
+(none for most tools).
 
 Notes come from the tool's registry sources: GitHub release bodies and changelog files, each
 file fetched and parsed once. A bullet that two sources share is shown once. Each entry has a
@@ -186,7 +187,8 @@ func newDigestCmd(d *app.Deps, g *globals) *cobra.Command {
 	cmd.MarkFlagsMutuallyExclusive(flagFromMise, "include-prereleases")
 	cmd.MarkFlagsMutuallyExclusive(flagAll, "include-prereleases")
 	setExitCodes(cmd, ExitFindings, ExitAuth)
-	setRelated(cmd, "reference/fail-on")
+	setRelated(cmd, "guides/digest", "guides/renovate-pr", "guides/summarize", "concepts/ranges",
+		"concepts/classification", "concepts/sources", "reference/fail-on")
 	return cmd
 }
 

@@ -70,3 +70,8 @@ relgap outdated --format json > outdated.json
 relgap notify --from outdated.json --notify github-pr-comment
 relgap notify --from digest.json --from drift.json --notify github-pr-comment --dry-run-notify
 ```
+
+## Related
+
+- [Notify targets](/reference/notify)
+- [Comment upgrade notes on Renovate pull requests](/guides/renovate-pr)

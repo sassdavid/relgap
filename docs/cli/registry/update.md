@@ -47,3 +47,8 @@ All codes are listed on the [exit codes](/reference/exit-codes) page.
 relgap registry update
 relgap registry update --format json
 ```
+
+## Related
+
+- [Write or fix a registry entry](/guides/registry-entry)
+- [Registry entry schema](/reference/registry-schema)

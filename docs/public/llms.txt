@@ -5,10 +5,35 @@
 ## Start
 
 - [Getting started](https://relgap.sasskovacs.dev/getting-started): Install relgap, give it a GitHub token, read what changed between two kubectl versions, then check the pins of a repository.
-- [Install](https://relgap.sasskovacs.dev/install): Install relgap from a release archive, with mise or with go install, verify the signature, and set up shell completion and man pages.
+- [Install](https://relgap.sasskovacs.dev/install): Install relgap from a release archive, with mise or with go install, verify the signature, and set up man pages.
+
+## Guides
+
+- [Read the changes between two versions](https://relgap.sasskovacs.dev/guides/digest): Merge the release notes between two versions of a tool into one digest, filter it by kind and confidence, and digest every pin a project or a change upgrades.
+- [Find pins behind latest or past EOL](https://relgap.sasskovacs.dev/guides/outdated): Compare every pinned tool version in a project with the latest release, read the breaking, EOL and vulnerability columns, and check installed Go binaries.
+- [Find version drift across repos](https://relgap.sasskovacs.dev/guides/drift): Compare the tool versions that many repositories pin, see which tools drift, add the latest versions and gate CI on drift.
+- [Gate CI on breaking changes, EOL and vulnerabilities](https://relgap.sasskovacs.dev/guides/ci-gate): Make a CI job fail when an upgrade has breaking changes, a pin is past its end of life or has a known vulnerability, or pins fall too far behind.
+- [Comment upgrade notes on Renovate pull requests](https://relgap.sasskovacs.dev/guides/renovate-pr): Post the release notes of every tool a pull request upgrades as one comment that updates itself, with Renovate pull requests limited to the dependency they bump.
+- [Use relgap-action](https://relgap.sasskovacs.dev/guides/action): Install a verified relgap release in GitHub Actions with relgap-action, and run outdated, drift or the pull request digest with one step.
+- [Upload SARIF to code scanning](https://relgap.sasskovacs.dev/guides/sarif): Write SARIF from relgap outdated or relgap drift and upload it to GitHub code scanning, so each finding shows at the pin's file and line.
+- [Feed tfcensus inventory into drift](https://relgap.sasskovacs.dev/guides/from-tfcensus): Read the Terraform and OpenTofu versions that tfcensus found in your state files into relgap drift, alone or next to scanned repositories.
+- [Map unresolved pins and private tools](https://relgap.sasskovacs.dev/guides/unresolved): Find the pins relgap can't map to a tool, map them with aliases, add private tools with tools.<name>.repo, and check the result with relgap resolve.
+- [Use Renovate's extract report as a pin source](https://relgap.sasskovacs.dev/guides/renovate-report): Add the dependencies Renovate extracts from a repository to relgap pins, for files relgap's own detectors don't read.
+- [Write or fix a registry entry](https://relgap.sasskovacs.dev/guides/registry-entry): Write a relgap registry entry for a tool, check it with registry lint, try it live with registry test, and send it upstream.
+- [Use relgap from an MCP client](https://relgap.sasskovacs.dev/guides/mcp): Register relgap as an MCP server in Claude Code or another client, choose the directories it may read, and use its tools, pages and upgrade_review prompt.
+- [Add an LLM summary](https://relgap.sasskovacs.dev/guides/summarize): Configure a model provider for digest --summarize, see what relgap sends and how it checks the citations, and keep the summary out of your CI gates.
+- [Work offline and manage the cache](https://relgap.sasskovacs.dev/guides/cache): Where relgap keeps its cache, how long answers stay fresh, how to work offline or force fresh data, and how to inspect, prune and clear the cache.
+- [Shell completion](https://relgap.sasskovacs.dev/guides/completion): Set up relgap's shell completion for bash, zsh, fish, PowerShell, nushell and other shells, and debug it.
 
 ## Concepts
 
+- [Pins and detectors](https://relgap.sasskovacs.dev/concepts/pins): What relgap counts as a pin, how it finds repositories and files, which detector reads which file, and how config narrows the scan.
+- [Tool resolution](https://relgap.sasskovacs.dev/concepts/resolution): How relgap turns a tool name, alias, variable or prefixed name into a GitHub repository, version rules and release-note sources, and which layer supplies each field.
+- [Versions, ranges and release lines](https://relgap.sasskovacs.dev/concepts/ranges): How relgap reads tags as versions, orders them, picks the versions in a range, and keeps the end of a range on a release line.
+- [Release-note sources](https://relgap.sasskovacs.dev/concepts/sources): Where relgap reads release notes from, how a registry entry names its sources, how notes from several sources merge, and what happens for a tool without an entry.
+- [Classification and confidence](https://relgap.sasskovacs.dev/concepts/classification): How relgap splits release notes into entries, gives each a kind and a confidence, hides weak guesses, and gives every entry a stable ID.
+- [EOL and vulnerabilities](https://relgap.sasskovacs.dev/concepts/enrichment): How relgap adds end-of-life dates from endoflife.date and known vulnerabilities from OSV to the pins relgap outdated compares, and what it does when either source is down.
+- [Drift](https://relgap.sasskovacs.dev/concepts/drift): What relgap means by drift, how each kind of pin counts toward it, how the majority version is chosen, and what the drift matrix shows.
 - [Network, privacy and tokens](https://relgap.sasskovacs.dev/concepts/network): Every host relgap sends requests to, the programs it runs, where the GitHub token goes, what the cache keeps and what --summarize sends to a model.
 
 ## Reference
@@ -19,6 +44,8 @@
 - [Fail-on values](https://relgap.sasskovacs.dev/reference/fail-on): The --fail-on values of each relgap command, which make it exit 3.
 - [JSON schemas](https://relgap.sasskovacs.dev/reference/schemas): The JSON schemas of relgap's config file and JSON output, with the URL each is served at.
 - [MCP tools and prompts](https://relgap.sasskovacs.dev/reference/mcp): The tools and prompts that relgap mcp serves, with their input schemas.
+- [Notify targets](https://relgap.sasskovacs.dev/reference/notify): The targets relgap notify publishes saved reports to, what each needs from the environment, and how a comment is found and updated again.
+- [Output formats](https://relgap.sasskovacs.dev/reference/output): The output formats relgap writes, which ones each command accepts, the JSON envelope every --format json report shares, and how --out writes several formats from one run.
 - [SARIF rules](https://relgap.sasskovacs.dev/reference/sarif-rules): The SARIF rules relgap outdated and drift report to code scanning, with their levels and help text.
 - [Supported tools](https://relgap.sasskovacs.dev/reference/tools): The tools relgap's curated registry describes: aliases, repository, release-note sources, EOL product and OSV packages.
 - [Registry entry schema](https://relgap.sasskovacs.dev/reference/registry-schema): Every key of a relgap registry entry, its type, allowed values and the keys each source kind needs.
@@ -51,3 +78,10 @@
 - [relgap registry update](https://relgap.sasskovacs.dev/cli/registry/update): Download the newest registry entries from relgap's repository
 - [relgap resolve](https://relgap.sasskovacs.dev/cli/resolve): Show how a tool name resolves to a repository, version rules and changelog sources
 - [relgap version](https://relgap.sasskovacs.dev/cli/version): Print version and build information
+
+## Help
+
+- [Troubleshooting](https://relgap.sasskovacs.dev/troubleshooting): What relgap's exit codes, token errors, rate limits, cache misses and unresolved pins mean, and what to do about each.
+- [FAQ](https://relgap.sasskovacs.dev/faq): Short answers about what relgap does and doesn't do, how it compares with Renovate, which tools it supports and what it sends over the network.
+- [Security and verification](https://relgap.sasskovacs.dev/security): How to report a vulnerability in relgap, how to verify a release, what each release archive carries, and where relgap's data and token handling is described.
+- [Contributing](https://relgap.sasskovacs.dev/contributing): How to build and test relgap, add a registry entry, change the docs site, and send a pull request.

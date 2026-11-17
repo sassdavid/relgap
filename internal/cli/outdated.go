@@ -99,7 +99,8 @@ since a pass on partial data proves nothing.`,
 		"also check the Go version and main module of the pinned tools' installed executables against OSV")
 	cmd.ValidArgsFunction = complete.Files()
 	setExitCodes(cmd, ExitFindings, ExitAuth)
-	setRelated(cmd, "reference/fail-on")
+	setRelated(cmd, "guides/outdated", "guides/ci-gate", "guides/sarif", "concepts/enrichment",
+		"reference/fail-on", "reference/sarif-rules")
 	return cmd
 }
 

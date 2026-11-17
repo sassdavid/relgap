@@ -62,6 +62,7 @@ Roots default to scan.roots, then the current directory.`,
 	addOutputFlags(cmd, g, pinsFormats()...)
 	cmd.ValidArgsFunction = complete.Dirs()
 	setExitCodes(cmd)
+	setRelated(cmd, "concepts/pins", "guides/unresolved", "guides/renovate-report")
 	return cmd
 }
 

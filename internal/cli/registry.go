@@ -67,6 +67,7 @@ the range isn't an error: an upgrade guide only has notes where a new release li
 	addGuessFlag(cmd, &guess)
 	setFormats(cmd, textFormats()...)
 	setExitCodes(cmd, ExitAuth)
+	setRelated(cmd, "guides/registry-entry", "reference/registry-schema")
 	return cmd
 }
 
@@ -177,6 +178,7 @@ is any.`,
 	}
 	setFormats(cmd, textFormats()...)
 	setExitCodes(cmd)
+	setRelated(cmd, "guides/registry-entry", "reference/registry-schema")
 	return cmd
 }
 
@@ -257,6 +259,7 @@ them.`,
 	}
 	setFormats(cmd, textFormats()...)
 	setExitCodes(cmd, ExitAuth)
+	setRelated(cmd, "guides/registry-entry", "reference/registry-schema")
 	return cmd
 }
 
