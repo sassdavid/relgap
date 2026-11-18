@@ -37,7 +37,7 @@ merged                                                                          
   https://github.com/argoproj/argo-cd/releases/tag/v3.6.1
 
 1 upgrade-guide docs/operator-manual/upgrading/{prev_minor}-{major}.{minor}.md:
-  https://github.com/argoproj/argo-cd/blob/master/docs/operator-manual/upgrading/3.5-3.6.md
+  https://github.com/argoproj/argo-cd/blob/v3.6.0/docs/operator-manual/upgrading/3.5-3.6.md
 
 merged:
   https://github.com/argoproj/argo-cd/releases/tag/v3.5.1
@@ -48,7 +48,7 @@ merged:
   https://github.com/argoproj/argo-cd/releases/tag/v3.5.6
   https://github.com/argoproj/argo-cd/releases/tag/v3.5.7
   https://github.com/argoproj/argo-cd/releases/tag/v3.6.0
-  https://github.com/argoproj/argo-cd/blob/master/docs/operator-manual/upgrading/3.5-3.6.md
+  https://github.com/argoproj/argo-cd/blob/v3.6.0/docs/operator-manual/upgrading/3.5-3.6.md
   https://github.com/argoproj/argo-cd/releases/tag/v3.6.1
 -- argocd.yaml --
 name: argocd
@@ -57,7 +57,7 @@ version: { scheme: semver, tag_prefix: "v" }
 sources:
   - kind: upgrade-guide
     path_template: "docs/operator-manual/upgrading/{prev_minor}-{major}.{minor}.md"
-    ref: master
+    ref: "{tag}"
 -- broken.yaml --
 name: broken
 repo: o/r

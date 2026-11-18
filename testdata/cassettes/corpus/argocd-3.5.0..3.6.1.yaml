@@ -458,7 +458,7 @@ interactions:
         host: api.github.com
         form:
             ref:
-                - master
+                - v3.6.0
         headers:
             Accept:
                 - application/vnd.github.raw
@@ -466,13 +466,13 @@ interactions:
                 - relgap/dev (+https://github.com/sassdavid/relgap)
             X-Github-Api-Version:
                 - "2022-11-28"
-        url: https://api.github.com/repos/argoproj/argo-cd/contents/docs/operator-manual/upgrading/3.5-3.6.md?ref=master
+        url: https://api.github.com/repos/argoproj/argo-cd/contents/docs/operator-manual/upgrading/3.5-3.6.md?ref=v3.6.0
         method: GET
       response:
         proto: HTTP/2.0
         proto_major: 2
         proto_minor: 0
-        content_length: 15831
+        content_length: 15397
         body: |+
             # v3.5 to 3.6
 
@@ -739,12 +739,6 @@ interactions:
               matching `status.observedGeneration`), so a sync wave acts as a real dependency barrier for it
               instead of treating the not-yet-applied Database as healthy.
 
-            - A bundled health check for Argo CD Image Updater's `argocd-image-updater.argoproj.io/ImageUpdater`
-              resource. It derives health from the standard Kubernetes conditions set by the operator:
-              `Healthy` when the `Ready` condition is `True`, `Degraded` when the `Error` condition is `True`
-              or `Ready` is `False`, and `Progressing` while the controller is actively reconciling or has not
-              yet observed the current spec generation.
-
             ### Health Checks During Deletion
 
             In the past, Argo CD always reported "Progressing" / "Pending deletion" for resources being deleted
@@ -787,17 +781,17 @@ interactions:
             Cache-Control:
                 - private, max-age=60, s-maxage=60
             Content-Length:
-                - "15831"
+                - "15397"
             Content-Security-Policy:
                 - default-src 'none'
             Content-Type:
                 - application/vnd.github.raw; charset=utf-8
             Date:
-                - Thu, 12 Nov 2026 09:39:28 GMT
+                - Wed, 18 Nov 2026 13:59:01 GMT
             Etag:
-                - '"7156d5b7611e59792b0f9b3633b672f6e56f9a64"'
+                - '"9d9d46826564a6b1fbb645d9770215024c1c886f"'
             Last-Modified:
-                - Thu, 12 Nov 2026 08:17:21 GMT
+                - Tue, 03 Nov 2026 21:24:39 GMT
             Referrer-Policy:
                 - origin-when-cross-origin, strict-origin-when-cross-origin
             Server:
@@ -821,15 +815,15 @@ interactions:
             X-Ratelimit-Limit:
                 - "5000"
             X-Ratelimit-Remaining:
-                - "4989"
+                - "4971"
             X-Ratelimit-Reset:
-                - "1794479961"
+                - "1795011523"
             X-Ratelimit-Resource:
                 - core
             X-Ratelimit-Used:
-                - "11"
+                - "29"
             X-Xss-Protection:
                 - "0"
         status: 200 OK
         code: 200
-        duration: 349.382959ms
+        duration: 347.2795ms

@@ -62,6 +62,12 @@ first version of the new line, headings one level down under "Upgrade guide", HT
 removed. The classifier makes one entry of each heading's section ([classification](classification.md) step 3). A transition without a document is skipped. Terraform's own upgrade guides are left
 out: they moved to hashicorp/web-unified-docs and are under 1 KB, mostly a link to the changelog.
 
+The curated upgrade-guide sources (argocd, terraform-provider-aws, terraform-provider-kubernetes)
+read the document at `ref: "{tag}"`, the tag of the new line's first version. A digest then shows
+the guide as that release shipped it, and its links name the tag. On the default branch the guide
+changes after the release: Argo CD's 3.5-3.6 guide got a note on 2026-11-16 about a fix that
+isn't in 3.6.1, which broke the nightly corpus golden.
+
 ## Auto-discovery (no registry entry)
 Following Renovate and Dependabot:
 1. `gh-release` bodies when the repo has non-empty releases. Boilerplate detection: under 400 chars, or only download links or checksums, means "empty". When at least one body in the range is more than boilerplate, every non-empty body is used.

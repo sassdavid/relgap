@@ -15,8 +15,6 @@ import (
 	"testing"
 	"time"
 
-	"go.yaml.in/yaml/v4"
-
 	"github.com/sassdavid/relgap/internal/app"
 	"github.com/sassdavid/relgap/internal/cli"
 	"github.com/sassdavid/relgap/internal/testutil"
@@ -27,16 +25,6 @@ import (
 const liveOutEnv = "RELGAP_LIVE_OUT"
 
 const defaultTolerance = 2
-
-type corpusTool struct {
-	Tool      string   `yaml:"tool"`
-	Range     string   `yaml:"range"`
-	Adapters  []string `yaml:"adapters"`
-	Breaking  int      `yaml:"breaking"`
-	Tolerance int      `yaml:"tolerance"`
-	Golden    string   `yaml:"golden"`
-	Skip      string   `yaml:"skip"`
-}
 
 // liveResult is one tool's line in results.json, which the live workflow turns into issues.
 type liveResult struct {
@@ -69,19 +57,9 @@ func TestLiveCorpus(t *testing.T) {
 	if err := os.MkdirAll(out, 0o750); err != nil {
 		t.Fatal(err)
 	}
-	b, err := os.ReadFile(filepath.Join("..", "..", "testdata", "corpus.yaml"))
-	if err != nil {
-		t.Fatal(err)
-	}
-	var c struct {
-		Tools []corpusTool `yaml:"tools"`
-	}
-	if err = yaml.Unmarshal(b, &c); err != nil {
-		t.Fatal(err)
-	}
 	cache := t.TempDir()
 	var results []liveResult
-	for _, tool := range c.Tools {
+	for _, tool := range readCorpus(t) {
 		res := liveResult{
 			Tool: tool.Tool, Slug: strings.Trim(nonSlug.ReplaceAllString(strings.ToLower(tool.Tool), "-"), "-"),
 			Range: tool.Range, Golden: tool.Golden,

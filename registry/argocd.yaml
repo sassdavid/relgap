@@ -13,7 +13,7 @@ sources:
     ignore_sections: ["Quick Start", "Release Signatures and Provenance", "Release Notes Blog Post", "Upgrading"]
   - kind: upgrade-guide
     path_template: "docs/operator-manual/upgrading/{prev_minor}-{major}.{minor}.md"
-    ref: master
+    ref: "{tag}"
 eol: { product: argo-cd, cycle: "{major}.{minor}" }
 osv:
   - { ecosystem: Go, name: github.com/argoproj/argo-cd/v3 }

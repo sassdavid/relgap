@@ -15,6 +15,6 @@ sources:
   - kind: gh-release
   - kind: upgrade-guide
     path_template: "website/docs/guides/version-{major}-upgrade.html.markdown"
-    ref: main
+    ref: "{tag}"
 osv:
   - { ecosystem: Go, name: github.com/hashicorp/terraform-provider-aws }
