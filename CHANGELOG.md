@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.1](https://github.com/sassdavid/relgap/compare/v0.9.0...v0.9.1) (2026-11-18)
+
+
+### Bug Fixes
+
+* **registry:** pin upgrade guides to the release tag ([#83](https://github.com/sassdavid/relgap/issues/83)) ([df826d1](https://github.com/sassdavid/relgap/commit/df826d1a0881eebbd35903109bae767e06bb3f28))
+
 ## [0.9.0](https://github.com/sassdavid/relgap/compare/v0.8.0...v0.9.0) (2026-11-17)
 
 
