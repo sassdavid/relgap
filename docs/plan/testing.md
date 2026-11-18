@@ -18,6 +18,8 @@ The corpus mirrors the author's real toolchain (dotfriedrice `_mise/config.toml`
 
 - **PR CI:** replays cassettes recorded from the live corpus. The corpus subset (terraform, kubectl, awscli,
   argocd, claude-code) has golden digests in `testdata/golden/corpus/` (`TestSpec_source_adapters_2`).
+  `TestCorpusGoldenCounts` fails when the `breaking` count in `testdata/corpus.yaml` differs from the
+  count in the tool's golden, so a change that regenerates a golden updates corpus.yaml in the same PR.
 - **Nightly `live.yml`** (04:41 UTC and on demand): `mise run test:live` runs `TestLiveCorpus`
   (`//go:build live`) against GitHub and the web with `GITHUB_TOKEN`, from a job that can only read the
   repository. For each tool it checks the expected adapters (at `--min-confidence 0`), the breaking count and,

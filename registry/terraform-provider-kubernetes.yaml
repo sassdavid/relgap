@@ -14,4 +14,4 @@ sources:
     heading: "^{version} \\("
   - kind: upgrade-guide
     path_template: "docs/guides/v{major}-upgrade-guide.md"
-    ref: main
+    ref: "{tag}"
