@@ -561,3 +561,15 @@ Found while writing M26:
   client became playwright-core with `@axe-core/playwright`, oxlint joined oxfmt in `lint:docs`,
   and the icons follow Evil Martians' favicon guide. VitePress stays at 1.6.4 (2.0 is alpha.21),
   and oxfmt at 0.78.0 (0.79.0 is under the 3-day minimum age).
+
+### M27: Renovate annotations and Terraform module pins (relgap only) ([pin-discovery](specs/pin-discovery.md#planned-renovate-annotations-and-terraform-modules-m27))
+Scope: pins that only a Renovate regex manager or a Terraform `module` block names today. Found on
+2026-11-19 while testing 0.9.1 on a Terraform and Helm module repository, whose chart versions are
+variable defaults such as `chart_version = optional(string, "1.23.0")` under a `# renovate:`
+comment.
+- [ ] A `# renovate: datasource=<ds> depName=<name>` comment above a line with a version string
+  makes that version a pin in the files the spec lists, with the datasource mapping it gives.
+- [ ] `module` blocks with a registry source and a `version` give `tfmodule:` pins that resolve
+  through the Terraform registry, and GitHub git sources with `?ref=` give `github:` pins.
+- [ ] `outdated`, `digest --base`, `drift` and `--pull-request` work on a fixture repository with
+  both kinds of pins.

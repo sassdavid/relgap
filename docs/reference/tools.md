@@ -12,7 +12,7 @@ repository with `tools.<name>.repo`. For those tools it finds release notes by a
 the GitHub release bodies when they hold more than boilerplate, else a changelog file in the
 repository's top directory.
 
-The 20 tools below have a curated registry entry in the binary. An entry says where the notes are
+The 21 tools below have a curated registry entry in the binary. An entry says where the notes are
 (sources), how tags become versions, which [endoflife.date](https://endoflife.date) product holds
 the release cycles, and which [OSV](https://osv.dev) packages carry the vulnerabilities. Without
 an entry, a tool has no EOL or vulnerability data.
@@ -30,6 +30,7 @@ checks your own against the [registry entry schema](/reference/registry-schema).
 | `golangci-lint` |  | [golangci/golangci-lint](https://github.com/golangci/golangci-lint) | `changelog-file` | semver, releases |  |  |
 | `helm` |  | [helm/helm](https://github.com/helm/helm) | `gh-release` | semver, releases |  | Go: `helm.sh/helm/v3`, Go: `helm.sh/helm/v4` |
 | `k9s` |  | [derailed/k9s](https://github.com/derailed/k9s) | `changelog-file`, `gh-release` | semver, releases |  |  |
+| `karpenter` | `karpenter-provider-aws` | [aws/karpenter-provider-aws](https://github.com/aws/karpenter-provider-aws) | `gh-release`, `changelog-file` | semver, releases | [karpenter](https://endoflife.date/karpenter) |  |
 | `kubectl` | `kubernetes`, `k8s` | [kubernetes/kubernetes](https://github.com/kubernetes/kubernetes) | `changelog-file`, `upgrade-notes` | semver, tags | [kubernetes](https://endoflife.date/kubernetes) | Go: `k8s.io/kubernetes` |
 | `mise` |  | [jdx/mise](https://github.com/jdx/mise) | `gh-release`, `changelog-file` | semver, releases |  | crates.io: `mise` |
 | `node` | `nodejs` | [nodejs/node](https://github.com/nodejs/node) | `changelog-file` | semver, releases | [nodejs](https://endoflife.date/nodejs) | GIT: `https://github.com/nodejs/node` |

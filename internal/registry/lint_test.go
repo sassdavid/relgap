@@ -158,7 +158,7 @@ func TestEmbeddedEntries(t *testing.T) {
 	require.NoError(t, err)
 	entries, err := l.LoadFS(curated.FS(), ".")
 	require.NoError(t, err)
-	assert.Len(t, entries, 20)
+	assert.Len(t, entries, 21)
 
 	for _, e := range entries {
 		raw, readErr := os.ReadFile(filepath.Join("..", "..", "registry", e.Name+".yaml"))

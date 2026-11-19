@@ -3,6 +3,7 @@ package report
 import (
 	"cmp"
 	"context"
+	"errors"
 	"fmt"
 	"log/slog"
 	"regexp"
@@ -169,6 +170,9 @@ func (d *Digester) Digest(ctx context.Context, req DigestRequest) (*ToolDigest, 
 		From: req.From, To: req.To, Line: req.Line, IncludePrereleases: req.IncludePrereleases,
 	})
 	if err != nil {
+		if errors.Is(err, version.ErrNotFound) {
+			err = fmt.Errorf("%w; %s", err, tagHint(t, refs, len(universe.Versions()), req.To))
+		}
 		return nil, fmt.Errorf("select %s range: %w", t.Name, err)
 	}
 	out := &ToolDigest{
@@ -204,9 +208,6 @@ func (d *Digester) Digest(ctx context.Context, req DigestRequest) (*ToolDigest, 
 			out.Warnings = append(out.Warnings, w.Warnings()...)
 		}
 	}
-	if len(entries) == 0 && len(r.Versions) > 0 {
-		out.Warnings = append(out.Warnings, "no release notes found; compare the versions at "+compareURL(t.Repo, r))
-	}
 	urls := map[string]string{}
 	order := map[string]int{}
 	for i, v := range out.Versions {
@@ -226,6 +227,9 @@ func (d *Digester) Digest(ctx context.Context, req DigestRequest) (*ToolDigest, 
 		}
 		out.Counts[e.Kind]++
 		out.Entries = append(out.Entries, e)
+	}
+	if len(r.Versions) > 0 && len(out.Entries) == 0 {
+		out.Warnings = append(out.Warnings, noNotesWarning(t.Repo, r, out.Hidden, req.MinConfidence))
 	}
 	out.Entries = EntriesOf(out.Entries, req.Kinds)
 	return out, nil
@@ -386,6 +390,38 @@ func newestStable(u *version.Universe) version.V {
 		}
 	}
 	return newest
+}
+
+// noNotesWarning says that a range shows no entries, and why: it has none, or all of them are
+// below the minimum confidence, as release bodies that only link to a docs site are.
+func noNotesWarning(repo string, r *version.Range, hidden int, minConfidence float64) string {
+	if hidden == 0 {
+		return "no release notes found; compare the versions at " + compareURL(repo, r)
+	}
+	return fmt.Sprintf("all %d entries are below the minimum confidence %g; lower --min-confidence to see them, "+
+		"or compare the versions at %s", hidden, minConfidence, compareURL(repo, r))
+}
+
+// tagHint says which tags a missing version was looked for in. A wrong tag prefix hides every
+// tag of the tool, so it names the prefix and up to 3 tags that hold the version.
+func tagHint(t registry.ToolSpec, refs []version.Ref, parsed int, want string) string {
+	hint := fmt.Sprintf("%d of %d tags of %s are versions", parsed, len(refs), t.Repo)
+	if p := t.Version.TagPrefix; p != "" {
+		hint = fmt.Sprintf("%d of %d tags of %s are versions after the tag prefix %q", parsed, len(refs), t.Repo, p)
+	}
+	if want = strings.TrimPrefix(want, "v"); want != "" {
+		var holding []string
+		for _, r := range refs {
+			if strings.Contains(r.Tag, want) && len(holding) < 3 {
+				holding = append(holding, r.Tag)
+			}
+		}
+		if len(holding) > 0 {
+			hint += "; tags that hold " + want + ": " + strings.Join(holding, ", ")
+		}
+	}
+	return hint + "; to read other tags, write a registry entry with version.tag_prefix and try it with " +
+		"relgap registry test <file.yaml> <range>"
 }
 
 // compareURL returns the GitHub page comparing the version before the range with its end.

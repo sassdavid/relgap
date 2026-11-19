@@ -5,7 +5,7 @@ description: Write a relgap registry entry for a tool, check it with registry li
 # Write or fix a registry entry
 
 A registry entry tells relgap where a tool's release notes are, how its tags become versions,
-and where its EOL and vulnerability data live. relgap embeds 20 curated entries
+and where its EOL and vulnerability data live. relgap embeds 21 curated entries
 ([Supported tools](/reference/tools)). Every other tool gets the defaults: versions from its
 GitHub releases and release notes by auto-discovery. Write an entry when the defaults miss the
 notes, pick up the wrong tags, or when you want EOL and vulnerability columns in

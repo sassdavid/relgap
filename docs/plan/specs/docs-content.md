@@ -72,7 +72,7 @@ rewritten to the writing rules.
 | JSON schemas | `/reference/schemas` | `schemas/*.json` (7 files) | Gen |
 | SARIF rules | `/reference/sarif-rules` | `render/sarif.go` | Gen |
 | Registry entry schema | `/reference/registry-schema` | `schemas/registry-v1.json` | Gen |
-| Supported tools | `/reference/tools` | `registry/*.yaml` (20 curated entries: aliases, repo, sources, EOL, OSV) | Gen |
+| Supported tools | `/reference/tools` | `registry/*.yaml` (21 curated entries: aliases, repo, sources, EOL, OSV) | Gen |
 | Registry snapshots | `/reference/snapshots` | `internal/registry/snapshot/*.json` metadata (mise 1022 entries, aqua 2351, commit and date) | Gen |
 | MCP tools and prompts | `/reference/mcp` | `tools/list`, `prompts/list` | Gen |
 | Notify targets | `/reference/notify` | notify help (one target: `github-pr-comment`) | Hand |

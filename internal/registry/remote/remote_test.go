@@ -2,7 +2,10 @@ package remote_test
 
 import (
 	"context"
+	"encoding/json"
+	"errors"
 	"log/slog"
+	"os"
 	"path/filepath"
 	"testing"
 
@@ -22,7 +25,7 @@ func (f fakeSearcher) SearchRepos(context.Context, string) ([]remote.RepoHit, er
 func TestRemoteFind(t *testing.T) {
 	t.Parallel()
 	rt := vcr.ForTest(t, filepath.Join("..", "..", "..", "testdata", "cassettes", "resolve", "lookups"), vcr.Scrubber{})
-	remote := remote.New(httpx.New(httpx.Options{Logger: slog.New(slog.DiscardHandler), Transport: rt}), nil)
+	remote := remote.New(httpx.New(httpx.Options{Logger: slog.New(slog.DiscardHandler), Transport: rt}), nil, nil)
 	tests := []struct {
 		kind, name string
 		want       registry.Found
@@ -74,6 +77,75 @@ func TestRemoteFind(t *testing.T) {
 	}
 }
 
+// TestSpec_tool_resolution_6: the tag prefix of a chart comes from the repository's tags. The
+// fixtures in testdata/charttags hold Artifact Hub's versions and every tag of the repository,
+// as they were on 2026-11-19.
+func TestSpec_tool_resolution_6(t *testing.T) {
+	t.Parallel()
+	tests := map[string]string{
+		"argo-cd":            "argo-cd-",                  // chart-releaser's default
+		"cert-manager":       "v",                         // the chart shares the app's tags
+		"cluster-autoscaler": "cluster-autoscaler-chart-", // the app's tags are cluster-autoscaler-<version>
+		"external-dns":       "external-dns-helm-chart-",  // the app's tags are v<version>
+		"external-secrets":   "helm-chart-",
+		"keda":               "v", // kedacore/charts has keda-add-ons-http- tags too
+		"metrics-server":     "metrics-server-helm-chart-",
+	}
+	for name, want := range tests {
+		raw, err := os.ReadFile(filepath.Join("..", "..", "..", "testdata", "charttags", name+".json"))
+		require.NoError(t, err)
+		var fx struct {
+			Chart    string   `json:"chart"`
+			Versions []string `json:"versions"`
+			Tags     []string `json:"tags"`
+		}
+		require.NoError(t, json.Unmarshal(raw, &fx))
+		got, ok := remote.ChartTagPrefix(fx.Chart, fx.Versions, fx.Tags)
+		assert.True(t, ok, name)
+		assert.Equal(t, want, got, name)
+	}
+	_, ok := remote.ChartTagPrefix("x", []string{"1.0.0"}, []string{"v2.0.0", "x-1.0.0.1"})
+	assert.False(t, ok, "no tag ends in a known version")
+	got, _ := remote.ChartTagPrefix("x", []string{"1.0.0", "1.1.0"}, []string{"v1.0.0", "x-1.0.0", "11.0.0"})
+	assert.Equal(t, "x-", got, "a tie goes to the prefix with the chart's name; 11.0.0 isn't 1.0.0")
+}
+
+type fakeTags struct {
+	tags []string
+	err  error
+}
+
+func (f *fakeTags) Tags(context.Context, string) ([]string, error) { return f.tags, f.err }
+
+// TestRemoteChartTags: a chart lookup reads the repository's tags and keeps chart-releaser's
+// default prefix when none of them ends in a version Artifact Hub lists.
+func TestRemoteChartTags(t *testing.T) {
+	t.Parallel()
+	find := func(tags *fakeTags) (*registry.Found, error) {
+		rt := vcr.ForTest(
+			t,
+			filepath.Join("..", "..", "..", "testdata", "cassettes", "resolve", "lookups"),
+			vcr.Scrubber{},
+		)
+		hc := httpx.New(httpx.Options{Logger: slog.New(slog.DiscardHandler), Transport: rt})
+		return remote.New(hc, nil, tags).Find(t.Context(), registry.KindChart, "argo/argo-cd")
+	}
+	got, err := find(&fakeTags{tags: []string{"v3.0.0", "argo-cd-9.1.0", "argo-cd-9.0.0"}})
+	require.NoError(t, err)
+	assert.Equal(t, "argo-cd-", got.TagPrefix)
+
+	got, err = find(&fakeTags{tags: []string{"chart-v9.1.0", "chart-v9.0.0", "argo-cd-9.0.0"}})
+	require.NoError(t, err)
+	assert.Equal(t, "chart-v", got.TagPrefix, "the prefix that covers more versions wins")
+
+	got, err = find(&fakeTags{tags: []string{"v99.0.0"}})
+	require.NoError(t, err)
+	assert.Equal(t, "argo-cd-", got.TagPrefix, "no evidence keeps the default")
+
+	_, err = find(&fakeTags{err: errors.New("rate limited")})
+	require.ErrorContains(t, err, "chart:argo/argo-cd: rate limited")
+}
+
 func TestRemoteGuess(t *testing.T) {
 	t.Parallel()
 	hits := fakeSearcher{
@@ -81,13 +153,13 @@ func TestRemoteGuess(t *testing.T) {
 		{FullName: "small/Tool", Stars: 3},
 		{FullName: "acme/tool", Stars: 120},
 	}
-	got, err := remote.New(nil, hits).Find(t.Context(), registry.KindGuess, "tool")
+	got, err := remote.New(nil, hits, nil).Find(t.Context(), registry.KindGuess, "tool")
 	require.NoError(t, err)
 	assert.Equal(t, registry.Found{
 		Repo: "acme/tool", Name: "tool", Layer: registry.LayerGuess, Alternatives: []string{"small/Tool"},
 	}, *got, "only exact names count, most stars first")
 
-	_, err = remote.New(nil, fakeSearcher{{FullName: "a/tool-x"}}).Find(t.Context(), registry.KindGuess, "tool")
+	_, err = remote.New(nil, fakeSearcher{{FullName: "a/tool-x"}}, nil).Find(t.Context(), registry.KindGuess, "tool")
 	require.ErrorIs(t, err, registry.ErrUnknownTool)
 }
 

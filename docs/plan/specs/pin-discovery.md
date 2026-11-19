@@ -37,6 +37,39 @@ from many repo roots. Used by `pins`, `outdated` and `drift`. Code: `internal/sc
 - `tool` is the name `relgap digest` accepts: a registry name, or `github:owner/repo` and `aqua:package` when no registry names the tool.
 - JSON follows `schemas/pins-v1.json`: `data.repos[]` and `data.pins[]`, sorted by repo, file and line. Files that fail to parse go into the envelope's `errors`, and the command exits 1 after printing the rest.
 
+## Planned: Renovate annotations and Terraform modules (M27)
+
+Draft scope for [M27](../milestones.md). Settle the open questions before coding, in an ADR where
+they change a detector's reach.
+
+Renovate's regex custom managers are often driven by a comment on the line above a version:
+`# renovate: datasource=<ds> depName=<name> [packageName=<pkg>] [registryUrl=<url>]`. Today only the
+`dockerfile` detector reads it, and `generic` matches only `NAME_VERSION = x.y.z`. The plan: a
+`# renovate:` line (also `//` and `<!-- -->` comments) above any line that holds one version
+string literal makes that literal a pin. The datasource sets the kind, reusing `datasourceLookup`
+in `internal/scan/renovate.go`:
+
+| Datasource | Pin |
+|---|---|
+| `helm` | `chart:<repo>/<depName>`, the repo from `registryUrl` through Artifact Hub's repository search |
+| `github-releases`, `github-tags` | `github:<depName>` |
+| `terraform-provider` | `tfprovider:<depName>` |
+| `docker` | `image:<depName>` |
+| `aqua` | `aqua:<depName>` |
+
+`module "x" { source = "<ns>/<name>/<provider>" version = "..." }` gives a `tfmodule:` pin. It
+resolves through the Terraform registry's module endpoint (`/v1/modules/<ns>/<name>/<provider>`,
+whose `source` field names the repository; check the response shape first). A git source on
+github.com with `?ref=<version>` gives a `github:<owner>/<repo>` pin.
+
+Open questions:
+- Which files the annotation scan reads: every file the walk visits, or only `.tf`, `.hcl`, YAML
+  and `scan.extra_files`. Reading every file costs scan time (the 60-repo benchmark) and may find
+  annotations in vendored code.
+- Whether `tfmodule:` pins take part in `drift` and `outdated` from the start, and how a module
+  repository's tags map to module versions (many use `v` tags, some a subdirectory prefix).
+- How `registryUrl` maps to an Artifact Hub repository when the URL is an OCI registry.
+
 ## Acceptance criteria
 - [x] Every detector above has a testscript fixture under `testdata/script/pins_*.txtar` with golden JSON.
 - [x] Fixture: a dotfriedrice-like `mise.toml` (array values, `http:`/`github:`/`aqua:` backends, `[tools."http:mongodb-database-tools"]` tables) parses identically with and without the mise binary on PATH.
