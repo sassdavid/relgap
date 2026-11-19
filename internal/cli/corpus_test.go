@@ -2,8 +2,11 @@ package cli_test
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 	"path/filepath"
+	"slices"
+	"strings"
 	"testing"
 
 	"go.yaml.in/yaml/v4"
@@ -68,6 +71,76 @@ func TestCorpusGoldenCounts(t *testing.T) {
 					"testdata/golden/%s has %d breaking entries, corpus.yaml says %d: update corpus.yaml",
 					tool.Golden, got, tool.Breaking,
 				)
+			}
+		})
+	}
+}
+
+// newVersions returns the versions in the digest data got that the golden data want lacks, each
+// with its publish date. A new patch of an older supported line sorts inside a range.
+func newVersions(want, got []byte) ([]string, error) {
+	type versions struct {
+		Tools []struct {
+			Versions []struct {
+				Version     string `json:"version"`
+				PublishedAt string `json:"published_at"`
+			} `json:"versions"`
+		} `json:"tools"`
+	}
+	var w, g versions
+	if err := json.Unmarshal(want, &w); err != nil {
+		return nil, fmt.Errorf("decode golden versions: %w", err)
+	}
+	if err := json.Unmarshal(got, &g); err != nil {
+		return nil, fmt.Errorf("decode digest versions: %w", err)
+	}
+	var known []string
+	for _, tool := range w.Tools {
+		for _, v := range tool.Versions {
+			known = append(known, v.Version)
+		}
+	}
+	var added []string
+	for _, tool := range g.Tools {
+		for _, v := range tool.Versions {
+			if slices.Contains(known, v.Version) {
+				continue
+			}
+			date, _, _ := strings.Cut(v.PublishedAt, "T")
+			added = append(added, fmt.Sprintf("%s (published %s)", v.Version, date))
+		}
+	}
+	return added, nil
+}
+
+func TestNewVersions(t *testing.T) {
+	t.Parallel()
+	golden := `{"tools":[{"versions":[{"version":"3.5.7","published_at":"2026-11-02T20:14:51Z"},` +
+		`{"version":"3.6.1","published_at":"2026-11-04T14:20:31Z"}]}]}`
+	tests := []struct {
+		name string
+		got  string
+		want []string
+	}{
+		{"same versions", golden, nil},
+		{
+			"backport inside the range",
+			`{"tools":[{"versions":[{"version":"3.5.7","published_at":"2026-11-02T20:14:51Z"},` +
+				`{"version":"3.5.8","published_at":"2026-11-18T19:54:30Z"},` +
+				`{"version":"3.6.1","published_at":"2026-11-04T14:20:31Z"}]}]}`,
+			[]string{"3.5.8 (published 2026-11-18)"},
+		},
+		{"version gone", `{"tools":[{"versions":[{"version":"3.6.1"}]}]}`, nil},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			got, err := newVersions([]byte(golden), []byte(tt.got))
+			if err != nil {
+				t.Fatal(err)
+			}
+			if !slices.Equal(got, tt.want) {
+				t.Errorf("newVersions() = %q, want %q", got, tt.want)
 			}
 		})
 	}

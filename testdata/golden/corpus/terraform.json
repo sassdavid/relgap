@@ -9,7 +9,7 @@
         "tool": "terraform",
         "repo": "hashicorp/terraform",
         "from": "1.15.8",
-        "to": "1.17.1",
+        "to": "1.16.7",
         "versions": [
           {
             "version": "1.15.9",
@@ -64,18 +64,6 @@
             "tag": "v1.16.7",
             "published_at": "2026-10-22T09:30:19Z",
             "url": "https://github.com/hashicorp/terraform/releases/tag/v1.16.7"
-          },
-          {
-            "version": "1.17.0",
-            "tag": "v1.17.0",
-            "published_at": "2026-10-21T17:32:54Z",
-            "url": "https://github.com/hashicorp/terraform/releases/tag/v1.17.0"
-          },
-          {
-            "version": "1.17.1",
-            "tag": "v1.17.1",
-            "published_at": "2026-10-28T18:02:22Z",
-            "url": "https://github.com/hashicorp/terraform/releases/tag/v1.17.1"
           }
         ],
         "entries": [
@@ -858,257 +846,17 @@
                 "BUG FIXES:"
               ]
             }
-          },
-          {
-            "id": "e-a57c754a",
-            "version": "1.17.0",
-            "kind": "feature",
-            "confidence": 0.9,
-            "text": "Terraform now supports variables and locals in provider requirements ([#39153](https://github.com/hashicorp/terraform/issues/39153))",
-            "source": {
-              "adapter": "changelog-file",
-              "url": "https://github.com/hashicorp/terraform/blob/v1.17/CHANGELOG.md#L20",
-              "heading": [
-                "1.17.0 (October 21, 2026)",
-                "NEW FEATURES:"
-              ]
-            }
-          },
-          {
-            "id": "e-91cda2fb",
-            "version": "1.17.0",
-            "kind": "feature",
-            "confidence": 0.9,
-            "text": "A new `-minimal-refresh` planning option has been added, which will only refresh resources that have proposed changes. ([#35290](https://github.com/hashicorp/terraform/issues/35290))",
-            "source": {
-              "adapter": "changelog-file",
-              "url": "https://github.com/hashicorp/terraform/blob/v1.17/CHANGELOG.md#L22",
-              "heading": [
-                "1.17.0 (October 21, 2026)",
-                "NEW FEATURES:"
-              ]
-            }
-          },
-          {
-            "id": "e-a227714d",
-            "version": "1.17.0",
-            "kind": "feature",
-            "confidence": 0.9,
-            "text": "policy: Terraform Policy is now generally available. The `-policies` flag for `plan`, `apply`, and `query` no longer requires an experimental build or the `-allow-experimental-features` flag. Query policies evaluate resources discovered by list blocks and report human-readable or JSON results. See https://developer.hashicorp.com/terraform/policy for more information. ([#38970](https://github.com/hashicorp/terraform/issues/38970))",
-            "source": {
-              "adapter": "changelog-file",
-              "url": "https://github.com/hashicorp/terraform/blob/v1.17/CHANGELOG.md#L24",
-              "heading": [
-                "1.17.0 (October 21, 2026)",
-                "NEW FEATURES:"
-              ]
-            }
-          },
-          {
-            "id": "e-d481d84e",
-            "version": "1.17.0",
-            "kind": "feature",
-            "confidence": 0.9,
-            "text": "command/init: Enrich log messages with provider versions ([#38918](https://github.com/hashicorp/terraform/issues/38918))",
-            "source": {
-              "adapter": "changelog-file",
-              "url": "https://github.com/hashicorp/terraform/blob/v1.17/CHANGELOG.md#L29",
-              "heading": [
-                "1.17.0 (October 21, 2026)",
-                "ENHANCEMENTS:"
-              ]
-            }
-          },
-          {
-            "id": "e-287444e4",
-            "version": "1.17.0",
-            "kind": "feature",
-            "confidence": 0.9,
-            "text": "test: Add mock_provider support for ephemeral resources ([#38928](https://github.com/hashicorp/terraform/issues/38928))",
-            "source": {
-              "adapter": "changelog-file",
-              "url": "https://github.com/hashicorp/terraform/blob/v1.17/CHANGELOG.md#L31",
-              "heading": [
-                "1.17.0 (October 21, 2026)",
-                "ENHANCEMENTS:"
-              ]
-            }
-          },
-          {
-            "id": "e-d5277749",
-            "version": "1.17.0",
-            "kind": "feature",
-            "confidence": 0.9,
-            "text": "command/login: display warning after successful login if user is subject to an organization's TTL policy",
-            "source": {
-              "adapter": "changelog-file",
-              "url": "https://github.com/hashicorp/terraform/blob/v1.17/CHANGELOG.md#L33",
-              "heading": [
-                "1.17.0 (October 21, 2026)",
-                "ENHANCEMENTS:"
-              ]
-            }
-          },
-          {
-            "id": "e-ef7abbae",
-            "version": "1.17.0",
-            "kind": "fix",
-            "confidence": 0.9,
-            "text": "funcs: pow and log no longer panic when result is not a number ([#38912](https://github.com/hashicorp/terraform/issues/38912))",
-            "source": {
-              "adapter": "changelog-file",
-              "url": "https://github.com/hashicorp/terraform/blob/v1.17/CHANGELOG.md#L38",
-              "heading": [
-                "1.17.0 (October 21, 2026)",
-                "BUG FIXES:"
-              ]
-            }
-          },
-          {
-            "id": "e-83f02ed5",
-            "version": "1.17.0",
-            "kind": "fix",
-            "confidence": 0.9,
-            "text": "ephemeral: Terraform will now use and display diagnostics raised when _renewing_ an ephemeral resource. This may cause warnings to appear that previously were lost. We expect that any error diagnostics that were previously lost would have caused confusing downstream errors, so we do not anticipate this change to be breaking. ([#38989](https://github.com/hashicorp/terraform/issues/38989))",
-            "source": {
-              "adapter": "changelog-file",
-              "url": "https://github.com/hashicorp/terraform/blob/v1.17/CHANGELOG.md#L40",
-              "heading": [
-                "1.17.0 (October 21, 2026)",
-                "BUG FIXES:"
-              ]
-            }
-          },
-          {
-            "id": "e-6348bca4",
-            "version": "1.17.0",
-            "kind": "fix",
-            "confidence": 0.9,
-            "text": "test: Deterministic dependency ordering in cleanup graph ([#38247](https://github.com/hashicorp/terraform/issues/38247))",
-            "source": {
-              "adapter": "changelog-file",
-              "url": "https://github.com/hashicorp/terraform/blob/v1.17/CHANGELOG.md#L42",
-              "heading": [
-                "1.17.0 (October 21, 2026)",
-                "BUG FIXES:"
-              ]
-            }
-          },
-          {
-            "id": "e-0685b65e",
-            "version": "1.17.0",
-            "kind": "fix",
-            "confidence": 0.9,
-            "text": "query: report Unknown and N/A results for policy evaluations of discovered resources ([#39058](https://github.com/hashicorp/terraform/issues/39058))",
-            "source": {
-              "adapter": "changelog-file",
-              "url": "https://github.com/hashicorp/terraform/blob/v1.17/CHANGELOG.md#L44",
-              "heading": [
-                "1.17.0 (October 21, 2026)",
-                "BUG FIXES:"
-              ]
-            }
-          },
-          {
-            "id": "e-201255bc",
-            "version": "1.17.0",
-            "kind": "fix",
-            "confidence": 0.9,
-            "text": "query: `terraform query -policies` now rejects a path that is not a directory, instead of passing it on to the policy engine ([#39238](https://github.com/hashicorp/terraform/issues/39238))",
-            "source": {
-              "adapter": "changelog-file",
-              "url": "https://github.com/hashicorp/terraform/blob/v1.17/CHANGELOG.md#L46",
-              "heading": [
-                "1.17.0 (October 21, 2026)",
-                "BUG FIXES:"
-              ]
-            }
-          },
-          {
-            "id": "e-82dd2fc7",
-            "version": "1.17.0",
-            "kind": "fix",
-            "confidence": 0.9,
-            "text": "funcs: The `log` and `pow` functions now raise errors when they return +/- Infinity, as this result is not usable in downstream code. ([#39304](https://github.com/hashicorp/terraform/issues/39304))",
-            "source": {
-              "adapter": "changelog-file",
-              "url": "https://github.com/hashicorp/terraform/blob/v1.17/CHANGELOG.md#L48",
-              "heading": [
-                "1.17.0 (October 21, 2026)",
-                "BUG FIXES:"
-              ]
-            }
-          },
-          {
-            "id": "e-9e36ba62",
-            "version": "1.17.0",
-            "kind": "fix",
-            "confidence": 0.9,
-            "text": "show: Read variable values from the plan file when showing a local plan ([#39362](https://github.com/hashicorp/terraform/issues/39362))",
-            "source": {
-              "adapter": "changelog-file",
-              "url": "https://github.com/hashicorp/terraform/blob/v1.17/CHANGELOG.md#L50",
-              "heading": [
-                "1.17.0 (October 21, 2026)",
-                "BUG FIXES:"
-              ]
-            }
-          },
-          {
-            "id": "e-c6debc70",
-            "version": "1.17.1",
-            "kind": "fix",
-            "confidence": 0.9,
-            "text": "fmt: The original content of a file is now preserved if Terraform experiences an error writing to the original file. ([#39303](https://github.com/hashicorp/terraform/issues/39303))",
-            "source": {
-              "adapter": "changelog-file",
-              "url": "https://github.com/hashicorp/terraform/blob/v1.17/CHANGELOG.md#L8",
-              "heading": [
-                "1.17.1 (October 28, 2026)",
-                "BUG FIXES:"
-              ]
-            }
-          },
-          {
-            "id": "e-772786c0",
-            "version": "1.17.1",
-            "kind": "fix",
-            "confidence": 0.9,
-            "text": "Always evaluate module policies during destroy plan ([#39455](https://github.com/hashicorp/terraform/issues/39455))",
-            "source": {
-              "adapter": "changelog-file",
-              "url": "https://github.com/hashicorp/terraform/blob/v1.17/CHANGELOG.md#L10",
-              "heading": [
-                "1.17.1 (October 28, 2026)",
-                "BUG FIXES:"
-              ]
-            }
-          },
-          {
-            "id": "e-5ae7d1c6",
-            "version": "1.17.1",
-            "kind": "fix",
-            "confidence": 0.9,
-            "text": "stacks: report every policy result for a replaced resource instead of only one of them ([#39453](https://github.com/hashicorp/terraform/issues/39453))",
-            "source": {
-              "adapter": "changelog-file",
-              "url": "https://github.com/hashicorp/terraform/blob/v1.17/CHANGELOG.md#L12",
-              "heading": [
-                "1.17.1 (October 28, 2026)",
-                "BUG FIXES:"
-              ]
-            }
           }
         ],
         "counts": {
           "breaking": 1,
           "deprecation": 0,
-          "feature": 26,
-          "fix": 41,
+          "feature": 20,
+          "fix": 31,
           "other": 0,
           "security": 0
         },
-        "hidden": 15,
+        "hidden": 9,
         "warnings": []
       }
     ]

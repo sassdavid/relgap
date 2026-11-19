@@ -20,6 +20,11 @@ The corpus mirrors the author's real toolchain (dotfriedrice `_mise/config.toml`
   argocd, claude-code) has golden digests in `testdata/golden/corpus/` (`TestSpec_source_adapters_2`).
   `TestCorpusGoldenCounts` fails when the `breaking` count in `testdata/corpus.yaml` differs from the
   count in the tool's golden, so a change that regenerates a golden updates corpus.yaml in the same PR.
+- A golden range must stay frozen. relgap sorts versions by scheme, so a patch release of an older supported
+  line lands inside a range that crosses it. Argo CD's 3.5.8, released after 3.6.1, broke the golden of
+  `3.5.0..3.6.1`. A range with a golden therefore crosses only end-of-life lines below the line of its
+  end (check endoflife.date); a later patch on the end's line sorts above the end. When a golden differs
+  because of new versions, the live test names them in the issue.
 - **Nightly `live.yml`** (04:41 UTC and on demand): `mise run test:live` runs `TestLiveCorpus`
   (`//go:build live`) against GitHub and the web with `GITHUB_TOKEN`, from a job that can only read the
   repository. For each tool it checks the expected adapters (at `--min-confidence 0`), the breaking count and,

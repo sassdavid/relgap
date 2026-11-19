@@ -6,13 +6,17 @@
 #             (default 2) is drift
 #   golden    a digest golden under testdata/golden whose data must match exactly
 #   skip      why the tool isn't digested yet
-# Ranges and counts were checked live on 2026-11-12, chart:argo/argo-cd on 2026-11-16, argocd and
-# tfprovider:hashicorp/aws on 2026-11-18. The live test never rewrites this file or a golden; a
-# person updates both after reviewing the drift issue. TestCorpusGoldenCounts keeps the breaking
-# count of a tool with a golden equal to the golden's count.
+# A range with a golden crosses only end-of-life release lines below the line of its end. A patch
+# of a supported older line sorts inside the range (3.5.8 sorts below 3.6.1) and breaks the golden;
+# a patch on the end's line sorts above the end. Check the lines on endoflife.date.
+# Ranges and counts were checked live on 2026-11-12, chart:argo/argo-cd on 2026-11-16,
+# tfprovider:hashicorp/aws on 2026-11-18, terraform, kubectl and argocd on 2026-11-19. The live
+# test never rewrites this file or a golden; a person updates both after reviewing the drift
+# issue. TestCorpusGoldenCounts keeps the breaking count of a tool with a golden equal to the
+# golden's count.
 tools:
   - tool: terraform
-    range: 1.15.8..1.17.1
+    range: 1.15.8..1.16.7
     adapters: [changelog-file]
     breaking: 1
     golden: corpus/terraform.json
@@ -42,18 +46,18 @@ tools:
     adapters: [gh-release, upgrade-guide]
     breaking: 8
   - tool: kubectl
-    range: 1.36.0..1.37.2
+    range: 1.34.7..1.35.2
     adapters: [changelog-file, upgrade-notes]
-    breaking: 4
+    breaking: 6
     golden: corpus/kubectl.json
   - tool: helm
     range: 3.21.0..3.22.1
     adapters: [gh-release]
     breaking: 0
   - tool: argocd
-    range: 3.5.0..3.6.1
+    range: 3.2.5..3.3.1
     adapters: [gh-release, upgrade-guide]
-    breaking: 11
+    breaking: 12
     golden: corpus/argocd.json
   - tool: k9s
     range: 0.50.7..0.50.9
