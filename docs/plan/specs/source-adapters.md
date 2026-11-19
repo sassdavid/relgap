@@ -87,7 +87,7 @@ Following Renovate and Dependabot:
 
 ## Acceptance criteria
 - [x] Each adapter kind has cassette-backed tests with golden `VersionNotes` for at least 2 tools. (gh-release: terraform, helm in `TestSpec_source_adapters_1`; changelog-file: claude-code, node, terraform in `TestSpec_source_adapters_1_changelog`; structured-json: awscli, temurin; web-doc: go, go point releases, python; upgrade-guide: argocd, terraform-provider-kubernetes, each in `TestSpec_source_adapters_1_<kind>`. upgrade-notes, used only by kubectl: `TestUpgradeNotesKubectl`.)
-- [x] terraform 1.15.8..1.17.1, kubectl 1.36.0..1.37.2, awscli 2.31.0..2.31.10, argocd 3.5.0..3.6.1 and claude-code 2.1.300..2.1.319 produce golden digests (the corpus subset). (`TestSpec_source_adapters_2`, goldens in `testdata/golden/corpus/`; the live corpus compares with the same files.)
+- [x] terraform 1.15.8..1.16.7, kubectl 1.34.7..1.35.2, awscli 2.31.0..2.31.10, argocd 3.2.5..3.3.1 and claude-code 2.1.300..2.1.319 produce golden digests (the corpus subset). (`TestSpec_source_adapters_2`, goldens in `testdata/golden/corpus/`; the live corpus compares with the same files.)
 - [x] A changelog file is fetched exactly once per digest regardless of how many versions it contains (asserted via the request counter).
 - [x] The stale-changelog guard is covered by an argocd fixture. (`TestSpec_source_adapters_4`, with the head of argocd's real `CHANGELOG.md` in `testdata/autodiscovery/argocd/`.)
 - [x] Auto-discovery picks `HISTORY.md` / `CHANGES.rst` / `RELEASE_NOTES.md` in fixtures and rejects `changelog.json`. (`TestSpec_source_adapters_5`; `TestAutoUsesFreshChangelog` reads a `CHANGES.rst`.)

@@ -137,6 +137,14 @@ func checkLive(t *testing.T, tool corpusTool, cache, prefix string) []string {
 		return append(problems, fmt.Sprintf("read golden %s: %v", tool.Golden, err))
 	}
 	if !bytes.Equal(lineAnchor.ReplaceAll(want, []byte(`"`)), lineAnchor.ReplaceAll(data.raw, []byte(`"`))) {
+		if added, verr := newVersions(want, data.raw); verr != nil {
+			problems = append(problems, verr.Error())
+		} else if len(added) > 0 {
+			problems = append(problems, fmt.Sprintf(
+				"new versions inside the range: %s; pick a range that crosses only end-of-life release lines (testdata/corpus.yaml)",
+				strings.Join(added, ", "),
+			))
+		}
 		problems = append(problems, fmt.Sprintf("the digest differs from testdata/golden/%s", tool.Golden))
 		_ = os.WriteFile(prefix+".want.json", want, 0o600)
 		_ = os.WriteFile(prefix+".got.json", data.raw, 0o600)
