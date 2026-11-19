@@ -1,6 +1,7 @@
 package remote
 
 import (
+	"cmp"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -42,15 +43,22 @@ type RepoSearcher interface {
 	SearchRepos(ctx context.Context, name string) ([]RepoHit, error)
 }
 
+// TagLister lists the tag names of a GitHub repository.
+type TagLister interface {
+	Tags(ctx context.Context, repo string) ([]string, error)
+}
+
 // Remote is a [registry.Finder] that asks the Terraform registry, Artifact Hub, npm, PyPI and GitHub.
 type Remote struct {
 	hc     *http.Client
 	search RepoSearcher
+	tags   TagLister
 }
 
-// New returns a [Remote] that sends requests through hc and searches with search.
-func New(hc *http.Client, search RepoSearcher) *Remote {
-	return &Remote{hc: hc, search: search}
+// New returns a [Remote] that sends requests through hc, searches with search and reads a
+// chart repository's tags with tags.
+func New(hc *http.Client, search RepoSearcher, tags TagLister) *Remote {
+	return &Remote{hc: hc, search: search, tags: tags}
 }
 
 const maxLookupBody = 8 << 20
@@ -110,6 +118,9 @@ type chartPackage struct {
 		Name string `json:"name"`
 		URL  string `json:"url"`
 	} `json:"repository"`
+	AvailableVersions []struct {
+		Version string `json:"version"`
+	} `json:"available_versions"`
 }
 
 func (r *Remote) chart(ctx context.Context, name string) (*registry.Found, error) {
@@ -139,7 +150,70 @@ func (r *Remote) chart(ctx context.Context, name string) (*registry.Found, error
 			registry.ErrNoRepo, repoName, chart)
 	}
 	f.Name = chart
+	if r.tags == nil || len(pkg.AvailableVersions) == 0 {
+		return f, nil
+	}
+	tags, err := r.tags.Tags(ctx, f.Repo)
+	if err != nil {
+		return nil, fmt.Errorf("chart:%s/%s: %w", repoName, chart, err)
+	}
+	versions := make([]string, len(pkg.AvailableVersions))
+	for i, v := range pkg.AvailableVersions {
+		versions[i] = v.Version
+	}
+	if prefix, found := chartTagPrefix(chart, versions, tags); found {
+		f.TagPrefix = prefix
+	}
 	return f, nil
+}
+
+// chartTagPrefix finds the prefix of the tags that name the chart's versions. Each tag that
+// ends in a version Artifact Hub lists gives the rest of the tag as a candidate. The candidate
+// that covers the most versions wins; on a tie, one that holds the chart's name, then the
+// longer one. So external-dns-helm-chart- beats the app's v in kubernetes-sigs/external-dns.
+func chartTagPrefix(chart string, versions, tags []string) (string, bool) {
+	known := make(map[string]bool, len(versions))
+	for _, v := range versions {
+		known[strings.TrimPrefix(v, "v")] = true
+	}
+	covered := map[string]map[string]bool{}
+	for _, tag := range tags {
+		for i := range len(tag) {
+			if !isDigit(tag[i]) || i > 0 && (isDigit(tag[i-1]) || tag[i-1] == '.') {
+				continue
+			}
+			if v := tag[i:]; known[v] {
+				if covered[tag[:i]] == nil {
+					covered[tag[:i]] = map[string]bool{}
+				}
+				covered[tag[:i]][v] = true
+			}
+		}
+	}
+	if len(covered) == 0 {
+		return "", false
+	}
+	chart = strings.ToLower(chart)
+	rank := func(prefix string) (int, bool, int) {
+		return len(covered[prefix]), strings.Contains(strings.ToLower(prefix), chart), len(prefix)
+	}
+	return slices.MaxFunc(slices.Sorted(maps.Keys(covered)), func(a, b string) int {
+		an, ac, al := rank(a)
+		bn, bc, bl := rank(b)
+		return cmp.Or(cmp.Compare(an, bn), compareBool(ac, bc), cmp.Compare(al, bl))
+	}), true
+}
+
+func isDigit(c byte) bool { return c >= '0' && c <= '9' }
+
+func compareBool(a, b bool) int {
+	switch {
+	case a == b:
+		return 0
+	case a:
+		return 1
+	}
+	return -1
 }
 
 // chartRepo finds the Artifact Hub repository of the chart called name: the only one with such
@@ -180,8 +254,9 @@ func (r *Remote) chartRepo(ctx context.Context, name string) (string, error) {
 }
 
 // chartSource picks the repository that holds the chart itself, not the application it
-// installs: a link into a subdirectory, such as argo-helm/tree/main/charts/argo-cd, wins, and
-// such a repository tags each chart as <name>-<version>, as chart-releaser does.
+// installs: a link into a subdirectory, such as argo-helm/tree/main/charts/argo-cd, wins. Such a
+// repository gets chart-releaser's default tag prefix <name>-, which the repository's tags
+// replace when they show another one.
 func chartSource(p chartPackage) (*registry.Found, bool) {
 	var plain []string
 	for _, l := range p.Links {

@@ -72,7 +72,7 @@ isn't in 3.6.1, which broke the nightly corpus golden.
 Following Renovate and Dependabot:
 1. `gh-release` bodies when the repo has non-empty releases. Boilerplate detection: under 400 chars, or only download links or checksums, means "empty". When at least one body in the range is more than boilerplate, every non-empty body is used.
 2. Otherwise look for a changelog file in the default-branch tree. Match the filename with Renovate's regex `^(?:(?:update|change|release)(?:s|[ \-_]*(?:logs?|histor(?:y|ies)))|histor(?:y|ies)|release[ \-_]*notes?)(?:\.[\da-z]+)?$`, preferring `.md` over `.rst` over `.txt`, skipping `.json` and files under 100 B. relgap lists the top directory with the contents API, which gives the sizes.
-3. Otherwise: the boilerplate bodies there are. A range with no entries at all gets a warning with the compare URL ("no release notes found; compare the versions at https://github.com/o/r/compare/v1.0.0...v1.1.0").
+3. Otherwise: the boilerplate bodies there are. A range with no entries at all gets a warning with the compare URL ("no release notes found; compare the versions at https://github.com/o/r/compare/v1.0.0...v1.1.0"). So does a range whose entries are all below the minimum confidence ("all 2 entries are below the minimum confidence 0.5; lower --min-confidence to see them, or compare the versions at ..."): boilerplate bodies that only link to a docs site give such entries.
 4. A **stale changelog guard**: if the file's newest version heading is older than the newest release, ignore the file, with a warning in the digest. ArgoCD's `CHANGELOG.md` stops at 2.4.8 (2022).
 
 ## GitHub specifics

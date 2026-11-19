@@ -250,3 +250,48 @@ func TestDigestRangeErrors(t *testing.T) {
 	)
 	require.ErrorIs(t, err, version.ErrNotFound)
 }
+
+// TestDigestAllHiddenWarns: a range whose entries are all below the minimum confidence warns
+// with the compare link, as a range without notes does.
+func TestDigestAllHiddenWarns(t *testing.T) {
+	t.Parallel()
+	gh := &fakeGitHub{releases: []github.Release{
+		{Tag: "v1.0.0"},
+		{Tag: "v1.1.0", Body: "See https://docs.example.test/1.1.0 for the release notes.\n"},
+	}}
+	d := report.NewDigester(slog.New(slog.DiscardHandler), gh, nil)
+	got, err := d.Digest(t.Context(), report.DigestRequest{
+		Tool: spec(registry.UniverseReleases), From: "1.0.0", MinConfidence: 0.99,
+	})
+	require.NoError(t, err)
+	assert.Empty(t, got.Entries)
+	assert.Equal(t, 1, got.Hidden)
+	assert.Equal(t, []string{
+		"all 1 entries are below the minimum confidence 0.99; lower --min-confidence to see them, " +
+			"or compare the versions at https://github.com/o/r/compare/v1.0.0...v1.1.0",
+	}, got.Warnings)
+
+	got, err = d.Digest(t.Context(), report.DigestRequest{Tool: spec(registry.UniverseReleases), From: "1.0.0"})
+	require.NoError(t, err)
+	assert.Len(t, got.Entries, 1)
+	assert.Empty(t, got.Warnings, "an entry is shown")
+}
+
+// TestDigestNotFoundNamesPrefix: a missing version names the tag prefix and the tags that hold
+// the version, since a wrong prefix hides every tag.
+func TestDigestNotFoundNamesPrefix(t *testing.T) {
+	t.Parallel()
+	gh := &fakeGitHub{releases: []github.Release{
+		{Tag: "x-helm-chart-1.0.0"}, {Tag: "x-helm-chart-1.1.0"}, {Tag: "v0.1.0"}, {Tag: "x-1.0.0"},
+	}}
+	tool := spec(registry.UniverseReleases)
+	tool.Version.TagPrefix = "x-"
+	_, err := report.NewDigester(slog.New(slog.DiscardHandler), gh, nil).Digest(t.Context(), report.DigestRequest{
+		Tool: tool, From: "1.0.0", To: "1.1.0",
+	})
+	require.ErrorIs(t, err, version.ErrNotFound)
+	assert.EqualError(t, err, `select tool range: version not found: 1.1.0; `+
+		`1 of 4 tags of o/r are versions after the tag prefix "x-"; tags that hold 1.1.0: x-helm-chart-1.1.0; `+
+		`to read other tags, write a registry entry with version.tag_prefix and try it with `+
+		`relgap registry test <file.yaml> <range>`)
+}

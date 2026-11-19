@@ -55,7 +55,8 @@ These are the tools whose GitHub release body is *not* the real changelog, or th
 mise, node, python, go, temurin/java, gh, k9s, uv, ruff, plus the Terraform providers `hashicorp/aws` and
 `hashicorp/kubernetes`. Other tools fall back to auto-discovery ([source-adapters.md](source-adapters.md)).
 
-The 20 entries in `registry/` (checked live on 2026-11-12 with `relgap registry test`):
+The 21 entries in `registry/` (checked live on 2026-11-12 with `relgap registry test`, karpenter on
+2026-11-19):
 
 | Entry | Sources, in order | EOL | OSV | Why curated |
 |---|---|---|---|---|
@@ -79,6 +80,7 @@ The 20 entries in `registry/` (checked live on 2026-11-12 with `relgap registry 
 | terraform-provider-aws | changelog-file `CHANGELOG.md` on main, gh-release, upgrade-guide `website/docs/guides/version-{major}-upgrade.html.markdown` | | Go `github.com/hashicorp/terraform-provider-aws` | per-major guides |
 | terraform-provider-kubernetes | gh-release, changelog-file `CHANGELOG.md`, upgrade-guide `docs/guides/v{major}-upgrade-guide.md` | | | per-major guides |
 | golangci-lint | changelog-file `CHANGELOG.md` (`^v{version}$`) | | | release bodies are a commit list |
+| karpenter | gh-release, changelog-file `website/content/en/docs/upgrading/upgrade-guide.md` (``^Upgrading to `{version}`\+$``) | karpenter | | breaking changes only in the upgrade guide |
 
 1password-cli has no public repository and stays unresolved; atlascli's notes are one mongodb.com
 page for all versions, which web-doc doesn't split yet.
@@ -108,9 +110,25 @@ A package registry only names the repository. relgap reads no changelog URL from
 A repository that a registry knows takes that tool's entry, as `github:` does. A chart never does:
 its repository can be the application's own, whose entry describes app versions, and a chart pin
 carries a chart version. Artifact Hub often lists both. relgap picks the link into a
-subdirectory (`argoproj/argo-helm/tree/main/charts/argo-cd`), or a GitHub Pages repository URL,
-and sets `tag_prefix: <name>-` because such repositories tag each chart as `<name>-<version>`, as
-chart-releaser does. Otherwise it picks the link whose repository is named like the chart.
+subdirectory (`argoproj/argo-helm/tree/main/charts/argo-cd`), or a GitHub Pages repository URL.
+Otherwise it picks the link whose repository is named like the chart.
+
+The tag prefix comes from the repository's tags, listed once per lookup. Each tag that ends in a
+chart version Artifact Hub lists makes the rest of the tag a candidate prefix. The candidate that
+covers the most versions wins; on a tie, the one that holds the chart's name, then the longer
+one. A version must start the tag or follow a character other than a digit or dot, so `11.0.0`
+doesn't count for `1.0.0`. Real repositories use `argo-cd-` (chart-releaser's default),
+`external-dns-helm-chart-` next to the app's `v`, `cluster-autoscaler-chart-` next to the app's
+`cluster-autoscaler-`, `helm-chart-` (external-secrets) and a plain `v` (keda in kedacore/charts,
+cert-manager, whose chart shares the app's tags). Without a match, a subdirectory link or a GitHub
+Pages repository gets chart-releaser's `<name>-`, and any other repository no prefix.
+
+When a range endpoint is missing, the error says how many tags are versions after the prefix and
+names up to 3 tags that hold the version, such as "0 of 133 tags of kubernetes-sigs/external-dns
+are versions after the tag prefix "external-dns-"; tags that hold 1.23.0:
+external-dns-helm-chart-1.23.0". It ends by pointing to a registry entry with
+`version.tag_prefix`, tried with `relgap registry test <file.yaml> <range>`. `tools.<name>` takes
+only `repo`, and a chart never takes another tool's entry.
 
 `chart:<name>` without a repository, which pin discovery writes for `Chart.yaml` dependencies,
 searches Artifact Hub. It resolves when one repository has a chart of that name, or when exactly
@@ -156,3 +174,7 @@ each.
 - [x] `registry lint` rejects unknown keys and bad regexes with file:line errors.
 - [x] Snapshot staleness check fails CI when the snapshot is over 30 days old (`registry.yml`,
   `TestSnapshotMeta_CheckAge`).
+- [x] A chart's tag prefix comes from its repository's tags: `argo-cd-`, `cluster-autoscaler-chart-`,
+  `external-dns-helm-chart-`, `metrics-server-helm-chart-`, `helm-chart-` (external-secrets) and
+  `v` (cert-manager, keda) on real tag lists (`TestSpec_tool_resolution_6`, fixtures in
+  `testdata/charttags/`).

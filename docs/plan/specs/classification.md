@@ -18,7 +18,7 @@ Turns `VersionNotes` Markdown into `[]Entry{Kind, Text, Confidence, Source}`.
 | 2 | heading `features?`, `enhancements?`, `improvements?`, `added`, `new` / `bug ?fixes`, `fixed`, `bug` | feature / fix | 0.9 |
 | 3 | conventional-commit prefix `feat!:`, `fix(x)!:`, a `BREAKING CHANGE:` footer | breaking | 0.9 |
 | 3 | conventional-commit prefix `feat:` / `fix:` / `deps:`, other known types (`chore`, `docs`, `ci`, ...), node's `(SEMVER-MINOR)` | feature / fix / other | 0.8 |
-| 4 | leading verb (claude-code style `Removed …`, `Breaking change: …`, `Deprecated …`), optionally after a short scope such as `Windows: ` | mapped | 0.7 |
+| 4 | leading verb (claude-code style `Removed …`, `Breaking change: …`, `Deprecated …`), optionally after a short scope such as `Windows: `, or a bold label with the colon inside (`**Breaking:**`, `**Security:**`, `**Deprecation:**`, as in karpenter's upgrade guide) | mapped | 0.7 |
 | 4 | under a `Notable changes` or `Highlights` heading | other | 0.6 |
 | 5 | keyword anywhere (`no longer`, `removed`, `deprecated`, `must now`, `renamed`, `CVE-\d+`) | breaking / deprecation / security | 0.4 |
 | — | otherwise | other | 0.3 |

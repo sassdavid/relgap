@@ -46,6 +46,7 @@ valid: registry/go.yaml
 valid: registry/golangci-lint.yaml
 valid: registry/helm.yaml
 valid: registry/k9s.yaml
+valid: registry/karpenter.yaml
 valid: registry/kubectl.yaml
 valid: registry/mise.yaml
 valid: registry/node.yaml

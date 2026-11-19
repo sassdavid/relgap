@@ -103,7 +103,8 @@ func internalScopes() []string {
 func verbRules() []rule {
 	const prefix = `^(?:\*{0,2}[A-Za-z][\w./-]*(?: [A-Za-z][\w./-]*)?\*{0,2}:\s+)?`
 	return []rule{
-		{regexp.MustCompile(prefix + `(?i:breaking(?: change)?:)`), KindBreaking, confidenceVerb},
+		// A bold label keeps its colon inside: "**Breaking:** text".
+		{regexp.MustCompile(prefix + `(?i:\*{0,2}breaking(?: changes?)?:)`), KindBreaking, confidenceVerb},
 		// Only a removed interface is breaking; "Removed a flicker" or a commit title "Remove x"
 		// falls through to the keyword rule.
 		{
@@ -112,8 +113,12 @@ func verbRules() []rule {
 				`parameter|argument|endpoint|API|config)s?\b)`),
 			KindBreaking, confidenceVerb,
 		},
-		{regexp.MustCompile(prefix + `(?:Deprecated|Deprecates|Deprecate)\s`), KindDeprecation, confidenceVerb},
-		{regexp.MustCompile(prefix + `(?i:security:)`), KindSecurity, confidenceVerb},
+		{
+			regexp.MustCompile(prefix + `(?:Deprecated|Deprecates|Deprecate)\s|^\*{0,2}(?i:deprecations?:)`),
+			KindDeprecation,
+			confidenceVerb,
+		},
+		{regexp.MustCompile(prefix + `(?i:\*{0,2}security:)`), KindSecurity, confidenceVerb},
 		{regexp.MustCompile(prefix + `(?:Added|Adds|Add|Introduced|Introduces)\s`), KindFeature, confidenceVerb},
 		{regexp.MustCompile(prefix + `(?:Fixed|Fixes|Fix)\s`), KindFix, confidenceVerb},
 	}

@@ -10,6 +10,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/sassdavid/relgap/internal/app"
+	"github.com/sassdavid/relgap/internal/buildinfo"
 	"github.com/sassdavid/relgap/internal/complete"
 	"github.com/sassdavid/relgap/internal/config"
 	"github.com/sassdavid/relgap/internal/docsurl"
@@ -88,6 +89,7 @@ Docs: ` + docsurl.Base + `.`,
   relgap outdated --fail-on breaking
   relgap pins ~/src/infra
   relgap drift ~/src/infra ~/src/apps`,
+		Version:           buildinfo.Get().Version,
 		SilenceErrors:     true,
 		SilenceUsage:      true,
 		DisableAutoGenTag: true,
@@ -95,6 +97,7 @@ Docs: ` + docsurl.Base + `.`,
 			return g.setup(cmd, d)
 		},
 	}
+	root.SetVersionTemplate(config.AppName + " {{.Version}}\n")
 	root.SetIn(d.Stdin)
 	root.SetOut(d.Stdout)
 	root.SetErr(d.Stderr)

@@ -5,6 +5,11 @@ stdout '^commit +\S+'
 stdout '^platform +\w+/\w+$'
 ! stderr .
 
+# --version prints the first line of the version command.
+exec relgap --version
+stdout '^relgap \S+$'
+! stderr .
+
 # JSON output is the shared envelope and validates against schemas/report-v1.json.
 exec relgap version --format json
 stdout '"schema_version": "1"'

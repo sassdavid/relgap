@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=../schemas/registry-v1.json
+# Release bodies are commit lists. The upgrade guide has an "Upgrading to `1.15.0`+" section per
+# minor with the breaking changes and CRD steps, so it reads like a changelog file. It lives in
+# the docs on the default branch, which keep every older section.
+name: karpenter
+aliases: [karpenter-provider-aws]
+repo: aws/karpenter-provider-aws
+version:
+  scheme: semver
+  tag_prefix: "v"
+  universe: releases
+sources:
+  - kind: gh-release
+  - kind: changelog-file
+    path_template: "website/content/en/docs/upgrading/upgrade-guide.md"
+    heading: "^Upgrading to `{version}`\\+$"
+eol: { product: karpenter, cycle: "{major}.{minor}" }

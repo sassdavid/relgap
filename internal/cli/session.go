@@ -114,7 +114,7 @@ func (f sessionFinder) Find(ctx context.Context, kind, name string) (*registry.F
 	if err != nil {
 		return nil, err
 	}
-	found, err := remote.New(hc, repoSearcher{gh}).Find(ctx, kind, name)
+	found, err := remote.New(hc, repoSearcher{gh}, gh).Find(ctx, kind, name)
 	if err != nil {
 		return nil, fmt.Errorf("look up %s:%s: %w", kind, name, err)
 	}
