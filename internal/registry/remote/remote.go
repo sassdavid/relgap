@@ -4,6 +4,7 @@ import (
 	"cmp"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"maps"
@@ -68,6 +69,8 @@ func (r *Remote) Find(ctx context.Context, kind, name string) (*registry.Found, 
 	switch kind {
 	case registry.KindTFProvider:
 		return r.provider(ctx, name)
+	case registry.KindTFModule:
+		return r.module(ctx, name)
 	case registry.KindChart:
 		return r.chart(ctx, name)
 	case registry.KindNPM:
@@ -104,6 +107,101 @@ func (r *Remote) provider(ctx context.Context, name string) (*registry.Found, er
 	return &registry.Found{Repo: repo, Layer: registry.LayerTerraform}, nil
 }
 
+// module reads the latest version of a registry module from the endpoint that lists it for
+// every provider, which is far smaller than the one for a single provider. Its source names the
+// repository, and the part of its tag before the version is the tag prefix, so v6.8.0 for 6.8.0
+// gives "v".
+func (r *Remote) module(ctx context.Context, name string) (*registry.Found, error) {
+	parts := strings.Split(name, "/")
+	if len(parts) != moduleParts || slices.Contains(parts, "") {
+		return nil, fmt.Errorf("%w: tfmodule:%s is not tfmodule:<namespace>/<name>/<provider>",
+			registry.ErrUnsupported, name)
+	}
+	var doc struct {
+		Modules []moduleVersion `json:"modules"`
+	}
+	notFound := "the Terraform registry has no module " + name
+	u := "https://" + TerraformRegistryHost + "/v1/modules/" + url.PathEscape(parts[0]) + "/" + url.PathEscape(parts[1])
+	if err := r.getJSON(ctx, u, notFound, &doc); err != nil {
+		return nil, err
+	}
+	i := slices.IndexFunc(doc.Modules, func(m moduleVersion) bool { return strings.EqualFold(m.Provider, parts[2]) })
+	if i < 0 {
+		return nil, fmt.Errorf("%w: %s", registry.ErrUnknownTool, notFound)
+	}
+	m := doc.Modules[i]
+	repo, _, ok := ParseGitHubURL(m.Source)
+	if !ok {
+		return nil, fmt.Errorf("%w for tfmodule:%s: its source %q isn't on GitHub", registry.ErrNoRepo, name, m.Source)
+	}
+	f := &registry.Found{Repo: repo, Layer: registry.LayerTerraform}
+	if prefix, found := strings.CutSuffix(m.Tag, m.Version); found && m.Version != "" {
+		f.TagPrefix = prefix
+	}
+	return f, nil
+}
+
+const moduleParts = 3
+
+// moduleVersion is a module's latest version for one provider in the Terraform registry.
+type moduleVersion struct {
+	Provider string `json:"provider"`
+	Source   string `json:"source"`
+	Version  string `json:"version"`
+	Tag      string `json:"tag"`
+}
+
+// ChartRepo returns the Artifact Hub repository at the Helm repository URL registryURL that has
+// a chart called chart. For an oci:// URL it tries <url>/<chart> first, because Artifact Hub
+// lists most OCI charts as a repository of their own. It reports false when none matches.
+func (r *Remote) ChartRepo(ctx context.Context, registryURL, chart string) (string, bool, error) {
+	candidates := []string{registryURL}
+	if strings.HasPrefix(registryURL, "oci://") {
+		candidates = []string{registryURL + "/" + chart, registryURL}
+	}
+	for _, c := range candidates {
+		var repos []struct {
+			Name string `json:"name"`
+		}
+		q := url.Values{"kind": {"0"}, "url": {c}, "limit": {"60"}}
+		if err := r.getJSON(
+			ctx,
+			"https://"+ArtifactHubHost+"/api/v1/repositories/search?"+q.Encode(),
+			"",
+			&repos,
+		); err != nil {
+			return "", false, err
+		}
+		for _, repo := range repos {
+			has, err := r.hasChart(ctx, repo.Name, chart)
+			if err != nil {
+				return "", false, err
+			}
+			if has {
+				return repo.Name, true, nil
+			}
+		}
+	}
+	return "", false, nil
+}
+
+// hasChart reports whether the Artifact Hub repository repo has a chart called chart.
+func (r *Remote) hasChart(ctx context.Context, repo, chart string) (bool, error) {
+	var pkg chartPackage
+	err := r.getJSON(ctx, chartURL(repo, chart), "no chart", &pkg)
+	switch {
+	case errors.Is(err, registry.ErrUnknownTool):
+		return false, nil
+	case err != nil:
+		return false, err
+	}
+	return true, nil
+}
+
+func chartURL(repo, chart string) string {
+	return "https://" + ArtifactHubHost + "/api/v1/packages/helm/" + url.PathEscape(repo) + "/" + url.PathEscape(chart)
+}
+
 type chartLink struct {
 	Name string `json:"name"`
 	URL  string `json:"url"`
@@ -136,12 +234,12 @@ func (r *Remote) chart(ctx context.Context, name string) (*registry.Found, error
 		return nil, fmt.Errorf("%w: chart:%s is not chart:<repo>/<name> or chart:<name>", registry.ErrUnsupported, name)
 	}
 	var pkg chartPackage
-	u := "https://" + ArtifactHubHost + "/api/v1/packages/helm/" + url.PathEscape(
-		repoName,
-	) + "/" + url.PathEscape(
-		chart,
-	)
-	if err := r.getJSON(ctx, u, "Artifact Hub has no chart "+repoName+"/"+chart, &pkg); err != nil {
+	if err := r.getJSON(
+		ctx,
+		chartURL(repoName, chart),
+		"Artifact Hub has no chart "+repoName+"/"+chart,
+		&pkg,
+	); err != nil {
 		return nil, err
 	}
 	f, ok := chartSource(pkg)

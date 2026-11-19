@@ -24,9 +24,11 @@ relgap finds the latest versions with GraphQL queries of 10 to 25 tools, sent in
 Only pins that are behind, and constraint and prefix pins, need a tool's full release list;
 constraint and prefix pins start loading it at the same time.
 
-tfprovider and chart pins are looked up in the Terraform registry and Artifact Hub, which name
-the repository. Pins of tools without a GitHub repository, and image and action pins, are
-skipped; --format json lists them with the reason.
+tfprovider, tfmodule and chart pins are looked up in the Terraform registry and Artifact Hub,
+which name the repository. A chart pin with a repository URL (a Chart.yaml repository or a
+Renovate comment's registryUrl) uses the Artifact Hub repository at that URL, so a chart name
+that several repositories share still resolves. Pins of tools without a GitHub repository, and
+image and action pins, are skipped; --format json lists them with the reason.
 
 EOL shows whether CURRENT's release cycle has reached its end on endoflife.date (yes, no, or
 ? when endoflife.date doesn't list the cycle), for tools whose registry entry names a

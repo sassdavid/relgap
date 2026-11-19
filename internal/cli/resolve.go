@@ -28,13 +28,14 @@ func newResolveCmd(d *app.Deps, g *globals) *cobra.Command {
 		Long: `Resolves a tool name and prints the result with the layer that supplied each field.
 
 <tool> is a name or alias (terraform, tf), a NAME_VERSION variable (TERRAFORM_VERSION),
-github:owner/repo, aqua:package, tfprovider:namespace/name, chart:repo/name, chart:name,
-npm:package or pypi:package. When a registry knows the tool, the result is the same as for its
-name.
+github:owner/repo, aqua:package, tfprovider:namespace/name, tfmodule:namespace/name/provider,
+chart:repo/name, chart:name, npm:package or pypi:package. When a registry knows the tool, the
+result is the same as for its name.
 
-tfprovider:, chart:, npm: and pypi: names that no registry knows are looked up in the Terraform
-registry, Artifact Hub, the npm registry or PyPI, which name the source repository. chart:name
-without a repository resolves only when one Artifact Hub repository has a chart of that name.
+tfprovider:, tfmodule:, chart:, npm: and pypi: names that no registry knows are looked up in the
+Terraform registry, Artifact Hub, the npm registry or PyPI, which name the source repository. A
+module's tag prefix comes from the tag of its latest version. chart:name without a repository
+resolves only when one Artifact Hub repository has a chart of that name.
 
 Layers, highest precedence first:
 
@@ -51,6 +52,7 @@ matches exactly and has the most stars wins, and the result is marked low-confid
   relgap resolve TERRAFORM_VERSION
   relgap resolve aqua:hashicorp/terraform --format json
   relgap resolve tfprovider:integrations/github
+  relgap resolve tfmodule:terraform-aws-modules/vpc/aws
   relgap resolve chart:argo/argo-cd
   relgap resolve some-tool --guess`,
 		Args: exactArgs(1),

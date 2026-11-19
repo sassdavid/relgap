@@ -8,6 +8,7 @@ import (
 // Lookup kinds: the explicit prefixes that need a package registry, and a GitHub search.
 const (
 	KindTFProvider = "tfprovider"
+	KindTFModule   = "tfmodule"
 	KindChart      = "chart"
 	KindNPM        = "npm"
 	KindPyPI       = "pypi"
@@ -21,7 +22,7 @@ var ErrAmbiguous = errors.New("ambiguous name")
 type Found struct {
 	Repo         string   // owner/repo on GitHub
 	Name         string   // tool name to use when no registry knows the repo; empty means the repo name
-	TagPrefix    string   // set for a chart in a repository with several charts
+	TagPrefix    string   // set for a chart in a repository with several charts, and for a Terraform module
 	Layer        Layer    // the service that answered
 	Alternatives []string // other repositories a guess could have picked
 }

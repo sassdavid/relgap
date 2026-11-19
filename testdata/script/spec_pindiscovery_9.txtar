@@ -1,0 +1,37 @@
+# Terraform module blocks and Terragrunt tfr:// sources give tfmodule pins, and GitHub git sources
+# with ?ref= give github: pins. tfmodule names resolve through the Terraform registry: its source
+# field names the repository and the latest tag gives the tag prefix (v6.8.0 for 6.8.0).
+env TEST_NOW=2026-11-19T12:00:00Z
+# The cassette is TestRemoteModule's; record it there, not here.
+env TEST_CASSETTE=$CASSETTES/resolve/modules.yaml
+
+exec relgap pins --format json
+jsonschema pins-v1.json stdout
+stdout -count=2 '"tool": "tfmodule:terraform-aws-modules/vpc/aws"'
+stdout '"tool": "github:cloudposse/terraform-null-label",\n\s+"raw_name": "github\.com/cloudposse/terraform-null-label",\n\s+"kind": "tool",\n\s+"value": "0\.25\.0"'
+stdout '"kind": "tfmodule",\n\s+"value": "6\.5\.0",\n\s+"version": "6\.5\.0",\n\s+"exact": true'
+
+exec relgap resolve tfmodule:terraform-aws-modules/vpc/aws --format json
+stdout '"repo": "terraform-aws-modules/terraform-aws-vpc"'
+stdout '"tag_prefix": "v"'
+stdout '"by": "terraform module"'
+
+exec relgap resolve tfmodule:cloudposse/label/null --format json
+stdout '"repo": "cloudposse/terraform-null-label"'
+! stdout '"tag_prefix"'
+
+exec expect-exit 2 relgap resolve tfmodule:terraform-aws-modules/vpc
+stderr 'tfmodule:terraform-aws-modules/vpc is not tfmodule:<namespace>/<name>/<provider>'
+
+-- main.tf --
+module "vpc" {
+  source  = "terraform-aws-modules/vpc/aws"
+  version = "~> 6.5"
+}
+module "label" {
+  source = "github.com/cloudposse/terraform-null-label?ref=0.25.0"
+}
+-- live/vpc/terragrunt.hcl --
+terraform {
+  source = "tfr:///terraform-aws-modules/vpc/aws?version=6.5.0"
+}

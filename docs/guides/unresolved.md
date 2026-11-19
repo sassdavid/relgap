@@ -67,12 +67,13 @@ data, vulnerabilities or curated release-note sources, the tool needs a registry
 | `github:owner/repo` | the repository itself |
 | `aqua:package` | the embedded aqua registry index |
 | `tfprovider:namespace/name` | the Terraform registry, which names the source repository |
+| `tfmodule:namespace/name/provider` | the Terraform registry, which names the source repository and the tag of the latest version |
 | `chart:repo/name` or `chart:name` | Artifact Hub; `chart:name` only when one repository has a chart of that name |
 | `npm:package` | the npm registry |
 | `pypi:package` | PyPI |
 
 When a registry already knows the tool, the result is the same as for its name. The lookups for
-`tfprovider:`, `chart:`, `npm:` and `pypi:` go to the hosts that
+`tfprovider:`, `tfmodule:`, `chart:`, `npm:` and `pypi:` go to the hosts that
 [Network, privacy and tokens](/concepts/network#hosts) lists, and their answers are cached for a
 day.
 

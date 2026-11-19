@@ -9,6 +9,12 @@ import (
 	"go.yaml.in/yaml/v4"
 )
 
+// YAML file extensions.
+const (
+	extYAML = ".yaml"
+	extYML  = ".yml"
+)
+
 func parseYAML(data []byte) (*yaml.Node, error) {
 	var doc yaml.Node
 	if err := yaml.Unmarshal(data, &doc); err != nil {
@@ -43,7 +49,7 @@ func scalar(n *yaml.Node) (string, bool) {
 // isAquaConfig matches aqua.yaml, .aqua.yaml and YAML files in an aqua or .aqua directory.
 func isAquaConfig(rel string) bool {
 	base, ext := path.Base(rel), path.Ext(rel)
-	if ext != ".yaml" && ext != ".yml" {
+	if ext != extYAML && ext != extYML {
 		return false
 	}
 	name := strings.TrimSuffix(strings.TrimPrefix(base, "."), ext)
@@ -85,8 +91,8 @@ func detectAqua(f file) ([]Pin, error) {
 	return pins, nil
 }
 
-// detectHelm reads Chart.yaml: dependencies[] become chart pins and appVersion pins the tool
-// named like the chart.
+// detectHelm reads Chart.yaml: dependencies[] become chart pins with their repository URL and
+// appVersion pins the tool named like the chart.
 func detectHelm(f file) ([]Pin, error) {
 	root, err := parseYAML(f.data)
 	if err != nil {
@@ -107,8 +113,9 @@ func detectHelm(f file) ([]Pin, error) {
 			if !okName || !okVersion {
 				continue
 			}
+			repo, _ := scalar(get(d, "repository"))
 			pins = append(pins, Pin{
-				Tool: "chart:" + name, RawName: name, Kind: KindChart, Value: v,
+				Tool: "chart:" + name, RawName: name, Kind: KindChart, Registry: chartRegistry(repo), Value: v,
 				Location: Location{Line: vn.Line},
 			})
 		}
@@ -123,7 +130,7 @@ func isCI(rel string) bool {
 		return true
 	}
 	ext := path.Ext(rel)
-	return path.Dir(rel) == ".github/workflows" && (ext == ".yml" || ext == ".yaml")
+	return path.Dir(rel) == ".github/workflows" && (ext == extYML || ext == extYAML)
 }
 
 var versionKey = regexp.MustCompile(`(?i)^([a-z0-9_]+?)[_-]version$`)

@@ -1,0 +1,139 @@
+{
+  "schema_version": "1",
+  "tool": "relgap",
+  "version": "dev",
+  "generated_at": "2026-11-19T12:00:00Z",
+  "data": {
+    "repos": [
+      "other",
+      "repo"
+    ],
+    "tools": [
+      {
+        "tool": "chart:external-dns",
+        "drift": false,
+        "reference": "1.23.0",
+        "versions": [
+          {
+            "version": "1.23.0",
+            "repos": [
+              "other",
+              "repo"
+            ]
+          }
+        ],
+        "pins": [
+          {
+            "location": {
+              "repo": "other",
+              "file": "values.yaml",
+              "line": 3,
+              "detector": "renovate-comment"
+            },
+            "value": "1.23.0",
+            "match": "exact",
+            "version": "1.23.0"
+          },
+          {
+            "location": {
+              "repo": "repo",
+              "file": "variables.tf",
+              "line": 4,
+              "detector": "renovate-comment"
+            },
+            "value": "1.23.0",
+            "match": "exact",
+            "version": "1.23.0"
+          }
+        ]
+      },
+      {
+        "tool": "github:cloudposse/terraform-null-label",
+        "drift": true,
+        "reference": "0.25.0",
+        "versions": [
+          {
+            "version": "0.24.1",
+            "repos": [
+              "repo"
+            ]
+          },
+          {
+            "version": "0.25.0",
+            "repos": [
+              "other"
+            ]
+          }
+        ],
+        "pins": [
+          {
+            "location": {
+              "repo": "other",
+              "file": "modules.tf",
+              "line": 7,
+              "detector": "terraform"
+            },
+            "value": "0.25.0",
+            "match": "exact",
+            "version": "0.25.0"
+          },
+          {
+            "location": {
+              "repo": "repo",
+              "file": "modules.tf",
+              "line": 7,
+              "detector": "terraform"
+            },
+            "value": "0.24.1",
+            "match": "exact",
+            "version": "0.24.1"
+          }
+        ]
+      },
+      {
+        "tool": "tfmodule:terraform-aws-modules/vpc/aws",
+        "drift": true,
+        "reference": "6.7.3",
+        "versions": [
+          {
+            "version": "6.6.0",
+            "repos": [
+              "other"
+            ]
+          },
+          {
+            "version": "6.7.3",
+            "repos": [
+              "repo"
+            ]
+          }
+        ],
+        "pins": [
+          {
+            "location": {
+              "repo": "other",
+              "file": "modules.tf",
+              "line": 3,
+              "detector": "terraform"
+            },
+            "value": "6.6.0",
+            "match": "exact",
+            "version": "6.6.0"
+          },
+          {
+            "location": {
+              "repo": "repo",
+              "file": "modules.tf",
+              "line": 3,
+              "detector": "terraform"
+            },
+            "value": "6.7.3",
+            "match": "exact",
+            "version": "6.7.3"
+          }
+        ]
+      }
+    ]
+  },
+  "errors": []
+}

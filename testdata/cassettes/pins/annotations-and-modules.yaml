@@ -1,0 +1,688 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: registry.terraform.io
+        headers:
+            Accept:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://registry.terraform.io/v1/modules/terraform-aws-modules/vpc
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: "{\"meta\":{\"limit\":15,\"current_offset\":0},\"modules\":[{\"id\":\"terraform-aws-modules/vpc/aws/6.8.0\",\"owner\":\"antonbabenko\",\"namespace\":\"terraform-aws-modules\",\"name\":\"vpc\",\"version\":\"6.8.0\",\"provider\":\"aws\",\"provider_logo_url\":\"/images/providers/aws.png\",\"description\":\"Terraform module to create AWS VPC resources \U0001F1FA\U0001F1E6\",\"source\":\"https://github.com/terraform-aws-modules/terraform-aws-vpc\",\"tag\":\"v6.8.0\",\"published_at\":\"2026-11-17T02:25:51.618626Z\",\"downloads\":233966572,\"verified\":false}]}\n"
+        headers:
+            Cache-Control:
+                - public, stale-if-error=31536000
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 19 Nov 2026 20:19:57 GMT
+            Server:
+                - terraform-registry/627999198bc92ef2e3bcf199dcc5fa11869740f2
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubDomains; preload
+            Vary:
+                - Accept-Encoding
+            Via:
+                - 1.1 2de68e344e36fc65234d6896b309bb34.cloudfront.net (CloudFront)
+            X-Amz-Cf-Id:
+                - PKdl0M260KDNySSXuZ1UwPkzEJypbJLBzKrMmTga8tuZXAxMLzHUIA==
+            X-Amz-Cf-Pop:
+                - BUD50-P3
+            X-Cache:
+                - Miss from cloudfront
+        status: 200 OK
+        code: 200
+        duration: 167.508375ms
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 309
+        host: api.github.com
+        body: |
+            {"query":"query($cursor:String$first:Int!$name:String!$owner:String!){repository(owner: $owner, name: $name){refs(refPrefix: \"refs/tags/\", first: $first, after: $cursor){nodes{name},pageInfo{hasNextPage,endCursor}}}}","variables":{"cursor":null,"first":100,"name":"external-dns","owner":"kubernetes-sigs"}}
+        headers:
+            Content-Type:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.github.com/graphql
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"data":{"repository":{"refs":{"nodes":[{"name":"external-dns-helm-chart-1.2.0"},{"name":"external-dns-helm-chart-1.3.0"},{"name":"external-dns-helm-chart-1.3.1"},{"name":"external-dns-helm-chart-1.3.2"},{"name":"external-dns-helm-chart-1.4.0"},{"name":"external-dns-helm-chart-1.4.1"},{"name":"external-dns-helm-chart-1.5.0"},{"name":"external-dns-helm-chart-1.6.0"},{"name":"external-dns-helm-chart-1.7.0"},{"name":"external-dns-helm-chart-1.7.1"},{"name":"external-dns-helm-chart-1.8.0"},{"name":"external-dns-helm-chart-1.9.0"},{"name":"external-dns-helm-chart-1.10.0"},{"name":"external-dns-helm-chart-1.10.1"},{"name":"external-dns-helm-chart-1.11.0"},{"name":"external-dns-helm-chart-1.12.0"},{"name":"external-dns-helm-chart-1.12.1"},{"name":"external-dns-helm-chart-1.12.2"},{"name":"external-dns-helm-chart-1.13.0"},{"name":"external-dns-helm-chart-1.13.1"},{"name":"external-dns-helm-chart-1.14.0"},{"name":"external-dns-helm-chart-1.14.1"},{"name":"external-dns-helm-chart-1.14.2"},{"name":"external-dns-helm-chart-1.14.3"},{"name":"external-dns-helm-chart-1.14.4"},{"name":"external-dns-helm-chart-1.14.5"},{"name":"external-dns-helm-chart-1.15.0"},{"name":"external-dns-helm-chart-1.15.1"},{"name":"external-dns-helm-chart-1.15.2"},{"name":"external-dns-helm-chart-1.16.0"},{"name":"external-dns-helm-chart-1.16.1"},{"name":"external-dns-helm-chart-1.17.0"},{"name":"external-dns-helm-chart-1.18.0"},{"name":"external-dns-helm-chart-1.19.0"},{"name":"external-dns-helm-chart-1.20.0"},{"name":"external-dns-helm-chart-1.21.0"},{"name":"external-dns-helm-chart-1.21.1"},{"name":"external-dns-helm-chart-1.22.0"},{"name":"external-dns-helm-chart-1.23.0"},{"name":"external-dns-helm-chart-1.24.0"},{"name":"v0.1.0-beta.0"},{"name":"v0.1.0-beta.1"},{"name":"v0.1.0"},{"name":"v0.1.1"},{"name":"v0.2.0-beta.0"},{"name":"v0.2.0-beta.1"},{"name":"v0.2.0"},{"name":"v0.2.1"},{"name":"v0.3.0-alpha.0"},{"name":"v0.3.0-alpha.1"},{"name":"v0.3.0-alpha.2"},{"name":"v0.3.0-alpha.3"},{"name":"v0.3.0-alpha.4"},{"name":"v0.3.0-alpha.5"},{"name":"v0.3.0-beta.0"},{"name":"v0.3.0-beta.1"},{"name":"v0.3.0-beta.2"},{"name":"v0.3.0"},{"name":"v0.4.0-alpha.0"},{"name":"v0.4.0-alpha.1"},{"name":"v0.4.0-alpha.2"},{"name":"v0.4.0"},{"name":"v0.4.1"},{"name":"v0.4.2"},{"name":"v0.4.3"},{"name":"v0.4.4"},{"name":"v0.4.5"},{"name":"v0.4.6"},{"name":"v0.4.7"},{"name":"v0.4.8"},{"name":"v0.5.0-alpha.0"},{"name":"v0.5.0-alpha.1"},{"name":"v0.5.0-alpha.2"},{"name":"v0.5.0-alpha.3"},{"name":"v0.5.0"},{"name":"v0.5.1"},{"name":"v0.5.2"},{"name":"v0.5.3"},{"name":"v0.5.4"},{"name":"v0.5.5"},{"name":"v0.5.6"},{"name":"v0.5.7"},{"name":"v0.5.8"},{"name":"v0.5.9"},{"name":"v0.5.10"},{"name":"v0.5.11"},{"name":"v0.5.12"},{"name":"v0.5.13"},{"name":"v0.5.14"},{"name":"v0.5.15"},{"name":"v0.5.16"},{"name":"v0.5.17"},{"name":"v0.5.18"},{"name":"v0.6.0"},{"name":"v0.7.0"},{"name":"v0.7.1"},{"name":"v0.7.2"},{"name":"v0.7.3"},{"name":"v0.7.4"},{"name":"v0.7.5"}],"pageInfo":{"hasNextPage":true,"endCursor":"MTAw"}}}}}'
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/json; charset=utf-8
+            Date:
+                - Thu, 19 Nov 2026 20:19:57 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept-Encoding, Accept, X-Requested-With
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.v4; format=json
+            X-Ratelimit-Limit:
+                - "5000"
+            X-Ratelimit-Remaining:
+                - "4982"
+            X-Ratelimit-Reset:
+                - "1795123023"
+            X-Ratelimit-Resource:
+                - graphql
+            X-Ratelimit-Used:
+                - "18"
+            X-Xss-Protection:
+                - "0"
+        status: 200 OK
+        code: 200
+        duration: 886.4065ms
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 311
+        host: api.github.com
+        body: |
+            {"query":"query($cursor:String$first:Int!$name:String!$owner:String!){repository(owner: $owner, name: $name){refs(refPrefix: \"refs/tags/\", first: $first, after: $cursor){nodes{name},pageInfo{hasNextPage,endCursor}}}}","variables":{"cursor":"MTAw","first":100,"name":"external-dns","owner":"kubernetes-sigs"}}
+        headers:
+            Content-Type:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.github.com/graphql
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"data":{"repository":{"refs":{"nodes":[{"name":"v0.7.6"},{"name":"v0.8.0"},{"name":"v0.9.0"},{"name":"v0.10.0"},{"name":"v0.10.1"},{"name":"v0.10.2"},{"name":"v0.11.0"},{"name":"v0.11.1"},{"name":"v0.12.0"},{"name":"v0.12.1"},{"name":"v0.12.2"},{"name":"v0.13.0"},{"name":"v0.13.1"},{"name":"v0.13.2"},{"name":"v0.13.4"},{"name":"v0.13.5"},{"name":"v0.13.6"},{"name":"v0.14.0"},{"name":"v0.14.1"},{"name":"v0.14.2"},{"name":"v0.15.0"},{"name":"v0.15.1"},{"name":"v0.16.0"},{"name":"v0.16.1"},{"name":"v0.17.0"},{"name":"v0.18.0"},{"name":"v0.19.0"},{"name":"v0.20.0"},{"name":"v0.21.0"},{"name":"v0.22.0"},{"name":"v0.23.0"},{"name":"v0.23.1"},{"name":"v0.24.0"}],"pageInfo":{"hasNextPage":false,"endCursor":"MTMz"}}}}}'
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/json; charset=utf-8
+            Date:
+                - Thu, 19 Nov 2026 20:19:58 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept-Encoding, Accept, X-Requested-With
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.v4; format=json
+            X-Ratelimit-Limit:
+                - "5000"
+            X-Ratelimit-Remaining:
+                - "4981"
+            X-Ratelimit-Reset:
+                - "1795123023"
+            X-Ratelimit-Resource:
+                - graphql
+            X-Ratelimit-Used:
+                - "19"
+            X-Xss-Protection:
+                - "0"
+        status: 200 OK
+        code: 200
+        duration: 401.479667ms
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 755
+        host: api.github.com
+        body: |
+            {"query":"query($first:Int!$n0:String!$n1:String!$n2:String!$o0:String!$o1:String!$o2:String!){r0: repository(owner: $o0, name: $n0){releases(first: $first, orderBy: {field: CREATED_AT, direction: DESC}){nodes{tagName,isDraft,isPrerelease,publishedAt,url}}},r1: repository(owner: $o1, name: $n1){releases(first: $first, orderBy: {field: CREATED_AT, direction: DESC}){nodes{tagName,isDraft,isPrerelease,publishedAt,url}}},r2: repository(owner: $o2, name: $n2){releases(first: $first, orderBy: {field: CREATED_AT, direction: DESC}){nodes{tagName,isDraft,isPrerelease,publishedAt,url}}}}","variables":{"first":30,"n0":"terraform-aws-vpc","n1":"terraform-null-label","n2":"external-dns","o0":"terraform-aws-modules","o1":"cloudposse","o2":"kubernetes-sigs"}}
+        headers:
+            Content-Type:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.github.com/graphql
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"data":{"r0":{"releases":{"nodes":[{"tagName":"v6.8.0","isDraft":false,"isPrerelease":false,"publishedAt":"2026-11-17T02:25:51Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v6.8.0"},{"tagName":"v6.7.4","isDraft":false,"isPrerelease":false,"publishedAt":"2026-11-16T22:42:45Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v6.7.4"},{"tagName":"v6.7.3","isDraft":false,"isPrerelease":false,"publishedAt":"2026-09-18T19:52:22Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v6.7.3"},{"tagName":"v6.7.2","isDraft":false,"isPrerelease":false,"publishedAt":"2026-08-28T16:27:43Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v6.7.2"},{"tagName":"v6.7.1","isDraft":false,"isPrerelease":false,"publishedAt":"2026-08-27T20:34:04Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v6.7.1"},{"tagName":"v6.7.0","isDraft":false,"isPrerelease":false,"publishedAt":"2026-08-21T14:23:21Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v6.7.0"},{"tagName":"v6.6.1","isDraft":false,"isPrerelease":false,"publishedAt":"2026-04-02T20:22:09Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v6.6.1"},{"tagName":"v6.6.0","isDraft":false,"isPrerelease":false,"publishedAt":"2026-01-08T19:16:29Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v6.6.0"},{"tagName":"v6.5.1","isDraft":false,"isPrerelease":false,"publishedAt":"2025-11-17T14:34:19Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v6.5.1"},{"tagName":"v6.5.0","isDraft":false,"isPrerelease":false,"publishedAt":"2025-10-21T21:09:24Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v6.5.0"},{"tagName":"v6.4.1","isDraft":false,"isPrerelease":false,"publishedAt":"2025-10-21T09:01:02Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v6.4.1"},{"tagName":"v6.4.0","isDraft":false,"isPrerelease":false,"publishedAt":"2025-09-29T11:01:53Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v6.4.0"},{"tagName":"v6.3.0","isDraft":false,"isPrerelease":false,"publishedAt":"2025-09-26T12:39:50Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v6.3.0"},{"tagName":"v6.2.0","isDraft":false,"isPrerelease":false,"publishedAt":"2025-09-22T15:33:55Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v6.2.0"},{"tagName":"v6.1.0","isDraft":false,"isPrerelease":false,"publishedAt":"2025-09-22T15:31:37Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v6.1.0"},{"tagName":"v6.0.1","isDraft":false,"isPrerelease":false,"publishedAt":"2025-06-20T16:26:01Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v6.0.1"},{"tagName":"v6.0.0","isDraft":false,"isPrerelease":false,"publishedAt":"2025-06-19T11:04:09Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v6.0.0"},{"tagName":"v5.21.0","isDraft":false,"isPrerelease":false,"publishedAt":"2025-04-21T23:55:16Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v5.21.0"},{"tagName":"v5.20.0","isDraft":false,"isPrerelease":false,"publishedAt":"2025-04-21T23:50:01Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v5.20.0"},{"tagName":"v5.19.0","isDraft":false,"isPrerelease":false,"publishedAt":"2025-02-12T10:33:29Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v5.19.0"},{"tagName":"v5.18.1","isDraft":false,"isPrerelease":false,"publishedAt":"2025-01-28T13:22:10Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v5.18.1"},{"tagName":"v5.18.0","isDraft":false,"isPrerelease":false,"publishedAt":"2025-01-27T13:30:28Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v5.18.0"},{"tagName":"v5.17.0","isDraft":false,"isPrerelease":false,"publishedAt":"2024-12-18T21:31:47Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v5.17.0"},{"tagName":"v5.16.0","isDraft":false,"isPrerelease":false,"publishedAt":"2024-11-18T07:46:47Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v5.16.0"},{"tagName":"v5.15.0","isDraft":false,"isPrerelease":false,"publishedAt":"2024-11-03T05:44:45Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v5.15.0"},{"tagName":"v5.14.0","isDraft":false,"isPrerelease":false,"publishedAt":"2024-10-18T14:20:10Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v5.14.0"},{"tagName":"v5.13.0","isDraft":false,"isPrerelease":false,"publishedAt":"2024-08-16T13:30:16Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v5.13.0"},{"tagName":"v5.12.1","isDraft":false,"isPrerelease":false,"publishedAt":"2024-08-09T21:35:01Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v5.12.1"},{"tagName":"v5.12.0","isDraft":false,"isPrerelease":false,"publishedAt":"2024-08-03T14:15:13Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v5.12.0"},{"tagName":"v5.11.0","isDraft":false,"isPrerelease":false,"publishedAt":"2024-08-03T14:11:19Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v5.11.0"}]}},"r1":{"releases":{"nodes":[{"tagName":"0.25.0","isDraft":false,"isPrerelease":false,"publishedAt":"2021-08-25T17:47:02Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.25.0"},{"tagName":"0.25.0-rc.1","isDraft":false,"isPrerelease":true,"publishedAt":"2021-08-20T18:49:57Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.25.0-rc.1"},{"tagName":"0.24.1","isDraft":false,"isPrerelease":false,"publishedAt":"2021-02-04T09:20:38Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.24.1"},{"tagName":"0.24.0","isDraft":false,"isPrerelease":true,"publishedAt":"2021-02-04T08:15:15Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.24.0"},{"tagName":"0.23.0","isDraft":false,"isPrerelease":true,"publishedAt":"2021-02-01T20:06:13Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.23.0"},{"tagName":"0.22.1","isDraft":false,"isPrerelease":false,"publishedAt":"2020-12-22T01:53:40Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.22.1"},{"tagName":"0.22.0","isDraft":false,"isPrerelease":false,"publishedAt":"2020-12-03T20:09:21Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.22.0"},{"tagName":"0.21.0","isDraft":false,"isPrerelease":false,"publishedAt":"2020-11-11T20:28:32Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.21.0"},{"tagName":"0.20.0","isDraft":false,"isPrerelease":false,"publishedAt":"2020-11-10T22:27:29Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.20.0"},{"tagName":"0.19.2","isDraft":false,"isPrerelease":false,"publishedAt":"2020-08-28T03:22:44Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.19.2"},{"tagName":"0.19.1","isDraft":false,"isPrerelease":false,"publishedAt":"2020-08-27T21:37:09Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.19.1"},{"tagName":"0.19.0","isDraft":false,"isPrerelease":false,"publishedAt":"2020-08-27T05:48:54Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.19.0"},{"tagName":"0.18.0","isDraft":false,"isPrerelease":true,"publishedAt":"2020-08-26T23:07:48Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.18.0"},{"tagName":"0.17.0","isDraft":false,"isPrerelease":false,"publishedAt":"2020-08-09T20:06:05Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.17.0"},{"tagName":"0.16.0","isDraft":false,"isPrerelease":false,"publishedAt":"2019-10-28T16:14:55Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.16.0"},{"tagName":"0.15.0","isDraft":false,"isPrerelease":false,"publishedAt":"2019-08-14T17:45:08Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.15.0"},{"tagName":"0.14.1","isDraft":false,"isPrerelease":false,"publishedAt":"2019-06-25T00:09:53Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.14.1"},{"tagName":"0.14.0","isDraft":false,"isPrerelease":false,"publishedAt":"2019-06-24T21:39:05Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.14.0"},{"tagName":"0.13.0","isDraft":false,"isPrerelease":false,"publishedAt":"2019-06-19T19:35:55Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.13.0"},{"tagName":"0.12.2","isDraft":false,"isPrerelease":false,"publishedAt":"2019-06-19T05:22:44Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.12.2"},{"tagName":"0.12.1","isDraft":false,"isPrerelease":false,"publishedAt":"2019-06-18T02:43:22Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.12.1"},{"tagName":"0.12.0","isDraft":false,"isPrerelease":false,"publishedAt":"2019-06-06T01:27:27Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.12.0"},{"tagName":"0.11.1","isDraft":false,"isPrerelease":false,"publishedAt":"2019-05-28T06:32:15Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.11.1"},{"tagName":"0.11.0","isDraft":false,"isPrerelease":false,"publishedAt":"2019-05-28T04:28:02Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.11.0"},{"tagName":"0.10.0","isDraft":false,"isPrerelease":false,"publishedAt":"2019-05-28T01:13:34Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.10.0"},{"tagName":"0.9.0","isDraft":false,"isPrerelease":false,"publishedAt":"2019-05-28T01:05:16Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.9.0"},{"tagName":"0.8.0","isDraft":false,"isPrerelease":false,"publishedAt":"2019-05-27T22:16:14Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.8.0"},{"tagName":"0.7.0","isDraft":false,"isPrerelease":false,"publishedAt":"2019-04-01T19:56:47Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.7.0"},{"tagName":"0.6.3","isDraft":false,"isPrerelease":false,"publishedAt":"2019-03-14T19:09:42Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.6.3"},{"tagName":"0.6.2","isDraft":false,"isPrerelease":false,"publishedAt":"2019-02-19T02:26:39Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.6.2"}]}},"r2":{"releases":{"nodes":[{"tagName":"external-dns-helm-chart-1.24.0","isDraft":false,"isPrerelease":false,"publishedAt":"2026-11-19T17:15:01Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.24.0"},{"tagName":"v0.24.0","isDraft":false,"isPrerelease":false,"publishedAt":"2026-10-23T13:44:15Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.24.0"},{"tagName":"v0.23.1","isDraft":false,"isPrerelease":true,"publishedAt":"2026-10-23T12:43:15Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.23.1"},{"tagName":"external-dns-helm-chart-1.23.0","isDraft":false,"isPrerelease":false,"publishedAt":"2026-09-30T23:19:25Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.23.0"},{"tagName":"v0.23.0","isDraft":false,"isPrerelease":false,"publishedAt":"2026-09-18T11:56:19Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.23.0"},{"tagName":"external-dns-helm-chart-1.22.0","isDraft":false,"isPrerelease":false,"publishedAt":"2026-09-11T08:59:05Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.22.0"},{"tagName":"v0.22.0","isDraft":false,"isPrerelease":false,"publishedAt":"2026-08-20T12:32:17Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.22.0"},{"tagName":"external-dns-helm-chart-1.21.1","isDraft":false,"isPrerelease":false,"publishedAt":"2026-04-30T08:45:50Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.21.1"},{"tagName":"v0.21.0","isDraft":false,"isPrerelease":false,"publishedAt":"2026-04-06T12:19:06Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.21.0"},{"tagName":"external-dns-helm-chart-1.20.0","isDraft":false,"isPrerelease":false,"publishedAt":"2026-01-02T15:35:01Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.20.0"},{"tagName":"v0.20.0","isDraft":false,"isPrerelease":false,"publishedAt":"2025-11-14T09:24:38Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.20.0"},{"tagName":"external-dns-helm-chart-1.19.0","isDraft":false,"isPrerelease":false,"publishedAt":"2025-09-08T12:38:04Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.19.0"},{"tagName":"v0.19.0","isDraft":false,"isPrerelease":false,"publishedAt":"2025-09-02T07:48:53Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.19.0"},{"tagName":"external-dns-helm-chart-1.18.0","isDraft":false,"isPrerelease":false,"publishedAt":"2025-07-15T08:46:50Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.18.0"},{"tagName":"v0.18.0","isDraft":false,"isPrerelease":false,"publishedAt":"2025-06-26T06:38:27Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.18.0"},{"tagName":"external-dns-helm-chart-1.17.0","isDraft":false,"isPrerelease":false,"publishedAt":"2025-06-17T19:57:28Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.17.0"},{"tagName":"v0.17.0","isDraft":false,"isPrerelease":false,"publishedAt":"2025-05-14T10:13:21Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.17.0"},{"tagName":"external-dns-helm-chart-1.16.1","isDraft":false,"isPrerelease":false,"publishedAt":"2025-04-11T09:31:01Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.16.1"},{"tagName":"external-dns-helm-chart-1.16.0","isDraft":false,"isPrerelease":false,"publishedAt":"2025-03-21T08:30:52Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.16.0"},{"tagName":"v0.16.1","isDraft":false,"isPrerelease":false,"publishedAt":"2025-03-15T14:21:59Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.16.1"},{"tagName":"v0.16.0","isDraft":false,"isPrerelease":false,"publishedAt":"2025-03-12T10:19:20Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.16.0"},{"tagName":"external-dns-helm-chart-1.15.2","isDraft":false,"isPrerelease":false,"publishedAt":"2025-02-14T12:54:40Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.15.2"},{"tagName":"external-dns-helm-chart-1.15.1","isDraft":false,"isPrerelease":false,"publishedAt":"2025-01-27T09:47:40Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.15.1"},{"tagName":"v0.15.1","isDraft":false,"isPrerelease":false,"publishedAt":"2024-12-19T17:27:53Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.15.1"},{"tagName":"external-dns-helm-chart-1.15.0","isDraft":false,"isPrerelease":false,"publishedAt":"2024-09-11T16:31:31Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.15.0"},{"tagName":"v0.15.0","isDraft":false,"isPrerelease":false,"publishedAt":"2024-09-04T15:24:57Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.15.0"},{"tagName":"external-dns-helm-chart-1.14.5","isDraft":false,"isPrerelease":false,"publishedAt":"2024-06-10T15:14:43Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.14.5"},{"tagName":"v0.14.2","isDraft":false,"isPrerelease":false,"publishedAt":"2024-05-16T16:22:04Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.14.2"},{"tagName":"external-dns-helm-chart-1.14.4","isDraft":false,"isPrerelease":false,"publishedAt":"2024-04-05T15:03:30Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.14.4"},{"tagName":"v0.14.1","isDraft":false,"isPrerelease":false,"publishedAt":"2024-03-21T14:10:26Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.14.1"}]}}}}'
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/json; charset=utf-8
+            Date:
+                - Thu, 19 Nov 2026 20:19:59 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept-Encoding, Accept, X-Requested-With
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.v4; format=json
+            X-Ratelimit-Limit:
+                - "5000"
+            X-Ratelimit-Remaining:
+                - "4980"
+            X-Ratelimit-Reset:
+                - "1795123023"
+            X-Ratelimit-Resource:
+                - graphql
+            X-Ratelimit-Used:
+                - "20"
+            X-Xss-Protection:
+                - "0"
+        status: 200 OK
+        code: 200
+        duration: 816.6265ms
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 376
+        host: api.github.com
+        body: |
+            {"query":"query($cursor:String$first:Int!$name:String!$owner:String!){repository(owner: $owner, name: $name){releases(first: $first, after: $cursor, orderBy: {field: CREATED_AT, direction: DESC}){nodes{tagName,isDraft,isPrerelease,publishedAt,url},pageInfo{hasNextPage,endCursor}}}}","variables":{"cursor":null,"first":100,"name":"terraform-null-label","owner":"cloudposse"}}
+        headers:
+            Content-Type:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.github.com/graphql
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"data":{"repository":{"releases":{"nodes":[{"tagName":"0.25.0","isDraft":false,"isPrerelease":false,"publishedAt":"2021-08-25T17:47:02Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.25.0"},{"tagName":"0.25.0-rc.1","isDraft":false,"isPrerelease":true,"publishedAt":"2021-08-20T18:49:57Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.25.0-rc.1"},{"tagName":"0.24.1","isDraft":false,"isPrerelease":false,"publishedAt":"2021-02-04T09:20:38Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.24.1"},{"tagName":"0.24.0","isDraft":false,"isPrerelease":true,"publishedAt":"2021-02-04T08:15:15Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.24.0"},{"tagName":"0.23.0","isDraft":false,"isPrerelease":true,"publishedAt":"2021-02-01T20:06:13Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.23.0"},{"tagName":"0.22.1","isDraft":false,"isPrerelease":false,"publishedAt":"2020-12-22T01:53:40Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.22.1"},{"tagName":"0.22.0","isDraft":false,"isPrerelease":false,"publishedAt":"2020-12-03T20:09:21Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.22.0"},{"tagName":"0.21.0","isDraft":false,"isPrerelease":false,"publishedAt":"2020-11-11T20:28:32Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.21.0"},{"tagName":"0.20.0","isDraft":false,"isPrerelease":false,"publishedAt":"2020-11-10T22:27:29Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.20.0"},{"tagName":"0.19.2","isDraft":false,"isPrerelease":false,"publishedAt":"2020-08-28T03:22:44Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.19.2"},{"tagName":"0.19.1","isDraft":false,"isPrerelease":false,"publishedAt":"2020-08-27T21:37:09Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.19.1"},{"tagName":"0.19.0","isDraft":false,"isPrerelease":false,"publishedAt":"2020-08-27T05:48:54Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.19.0"},{"tagName":"0.18.0","isDraft":false,"isPrerelease":true,"publishedAt":"2020-08-26T23:07:48Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.18.0"},{"tagName":"0.17.0","isDraft":false,"isPrerelease":false,"publishedAt":"2020-08-09T20:06:05Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.17.0"},{"tagName":"0.16.0","isDraft":false,"isPrerelease":false,"publishedAt":"2019-10-28T16:14:55Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.16.0"},{"tagName":"0.15.0","isDraft":false,"isPrerelease":false,"publishedAt":"2019-08-14T17:45:08Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.15.0"},{"tagName":"0.14.1","isDraft":false,"isPrerelease":false,"publishedAt":"2019-06-25T00:09:53Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.14.1"},{"tagName":"0.14.0","isDraft":false,"isPrerelease":false,"publishedAt":"2019-06-24T21:39:05Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.14.0"},{"tagName":"0.13.0","isDraft":false,"isPrerelease":false,"publishedAt":"2019-06-19T19:35:55Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.13.0"},{"tagName":"0.12.2","isDraft":false,"isPrerelease":false,"publishedAt":"2019-06-19T05:22:44Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.12.2"},{"tagName":"0.12.1","isDraft":false,"isPrerelease":false,"publishedAt":"2019-06-18T02:43:22Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.12.1"},{"tagName":"0.12.0","isDraft":false,"isPrerelease":false,"publishedAt":"2019-06-06T01:27:27Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.12.0"},{"tagName":"0.11.1","isDraft":false,"isPrerelease":false,"publishedAt":"2019-05-28T06:32:15Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.11.1"},{"tagName":"0.11.0","isDraft":false,"isPrerelease":false,"publishedAt":"2019-05-28T04:28:02Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.11.0"},{"tagName":"0.10.0","isDraft":false,"isPrerelease":false,"publishedAt":"2019-05-28T01:13:34Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.10.0"},{"tagName":"0.9.0","isDraft":false,"isPrerelease":false,"publishedAt":"2019-05-28T01:05:16Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.9.0"},{"tagName":"0.8.0","isDraft":false,"isPrerelease":false,"publishedAt":"2019-05-27T22:16:14Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.8.0"},{"tagName":"0.7.0","isDraft":false,"isPrerelease":false,"publishedAt":"2019-04-01T19:56:47Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.7.0"},{"tagName":"0.6.3","isDraft":false,"isPrerelease":false,"publishedAt":"2019-03-14T19:09:42Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.6.3"},{"tagName":"0.6.2","isDraft":false,"isPrerelease":false,"publishedAt":"2019-02-19T02:26:39Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.6.2"},{"tagName":"0.6.1","isDraft":false,"isPrerelease":false,"publishedAt":"2019-02-14T18:38:45Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.6.1"},{"tagName":"0.6.0","isDraft":false,"isPrerelease":false,"publishedAt":"2019-02-13T17:55:00Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.6.0"},{"tagName":"0.5.4","isDraft":false,"isPrerelease":false,"publishedAt":"2018-12-18T08:22:18Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.5.4"},{"tagName":"0.5.3","isDraft":false,"isPrerelease":false,"publishedAt":"2018-09-11T18:39:26Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.5.3"},{"tagName":"0.5.2","isDraft":false,"isPrerelease":false,"publishedAt":"2018-09-05T19:46:47Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.5.2"},{"tagName":"0.5.1","isDraft":false,"isPrerelease":false,"publishedAt":"2018-08-31T13:38:03Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.5.1"},{"tagName":"0.5.0","isDraft":false,"isPrerelease":false,"publishedAt":"2018-08-24T18:34:06Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.5.0"},{"tagName":"0.4.1","isDraft":false,"isPrerelease":false,"publishedAt":"2018-07-25T10:05:52Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.4.1"},{"tagName":"0.4.0","isDraft":false,"isPrerelease":false,"publishedAt":"2018-07-24T21:10:13Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.4.0"},{"tagName":"0.3.8","isDraft":false,"isPrerelease":false,"publishedAt":"2018-07-24T19:12:08Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.3.8"},{"tagName":"0.3.7","isDraft":false,"isPrerelease":false,"publishedAt":"2018-07-05T12:37:59Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.3.7"},{"tagName":"0.3.6","isDraft":false,"isPrerelease":false,"publishedAt":"2018-06-28T22:05:27Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.3.6"},{"tagName":"0.3.5","isDraft":false,"isPrerelease":false,"publishedAt":"2018-05-16T04:41:05Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.3.5"},{"tagName":"0.3.4","isDraft":false,"isPrerelease":false,"publishedAt":"2018-05-16T01:43:37Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.3.4"},{"tagName":"0.3.3","isDraft":false,"isPrerelease":false,"publishedAt":"2018-02-27T19:04:34Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.3.3"},{"tagName":"0.3.2","isDraft":false,"isPrerelease":false,"publishedAt":"2018-02-27T01:47:34Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.3.2"},{"tagName":"0.3.1","isDraft":false,"isPrerelease":false,"publishedAt":"2017-11-15T15:41:01Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.3.1"},{"tagName":"0.3.0","isDraft":false,"isPrerelease":false,"publishedAt":"2017-10-30T17:47:13Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.3.0"},{"tagName":"0.2.2","isDraft":false,"isPrerelease":false,"publishedAt":"2017-10-14T00:09:28Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.2.2"},{"tagName":"0.2.1","isDraft":false,"isPrerelease":false,"publishedAt":"2017-09-20T17:42:16Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.2.1"}],"pageInfo":{"hasNextPage":false,"endCursor":"Y3Vyc29yOnYyOpK0MjAxNy0wOS0yMFQxODowODoxNVrOAHdzDg=="}}}}}'
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/json; charset=utf-8
+            Date:
+                - Thu, 19 Nov 2026 20:19:59 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept-Encoding, Accept, X-Requested-With
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.v4; format=json
+            X-Ratelimit-Limit:
+                - "5000"
+            X-Ratelimit-Remaining:
+                - "4979"
+            X-Ratelimit-Reset:
+                - "1795123023"
+            X-Ratelimit-Resource:
+                - graphql
+            X-Ratelimit-Used:
+                - "21"
+            X-Xss-Protection:
+                - "0"
+        status: 200 OK
+        code: 200
+        duration: 475.018625ms
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 384
+        host: api.github.com
+        body: |
+            {"query":"query($cursor:String$first:Int!$name:String!$owner:String!){repository(owner: $owner, name: $name){releases(first: $first, after: $cursor, orderBy: {field: CREATED_AT, direction: DESC}){nodes{tagName,isDraft,isPrerelease,publishedAt,url},pageInfo{hasNextPage,endCursor}}}}","variables":{"cursor":null,"first":100,"name":"terraform-aws-vpc","owner":"terraform-aws-modules"}}
+        headers:
+            Content-Type:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.github.com/graphql
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"data":{"repository":{"releases":{"nodes":[{"tagName":"v6.8.0","isDraft":false,"isPrerelease":false,"publishedAt":"2026-11-17T02:25:51Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v6.8.0"},{"tagName":"v6.7.4","isDraft":false,"isPrerelease":false,"publishedAt":"2026-11-16T22:42:45Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v6.7.4"},{"tagName":"v6.7.3","isDraft":false,"isPrerelease":false,"publishedAt":"2026-09-18T19:52:22Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v6.7.3"},{"tagName":"v6.7.2","isDraft":false,"isPrerelease":false,"publishedAt":"2026-08-28T16:27:43Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v6.7.2"},{"tagName":"v6.7.1","isDraft":false,"isPrerelease":false,"publishedAt":"2026-08-27T20:34:04Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v6.7.1"},{"tagName":"v6.7.0","isDraft":false,"isPrerelease":false,"publishedAt":"2026-08-21T14:23:21Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v6.7.0"},{"tagName":"v6.6.1","isDraft":false,"isPrerelease":false,"publishedAt":"2026-04-02T20:22:09Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v6.6.1"},{"tagName":"v6.6.0","isDraft":false,"isPrerelease":false,"publishedAt":"2026-01-08T19:16:29Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v6.6.0"},{"tagName":"v6.5.1","isDraft":false,"isPrerelease":false,"publishedAt":"2025-11-17T14:34:19Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v6.5.1"},{"tagName":"v6.5.0","isDraft":false,"isPrerelease":false,"publishedAt":"2025-10-21T21:09:24Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v6.5.0"},{"tagName":"v6.4.1","isDraft":false,"isPrerelease":false,"publishedAt":"2025-10-21T09:01:02Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v6.4.1"},{"tagName":"v6.4.0","isDraft":false,"isPrerelease":false,"publishedAt":"2025-09-29T11:01:53Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v6.4.0"},{"tagName":"v6.3.0","isDraft":false,"isPrerelease":false,"publishedAt":"2025-09-26T12:39:50Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v6.3.0"},{"tagName":"v6.2.0","isDraft":false,"isPrerelease":false,"publishedAt":"2025-09-22T15:33:55Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v6.2.0"},{"tagName":"v6.1.0","isDraft":false,"isPrerelease":false,"publishedAt":"2025-09-22T15:31:37Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v6.1.0"},{"tagName":"v6.0.1","isDraft":false,"isPrerelease":false,"publishedAt":"2025-06-20T16:26:01Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v6.0.1"},{"tagName":"v6.0.0","isDraft":false,"isPrerelease":false,"publishedAt":"2025-06-19T11:04:09Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v6.0.0"},{"tagName":"v5.21.0","isDraft":false,"isPrerelease":false,"publishedAt":"2025-04-21T23:55:16Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v5.21.0"},{"tagName":"v5.20.0","isDraft":false,"isPrerelease":false,"publishedAt":"2025-04-21T23:50:01Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v5.20.0"},{"tagName":"v5.19.0","isDraft":false,"isPrerelease":false,"publishedAt":"2025-02-12T10:33:29Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v5.19.0"},{"tagName":"v5.18.1","isDraft":false,"isPrerelease":false,"publishedAt":"2025-01-28T13:22:10Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v5.18.1"},{"tagName":"v5.18.0","isDraft":false,"isPrerelease":false,"publishedAt":"2025-01-27T13:30:28Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v5.18.0"},{"tagName":"v5.17.0","isDraft":false,"isPrerelease":false,"publishedAt":"2024-12-18T21:31:47Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v5.17.0"},{"tagName":"v5.16.0","isDraft":false,"isPrerelease":false,"publishedAt":"2024-11-18T07:46:47Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v5.16.0"},{"tagName":"v5.15.0","isDraft":false,"isPrerelease":false,"publishedAt":"2024-11-03T05:44:45Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v5.15.0"},{"tagName":"v5.14.0","isDraft":false,"isPrerelease":false,"publishedAt":"2024-10-18T14:20:10Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v5.14.0"},{"tagName":"v5.13.0","isDraft":false,"isPrerelease":false,"publishedAt":"2024-08-16T13:30:16Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v5.13.0"},{"tagName":"v5.12.1","isDraft":false,"isPrerelease":false,"publishedAt":"2024-08-09T21:35:01Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v5.12.1"},{"tagName":"v5.12.0","isDraft":false,"isPrerelease":false,"publishedAt":"2024-08-03T14:15:13Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v5.12.0"},{"tagName":"v5.11.0","isDraft":false,"isPrerelease":false,"publishedAt":"2024-08-03T14:11:19Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v5.11.0"},{"tagName":"v5.10.0","isDraft":false,"isPrerelease":false,"publishedAt":"2024-08-02T17:59:33Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v5.10.0"},{"tagName":"v5.9.0","isDraft":false,"isPrerelease":false,"publishedAt":"2024-07-05T16:55:34Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v5.9.0"},{"tagName":"v5.8.1","isDraft":false,"isPrerelease":false,"publishedAt":"2024-04-26T15:21:05Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v5.8.1"},{"tagName":"v5.8.0","isDraft":false,"isPrerelease":false,"publishedAt":"2024-04-25T00:30:03Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v5.8.0"},{"tagName":"v5.7.2","isDraft":false,"isPrerelease":false,"publishedAt":"2024-04-24T23:57:21Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v5.7.2"},{"tagName":"v5.7.1","isDraft":false,"isPrerelease":false,"publishedAt":"2024-04-06T00:27:29Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v5.7.1"},{"tagName":"v5.7.0","isDraft":false,"isPrerelease":false,"publishedAt":"2024-03-22T18:40:38Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v5.7.0"},{"tagName":"v5.6.0","isDraft":false,"isPrerelease":false,"publishedAt":"2024-03-14T13:14:28Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v5.6.0"},{"tagName":"v5.5.3","isDraft":false,"isPrerelease":false,"publishedAt":"2024-03-06T19:12:51Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v5.5.3"},{"tagName":"v5.5.2","isDraft":false,"isPrerelease":false,"publishedAt":"2024-02-09T12:10:55Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v5.5.2"},{"tagName":"v5.5.1","isDraft":false,"isPrerelease":false,"publishedAt":"2024-01-13T21:03:52Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v5.5.1"},{"tagName":"v5.5.0","isDraft":false,"isPrerelease":false,"publishedAt":"2024-01-09T20:53:52Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v5.5.0"},{"tagName":"v5.4.0","isDraft":false,"isPrerelease":false,"publishedAt":"2023-12-11T15:34:55Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v5.4.0"},{"tagName":"v5.3.0","isDraft":false,"isPrerelease":false,"publishedAt":"2023-12-11T15:15:24Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v5.3.0"},{"tagName":"v5.2.0","isDraft":false,"isPrerelease":false,"publishedAt":"2023-11-18T16:12:45Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v5.2.0"},{"tagName":"v5.1.2","isDraft":false,"isPrerelease":false,"publishedAt":"2023-09-07T20:04:01Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v5.1.2"},{"tagName":"v5.1.1","isDraft":false,"isPrerelease":false,"publishedAt":"2023-07-25T18:16:56Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v5.1.1"},{"tagName":"v5.1.0","isDraft":false,"isPrerelease":false,"publishedAt":"2023-07-15T18:09:19Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v5.1.0"},{"tagName":"v5.0.0","isDraft":false,"isPrerelease":false,"publishedAt":"2023-05-30T15:44:43Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v5.0.0"},{"tagName":"v4.0.2","isDraft":false,"isPrerelease":false,"publishedAt":"2023-05-15T14:19:15Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v4.0.2"},{"tagName":"v4.0.1","isDraft":false,"isPrerelease":false,"publishedAt":"2023-04-07T19:59:13Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v4.0.1"},{"tagName":"v4.0.0","isDraft":false,"isPrerelease":false,"publishedAt":"2023-04-07T13:33:28Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v4.0.0"},{"tagName":"v3.19.0","isDraft":false,"isPrerelease":false,"publishedAt":"2023-01-13T11:43:17Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v3.19.0"},{"tagName":"v3.18.1","isDraft":false,"isPrerelease":false,"publishedAt":"2022-10-27T18:33:11Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v3.18.1"},{"tagName":"v3.18.0","isDraft":false,"isPrerelease":false,"publishedAt":"2022-10-21T11:30:20Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v3.18.0"},{"tagName":"v3.17.0","isDraft":false,"isPrerelease":false,"publishedAt":"2022-10-21T10:55:03Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v3.17.0"},{"tagName":"v3.16.1","isDraft":false,"isPrerelease":false,"publishedAt":"2022-10-14T19:50:37Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v3.16.1"},{"tagName":"v3.16.0","isDraft":false,"isPrerelease":false,"publishedAt":"2022-09-26T14:49:29Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v3.16.0"},{"tagName":"v3.15.0","isDraft":false,"isPrerelease":false,"publishedAt":"2022-09-25T17:13:45Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v3.15.0"},{"tagName":"v3.14.4","isDraft":false,"isPrerelease":false,"publishedAt":"2022-09-05T14:47:45Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v3.14.4"},{"tagName":"v3.14.3","isDraft":false,"isPrerelease":false,"publishedAt":"2022-09-02T14:28:51Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v3.14.3"},{"tagName":"v3.14.2","isDraft":false,"isPrerelease":false,"publishedAt":"2022-06-20T13:09:27Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v3.14.2"},{"tagName":"v3.14.1","isDraft":false,"isPrerelease":false,"publishedAt":"2022-06-16T08:33:02Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v3.14.1"},{"tagName":"v3.14.0","isDraft":false,"isPrerelease":false,"publishedAt":"2022-03-31T15:03:02Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v3.14.0"},{"tagName":"v3.13.0","isDraft":false,"isPrerelease":false,"publishedAt":"2022-03-11T21:28:48Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v3.13.0"},{"tagName":"v3.12.0","isDraft":false,"isPrerelease":false,"publishedAt":"2022-02-07T15:23:59Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v3.12.0"},{"tagName":"v3.11.5","isDraft":false,"isPrerelease":false,"publishedAt":"2022-01-28T15:59:46Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v3.11.5"},{"tagName":"v3.11.4","isDraft":false,"isPrerelease":false,"publishedAt":"2022-01-26T11:24:38Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v3.11.4"},{"tagName":"v3.11.3","isDraft":false,"isPrerelease":false,"publishedAt":"2022-01-13T14:11:25Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v3.11.3"},{"tagName":"v3.11.2","isDraft":false,"isPrerelease":false,"publishedAt":"2022-01-11T20:38:34Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v3.11.2"},{"tagName":"v3.11.1","isDraft":false,"isPrerelease":false,"publishedAt":"2022-01-10T09:24:59Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v3.11.1"},{"tagName":"v3.11.0","isDraft":false,"isPrerelease":false,"publishedAt":"2021-11-04T09:35:00Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v3.11.0"},{"tagName":"v3.10.0","isDraft":false,"isPrerelease":false,"publishedAt":"2021-10-15T20:23:44Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v3.10.0"},{"tagName":"v3.9.0","isDraft":false,"isPrerelease":false,"publishedAt":"2021-10-15T07:48:06Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v3.9.0"},{"tagName":"v3.8.0","isDraft":false,"isPrerelease":false,"publishedAt":"2021-10-14T19:29:19Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v3.8.0"},{"tagName":"v3.7.0","isDraft":false,"isPrerelease":false,"publishedAt":"2021-08-31T14:19:07Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v3.7.0"}],"pageInfo":{"hasNextPage":false,"endCursor":"Y3Vyc29yOnYyOpK0MjAyMS0wOC0zMVQxNDoxOTowNFrOAufbVA=="}}}}}'
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/json; charset=utf-8
+            Date:
+                - Thu, 19 Nov 2026 20:19:59 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept-Encoding, Accept, X-Requested-With
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.v4; format=json
+            X-Ratelimit-Limit:
+                - "5000"
+            X-Ratelimit-Remaining:
+                - "4978"
+            X-Ratelimit-Reset:
+                - "1795123023"
+            X-Ratelimit-Resource:
+                - graphql
+            X-Ratelimit-Used:
+                - "22"
+            X-Xss-Protection:
+                - "0"
+        status: 200 OK
+        code: 200
+        duration: 503.854541ms
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 373
+        host: api.github.com
+        body: |
+            {"query":"query($cursor:String$first:Int!$name:String!$owner:String!){repository(owner: $owner, name: $name){releases(first: $first, after: $cursor, orderBy: {field: CREATED_AT, direction: DESC}){nodes{tagName,isDraft,isPrerelease,publishedAt,url},pageInfo{hasNextPage,endCursor}}}}","variables":{"cursor":null,"first":100,"name":"external-dns","owner":"kubernetes-sigs"}}
+        headers:
+            Content-Type:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.github.com/graphql
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"data":{"repository":{"releases":{"nodes":[{"tagName":"external-dns-helm-chart-1.24.0","isDraft":false,"isPrerelease":false,"publishedAt":"2026-11-19T17:15:01Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.24.0"},{"tagName":"v0.24.0","isDraft":false,"isPrerelease":false,"publishedAt":"2026-10-23T13:44:15Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.24.0"},{"tagName":"v0.23.1","isDraft":false,"isPrerelease":true,"publishedAt":"2026-10-23T12:43:15Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.23.1"},{"tagName":"external-dns-helm-chart-1.23.0","isDraft":false,"isPrerelease":false,"publishedAt":"2026-09-30T23:19:25Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.23.0"},{"tagName":"v0.23.0","isDraft":false,"isPrerelease":false,"publishedAt":"2026-09-18T11:56:19Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.23.0"},{"tagName":"external-dns-helm-chart-1.22.0","isDraft":false,"isPrerelease":false,"publishedAt":"2026-09-11T08:59:05Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.22.0"},{"tagName":"v0.22.0","isDraft":false,"isPrerelease":false,"publishedAt":"2026-08-20T12:32:17Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.22.0"},{"tagName":"external-dns-helm-chart-1.21.1","isDraft":false,"isPrerelease":false,"publishedAt":"2026-04-30T08:45:50Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.21.1"},{"tagName":"v0.21.0","isDraft":false,"isPrerelease":false,"publishedAt":"2026-04-06T12:19:06Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.21.0"},{"tagName":"external-dns-helm-chart-1.20.0","isDraft":false,"isPrerelease":false,"publishedAt":"2026-01-02T15:35:01Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.20.0"},{"tagName":"v0.20.0","isDraft":false,"isPrerelease":false,"publishedAt":"2025-11-14T09:24:38Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.20.0"},{"tagName":"external-dns-helm-chart-1.19.0","isDraft":false,"isPrerelease":false,"publishedAt":"2025-09-08T12:38:04Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.19.0"},{"tagName":"v0.19.0","isDraft":false,"isPrerelease":false,"publishedAt":"2025-09-02T07:48:53Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.19.0"},{"tagName":"external-dns-helm-chart-1.18.0","isDraft":false,"isPrerelease":false,"publishedAt":"2025-07-15T08:46:50Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.18.0"},{"tagName":"v0.18.0","isDraft":false,"isPrerelease":false,"publishedAt":"2025-06-26T06:38:27Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.18.0"},{"tagName":"external-dns-helm-chart-1.17.0","isDraft":false,"isPrerelease":false,"publishedAt":"2025-06-17T19:57:28Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.17.0"},{"tagName":"v0.17.0","isDraft":false,"isPrerelease":false,"publishedAt":"2025-05-14T10:13:21Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.17.0"},{"tagName":"external-dns-helm-chart-1.16.1","isDraft":false,"isPrerelease":false,"publishedAt":"2025-04-11T09:31:01Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.16.1"},{"tagName":"external-dns-helm-chart-1.16.0","isDraft":false,"isPrerelease":false,"publishedAt":"2025-03-21T08:30:52Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.16.0"},{"tagName":"v0.16.1","isDraft":false,"isPrerelease":false,"publishedAt":"2025-03-15T14:21:59Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.16.1"},{"tagName":"v0.16.0","isDraft":false,"isPrerelease":false,"publishedAt":"2025-03-12T10:19:20Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.16.0"},{"tagName":"external-dns-helm-chart-1.15.2","isDraft":false,"isPrerelease":false,"publishedAt":"2025-02-14T12:54:40Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.15.2"},{"tagName":"external-dns-helm-chart-1.15.1","isDraft":false,"isPrerelease":false,"publishedAt":"2025-01-27T09:47:40Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.15.1"},{"tagName":"v0.15.1","isDraft":false,"isPrerelease":false,"publishedAt":"2024-12-19T17:27:53Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.15.1"},{"tagName":"external-dns-helm-chart-1.15.0","isDraft":false,"isPrerelease":false,"publishedAt":"2024-09-11T16:31:31Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.15.0"},{"tagName":"v0.15.0","isDraft":false,"isPrerelease":false,"publishedAt":"2024-09-04T15:24:57Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.15.0"},{"tagName":"external-dns-helm-chart-1.14.5","isDraft":false,"isPrerelease":false,"publishedAt":"2024-06-10T15:14:43Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.14.5"},{"tagName":"v0.14.2","isDraft":false,"isPrerelease":false,"publishedAt":"2024-05-16T16:22:04Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.14.2"},{"tagName":"external-dns-helm-chart-1.14.4","isDraft":false,"isPrerelease":false,"publishedAt":"2024-04-05T15:03:30Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.14.4"},{"tagName":"v0.14.1","isDraft":false,"isPrerelease":false,"publishedAt":"2024-03-21T14:10:26Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.14.1"},{"tagName":"external-dns-helm-chart-1.14.3","isDraft":false,"isPrerelease":false,"publishedAt":"2024-01-26T13:33:01Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.14.3"},{"tagName":"external-dns-helm-chart-1.14.2","isDraft":false,"isPrerelease":false,"publishedAt":"2024-01-22T11:27:31Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.14.2"},{"tagName":"external-dns-helm-chart-1.14.1","isDraft":false,"isPrerelease":false,"publishedAt":"2024-01-12T07:14:28Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.14.1"},{"tagName":"external-dns-helm-chart-1.14.0","isDraft":false,"isPrerelease":false,"publishedAt":"2024-01-10T20:27:33Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.14.0"},{"tagName":"v0.14.0","isDraft":false,"isPrerelease":false,"publishedAt":"2023-11-07T11:31:18Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.14.0"},{"tagName":"external-dns-helm-chart-1.13.1","isDraft":false,"isPrerelease":false,"publishedAt":"2023-09-08T10:44:39Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.13.1"},{"tagName":"v0.13.6","isDraft":false,"isPrerelease":false,"publishedAt":"2023-09-06T06:57:40Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.13.6"},{"tagName":"external-dns-helm-chart-1.13.0","isDraft":false,"isPrerelease":false,"publishedAt":"2023-06-07T19:42:43Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.13.0"},{"tagName":"v0.13.5","isDraft":false,"isPrerelease":false,"publishedAt":"2023-05-29T13:45:29Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.13.5"},{"tagName":"external-dns-helm-chart-1.12.2","isDraft":false,"isPrerelease":false,"publishedAt":"2023-03-30T10:18:21Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.12.2"},{"tagName":"v0.13.4","isDraft":false,"isPrerelease":false,"publishedAt":"2023-03-27T07:59:51Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.13.4"},{"tagName":"external-dns-helm-chart-1.12.1","isDraft":false,"isPrerelease":false,"publishedAt":"2023-02-06T18:13:25Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.12.1"},{"tagName":"v0.13.2","isDraft":false,"isPrerelease":false,"publishedAt":"2023-01-14T09:36:22Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.13.2"},{"tagName":"external-dns-helm-chart-1.12.0","isDraft":false,"isPrerelease":false,"publishedAt":"2022-12-06T17:33:06Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.12.0"},{"tagName":"v0.13.1","isDraft":false,"isPrerelease":false,"publishedAt":"2022-10-20T14:13:34Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.13.1"},{"tagName":"external-dns-helm-chart-1.11.0","isDraft":false,"isPrerelease":false,"publishedAt":"2022-08-10T15:30:53Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.11.0"},{"tagName":"v0.12.2","isDraft":false,"isPrerelease":false,"publishedAt":"2022-07-27T14:56:14Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.12.2"},{"tagName":"external-dns-helm-chart-1.10.1","isDraft":false,"isPrerelease":false,"publishedAt":"2022-07-13T07:58:01Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.10.1"},{"tagName":"external-dns-helm-chart-1.10.0","isDraft":false,"isPrerelease":false,"publishedAt":"2022-07-08T19:46:09Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.10.0"},{"tagName":"v0.12.0","isDraft":false,"isPrerelease":false,"publishedAt":"2022-05-26T10:17:12Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.12.0"},{"tagName":"external-dns-helm-chart-1.9.0","isDraft":false,"isPrerelease":false,"publishedAt":"2022-04-19T08:43:45Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.9.0"},{"tagName":"external-dns-helm-chart-1.8.0","isDraft":false,"isPrerelease":false,"publishedAt":"2022-04-13T15:05:35Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.8.0"},{"tagName":"v0.11.0","isDraft":false,"isPrerelease":false,"publishedAt":"2022-03-21T16:38:09Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.11.0"},{"tagName":"external-dns-helm-chart-1.7.1","isDraft":false,"isPrerelease":false,"publishedAt":"2022-01-05T09:02:57Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.7.1"},{"tagName":"external-dns-helm-chart-1.7.0","isDraft":false,"isPrerelease":false,"publishedAt":"2021-12-15T13:26:42Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.7.0"},{"tagName":"v0.10.2","isDraft":false,"isPrerelease":false,"publishedAt":"2021-12-11T11:03:52Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.10.2"},{"tagName":"external-dns-helm-chart-1.6.0","isDraft":false,"isPrerelease":false,"publishedAt":"2021-11-12T14:36:53Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.6.0"},{"tagName":"external-dns-helm-chart-1.5.0","isDraft":false,"isPrerelease":false,"publishedAt":"2021-11-04T10:04:29Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.5.0"},{"tagName":"external-dns-helm-chart-1.4.1","isDraft":false,"isPrerelease":false,"publishedAt":"2021-11-03T11:35:18Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.4.1"},{"tagName":"external-dns-helm-chart-1.4.0","isDraft":false,"isPrerelease":false,"publishedAt":"2021-10-23T19:40:45Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.4.0"},{"tagName":"v0.10.1","isDraft":false,"isPrerelease":false,"publishedAt":"2021-10-23T14:28:41Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.10.1"},{"tagName":"external-dns-helm-chart-1.3.2","isDraft":false,"isPrerelease":false,"publishedAt":"2021-10-06T17:05:13Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.3.2"},{"tagName":"external-dns-helm-chart-1.3.1","isDraft":false,"isPrerelease":false,"publishedAt":"2021-10-06T07:46:56Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.3.1"},{"tagName":"external-dns-helm-chart-1.3.0","isDraft":false,"isPrerelease":false,"publishedAt":"2021-10-05T08:27:50Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.3.0"},{"tagName":"v0.10.0","isDraft":false,"isPrerelease":false,"publishedAt":"2021-10-01T07:53:28Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.10.0"},{"tagName":"external-dns-helm-chart-1.2.0","isDraft":false,"isPrerelease":false,"publishedAt":"2021-08-19T16:41:47Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.2.0"},{"tagName":"v0.9.0","isDraft":false,"isPrerelease":false,"publishedAt":"2021-08-05T12:22:15Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.9.0"},{"tagName":"v0.8.0","isDraft":false,"isPrerelease":false,"publishedAt":"2021-05-04T10:42:24Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.8.0"},{"tagName":"v0.7.6","isDraft":false,"isPrerelease":false,"publishedAt":"2021-01-13T08:50:06Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.7.6"},{"tagName":"v0.7.5","isDraft":false,"isPrerelease":false,"publishedAt":"2020-12-19T09:21:25Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.7.5"},{"tagName":"v0.7.4","isDraft":false,"isPrerelease":false,"publishedAt":"2020-09-30T08:05:33Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.7.4"},{"tagName":"v0.7.3","isDraft":false,"isPrerelease":false,"publishedAt":"2020-08-05T08:10:47Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.7.3"},{"tagName":"v0.7.2","isDraft":false,"isPrerelease":false,"publishedAt":"2020-06-03T12:02:25Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.7.2"},{"tagName":"v0.7.1","isDraft":false,"isPrerelease":false,"publishedAt":"2020-04-01T14:53:37Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.7.1"},{"tagName":"v0.7.0","isDraft":false,"isPrerelease":false,"publishedAt":"2020-03-11T11:40:51Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.7.0"},{"tagName":"v0.6.0","isDraft":false,"isPrerelease":false,"publishedAt":"2020-02-11T14:43:39Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.6.0"},{"tagName":"v0.5.18","isDraft":false,"isPrerelease":false,"publishedAt":"2020-01-15T13:15:39Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.5.18"},{"tagName":"v0.5.17","isDraft":false,"isPrerelease":false,"publishedAt":"2019-09-17T15:56:48Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.5.17"},{"tagName":"v0.5.16","isDraft":false,"isPrerelease":false,"publishedAt":"2019-08-20T12:55:59Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.5.16"},{"tagName":"v0.5.15","isDraft":false,"isPrerelease":false,"publishedAt":"2019-07-04T08:13:07Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.5.15"},{"tagName":"v0.5.14","isDraft":false,"isPrerelease":false,"publishedAt":"2019-05-14T12:43:59Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.5.14"},{"tagName":"v0.5.13","isDraft":false,"isPrerelease":false,"publishedAt":"2019-04-18T09:47:47Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.5.13"},{"tagName":"v0.5.12","isDraft":false,"isPrerelease":false,"publishedAt":"2019-03-26T15:42:56Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.5.12"},{"tagName":"v0.5.11","isDraft":false,"isPrerelease":false,"publishedAt":"2019-02-11T15:56:36Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.5.11"},{"tagName":"v0.5.10","isDraft":false,"isPrerelease":false,"publishedAt":"2019-01-28T13:07:58Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.5.10"},{"tagName":"v0.5.9","isDraft":false,"isPrerelease":false,"publishedAt":"2018-11-22T12:27:54Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.5.9"},{"tagName":"v0.5.8","isDraft":false,"isPrerelease":false,"publishedAt":"2018-10-11T14:51:37Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.5.8"},{"tagName":"v0.5.7","isDraft":false,"isPrerelease":false,"publishedAt":"2018-10-11T14:49:45Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.5.7"},{"tagName":"v0.5.6","isDraft":false,"isPrerelease":false,"publishedAt":"2018-09-07T11:29:40Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.5.6"},{"tagName":"v0.5.5","isDraft":false,"isPrerelease":false,"publishedAt":"2018-08-17T11:47:48Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.5.5"},{"tagName":"v0.5.4","isDraft":false,"isPrerelease":false,"publishedAt":"2018-06-28T12:57:34Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.5.4"},{"tagName":"v0.5.3","isDraft":false,"isPrerelease":false,"publishedAt":"2018-06-15T09:54:42Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.5.3"},{"tagName":"v0.5.2","isDraft":false,"isPrerelease":false,"publishedAt":"2018-05-31T08:04:55Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.5.2"},{"tagName":"v0.5.1","isDraft":false,"isPrerelease":false,"publishedAt":"2018-05-16T11:57:55Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.5.1"},{"tagName":"v0.5.0","isDraft":false,"isPrerelease":false,"publishedAt":"2018-04-23T15:05:40Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.5.0"},{"tagName":"v0.5.0-alpha.3","isDraft":false,"isPrerelease":true,"publishedAt":"2018-04-19T10:01:45Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.5.0-alpha.3"},{"tagName":"v0.5.0-alpha.2","isDraft":false,"isPrerelease":true,"publishedAt":"2018-04-17T13:54:35Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.5.0-alpha.2"},{"tagName":"v0.5.0-alpha.0","isDraft":false,"isPrerelease":true,"publishedAt":"2018-01-26T13:49:55Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.5.0-alpha.0"},{"tagName":"v0.4.8","isDraft":false,"isPrerelease":false,"publishedAt":"2017-11-22T18:46:25Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.4.8"},{"tagName":"v0.4.7","isDraft":false,"isPrerelease":false,"publishedAt":"2017-10-18T09:07:02Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.4.7"}],"pageInfo":{"hasNextPage":true,"endCursor":"Y3Vyc29yOnYyOpK0MjAxNy0xMC0xOFQwOTowMDoxN1rOAHyMGA=="}}}}}'
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/json; charset=utf-8
+            Date:
+                - Thu, 19 Nov 2026 20:19:59 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept-Encoding, Accept, X-Requested-With
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.v4; format=json
+            X-Ratelimit-Limit:
+                - "5000"
+            X-Ratelimit-Remaining:
+                - "4977"
+            X-Ratelimit-Reset:
+                - "1795123023"
+            X-Ratelimit-Resource:
+                - graphql
+            X-Ratelimit-Used:
+                - "23"
+            X-Xss-Protection:
+                - "0"
+        status: 200 OK
+        code: 200
+        duration: 609.46575ms
+    - id: 7
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 379
+        host: api.github.com
+        body: |
+            {"query":"query($name:String!$owner:String!$t0:String!$t1:String!){repository(owner: $owner, name: $name){r0: release(tagName: $t0){tagName,isDraft,isPrerelease,publishedAt,url,description},r1: release(tagName: $t1){tagName,isDraft,isPrerelease,publishedAt,url,description}}}","variables":{"name":"terraform-aws-vpc","owner":"terraform-aws-modules","t0":"v6.7.4","t1":"v6.8.0"}}
+        headers:
+            Content-Type:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.github.com/graphql
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"data":{"repository":{"r0":{"tagName":"v6.7.4","isDraft":false,"isPrerelease":false,"publishedAt":"2026-11-16T22:42:45Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v6.7.4","description":"## [6.7.4](https://github.com/terraform-aws-modules/terraform-aws-vpc/compare/v6.7.3...v6.7.4) (2026-11-16)\n\n### Bug Fixes\n\n* Correct CloudWatch Flow Log IAM permissions by splitting Log Stream and Log Group permissions ([#1320](https://github.com/terraform-aws-modules/terraform-aws-vpc/issues/1320)) ([62417ba](https://github.com/terraform-aws-modules/terraform-aws-vpc/commit/62417bac63399480dde02063eea03ca3867ae792)), closes [#1319](https://github.com/terraform-aws-modules/terraform-aws-vpc/issues/1319)\n* Scope root VPC flow log DescribeLogGroups/DescribeLogStreams to the log group ARN ([#1321](https://github.com/terraform-aws-modules/terraform-aws-vpc/issues/1321)) ([ea3fe16](https://github.com/terraform-aws-modules/terraform-aws-vpc/commit/ea3fe16d06d62d426126eda4364fc4bdd43f51ae))\n"},"r1":{"tagName":"v6.8.0","isDraft":false,"isPrerelease":false,"publishedAt":"2026-11-17T02:25:51Z","url":"https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v6.8.0","description":"## [6.8.0](https://github.com/terraform-aws-modules/terraform-aws-vpc/compare/v6.7.4...v6.8.0) (2026-11-17)\n\n### Features\n\n* Add toggle to disable default route creation for public route tables ([#1188](https://github.com/terraform-aws-modules/terraform-aws-vpc/issues/1188)) ([4ca30c3](https://github.com/terraform-aws-modules/terraform-aws-vpc/commit/4ca30c31fdd2ac60d29793bff77daf720e085540))\n"}}}}'
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/json; charset=utf-8
+            Date:
+                - Thu, 19 Nov 2026 20:20:00 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept-Encoding, Accept, X-Requested-With
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.v4; format=json
+            X-Ratelimit-Limit:
+                - "5000"
+            X-Ratelimit-Remaining:
+                - "4975"
+            X-Ratelimit-Reset:
+                - "1795123023"
+            X-Ratelimit-Resource:
+                - graphql
+            X-Ratelimit-Used:
+                - "25"
+            X-Xss-Protection:
+                - "0"
+        status: 200 OK
+        code: 200
+        duration: 302.373708ms
+    - id: 8
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 262
+        host: api.github.com
+        body: |
+            {"query":"query($name:String!$owner:String!$t0:String!){repository(owner: $owner, name: $name){r0: release(tagName: $t0){tagName,isDraft,isPrerelease,publishedAt,url,description}}}","variables":{"name":"terraform-null-label","owner":"cloudposse","t0":"0.25.0"}}
+        headers:
+            Content-Type:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.github.com/graphql
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"data":{"repository":{"r0":{"tagName":"0.25.0","isDraft":false,"isPrerelease":false,"publishedAt":"2021-08-25T17:47:02Z","url":"https://github.com/cloudposse/terraform-null-label/releases/tag/0.25.0","description":"<details>\r\n  <summary>Add \"tenant\", \"labels_as_tags\", and \"descriptors\" @Nuru (#132)</summary>\r\n\r\n  ## what\r\n- Add additional label and `id` component: `tenant`\r\n- New input `labels_as_tags` controls which labels are exported as tags\r\n- New input `descriptor_formats` generates new output `descriptors`\r\n- Update README, remove link to obsolete `terraform-terraform-label`\r\n\r\n## why\r\n- Support users that host resources on behalf of and/or dedicated to single customers\r\n- Supersedes and closes #131, giving people control over which tags the module generates\r\n- Simple mechanism for creating multiple identifiers from the same inputs, reducing the need to create multiple instances of `null-label`\r\n- Document `tenant`, `labels_as_tags`, `descriptor_formats`, add additional clarification, stop promoting obsolete module\r\n\r\n\r\n</details>\r\n\r\n<details>\r\n  <summary>Fix: Update README Snippets @korenyoni (#130)</summary>\r\n\r\n  ## what\r\n* Update README snippets to reflect use of Terraform Registry.\r\n\r\n## why\r\n* Including snippets that reflect use of the Terraform Registry make it easier for users to quickly instantiate a null_label module.\r\n* README is out of date and does not include snippets that reflect use of the Terraform Registry.\r\n\r\n## references\r\n* N/A\r\n\r\n\r\n</details>\r\n\r\n<details>\r\n  <summary>Bridgecrew compliance @Nuru (#125)</summary>\r\n\r\n  ## what\r\n- Resolve Bridgecrew compliance complaint about example Autoscaling Group (BC_AWS_GENERAL_31)\r\n- Fix typo in README\r\n- Include Terraform lock file in `.gitignore`\r\n\r\n## why\r\n- Get clean Bridgecrew badge\r\n- Correct confusing error\r\n- Ensure lock files are not checked into GitHub\r\n\r\n## note\r\nThe PR can and should be merged into `master` to update README and Bridgecrew without triggering a new release/version. These changes have no effect on the actual module in use and a release will create unnecessary ripple effects. However, merging to `master` will update the README and badges, so is worthwhile, and the changes will move forward into the next release.\r\n\r\n</details>\r\n\r\n<details>\r\n  <summary>Properly output descriptors of chained modules @Nuru (#133)</summary>\r\n\r\n  ## what\r\n- Properly output descriptors of chained modules\r\n\r\n## why\r\n- Bug fix; implement intended behavior\r\n\r\n</details>\r\n"}}}}'
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/json; charset=utf-8
+            Date:
+                - Thu, 19 Nov 2026 20:20:00 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept-Encoding, Accept, X-Requested-With
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.v4; format=json
+            X-Ratelimit-Limit:
+                - "5000"
+            X-Ratelimit-Remaining:
+                - "4976"
+            X-Ratelimit-Reset:
+                - "1795123023"
+            X-Ratelimit-Resource:
+                - graphql
+            X-Ratelimit-Used:
+                - "24"
+            X-Xss-Protection:
+                - "0"
+        status: 200 OK
+        code: 200
+        duration: 397.100417ms
+    - id: 9
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 423
+        host: api.github.com
+        body: |
+            {"query":"query($cursor:String$first:Int!$name:String!$owner:String!){repository(owner: $owner, name: $name){releases(first: $first, after: $cursor, orderBy: {field: CREATED_AT, direction: DESC}){nodes{tagName,isDraft,isPrerelease,publishedAt,url},pageInfo{hasNextPage,endCursor}}}}","variables":{"cursor":"Y3Vyc29yOnYyOpK0MjAxNy0xMC0xOFQwOTowMDoxN1rOAHyMGA==","first":100,"name":"external-dns","owner":"kubernetes-sigs"}}
+        headers:
+            Content-Type:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.github.com/graphql
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"data":{"repository":{"releases":{"nodes":[{"tagName":"v0.4.6","isDraft":false,"isPrerelease":false,"publishedAt":"2017-10-12T18:20:11Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.4.6"},{"tagName":"v0.4.5","isDraft":false,"isPrerelease":false,"publishedAt":"2017-09-26T20:11:36Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.4.5"},{"tagName":"v0.4.4","isDraft":false,"isPrerelease":false,"publishedAt":"2017-08-17T20:43:40Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.4.4"},{"tagName":"v0.4.3","isDraft":false,"isPrerelease":false,"publishedAt":"2017-08-10T19:03:13Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.4.3"},{"tagName":"v0.4.2","isDraft":false,"isPrerelease":false,"publishedAt":"2017-08-03T07:56:26Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.4.2"},{"tagName":"v0.4.1","isDraft":false,"isPrerelease":false,"publishedAt":"2017-07-29T09:59:30Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.4.1"},{"tagName":"v0.4.0","isDraft":false,"isPrerelease":false,"publishedAt":"2017-07-21T15:49:30Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.4.0"},{"tagName":"v0.4.0-alpha.2","isDraft":false,"isPrerelease":true,"publishedAt":"2017-07-20T21:40:14Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.4.0-alpha.2"},{"tagName":"v0.4.0-alpha.1","isDraft":false,"isPrerelease":true,"publishedAt":"2017-06-19T09:16:12Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.4.0-alpha.1"},{"tagName":"v0.4.0-alpha.0","isDraft":false,"isPrerelease":true,"publishedAt":"2017-06-19T09:12:55Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.4.0-alpha.0"},{"tagName":"v0.3.0","isDraft":false,"isPrerelease":false,"publishedAt":"2017-05-08T15:41:15Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.3.0"},{"tagName":"v0.3.0-beta.2","isDraft":false,"isPrerelease":true,"publishedAt":"2017-05-05T18:05:37Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.3.0-beta.2"},{"tagName":"v0.3.0-beta.1","isDraft":false,"isPrerelease":true,"publishedAt":"2017-05-05T18:04:33Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.3.0-beta.1"},{"tagName":"v0.3.0-beta.0","isDraft":false,"isPrerelease":true,"publishedAt":"2017-04-28T14:58:25Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.3.0-beta.0"},{"tagName":"v0.2.1","isDraft":false,"isPrerelease":false,"publishedAt":"2017-04-14T14:29:03Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.2.1"},{"tagName":"v0.3.0-alpha.0","isDraft":false,"isPrerelease":true,"publishedAt":"2017-04-14T14:26:30Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.3.0-alpha.0"},{"tagName":"v0.2.0","isDraft":false,"isPrerelease":false,"publishedAt":"2017-04-07T13:11:23Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.2.0"},{"tagName":"v0.2.0-beta.1","isDraft":false,"isPrerelease":true,"publishedAt":"2017-04-07T12:23:28Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.2.0-beta.1"},{"tagName":"v0.2.0-beta.0","isDraft":false,"isPrerelease":true,"publishedAt":"2017-04-06T19:08:57Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.2.0-beta.0"},{"tagName":"v0.1.1","isDraft":false,"isPrerelease":false,"publishedAt":"2017-04-06T19:07:16Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.1.1"},{"tagName":"v0.1.0","isDraft":false,"isPrerelease":false,"publishedAt":"2017-03-30T09:39:43Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.1.0"},{"tagName":"v0.1.0-beta.1","isDraft":false,"isPrerelease":true,"publishedAt":"2017-03-27T12:54:41Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.1.0-beta.1"},{"tagName":"v0.1.0-beta.0","isDraft":false,"isPrerelease":true,"publishedAt":"2017-03-17T16:58:33Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.1.0-beta.0"}],"pageInfo":{"hasNextPage":false,"endCursor":"Y3Vyc29yOnYyOpK0MjAxNy0wMy0xN1QxNjozNToxMFrOAFhCrQ=="}}}}}'
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/json; charset=utf-8
+            Date:
+                - Thu, 19 Nov 2026 20:20:00 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept-Encoding, Accept, X-Requested-With
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.v4; format=json
+            X-Ratelimit-Limit:
+                - "5000"
+            X-Ratelimit-Remaining:
+                - "4974"
+            X-Ratelimit-Reset:
+                - "1795123023"
+            X-Ratelimit-Resource:
+                - graphql
+            X-Ratelimit-Used:
+                - "26"
+            X-Xss-Protection:
+                - "0"
+        status: 200 OK
+        code: 200
+        duration: 443.940292ms
+    - id: 10
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 283
+        host: api.github.com
+        body: |
+            {"query":"query($name:String!$owner:String!$t0:String!){repository(owner: $owner, name: $name){r0: release(tagName: $t0){tagName,isDraft,isPrerelease,publishedAt,url,description}}}","variables":{"name":"external-dns","owner":"kubernetes-sigs","t0":"external-dns-helm-chart-1.24.0"}}
+        headers:
+            Content-Type:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.github.com/graphql
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"data":{"repository":{"r0":{"tagName":"external-dns-helm-chart-1.24.0","isDraft":false,"isPrerelease":false,"publishedAt":"2026-11-19T17:15:01Z","url":"https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.24.0","description":"\n### Added\n\n- Add value `.fqdnTemplates` to configure [FQDN templates](https://kubernetes-sigs.github.io/external-dns/latest/docs/advanced/fqdn-templating) for generating DNS records. [#6394](https://github.com/kubernetes-sigs/external-dns/pull/6394) @Schluggi\n- Add value `eventsEmit` to set the _Kubernetes_ events _ExternalDNS_ emits and grant the matching RBAC to create `events.k8s.io` events. [#6817](https://github.com/kubernetes-sigs/external-dns/pull/6817) @dlanov\n- Add value `hostUsers` to set the `Pod` `hostUsers` field, so that the `Pod` can run in a [user namespace](https://kubernetes.io/docs/concepts/workloads/pods/user-namespaces/). [#6827](https://github.com/kubernetes-sigs/external-dns/pull/6827) @A-RYAN-1\n\n### Changed\n\n- Update bundled `DNSEndpoint` and `DNSRecord` CRDs with admission validation. [#6620](https://github.com/kubernetes-sigs/external-dns/pull/6620) @mloiseleur\n- Default `provider.webhook.securityContext` to no privilege escalation, no capabilities and a read-only root filesystem, like the `external-dns` container, so the `Pod` meets the _restricted_ Pod Security Standard. [#6785](https://github.com/kubernetes-sigs/external-dns/pull/6785) @LorbusChris\n- Update _ExternalDNS_ OCI image version to [`v0.24.0`](https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.24.0). [#6914](https://github.com/kubernetes-sigs/external-dns/pull/6914) @samuelmasuy"}}}}'
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/json; charset=utf-8
+            Date:
+                - Thu, 19 Nov 2026 20:20:00 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept-Encoding, Accept, X-Requested-With
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.v4; format=json
+            X-Ratelimit-Limit:
+                - "5000"
+            X-Ratelimit-Remaining:
+                - "4973"
+            X-Ratelimit-Reset:
+                - "1795123023"
+            X-Ratelimit-Resource:
+                - graphql
+            X-Ratelimit-Used:
+                - "27"
+            X-Xss-Protection:
+                - "0"
+        status: 200 OK
+        code: 200
+        duration: 432.621917ms

@@ -65,9 +65,11 @@ type Source struct {
 	Heading        string   `json:"heading,omitempty"         yaml:"heading"`
 	IgnoreSections []string `json:"ignore_sections,omitempty" yaml:"ignore_sections"`
 	FromHeading    string   `json:"from_heading,omitempty"    yaml:"from_heading"`
-	Content        string   `json:"content,omitempty"         yaml:"content"` // web-doc: selector of the element to convert
-	Strip          []string `json:"strip,omitempty"           yaml:"strip"`   // web-doc: selectors of elements to drop
-	Anchor         string   `json:"anchor,omitempty"          yaml:"anchor"`  // web-doc: id template of a version's element
+	Content        string   `json:"content,omitempty"         yaml:"content"`     // web-doc: selector of the element to convert
+	Strip          []string `json:"strip,omitempty"           yaml:"strip"`       // web-doc: selectors of elements to drop
+	Anchor         string   `json:"anchor,omitempty"          yaml:"anchor"`      // web-doc: id template of a version's element
+	SiteURL        string   `json:"site_url,omitempty"        yaml:"site_url"`    // changelog-file: base URL of the Hugo site
+	ContentDir     string   `json:"content_dir,omitempty"     yaml:"content_dir"` // changelog-file: Hugo content directory
 	JSON           *JSONMap `json:"json,omitempty"            yaml:"json"`
 }
 

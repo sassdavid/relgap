@@ -1,0 +1,256 @@
+{
+  "schema_version": "1",
+  "tool": "relgap",
+  "version": "dev",
+  "generated_at": "2026-11-19T00:00:00Z",
+  "data": {
+    "repos": [
+      "."
+    ],
+    "pins": [
+      {
+        "tool": "image:postgres",
+        "raw_name": "postgres",
+        "kind": "image",
+        "value": "17.6",
+        "version": "17.6",
+        "exact": false,
+        "match": "prefix",
+        "location": {
+          "repo": ".",
+          "file": ".env",
+          "line": 2,
+          "detector": "renovate-comment"
+        }
+      },
+      {
+        "tool": "terraform",
+        "raw_name": "hashicorp/terraform",
+        "kind": "tool",
+        "value": "1.14.0",
+        "version": "1.14.0",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": ".",
+          "file": ".github/workflows/ci.yml",
+          "line": 4,
+          "detector": "renovate-comment"
+        }
+      },
+      {
+        "tool": "terragrunt",
+        "raw_name": "TG_VERSION",
+        "kind": "tool",
+        "value": "1.2.1",
+        "version": "1.2.1",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": ".",
+          "file": "Dockerfile",
+          "line": 2,
+          "detector": "dockerfile"
+        }
+      },
+      {
+        "tool": "golangci-lint",
+        "raw_name": "golangci/golangci-lint",
+        "kind": "tool",
+        "value": "v2.6.1",
+        "version": "2.6.1",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": ".",
+          "file": "Makefile",
+          "line": 2,
+          "detector": "renovate-comment"
+        }
+      },
+      {
+        "tool": "prettier",
+        "raw_name": "prettier",
+        "kind": "tool",
+        "value": "3.6.2",
+        "version": "3.6.2",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": ".",
+          "file": "Makefile",
+          "line": 4,
+          "detector": "renovate-comment"
+        }
+      },
+      {
+        "tool": "pypi:no-such-project-relgap",
+        "raw_name": "no-such-project-relgap",
+        "kind": "tool",
+        "value": "0.4.0",
+        "version": "0.4.0",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": ".",
+          "file": "Makefile",
+          "line": 6,
+          "detector": "renovate-comment"
+        }
+      },
+      {
+        "tool": "image:ghcr.io/example/app",
+        "raw_name": "ghcr.io/example/app",
+        "kind": "image",
+        "value": "2.4.0",
+        "version": "2.4.0",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": ".",
+          "file": "charts/app/Chart.yaml",
+          "line": 5,
+          "detector": "renovate-comment"
+        }
+      },
+      {
+        "tool": "protoc",
+        "raw_name": "protocolbuffers/protobuf",
+        "kind": "tool",
+        "value": "4.33.0",
+        "version": "4.33.0",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": ".",
+          "file": "pom.xml",
+          "line": 4,
+          "detector": "renovate-comment"
+        }
+      },
+      {
+        "tool": "helm",
+        "raw_name": "helm/helm",
+        "kind": "tool",
+        "value": "v3.19.0",
+        "version": "3.19.0",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": ".",
+          "file": "scripts/install.sh",
+          "line": 3,
+          "detector": "renovate-comment"
+        }
+      },
+      {
+        "tool": "image:quay.io/argoproj/argocd",
+        "raw_name": "quay.io/argoproj/argocd",
+        "kind": "image",
+        "value": "v3.2.0",
+        "version": "3.2.0",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": ".",
+          "file": "values.yaml",
+          "line": 4,
+          "detector": "renovate-comment"
+        }
+      },
+      {
+        "tool": "chart:cert-manager",
+        "raw_name": "cert-manager",
+        "kind": "chart",
+        "registry_url": "https://charts.jetstack.io",
+        "value": "1.19.1",
+        "version": "1.19.1",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": ".",
+          "file": "values.yaml",
+          "line": 9,
+          "detector": "renovate-comment"
+        }
+      },
+      {
+        "tool": "chart:karpenter",
+        "raw_name": "karpenter",
+        "kind": "chart",
+        "registry_url": "oci://public.ecr.aws/karpenter",
+        "value": "1.8.1",
+        "version": "1.8.1",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": ".",
+          "file": "variables.tf",
+          "line": 4,
+          "detector": "renovate-comment"
+        }
+      },
+      {
+        "tool": "terragrunt",
+        "raw_name": "gruntwork-io/terragrunt",
+        "kind": "tool",
+        "value": "v1.2.1",
+        "version": "1.2.1",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": ".",
+          "file": "variables.tf",
+          "line": 10,
+          "detector": "renovate-comment"
+        }
+      },
+      {
+        "tool": "tfprovider:hashicorp/aws",
+        "raw_name": "aws",
+        "kind": "tfprovider",
+        "value": "6.20.0",
+        "version": "6.20.0",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": ".",
+          "file": "variables.tf",
+          "line": 15,
+          "detector": "renovate-comment"
+        }
+      },
+      {
+        "tool": "tfmodule:terraform-aws-modules/vpc/aws",
+        "raw_name": "terraform-aws-modules/vpc/aws",
+        "kind": "tfmodule",
+        "value": "6.5.0",
+        "version": "6.5.0",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": ".",
+          "file": "variables.tf",
+          "line": 17,
+          "detector": "renovate-comment"
+        }
+      },
+      {
+        "tool": "kubectl",
+        "raw_name": "kubectl",
+        "kind": "tool",
+        "value": "1.34.2",
+        "version": "1.34.2",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": ".",
+          "file": "variables.tf",
+          "line": 19,
+          "detector": "renovate-comment"
+        }
+      }
+    ]
+  },
+  "errors": []
+}

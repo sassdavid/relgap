@@ -562,17 +562,29 @@ Found while writing M26:
   and the icons follow Evil Martians' favicon guide. VitePress stays at 1.6.4 (2.0 is alpha.21),
   and oxfmt at 0.78.0 (0.79.0 is under the 3-day minimum age).
 
-### M27: Renovate annotations and Terraform module pins (relgap only) ([pin-discovery](specs/pin-discovery.md#planned-renovate-annotations-and-terraform-modules-m27))
+### M27: Renovate annotations and Terraform module pins (relgap only) ([pin-discovery](specs/pin-discovery.md#renovate-annotations-and-terraform-modules-m27))
 Scope: pins that only a Renovate regex manager or a Terraform `module` block names today. Found on
 2026-11-19 while testing 0.9.1 on a Terraform and Helm module repository, whose chart versions are
 variable defaults such as `chart_version = optional(string, "1.23.0")` under a `# renovate:`
-comment.
-- [ ] A `# renovate: datasource=<ds> depName=<name>` comment above a line with a version string
+comment. Decisions: [ADR-0015](adr/0015-renovate-annotations-and-terraform-modules.md).
+- [x] A `# renovate: datasource=<ds> depName=<name>` comment above a line with a version string
   makes that version a pin in the files the spec lists, with the datasource mapping it gives.
-- [ ] `module` blocks with a registry source and a `version` give `tfmodule:` pins that resolve
+  (pin-discovery criterion 8, `TestSpec_pindiscovery_8`: the new `renovate-comment` detector,
+  fixture `pins_renovate_comment.txtar`. `--renovate-report` helm dependencies keep their
+  `registryUrls` too.)
+- [x] `module` blocks with a registry source and a `version` give `tfmodule:` pins that resolve
   through the Terraform registry, and GitHub git sources with `?ref=` give `github:` pins.
-- [ ] `outdated`, `digest --base`, `drift` and `--pull-request` work on a fixture repository with
+  (pin-discovery criterion 9, `TestSpec_pindiscovery_9` and `TestRemoteModule`. Terragrunt
+  `terraform { source }` with `tfr://` or `?ref=` too.)
+- [x] `outdated`, `digest --base`, `drift` and `--pull-request` work on a fixture repository with
   both kinds of pins.
-- [ ] Hugo `{{<ref "...">}}` and `{{< relref >}}` link targets in a changelog file become working
+  (pin-discovery criterion 10, `TestSpec_pindiscovery_10` and `TestRemoteChartRepo`: the chart's
+  `registryUrl` picks the external-dns Artifact Hub repository, which a bare `chart:external-dns`
+  can't, and `Chart.yaml` `repository` URLs do the same.)
+- [x] Hugo `{{<ref "...">}}` and `{{< relref >}}` link targets in a changelog file become working
   links: karpenter's upgrade guide gives `blob/HEAD/...{{<ref ...` URLs in its digest entries today
   (found with PR #87).
+  (source-adapters criterion 7, `TestSpec_source_adapters_7`: karpenter's entry sets
+  `site_url: https://karpenter.sh/`, and `{{% alert %}}` lines are dropped. The 11 karpenter.sh
+  links in a live `digest karpenter 1.0.0..1.12.0` answer 200, and the 9 with a fragment have that
+  id on the page.)

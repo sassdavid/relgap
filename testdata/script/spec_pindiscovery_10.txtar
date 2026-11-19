@@ -1,0 +1,108 @@
+# outdated, drift, digest --base and --pull-request on repositories whose pins come from a
+# # renovate: comment and from Terraform module blocks. The chart's registryUrl picks the
+# external-dns Artifact Hub repository, so the chart name, which several repositories share,
+# resolves. The module resolves through the Terraform registry with the tag prefix v.
+# Record again with: VCR_RECORD=1 TEST_GH_TOKEN=$(gh auth token) go test ./internal/cli -run TestSpec_pindiscovery_10
+[!git] skip
+usegit
+env TEST_NOW=2026-11-19T12:00:00Z
+env GH_TOKEN=$TEST_GH_TOKEN
+env TEST_CASSETTE=$CASSETTES/resolve/modules.yaml,$CASSETTES/resolve/chart-registries.yaml,$CASSETTES/pins/annotations-and-modules.yaml
+
+exec relgap pins repo --format json
+stdout '"tool": "chart:external-dns",\n\s+"raw_name": "external-dns",\n\s+"kind": "chart",\n\s+"registry_url": "https://kubernetes-sigs.github.io/external-dns"'
+stdout '"tool": "tfmodule:terraform-aws-modules/vpc/aws"'
+stdout '"tool": "github:cloudposse/terraform-null-label"'
+
+# drift makes no request and groups the chart by its name.
+exec relgap drift repo other --format json
+jsonschema drift-v1.json stdout
+golden stdout drift/annotations-and-modules.json
+
+exec relgap outdated repo --format json
+jsonschema outdated-v1.json stdout
+golden stdout outdated/annotations-and-modules.json
+stdout '"tool": "chart:external-dns/external-dns"'
+stdout '"tool": "tfmodule:terraform-aws-modules/vpc/aws"'
+
+cd repo
+exec git init -q -b main
+exec git add .
+exec git commit -q -m base
+cp ../change/variables.tf variables.tf
+cp ../change/modules.tf modules.tf
+
+exec relgap digest --base main --format json
+jsonschema digest-v1.json stdout
+golden stdout digest/annotations-and-modules.json
+stdout '"repo": "kubernetes-sigs/external-dns",\n\s+"from": "1\.23\.0",\n\s+"to": "1\.24\.0"'
+stdout '"repo": "terraform-aws-modules/terraform-aws-vpc",\n\s+"from": "6\.7\.3",\n\s+"to": "6\.8\.0"'
+stdout '"repo": "cloudposse/terraform-null-label",\n\s+"from": "0\.24\.1",\n\s+"to": "0\.25\.0"'
+! stderr 'not digested'
+
+# A Renovate branch for the module digests only the module.
+exec git checkout -q -b renovate/terraform-aws-modules-vpc-aws-6.x
+exec git commit -q -am change
+exec git checkout -q main
+exec git checkout -q renovate/terraform-aws-modules-vpc-aws-6.x
+env GITHUB_EVENT_PATH=$WORK/renovate.json
+exec relgap digest --pull-request --format json
+stdout '"repo": "terraform-aws-modules/terraform-aws-vpc"'
+! stdout '"repo": "(kubernetes-sigs/external-dns|cloudposse/terraform-null-label)"'
+stderr 'not digested: chart:external-dns 1\.23\.0 to 1\.24\.0 \(variables\.tf:4\): the Renovate branch renovate/terraform-aws-modules-vpc-aws-6\.x names another dependency'
+
+-- repo/variables.tf --
+variable "external_dns" {
+  type = object({
+    # renovate: datasource=helm depName=external-dns registryUrl=https://kubernetes-sigs.github.io/external-dns
+    chart_version = optional(string, "1.23.0")
+  })
+}
+-- repo/modules.tf --
+module "vpc" {
+  source  = "terraform-aws-modules/vpc/aws"
+  version = "6.7.3"
+}
+
+module "label" {
+  source = "git::https://github.com/cloudposse/terraform-null-label.git?ref=0.24.1"
+}
+-- other/modules.tf --
+module "vpc" {
+  source  = "terraform-aws-modules/vpc/aws"
+  version = "6.6.0"
+}
+
+module "label" {
+  source = "github.com/cloudposse/terraform-null-label?ref=0.25.0"
+}
+-- other/values.yaml --
+external-dns:
+  # renovate: datasource=helm depName=external-dns registryUrl=https://kubernetes-sigs.github.io/external-dns
+  version: 1.23.0
+-- change/variables.tf --
+variable "external_dns" {
+  type = object({
+    # renovate: datasource=helm depName=external-dns registryUrl=https://kubernetes-sigs.github.io/external-dns
+    chart_version = optional(string, "1.24.0")
+  })
+}
+-- change/modules.tf --
+module "vpc" {
+  source  = "terraform-aws-modules/vpc/aws"
+  version = "6.8.0"
+}
+
+module "label" {
+  source = "git::https://github.com/cloudposse/terraform-null-label.git?ref=0.25.0"
+}
+-- renovate.json --
+{
+  "action": "opened",
+  "pull_request": {
+    "number": 9,
+    "body": "This PR contains the following updates:\n\n<!--renovate-debug:eyJjcmVhdGVkSW5WZXIiOiI0My4xMC4yIiwidXBkYXRlZEluVmVyIjoiNDMuMTAuMiIsInRhcmdldEJyYW5jaCI6Im1haW4iLCJsYWJlbHMiOlsiZGVwZW5kZW5jaWVzIl19-->\n",
+    "base": {"ref": "main", "sha": "0123456789abcdef0123456789abcdef01234567"},
+    "head": {"ref": "renovate/terraform-aws-modules-vpc-aws-6.x", "sha": "89abcdef0123456789abcdef0123456789abcdef"}
+  }
+}

@@ -194,3 +194,69 @@ func TestParseGitHubURL(t *testing.T) {
 		assert.Equal(t, tt.sub, sub, tt.in)
 	}
 }
+
+// TestRemoteModule: a module's repository comes from the Terraform registry's source field, and
+// its tag prefix from the tag of the latest version.
+func TestRemoteModule(t *testing.T) {
+	t.Parallel()
+	rt := vcr.ForTest(t, filepath.Join("..", "..", "..", "testdata", "cassettes", "resolve", "modules"), vcr.Scrubber{})
+	r := remote.New(httpx.New(httpx.Options{Logger: slog.New(slog.DiscardHandler), Transport: rt}), nil, nil)
+	tests := []struct {
+		name    string
+		want    registry.Found
+		wantErr error
+	}{
+		{
+			name: "terraform-aws-modules/vpc/aws",
+			want: registry.Found{
+				Repo:      "terraform-aws-modules/terraform-aws-vpc",
+				TagPrefix: "v",
+				Layer:     registry.LayerTerraform,
+			},
+		},
+		{
+			name: "cloudposse/label/null",
+			want: registry.Found{Repo: "cloudposse/terraform-null-label", Layer: registry.LayerTerraform},
+		},
+		{name: "terraform-aws-modules/vpc/google", wantErr: registry.ErrUnknownTool},
+		{name: "hashicorp/no-such-module-relgap/aws", wantErr: registry.ErrUnknownTool},
+		{name: "terraform-aws-modules/vpc", wantErr: registry.ErrUnsupported},
+	}
+	for _, tt := range tests {
+		got, err := r.Find(t.Context(), registry.KindTFModule, tt.name)
+		if tt.wantErr != nil {
+			require.ErrorIs(t, err, tt.wantErr, tt.name)
+			continue
+		}
+		require.NoError(t, err, tt.name)
+		assert.Equal(t, tt.want, *got, tt.name)
+	}
+}
+
+// TestRemoteChartRepo: a Helm repository URL maps to the Artifact Hub repository at that URL
+// that has the chart. An OCI chart is usually listed under its own URL, and a bare OCI registry
+// URL can belong to a mirror without the chart.
+func TestRemoteChartRepo(t *testing.T) {
+	t.Parallel()
+	rt := vcr.ForTest(
+		t,
+		filepath.Join("..", "..", "..", "testdata", "cassettes", "resolve", "chart-registries"),
+		vcr.Scrubber{},
+	)
+	r := remote.New(httpx.New(httpx.Options{Logger: slog.New(slog.DiscardHandler), Transport: rt}), nil, nil)
+	tests := []struct {
+		url, chart, want string
+	}{
+		{"oci://public.ecr.aws/karpenter", "karpenter", "aws-karpenter"},
+		{"https://kubernetes-sigs.github.io/external-dns", "external-dns", "external-dns"},
+		{"https://charts.jetstack.io", "cert-manager", "cert-manager"},
+		{"oci://registry-1.docker.io/bitnamicharts", "redis", ""},
+		{"https://charts.example.invalid/stable", "app", ""},
+	}
+	for _, tt := range tests {
+		got, ok, err := r.ChartRepo(t.Context(), tt.url, tt.chart)
+		require.NoError(t, err, tt.url)
+		assert.Equal(t, tt.want != "", ok, tt.url)
+		assert.Equal(t, tt.want, got, tt.url)
+	}
+}

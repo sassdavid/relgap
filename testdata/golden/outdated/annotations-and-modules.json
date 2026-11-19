@@ -1,0 +1,128 @@
+{
+  "schema_version": "1",
+  "tool": "relgap",
+  "version": "dev",
+  "generated_at": "2026-11-19T12:00:00Z",
+  "data": {
+    "repos": [
+      "repo"
+    ],
+    "pins": [
+      {
+        "tool": "chart:external-dns/external-dns",
+        "repo": "kubernetes-sigs/external-dns",
+        "pin": {
+          "tool": "chart:external-dns/external-dns",
+          "raw_name": "external-dns",
+          "kind": "chart",
+          "registry_url": "https://kubernetes-sigs.github.io/external-dns",
+          "value": "1.23.0",
+          "version": "1.23.0",
+          "exact": true,
+          "match": "exact",
+          "location": {
+            "repo": "repo",
+            "file": "variables.tf",
+            "line": 4,
+            "detector": "renovate-comment"
+          }
+        },
+        "current": "1.23.0",
+        "latest": "1.24.0",
+        "behind": {
+          "releases": 1,
+          "major": 0,
+          "minor": 1,
+          "patch": 0,
+          "since": "2026-11-19T17:15:01Z"
+        },
+        "counts": {
+          "breaking": 0,
+          "deprecation": 0,
+          "feature": 3,
+          "fix": 0,
+          "other": 0,
+          "security": 0
+        },
+        "hidden": 3,
+        "status": "outdated"
+      },
+      {
+        "tool": "github:cloudposse/terraform-null-label",
+        "repo": "cloudposse/terraform-null-label",
+        "pin": {
+          "tool": "github:cloudposse/terraform-null-label",
+          "raw_name": "git::https://github.com/cloudposse/terraform-null-label.git",
+          "kind": "tool",
+          "value": "0.24.1",
+          "version": "0.24.1",
+          "exact": true,
+          "match": "exact",
+          "location": {
+            "repo": "repo",
+            "file": "modules.tf",
+            "line": 7,
+            "detector": "terraform"
+          }
+        },
+        "current": "0.24.1",
+        "latest": "0.25.0",
+        "behind": {
+          "releases": 1,
+          "major": 0,
+          "minor": 1,
+          "patch": 0,
+          "since": "2021-08-25T17:47:02Z"
+        },
+        "counts": {
+          "breaking": 1,
+          "deprecation": 0,
+          "feature": 1,
+          "fix": 1,
+          "other": 0,
+          "security": 0
+        },
+        "hidden": 23,
+        "status": "outdated"
+      },
+      {
+        "tool": "tfmodule:terraform-aws-modules/vpc/aws",
+        "repo": "terraform-aws-modules/terraform-aws-vpc",
+        "pin": {
+          "tool": "tfmodule:terraform-aws-modules/vpc/aws",
+          "raw_name": "terraform-aws-modules/vpc/aws",
+          "kind": "tfmodule",
+          "value": "6.7.3",
+          "version": "6.7.3",
+          "exact": true,
+          "match": "exact",
+          "location": {
+            "repo": "repo",
+            "file": "modules.tf",
+            "line": 3,
+            "detector": "terraform"
+          }
+        },
+        "current": "6.7.3",
+        "latest": "6.8.0",
+        "behind": {
+          "releases": 2,
+          "major": 0,
+          "minor": 1,
+          "patch": 1,
+          "since": "2026-11-16T22:42:45Z"
+        },
+        "counts": {
+          "breaking": 0,
+          "deprecation": 0,
+          "feature": 1,
+          "fix": 2,
+          "other": 0,
+          "security": 0
+        },
+        "status": "outdated"
+      }
+    ]
+  },
+  "errors": []
+}

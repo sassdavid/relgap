@@ -49,6 +49,7 @@ Changelog sources, tried and merged in order. Empty means auto-discovery.
 |---|---|---|---|---|
 | `sources[].anchor` | string |  |  | web-doc: id of a version's element on the page, with the path_template placeholders, such as go{version}. |
 | `sources[].content` | string |  |  | web-doc: selector (tag, #id and .class without spaces) of the element to convert. Default main, else body. |
+| `sources[].content_dir` | string |  |  | changelog-file: the Hugo content directory in the repository, such as website/content/en. Default: the path up to the last content/ directory, plus a language directory after it. |
 | `sources[].from_heading` | string |  |  | Heading whose section holds the upgrade notes. |
 | `sources[].heading` | string |  |  | Regular expression for a version's heading; {version} is replaced first. |
 | `sources[].ignore_sections` | list of strings |  |  | Headings, or heading paths joined with " › ", whose entries are dropped. A heading matches when it equals the item or starts with it and a space. |
@@ -60,6 +61,7 @@ Changelog sources, tried and merged in order. Empty means auto-discovery.
 | `sources[].kind` | string | yes | `gh-release`, `changelog-file`, `structured-json`, `web-doc`, `upgrade-guide`, `upgrade-notes` |  |
 | `sources[].path_template` | string |  |  | File path in the repo. Placeholders: {version}, {major}, {minor} (the minor number alone) and {tag}; upgrade-guide also has {prev_minor} (such as 3.5) and {prev_major}. |
 | `sources[].ref` | string |  |  | Git ref; may be a template such as v{major}.{minor}. |
+| `sources[].site_url` | string |  | pattern `^https://` | changelog-file: base URL of the project's Hugo site. Hugo ref and relref links in the file point at its pages; without it they keep their text and lose the link. |
 | `sources[].strip` | list of strings |  |  | web-doc: selectors of elements dropped before converting, such as a.headerlink. |
 | `sources[].url_template` | string |  | pattern `^https://` | https URL on a host relgap allows (go.dev, docs.python.org, api.adoptium.net); same placeholders as path_template. |
 

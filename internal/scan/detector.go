@@ -7,19 +7,20 @@ import (
 
 // Detector names, as shown in Location.Detector.
 const (
-	DetectorMise         = "mise"
-	DetectorToolVersions = "tool-versions"
-	DetectorAqua         = "aqua"
-	DetectorIdiomatic    = "idiomatic"
-	DetectorTerraform    = "terraform"
-	DetectorTFLock       = "tf-lock"
-	DetectorTerragrunt   = "terragrunt"
-	DetectorDockerfile   = "dockerfile"
-	DetectorCI           = "ci"
-	DetectorHelm         = "helm"
-	DetectorGeneric      = "generic"
-	DetectorRenovate     = "renovate"
-	DetectorTFCensus     = "tfcensus"
+	DetectorMise            = "mise"
+	DetectorToolVersions    = "tool-versions"
+	DetectorAqua            = "aqua"
+	DetectorIdiomatic       = "idiomatic"
+	DetectorTerraform       = "terraform"
+	DetectorTFLock          = "tf-lock"
+	DetectorTerragrunt      = "terragrunt"
+	DetectorDockerfile      = "dockerfile"
+	DetectorCI              = "ci"
+	DetectorHelm            = "helm"
+	DetectorGeneric         = "generic"
+	DetectorRenovate        = "renovate"
+	DetectorRenovateComment = "renovate-comment"
+	DetectorTFCensus        = "tfcensus"
 )
 
 // Detectors returns every detector name, sorted. renovate reads --renovate-report and tfcensus
@@ -27,7 +28,7 @@ const (
 func Detectors() []string {
 	return []string{
 		DetectorAqua, DetectorCI, DetectorDockerfile, DetectorGeneric, DetectorHelm, DetectorIdiomatic,
-		DetectorMise, DetectorRenovate, DetectorTerraform, DetectorTerragrunt, DetectorTFLock,
+		DetectorMise, DetectorRenovate, DetectorRenovateComment, DetectorTerraform, DetectorTerragrunt, DetectorTFLock,
 		DetectorTFCensus, DetectorToolVersions,
 	}
 }
@@ -67,7 +68,8 @@ func DetectorDocs() []DetectorDoc {
 		},
 		{
 			DetectorHelm, "Chart.yaml",
-			"dependencies[] as chart pins, and appVersion as a pin of the tool named like the chart",
+			"dependencies[] as chart pins with their repository URL, and appVersion as a pin of the tool " +
+				"named like the chart",
 			[]string{"Chart.yaml", "charts/app/Chart.yaml"},
 		},
 		{
@@ -90,14 +92,22 @@ func DetectorDocs() []DetectorDoc {
 			nil,
 		},
 		{
+			DetectorRenovateComment, "*.tf, *.tfvars, *.hcl, *.yml, *.yaml, Makefile, GNUmakefile, *.mk, pom.xml, " +
+				"*.sh, .env, .env.* and the files scan.extra_files names",
+			"the one version on the line after a # renovate:, // renovate: or <!-- renovate: --> comment, " +
+				"named by its datasource and depName",
+			[]string{"values.yaml", "Makefile", "build/tools.mk", "pom.xml", ".env"},
+		},
+		{
 			DetectorTerraform, "*.tf and *.tf.json",
-			"terraform { required_version } and required_providers constraints; a provider without a source " +
-				"is hashicorp/<name>",
+			"terraform { required_version } and required_providers constraints, a provider without a source " +
+				"being hashicorp/<name>; module versions as tfmodule pins and GitHub ?ref= module sources",
 			[]string{"main.tf", "modules/vpc/versions.tf.json"},
 		},
 		{
 			DetectorTerragrunt, "every .hcl file except .terraform.lock.hcl",
-			"terraform_version_constraint and terragrunt_version_constraint as literal strings at the top level",
+			"terraform_version_constraint and terragrunt_version_constraint as literal strings at the top " +
+				"level, and terraform { source } with tfr:// ?version= or a GitHub ?ref=",
 			[]string{"terragrunt.hcl", "live/prod/root.hcl"},
 		},
 		{
@@ -143,6 +153,7 @@ func (o *Options) detectors() []detector {
 		{DetectorCI, isCI, o.detectCI},
 		{DetectorHelm, baseIs("Chart.yaml"), detectHelm},
 	}
+	ds = append(ds, detector{DetectorRenovateComment, o.isAnnotated, detectAnnotations})
 	if o.Generic && len(o.ExtraFiles) > 0 {
 		ds = append(ds, detector{DetectorGeneric, o.isExtraFile, detectGeneric})
 	}

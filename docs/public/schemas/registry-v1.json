@@ -116,6 +116,16 @@
             "minLength": 1,
             "description": "web-doc: id of a version's element on the page, with the path_template placeholders, such as go{version}."
           },
+          "site_url": {
+            "type": "string",
+            "pattern": "^https://",
+            "description": "changelog-file: base URL of the project's Hugo site. Hugo ref and relref links in the file point at its pages; without it they keep their text and lose the link."
+          },
+          "content_dir": {
+            "type": "string",
+            "minLength": 1,
+            "description": "changelog-file: the Hugo content directory in the repository, such as website/content/en. Default: the path up to the last content/ directory, plus a language directory after it."
+          },
           "json": {
             "type": "object",
             "additionalProperties": false,
@@ -129,10 +139,15 @@
             }
           }
         },
+        "dependentRequired": { "content_dir": ["site_url"] },
         "allOf": [
           {
             "if": { "properties": { "kind": { "const": "changelog-file" } } },
             "then": { "required": ["path_template"] }
+          },
+          {
+            "if": { "required": ["site_url"] },
+            "then": { "properties": { "kind": { "const": "changelog-file" } } }
           },
           {
             "if": { "properties": { "kind": { "const": "structured-json" } } },

@@ -72,6 +72,18 @@ finds each version's section, then the release bodies with one section dropped.
 `{major}`. [Release-note sources](/concepts/sources) describes each kind, the placeholders and the
 hosts a `url_template` may use.
 
+A changelog file from a Hugo site, such as karpenter's upgrade guide, links pages with Hugo's
+`ref` and `relref` shortcodes:
+
+```md
+See [Drift]({{< ref "../concepts/disruption#drift" >}}).
+```
+
+Set `site_url` to the site's base URL and those links point at its pages
+(`https://karpenter.sh/docs/concepts/disruption/#drift`). relgap finds
+the content directory from the path, such as `website/content/en`; set `content_dir` when that
+guess is wrong. Without `site_url` the links keep their text and lose the link.
+
 `ignore_sections` drops headings that hold no changes, such as install steps.
 `breaking_markers` lists literal text that marks an entry as breaking, such as kubectl's
 `ACTION REQUIRED`. [Classification and confidence](/concepts/classification) shows how the

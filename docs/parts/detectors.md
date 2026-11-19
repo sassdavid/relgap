@@ -6,12 +6,13 @@
 | `ci` | GitHub Actions workflows, .gitlab-ci.yml and bitbucket-pipelines.yml | image keys and job containers as image pins, keys such as TERRAFORM_VERSION or go-version as tool pins, and uses: as action pins with scan.detectors.ci_actions; values with variables are skipped |
 | `dockerfile` | Dockerfile*, Containerfile* and *.dockerfile | FROM image tags with ARG defaults filled in, and ARG or ENV NAME_VERSION values; a # renovate: comment above an ARG or ENV names the tool |
 | `generic` | the files scan.extra_files names, with scan.detectors.generic on | NAME_VERSION = x.y.z assignments in any text file |
-| `helm` | Chart.yaml | dependencies[] as chart pins, and appVersion as a pin of the tool named like the chart |
+| `helm` | Chart.yaml | dependencies[] as chart pins with their repository URL, and appVersion as a pin of the tool named like the chart |
 | `idiomatic` | .terraform-version, .terragrunt-version, .node-version, .nvmrc, .python-version, .go-version and go.mod | the first version line of a version file; go.mod's go line as a constraint and its toolchain line |
 | `mise` | mise.toml, .mise.toml, mise.*.toml and the conf.d files of a mise directory | each version under [tools]: a string, each string of an array, or the version key of a table |
 | `renovate` | the file pins --renovate-report names, not repository files | each dependency of Renovate's extract report, resolved like the other pins |
-| `terraform` | *.tf and *.tf.json | terraform { required_version } and required_providers constraints; a provider without a source is hashicorp/&lt;name&gt; |
-| `terragrunt` | every .hcl file except .terraform.lock.hcl | terraform_version_constraint and terragrunt_version_constraint as literal strings at the top level |
+| `renovate-comment` | *.tf, *.tfvars, *.hcl, *.yml, *.yaml, Makefile, GNUmakefile, *.mk, pom.xml, *.sh, .env, .env.* and the files scan.extra_files names | the one version on the line after a # renovate:, // renovate: or &lt;!-- renovate: --&gt; comment, named by its datasource and depName |
+| `terraform` | *.tf and *.tf.json | terraform { required_version } and required_providers constraints, a provider without a source being hashicorp/&lt;name&gt;; module versions as tfmodule pins and GitHub ?ref= module sources |
+| `terragrunt` | every .hcl file except .terraform.lock.hcl | terraform_version_constraint and terragrunt_version_constraint as literal strings at the top level, and terraform { source } with tfr:// ?version= or a GitHub ?ref= |
 | `tf-lock` | .terraform.lock.hcl | the exact version of each provider |
 | `tfcensus` | the tfcensus inventory drift --from-tfcensus reads, not repository files | exact terraform or opentofu and provider versions per unit and workspace |
 | `tool-versions` | .tool-versions | a tool name followed by one or more versions |

@@ -78,7 +78,7 @@
             "type": "string"
           },
           "type": "array",
-          "description": "Extra glob patterns scanned by the generic detector."
+          "description": "Extra glob patterns read by the renovate-comment detector, and by the generic detector when it is on."
         }
       },
       "additionalProperties": false,

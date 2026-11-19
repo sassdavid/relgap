@@ -1,0 +1,221 @@
+{
+  "schema_version": "1",
+  "tool": "relgap",
+  "version": "dev",
+  "generated_at": "2026-11-19T12:00:00Z",
+  "data": {
+    "tools": [
+      {
+        "tool": "terraform-aws-vpc",
+        "repo": "terraform-aws-modules/terraform-aws-vpc",
+        "from": "6.7.3",
+        "to": "6.8.0",
+        "versions": [
+          {
+            "version": "6.7.4",
+            "tag": "v6.7.4",
+            "published_at": "2026-11-16T22:42:45Z",
+            "url": "https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v6.7.4"
+          },
+          {
+            "version": "6.8.0",
+            "tag": "v6.8.0",
+            "published_at": "2026-11-17T02:25:51Z",
+            "url": "https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v6.8.0"
+          }
+        ],
+        "entries": [
+          {
+            "id": "e-38499534",
+            "version": "6.7.4",
+            "kind": "fix",
+            "confidence": 0.9,
+            "text": "Correct CloudWatch Flow Log IAM permissions by splitting Log Stream and Log Group permissions ([#1320](https://github.com/terraform-aws-modules/terraform-aws-vpc/issues/1320)) ([62417ba](https://github.com/terraform-aws-modules/terraform-aws-vpc/commit/62417bac63399480dde02063eea03ca3867ae792)), closes [#1319](https://github.com/terraform-aws-modules/terraform-aws-vpc/issues/1319)",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v6.7.4",
+              "heading": [
+                "[6.7.4](https://github.com/terraform-aws-modules/terraform-aws-vpc/compare/v6.7.3...v6.7.4) (2026-11-16)",
+                "Bug Fixes"
+              ]
+            }
+          },
+          {
+            "id": "e-94262af3",
+            "version": "6.7.4",
+            "kind": "fix",
+            "confidence": 0.9,
+            "text": "Scope root VPC flow log DescribeLogGroups/DescribeLogStreams to the log group ARN ([#1321](https://github.com/terraform-aws-modules/terraform-aws-vpc/issues/1321)) ([ea3fe16](https://github.com/terraform-aws-modules/terraform-aws-vpc/commit/ea3fe16d06d62d426126eda4364fc4bdd43f51ae))",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v6.7.4",
+              "heading": [
+                "[6.7.4](https://github.com/terraform-aws-modules/terraform-aws-vpc/compare/v6.7.3...v6.7.4) (2026-11-16)",
+                "Bug Fixes"
+              ]
+            }
+          },
+          {
+            "id": "e-d84909b5",
+            "version": "6.8.0",
+            "kind": "feature",
+            "confidence": 0.9,
+            "text": "Add toggle to disable default route creation for public route tables ([#1188](https://github.com/terraform-aws-modules/terraform-aws-vpc/issues/1188)) ([4ca30c3](https://github.com/terraform-aws-modules/terraform-aws-vpc/commit/4ca30c31fdd2ac60d29793bff77daf720e085540))",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/terraform-aws-modules/terraform-aws-vpc/releases/tag/v6.8.0",
+              "heading": [
+                "[6.8.0](https://github.com/terraform-aws-modules/terraform-aws-vpc/compare/v6.7.4...v6.8.0) (2026-11-17)",
+                "Features"
+              ]
+            }
+          }
+        ],
+        "counts": {
+          "breaking": 0,
+          "deprecation": 0,
+          "feature": 1,
+          "fix": 2,
+          "other": 0,
+          "security": 0
+        },
+        "hidden": 0,
+        "warnings": []
+      },
+      {
+        "tool": "terraform-null-label",
+        "repo": "cloudposse/terraform-null-label",
+        "from": "0.24.1",
+        "to": "0.25.0",
+        "versions": [
+          {
+            "version": "0.25.0",
+            "tag": "0.25.0",
+            "published_at": "2021-08-25T17:47:02Z",
+            "url": "https://github.com/cloudposse/terraform-null-label/releases/tag/0.25.0"
+          }
+        ],
+        "entries": [
+          {
+            "id": "e-a8cbee7b",
+            "version": "0.25.0",
+            "kind": "breaking",
+            "confidence": 0.6,
+            "text": "minor version jump 0.24.x → 0.25.x: review the upgrade guide",
+            "source": {
+              "adapter": "version-jump",
+              "url": "https://github.com/cloudposse/terraform-null-label/releases/tag/0.25.0"
+            }
+          },
+          {
+            "id": "e-48a89659",
+            "version": "0.25.0",
+            "kind": "feature",
+            "confidence": 0.7,
+            "text": "Add additional label and `id` component: `tenant`",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/cloudposse/terraform-null-label/releases/tag/0.25.0",
+              "heading": [
+                "what"
+              ]
+            }
+          },
+          {
+            "id": "e-615e7213",
+            "version": "0.25.0",
+            "kind": "fix",
+            "confidence": 0.7,
+            "text": "Fix typo in README",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/cloudposse/terraform-null-label/releases/tag/0.25.0",
+              "heading": [
+                "what"
+              ]
+            }
+          }
+        ],
+        "counts": {
+          "breaking": 1,
+          "deprecation": 0,
+          "feature": 1,
+          "fix": 1,
+          "other": 0,
+          "security": 0
+        },
+        "hidden": 23,
+        "warnings": []
+      },
+      {
+        "tool": "external-dns",
+        "repo": "kubernetes-sigs/external-dns",
+        "from": "1.23.0",
+        "to": "1.24.0",
+        "versions": [
+          {
+            "version": "1.24.0",
+            "tag": "external-dns-helm-chart-1.24.0",
+            "published_at": "2026-11-19T17:15:01Z",
+            "url": "https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.24.0"
+          }
+        ],
+        "entries": [
+          {
+            "id": "e-15cf7503",
+            "version": "1.24.0",
+            "kind": "feature",
+            "confidence": 0.9,
+            "text": "Add value `.fqdnTemplates` to configure [FQDN templates](https://kubernetes-sigs.github.io/external-dns/latest/docs/advanced/fqdn-templating) for generating DNS records. [#6394](https://github.com/kubernetes-sigs/external-dns/pull/6394) @Schluggi",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.24.0",
+              "heading": [
+                "Added"
+              ]
+            }
+          },
+          {
+            "id": "e-d6ed93c0",
+            "version": "1.24.0",
+            "kind": "feature",
+            "confidence": 0.9,
+            "text": "Add value `eventsEmit` to set the _Kubernetes_ events _ExternalDNS_ emits and grant the matching RBAC to create `events.k8s.io` events. [#6817](https://github.com/kubernetes-sigs/external-dns/pull/6817) @dlanov",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.24.0",
+              "heading": [
+                "Added"
+              ]
+            }
+          },
+          {
+            "id": "e-4441e3dd",
+            "version": "1.24.0",
+            "kind": "feature",
+            "confidence": 0.9,
+            "text": "Add value `hostUsers` to set the `Pod` `hostUsers` field, so that the `Pod` can run in a [user namespace](https://kubernetes.io/docs/concepts/workloads/pods/user-namespaces/). [#6827](https://github.com/kubernetes-sigs/external-dns/pull/6827) @A-RYAN-1",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/kubernetes-sigs/external-dns/releases/tag/external-dns-helm-chart-1.24.0",
+              "heading": [
+                "Added"
+              ]
+            }
+          }
+        ],
+        "counts": {
+          "breaking": 0,
+          "deprecation": 0,
+          "feature": 3,
+          "fix": 0,
+          "other": 0,
+          "security": 0
+        },
+        "hidden": 3,
+        "warnings": []
+      }
+    ]
+  },
+  "errors": []
+}

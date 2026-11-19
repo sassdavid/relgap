@@ -36,8 +36,9 @@ the files, so .gitignore applies; without git, node_modules, vendor, .terraform 
 .terragrunt-cache are skipped.
 
 Detectors: mise (mise.toml and mise config directories), tool-versions, aqua, idiomatic
-(.terraform-version, .nvmrc, go.mod and others), terraform, tf-lock, terragrunt, dockerfile,
-ci (GitHub Actions, GitLab CI, Bitbucket Pipelines), helm, generic (scan.extra_files, opt-in
+(.terraform-version, .nvmrc, go.mod and others), terraform (with module blocks), tf-lock,
+terragrunt, dockerfile, ci (GitHub Actions, GitLab CI, Bitbucket Pipelines), helm,
+renovate-comment (a # renovate: comment above a version), generic (scan.extra_files, opt-in
 with scan.detectors.generic) and renovate (--renovate-report).
 
 A value marked ≈ allows more than one version: a constraint (~> 1.15), a prefix (26) or a

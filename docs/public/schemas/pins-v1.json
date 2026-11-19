@@ -26,7 +26,7 @@
       "required": ["tool", "raw_name", "kind", "value", "version", "exact", "match", "location"],
       "properties": {
         "tool": {
-          "description": "Name relgap digest accepts: a registry name, github:owner/repo, aqua:package, or kind:name for tfprovider, chart, image and action pins. Empty when the pin maps to no known tool.",
+          "description": "Name relgap digest accepts: a registry name, github:owner/repo, aqua:package, npm:package, pypi:package, or kind:name for tfprovider, tfmodule, chart, image and action pins. Empty when the pin maps to no known tool.",
           "type": "string"
         },
         "raw_name": {
@@ -34,7 +34,12 @@
           "type": "string",
           "minLength": 1
         },
-        "kind": { "enum": ["tool", "tfprovider", "chart", "image", "action"] },
+        "kind": { "enum": ["tool", "tfprovider", "tfmodule", "chart", "image", "action"] },
+        "registry_url": {
+          "description": "The Helm repository a chart pin names (a Chart.yaml repository or a Renovate comment's registryUrl). Absent for other pins.",
+          "type": "string",
+          "minLength": 1
+        },
         "value": { "description": "The value as written.", "type": "string", "minLength": 1 },
         "version": {
           "description": "The value without a leading v (or go for a go.mod toolchain), for comparison.",
@@ -55,7 +60,7 @@
             "file": { "description": "Relative to repo, slash-separated.", "type": "string", "minLength": 1 },
             "line": { "description": "1-based; 0 when the source has no lines (a Renovate report).", "type": "integer", "minimum": 0 },
             "detector": {
-              "enum": ["mise", "tool-versions", "aqua", "idiomatic", "terraform", "tf-lock", "terragrunt", "dockerfile", "ci", "helm", "generic", "renovate", "tfcensus"]
+              "enum": ["mise", "tool-versions", "aqua", "idiomatic", "terraform", "tf-lock", "terragrunt", "dockerfile", "ci", "helm", "generic", "renovate", "renovate-comment", "tfcensus"]
             }
           }
         }

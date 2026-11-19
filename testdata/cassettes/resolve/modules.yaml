@@ -1,0 +1,174 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: registry.terraform.io
+        headers:
+            Accept:
+                - application/json
+        url: https://registry.terraform.io/v1/modules/terraform-aws-modules/vpc
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: "{\"meta\":{\"limit\":15,\"current_offset\":0},\"modules\":[{\"id\":\"terraform-aws-modules/vpc/aws/6.8.0\",\"owner\":\"antonbabenko\",\"namespace\":\"terraform-aws-modules\",\"name\":\"vpc\",\"version\":\"6.8.0\",\"provider\":\"aws\",\"provider_logo_url\":\"/images/providers/aws.png\",\"description\":\"Terraform module to create AWS VPC resources \U0001F1FA\U0001F1E6\",\"source\":\"https://github.com/terraform-aws-modules/terraform-aws-vpc\",\"tag\":\"v6.8.0\",\"published_at\":\"2026-11-17T02:25:51.618626Z\",\"downloads\":233966572,\"verified\":false}]}\n"
+        headers:
+            Cache-Control:
+                - public, stale-if-error=31536000
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 19 Nov 2026 20:20:27 GMT
+            Server:
+                - terraform-registry/627999198bc92ef2e3bcf199dcc5fa11869740f2
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubDomains; preload
+            Vary:
+                - Accept-Encoding
+            Via:
+                - 1.1 f4c49ac204aa1217b3cc4078e240a9e0.cloudfront.net (CloudFront)
+            X-Amz-Cf-Id:
+                - HuFAXv6DPHFMIAI6_AkM8nsZp7bnIv1RsDObeCFD0SE0_8s_sYqXxA==
+            X-Amz-Cf-Pop:
+                - BUD50-P3
+            X-Cache:
+                - Miss from cloudfront
+        status: 200 OK
+        code: 200
+        duration: 218.236458ms
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: registry.terraform.io
+        headers:
+            Accept:
+                - application/json
+        url: https://registry.terraform.io/v1/modules/cloudposse/label
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: |
+            {"meta":{"limit":15,"current_offset":0},"modules":[{"id":"cloudposse/label/null/0.25.0","owner":"osterman","namespace":"cloudposse","name":"label","version":"0.25.0","provider":"null","provider_logo_url":"/images/providers/generic.svg?2","description":"Terraform Module to define a consistent naming convention by (namespace, stage, name, [attributes])","source":"https://github.com/cloudposse/terraform-null-label","tag":"0.25.0","published_at":"2021-08-25T17:47:04.039843Z","downloads":221188186,"verified":false},{"id":"cloudposse/label/terraform/0.8.0","owner":"osterman","namespace":"cloudposse","name":"label","version":"0.8.0","provider":"terraform","provider_logo_url":"/images/providers/terraform.svg?3","description":"Terraform Module to define a consistent naming convention by (namespace, stage, name, [attributes])","source":"https://github.com/cloudposse/terraform-terraform-label","tag":"0.8.0","published_at":"2021-04-16T10:23:53.615213Z","downloads":1504457,"verified":false}]}
+        headers:
+            Cache-Control:
+                - public, stale-if-error=31536000
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 19 Nov 2026 20:20:28 GMT
+            Server:
+                - terraform-registry/627999198bc92ef2e3bcf199dcc5fa11869740f2
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubDomains; preload
+            Vary:
+                - Accept-Encoding
+            Via:
+                - 1.1 f4c49ac204aa1217b3cc4078e240a9e0.cloudfront.net (CloudFront)
+            X-Amz-Cf-Id:
+                - EO7X1HzBweISI7qarZ-GGowRCmOLu6DhIkLZtfOWDSVwzPaOuMemLg==
+            X-Amz-Cf-Pop:
+                - BUD50-P3
+            X-Cache:
+                - Miss from cloudfront
+        status: 200 OK
+        code: 200
+        duration: 138.753916ms
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: registry.terraform.io
+        headers:
+            Accept:
+                - application/json
+        url: https://registry.terraform.io/v1/modules/terraform-aws-modules/vpc
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: "{\"meta\":{\"limit\":15,\"current_offset\":0},\"modules\":[{\"id\":\"terraform-aws-modules/vpc/aws/6.8.0\",\"owner\":\"antonbabenko\",\"namespace\":\"terraform-aws-modules\",\"name\":\"vpc\",\"version\":\"6.8.0\",\"provider\":\"aws\",\"provider_logo_url\":\"/images/providers/aws.png\",\"description\":\"Terraform module to create AWS VPC resources \U0001F1FA\U0001F1E6\",\"source\":\"https://github.com/terraform-aws-modules/terraform-aws-vpc\",\"tag\":\"v6.8.0\",\"published_at\":\"2026-11-17T02:25:51.618626Z\",\"downloads\":233966572,\"verified\":false}]}\n"
+        headers:
+            Cache-Control:
+                - public, stale-if-error=31536000
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 19 Nov 2026 20:20:28 GMT
+            Server:
+                - terraform-registry/627999198bc92ef2e3bcf199dcc5fa11869740f2
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubDomains; preload
+            Vary:
+                - Accept-Encoding
+            Via:
+                - 1.1 f4c49ac204aa1217b3cc4078e240a9e0.cloudfront.net (CloudFront)
+            X-Amz-Cf-Id:
+                - xD3xuSzdN2B9Zmc83TvwW148wxv8qrzeiX1hBlgJea02awQ9ob5Tww==
+            X-Amz-Cf-Pop:
+                - BUD50-P3
+            X-Cache:
+                - Miss from cloudfront
+        status: 200 OK
+        code: 200
+        duration: 128.879042ms
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: registry.terraform.io
+        headers:
+            Accept:
+                - application/json
+        url: https://registry.terraform.io/v1/modules/hashicorp/no-such-module-relgap
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"errors":["module version not found"]}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 19 Nov 2026 20:20:28 GMT
+            Server:
+                - terraform-registry/627999198bc92ef2e3bcf199dcc5fa11869740f2
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubDomains; preload
+            Vary:
+                - Accept-Encoding
+            Via:
+                - 1.1 f4c49ac204aa1217b3cc4078e240a9e0.cloudfront.net (CloudFront)
+            X-Amz-Cf-Id:
+                - R-MPsKgJCScV9zeKU-ZYYOvKDw1jC5bROfoVqVe3YRx9wKV20kxc8w==
+            X-Amz-Cf-Pop:
+                - BUD50-P3
+            X-Cache:
+                - Error from cloudfront
+        status: 404 Not Found
+        code: 404
+        duration: 120.708583ms

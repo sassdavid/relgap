@@ -675,6 +675,30 @@ func TestSpec_pindiscovery_7(t *testing.T) {
 	testscript.Run(t, scriptParams(t, filepath.Join(scriptDir, "spec_pindiscovery_7.txtar")))
 }
 
+// TestSpec_pindiscovery_8: a renovate comment above a line with one version makes it a pin in the
+// files ADR-0015 lists, with the kind its datasource gives and a helm registryUrl kept, and the
+// comment's pin replaces another detector's pin on that line.
+func TestSpec_pindiscovery_8(t *testing.T) {
+	t.Parallel()
+	testscript.Run(t, scriptParams(t, filepath.Join(scriptDir, "pins_renovate_comment.txtar")))
+}
+
+// TestSpec_pindiscovery_9: module blocks with a registry source and a version, and Terragrunt
+// tfr:// sources, give tfmodule pins that resolve through the Terraform registry; GitHub git
+// sources with ?ref= give github: pins.
+func TestSpec_pindiscovery_9(t *testing.T) {
+	t.Parallel()
+	testscript.Run(t, scriptParams(t, filepath.Join(scriptDir, "spec_pindiscovery_9.txtar")))
+}
+
+// TestSpec_pindiscovery_10: outdated, drift, digest --base and --pull-request work on a fixture
+// repository with renovate comment and Terraform module pins, and a chart pin's registryUrl picks
+// its Artifact Hub repository.
+func TestSpec_pindiscovery_10(t *testing.T) {
+	t.Parallel()
+	testscript.Run(t, scriptParams(t, filepath.Join(scriptDir, "spec_pindiscovery_10.txtar")))
+}
+
 // TestSpec_output_and_ci_1: every format × command cell of the output-and-ci.md table has a golden
 // file that a script compares; spec_output_and_ci_1.txtar writes the cells no other script has.
 func TestSpec_output_and_ci_1(t *testing.T) {
