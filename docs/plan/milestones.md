@@ -573,3 +573,6 @@ comment.
   through the Terraform registry, and GitHub git sources with `?ref=` give `github:` pins.
 - [ ] `outdated`, `digest --base`, `drift` and `--pull-request` work on a fixture repository with
   both kinds of pins.
+- [ ] Hugo `{{<ref "...">}}` and `{{< relref >}}` link targets in a changelog file become working
+  links: karpenter's upgrade guide gives `blob/HEAD/...{{<ref ...` URLs in its digest entries today
+  (found with PR #87).
