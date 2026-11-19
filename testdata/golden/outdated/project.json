@@ -383,7 +383,7 @@
           }
         },
         "status": "skipped",
-        "note": "unsupported tool syntax: unknown prefix \"image:\" (relgap knows github, aqua, tfprovider, chart, npm and pypi)"
+        "note": "unsupported tool syntax: unknown prefix \"image:\" (relgap knows github, aqua, tfprovider, tfmodule, chart, npm and pypi)"
       },
       {
         "tool": "k9s",

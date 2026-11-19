@@ -39,6 +39,22 @@
         }
       },
       {
+        "tool": "chart:external-dns",
+        "raw_name": "external-dns",
+        "kind": "chart",
+        "registry_url": "https://kubernetes-sigs.github.io/external-dns",
+        "value": "1.23.0",
+        "version": "1.23.0",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": "local",
+          "file": "charts/app/Chart.yaml",
+          "line": 0,
+          "detector": "renovate"
+        }
+      },
+      {
         "tool": "terragrunt",
         "raw_name": "gruntwork-io/terragrunt",
         "kind": "tool",
@@ -69,7 +85,7 @@
         }
       },
       {
-        "tool": "",
+        "tool": "npm:unknown-tool",
         "raw_name": "unknown-tool",
         "kind": "tool",
         "value": "1.0.0",

@@ -14,7 +14,7 @@ type VersionNotes struct{ Version version.V; Markdown string; Source SourceRef }
 | Kind | How | Used by (examples) |
 |---|---|---|
 | `gh-release` | release body per tag, fetched via **GraphQL batch** (`releases(first:100)` with `description`; page size shrinks 100→50→25→10 on errors, as Renovate does) | terraform, opentofu, terragrunt, helm, argocd, gh, k9s, uv, ruff, most tools |
-| `changelog-file` | fetch the file **once** per (repo, ref, path), index by version heading ([ADR-0001](../adr/0001-goldmark-section-index.md)). `path_template` supports `{major}`, `{minor}` for per-line files; `ref` may be a template (`v{major}.{minor}`). `.rst` files get Markdown headings first | kubernetes `CHANGELOG/CHANGELOG-1.xx.md`, node `doc/changelogs/CHANGELOG_V26.md`, claude-code `CHANGELOG.md`, terraform-provider-aws, uv/ruff `changelogs/0.x.x.md` |
+| `changelog-file` | fetch the file **once** per (repo, ref, path), index by version heading ([ADR-0001](../adr/0001-goldmark-section-index.md)). `path_template` supports `{major}`, `{minor}` for per-line files; `ref` may be a template (`v{major}.{minor}`). `.rst` files get Markdown headings first. Hugo `ref`/`relref` links point at `site_url` (with `content_dir`), or keep their text without it; block shortcode lines are dropped | kubernetes `CHANGELOG/CHANGELOG-1.xx.md`, node `doc/changelogs/CHANGELOG_V26.md`, claude-code `CHANGELOG.md`, terraform-provider-aws, uv/ruff `changelogs/0.x.x.md` |
 | `structured-json` | fetch JSON per version from a repo file (`path_template`) or an allowed URL (`url_template`), map fields → entries with the `json` mapping | awscli `.changes/<ver>.json` (`type` = api-change/enhancement/bugfix), Adoptium `api.adoptium.net/v3/info/release_notes/<ver>` |
 | `web-doc` | allow-listed URL template → HTML → Markdown (`JohannesKaufmann/html-to-markdown/v2`) → index | python `docs.python.org/3/whatsnew/3.X.html`, go `go.dev/doc/go1.NN`, `go.dev/doc/devel/release` |
 | `upgrade-guide` | URL or file template per release line transition, whole document, attached as an "Upgrade guide" section | argocd `docs/operator-manual/upgrading/3.5-3.6.md`, terraform-provider-aws `website/docs/guides/version-6-upgrade.html.markdown` |
@@ -92,3 +92,8 @@ Following Renovate and Dependabot:
 - [x] The stale-changelog guard is covered by an argocd fixture. (`TestSpec_source_adapters_4`, with the head of argocd's real `CHANGELOG.md` in `testdata/autodiscovery/argocd/`.)
 - [x] Auto-discovery picks `HISTORY.md` / `CHANGES.rst` / `RELEASE_NOTES.md` in fixtures and rejects `changelog.json`. (`TestSpec_source_adapters_5`; `TestAutoUsesFreshChangelog` reads a `CHANGES.rst`.)
 - [x] The "latest version" lookup for 45 tools sends at most 5 GraphQL queries (request counter on a cassette, `TestSpec_source_adapters_6`; 2 before [ADR-0013](../adr/0013-parallel-latest-lookup.md)).
+- [x] Hugo `{{< ref >}}` and `{{< relref >}}` link targets in a changelog file point at the site's
+  pages when the source sets `site_url`, keep only their text otherwise, and lines that hold only
+  a block shortcode (`{{% alert %}}`) are dropped without moving line numbers. (`TestSpec_source_adapters_7`,
+  [ADR-0015](../adr/0015-renovate-annotations-and-terraform-modules.md); karpenter's upgrade guide
+  sets `site_url: https://karpenter.sh/`.)

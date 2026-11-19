@@ -143,6 +143,7 @@ func runDigestPR(cmd *cobra.Command, d *app.Deps, g *globals, f digestFlags, roo
 		return err
 	}
 	changes := renovateFilter(d, in, diff.changes)
+	s.chartRegistries(ctx, upgradedPins(changes))
 	jobs, skipped := planPRDigests(changes)
 	tools, errs, notes, err := s.runPRDigests(ctx, jobs, digestArgs{
 		line:               string(version.LineNone),
@@ -286,6 +287,17 @@ func depNames(p *scan.Pin) []string {
 		names = append(names, p.Tool[i+1:])
 	}
 	return names
+}
+
+// upgradedPins returns the base and head pins of each upgrade.
+func upgradedPins(changes []scan.Change) []*scan.Pin {
+	var out []*scan.Pin
+	for _, c := range changes {
+		if c.Upgrade() {
+			out = append(out, c.Base, c.Head)
+		}
+	}
+	return out
 }
 
 // planPRDigests groups the upgrades by tool and range and says why each other change has no

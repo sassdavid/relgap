@@ -87,6 +87,7 @@ func (a *ChangelogFile) Fetch(
 		if md == "" {
 			continue
 		}
+		md = hugoLinks(md, k.Path, a.src.SiteURL, a.src.ContentDir)
 		out = append(out, VersionNotes{
 			Version:  v,
 			Markdown: md,

@@ -1,24 +1,30 @@
 package scan
 
 import (
+	"bytes"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"maps"
+	"path"
 	"regexp"
 	"slices"
 	"strings"
 )
 
-// renovateFields parses `# renovate: key=value key=value`, the comment syntax Renovate's
-// documentation uses for custom regex managers (datasource, depName, packageName, versioning).
+// renovateComment matches `# renovate: key=value ...`, the comment syntax Renovate's
+// documentation uses for custom regex managers, also written after // or inside <!-- -->.
+var renovateComment = regexp.MustCompile(`^\s*(?:#|//|<!--)\s*renovate:(.*?)(?:-->)?\s*$`)
+
+// renovateFields parses the key=value fields of a renovate comment (datasource, depName,
+// packageName, registryUrl, versioning).
 func renovateFields(comment string) (map[string]string, bool) {
-	rest, ok := strings.CutPrefix(strings.TrimSpace(strings.TrimPrefix(comment, "#")), "renovate:")
-	if !ok {
+	m := renovateComment.FindStringSubmatch(comment)
+	if m == nil {
 		return nil, false
 	}
 	fields := map[string]string{}
-	for tok := range strings.FieldsSeq(rest) {
+	for tok := range strings.FieldsSeq(m[1]) {
 		if k, v, found := strings.Cut(tok, "="); found {
 			fields[k] = v
 		}
@@ -57,11 +63,12 @@ func datasourceLookup(datasource, pkg, dep string) string {
 type renovatePackageFile struct {
 	PackageFile string `json:"packageFile"`
 	Deps        []struct {
-		DepName      string `json:"depName"`
-		PackageName  string `json:"packageName"`
-		CurrentValue string `json:"currentValue"`
-		Datasource   string `json:"datasource"`
-		SkipReason   string `json:"skipReason"`
+		DepName      string   `json:"depName"`
+		PackageName  string   `json:"packageName"`
+		CurrentValue string   `json:"currentValue"`
+		Datasource   string   `json:"datasource"`
+		SkipReason   string   `json:"skipReason"`
+		RegistryURLs []string `json:"registryUrls"`
 	} `json:"deps"`
 }
 
@@ -96,6 +103,9 @@ func renovatePins(repo string, files renovatePackageFiles) []Pin {
 					continue
 				}
 				p := renovateDepPin(manager, d.Datasource, d.DepName, d.PackageName)
+				if p.Kind == KindChart && len(d.RegistryURLs) > 0 {
+					p.Registry = chartRegistry(d.RegistryURLs[0])
+				}
 				p.Value = d.CurrentValue
 				p.Location = Location{Repo: repo, File: pf.PackageFile, Detector: DetectorRenovate}
 				pins = append(pins, p)
@@ -105,7 +115,8 @@ func renovatePins(repo string, files renovatePackageFiles) []Pin {
 	return pins
 }
 
-// renovateDepPin sets the kind and the tool or lookup name of a Renovate dependency.
+// renovateDepPin sets the kind and the tool or lookup name of a Renovate dependency. An npm or
+// PyPI package that no registry names by itself becomes npm:<name> or pypi:<name>.
 func renovateDepPin(manager, datasource, dep, pkg string) Pin {
 	p := Pin{RawName: dep, Kind: KindTool}
 	name := firstNonEmpty(pkg, dep)
@@ -117,14 +128,123 @@ func renovateDepPin(manager, datasource, dep, pkg string) Pin {
 			name = "hashicorp/" + name
 		}
 		p.Kind, p.Tool = KindTFProvider, "tfprovider:"+providerName(name)
+	case datasource == "terraform-module":
+		p.Kind, p.Tool = KindTFModule, "tfmodule:"+providerName(name)
 	case datasource == "helm":
 		p.Kind, p.Tool = KindChart, "chart:"+dep
 	case manager == "github-actions":
 		p.Kind, p.Tool = KindAction, "action:"+name
+	case datasource == "npm" || datasource == "pypi":
+		p.lookup, p.fallback = name, datasource+":"+name
 	default:
 		p.lookup = datasourceLookup(datasource, pkg, dep)
 	}
 	return p
+}
+
+// isAnnotated matches the files the renovate-comment detector reads. Dockerfiles have their own
+// detector, which reads the same comments.
+func (o *Options) isAnnotated(rel string) bool {
+	if isDockerfile(rel) {
+		return false
+	}
+	base := path.Base(rel)
+	switch path.Ext(base) {
+	case ".tf", ".tfvars", extYML, extYAML, ".mk", ".sh":
+		return true
+	case ".hcl":
+		return base != tfLockFile
+	}
+	switch base {
+	case "Makefile", "makefile", "GNUmakefile", "GNUMakefile", "pom.xml", ".env":
+		return true
+	}
+	return strings.HasPrefix(base, ".env.") || o.isExtraFile(rel)
+}
+
+// annotatedVersion matches a version that stands alone on a line: quoted, or after =, : or >,
+// and followed by a quote, a closing bracket, a separator or the end of the line.
+var annotatedVersion = regexp.MustCompile(
+	`(?:^|[\s=:"'>(,\[])(v?\d+(?:\.\d+){1,3}(?:-[0-9A-Za-z.]+)?(?:\+[0-9A-Za-z.]+)?)(?:$|[\s"'<),;\]])`,
+)
+
+// detectAnnotations reads each renovate comment and the first line after it that is neither
+// blank nor a comment. That line's version is a pin when it is the only one there.
+func detectAnnotations(f file) ([]Pin, error) {
+	if !bytes.Contains(f.data, []byte("renovate:")) {
+		return nil, nil
+	}
+	var (
+		pins    []Pin
+		pending map[string]string
+	)
+	for i, line := range lines(f.data) {
+		trimmed := strings.TrimSpace(line)
+		if fields, ok := renovateFields(trimmed); ok {
+			pending = fields
+			continue
+		}
+		if pending == nil || trimmed == "" || isCommentLine(trimmed) {
+			continue
+		}
+		fields := pending
+		pending = nil
+		value, ok := soleVersion(trimmed)
+		if !ok {
+			continue
+		}
+		p := annotationPin(fields)
+		if p.RawName == "" {
+			continue
+		}
+		p.Value, p.Location.Line = value, i+1
+		pins = append(pins, p)
+	}
+	return pins, nil
+}
+
+func isCommentLine(s string) bool {
+	return strings.HasPrefix(s, "#") || strings.HasPrefix(s, "//") || strings.HasPrefix(s, "<!--")
+}
+
+// soleVersion returns the version on a line without its trailing comment, when there is
+// exactly one.
+func soleVersion(line string) (string, bool) {
+	line = stripComment(line)
+	if i := strings.Index(line, " //"); i >= 0 {
+		line = line[:i]
+	}
+	m := annotatedVersion.FindAllStringSubmatch(line, -1)
+	if len(m) != 1 {
+		return "", false
+	}
+	return m[0][1], true
+}
+
+// annotationPin names the dependency a renovate comment describes. Renovate's Chart.yaml
+// preset writes `image=<name>` for a Docker image without a datasource.
+func annotationPin(fields map[string]string) Pin {
+	datasource, dep := fields["datasource"], fields["depName"]
+	if image := fields["image"]; image != "" && dep == "" {
+		datasource, dep = "docker", image
+	}
+	pkg := firstNonEmpty(fields["packageName"], fields["lookupName"])
+	p := renovateDepPin("", datasource, firstNonEmpty(dep, pkg), pkg)
+	if p.Kind == KindChart {
+		p.Registry = chartRegistry(fields["registryUrl"])
+	}
+	return p
+}
+
+// chartRegistry returns a Helm repository URL without its trailing slash, or "" when it isn't
+// an http, https or oci URL, such as a Chart.yaml alias (@stable) or a file:// path.
+func chartRegistry(raw string) string {
+	for _, scheme := range []string{"https://", "http://", "oci://"} {
+		if strings.HasPrefix(raw, scheme) && len(raw) > len(scheme) {
+			return strings.TrimRight(raw, "/")
+		}
+	}
+	return ""
 }
 
 // genericVersion accepts =, :=, ?=, += and : after the name, so Makefile and YAML assignments

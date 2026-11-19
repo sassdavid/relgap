@@ -8,6 +8,10 @@ relgap's detectors read the files on [Pins and detectors](/concepts/pins). Renov
 more package files and custom regex managers. When Renovate already finds a pin that relgap
 misses, its extract report can fill the gap.
 
+A custom manager driven by a `# renovate: datasource=... depName=...` comment above the version
+needs no report: relgap's [`renovate-comment` detector](/concepts/pins#renovate-comments) reads
+those comments in Terraform, HCL, YAML, Makefiles, `pom.xml`, shell scripts and `.env` files.
+
 ## Write the report
 
 Renovate's local platform runs in the current directory, with or without a Renovate config.

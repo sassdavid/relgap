@@ -26,7 +26,7 @@ const (
 // Options configures a [Scanner].
 type Options struct {
 	Exclude     []string // globs on repository-relative paths, ** for any directories
-	ExtraFiles  []string // globs the generic detector reads
+	ExtraFiles  []string // globs the renovate-comment detector reads, and the generic one when Generic is set
 	Generic     bool     // run the generic detector on ExtraFiles
 	Actions     bool     // report `uses: owner/action@ref` in CI files
 	Submodules  bool     // scan checked-out submodules as repositories
@@ -243,11 +243,12 @@ func (s *Scanner) run(ctx context.Context, t task) taskResult {
 		}
 		r.pins = append(r.pins, pins...)
 	}
+	r.pins = preferAnnotations(r.pins)
 	return r
 }
 
 // finish classifies the value and names the tool. A tool pin tries its lookup name first, then
-// its raw name.
+// its raw name, then takes its fallback.
 func (s *Scanner) finish(p *Pin, bareExact bool) {
 	p.classify(bareExact)
 	if p.Tool != "" || p.Kind != KindTool {
@@ -262,4 +263,26 @@ func (s *Scanner) finish(p *Pin, bareExact bool) {
 			return
 		}
 	}
+	p.Tool = p.fallback
+}
+
+// preferAnnotations drops a pin that a renovate comment also reports on the same line with the
+// same value, because the comment names the dependency exactly.
+func preferAnnotations(pins []Pin) []Pin {
+	type key struct {
+		line  int
+		value string
+	}
+	annotated := map[key]bool{}
+	for _, p := range pins {
+		if p.Location.Detector == DetectorRenovateComment {
+			annotated[key{p.Location.Line, p.Value}] = true
+		}
+	}
+	if len(annotated) == 0 {
+		return pins
+	}
+	return slices.DeleteFunc(pins, func(p Pin) bool {
+		return p.Location.Detector != DetectorRenovateComment && annotated[key{p.Location.Line, p.Value}]
+	})
 }

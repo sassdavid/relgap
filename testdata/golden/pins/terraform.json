@@ -9,6 +9,111 @@
     ],
     "pins": [
       {
+        "tool": "tfmodule:terraform-aws-modules/vpc/aws",
+        "raw_name": "terraform-aws-modules/vpc/aws",
+        "kind": "tfmodule",
+        "value": "~> 6.5",
+        "version": "~> 6.5",
+        "exact": false,
+        "match": "constraint",
+        "location": {
+          "repo": ".",
+          "file": "modules.tf",
+          "line": 3,
+          "detector": "terraform"
+        }
+      },
+      {
+        "tool": "tfmodule:terraform-aws-modules/vpc/aws",
+        "raw_name": "registry.terraform.io/terraform-aws-modules/vpc/aws//modules/vpc-endpoints",
+        "kind": "tfmodule",
+        "value": "6.5.0",
+        "version": "6.5.0",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": ".",
+          "file": "modules.tf",
+          "line": 7,
+          "detector": "terraform"
+        }
+      },
+      {
+        "tool": "tfmodule:app.terraform.io/example-org/network/aws",
+        "raw_name": "app.terraform.io/example-org/network/aws",
+        "kind": "tfmodule",
+        "value": "2.1.0",
+        "version": "2.1.0",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": ".",
+          "file": "modules.tf",
+          "line": 11,
+          "detector": "terraform"
+        }
+      },
+      {
+        "tool": "github:terraform-aws-modules/terraform-aws-eks",
+        "raw_name": "git::https://github.com/terraform-aws-modules/terraform-aws-eks.git//modules/karpenter",
+        "kind": "tool",
+        "value": "v21.8.0",
+        "version": "21.8.0",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": ".",
+          "file": "modules.tf",
+          "line": 14,
+          "detector": "terraform"
+        }
+      },
+      {
+        "tool": "github:cloudposse/terraform-null-label",
+        "raw_name": "github.com/cloudposse/terraform-null-label",
+        "kind": "tool",
+        "value": "0.25.0",
+        "version": "0.25.0",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": ".",
+          "file": "modules.tf",
+          "line": 17,
+          "detector": "terraform"
+        }
+      },
+      {
+        "tool": "github:example/terraform-modules",
+        "raw_name": "git@github.com:example/terraform-modules.git//vpc",
+        "kind": "tool",
+        "value": "vpc-v1.2.0",
+        "version": "vpc-v1.2.0",
+        "exact": false,
+        "match": "channel",
+        "location": {
+          "repo": ".",
+          "file": "modules.tf",
+          "line": 20,
+          "detector": "terraform"
+        }
+      },
+      {
+        "tool": "",
+        "raw_name": "git::https://gitlab.com/example/modules.git",
+        "kind": "tool",
+        "value": "v3.0.0",
+        "version": "3.0.0",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": ".",
+          "file": "modules.tf",
+          "line": 23,
+          "detector": "terraform"
+        }
+      },
+      {
         "tool": "terraform",
         "raw_name": "required_version",
         "kind": "tool",
@@ -35,6 +140,21 @@
           "repo": ".",
           "file": "modules/json/versions.tf.json",
           "line": 5,
+          "detector": "terraform"
+        }
+      },
+      {
+        "tool": "tfmodule:terraform-aws-modules/rds/aws",
+        "raw_name": "terraform-aws-modules/rds/aws",
+        "kind": "tfmodule",
+        "value": "7.0.0",
+        "version": "7.0.0",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": ".",
+          "file": "modules/json/versions.tf.json",
+          "line": 9,
           "detector": "terraform"
         }
       },

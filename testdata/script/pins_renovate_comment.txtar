@@ -1,0 +1,102 @@
+# renovate-comment: a # renovate:, // renovate: or <!-- renovate: --> comment names the one
+# version on the next line that is neither blank nor a comment. The datasource sets the kind, a
+# helm registryUrl is kept, and the comment's pin replaces another detector's pin on that line.
+# Dockerfiles stay with the dockerfile detector, and files outside the list are read only when
+# scan.extra_files names them.
+env TEST_NOW=2026-11-19T00:00:00Z
+exec relgap pins --format json
+jsonschema pins-v1.json stdout
+golden stdout pins/renovate_comment.json
+! stdout 'versions\.txt|image:alpine|redis|kubernetes'
+! stdout '"detector": "(ci|helm)"'
+
+exec relgap pins --format json --config extra.yaml
+stdout '"file": "versions\.txt"'
+
+-- extra.yaml --
+schema_version: 1
+scan:
+  extra_files: ["versions.txt"]
+-- versions.txt --
+# renovate: datasource=github-releases depName=cli/cli
+gh 2.83.0
+-- variables.tf --
+variable "karpenter" {
+  type = object({
+    # renovate: datasource=helm depName=karpenter registryUrl=oci://public.ecr.aws/karpenter
+    chart_version = optional(string, "1.8.1")
+  })
+}
+
+variable "terragrunt_version" {
+  // renovate: datasource=github-releases depName=gruntwork-io/terragrunt
+  default = "v1.2.1"
+}
+
+locals {
+  # renovate: datasource=terraform-provider depName=aws
+  aws_provider = "6.20.0"
+  # renovate: datasource=terraform-module depName=terraform-aws-modules/vpc/aws
+  vpc_module = "6.5.0" # 6.6.0 needs aws 6.25
+  # renovate: datasource=custom.kubectl depName=kubectl
+  kubectl = "1.34.2"
+}
+-- values.yaml --
+image:
+  repository: quay.io/argoproj/argocd
+  # renovate: datasource=docker depName=quay.io/argoproj/argocd
+  tag: v3.2.0
+cert-manager:
+  # renovate: datasource=helm depName=cert-manager registryUrl=https://charts.jetstack.io/
+
+  # the comment above still names this version
+  version: 1.19.1
+kubernetes:
+  # renovate: datasource=github-releases depName=kubernetes/kubernetes
+  versions: [1.33.0, 1.34.0]
+latest:
+  # renovate: datasource=docker depName=alpine
+  tag: latest
+-- Makefile --
+# renovate: datasource=aqua depName=golangci/golangci-lint
+GOLANGCI_LINT_VERSION ?= v2.6.1
+# renovate: datasource=npm depName=prettier
+PRETTIER_VERSION := 3.6.2
+# renovate: datasource=pypi depName=no-such-project-relgap
+LINT_VERSION = 0.4.0
+-- pom.xml --
+<project>
+  <properties>
+    <!-- renovate: datasource=github-releases depName=protocolbuffers/protobuf -->
+    <protobuf.version>4.33.0</protobuf.version>
+  </properties>
+</project>
+-- .github/workflows/ci.yml --
+on: push
+env:
+  # renovate: datasource=github-releases depName=hashicorp/terraform
+  TERRAFORM_VERSION: 1.14.0
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - run: make test
+-- charts/app/Chart.yaml --
+apiVersion: v2
+name: app
+version: 0.1.0
+# renovate: image=ghcr.io/example/app
+appVersion: "2.4.0"
+-- scripts/install.sh --
+#!/bin/sh
+# renovate: datasource=github-tags depName=helm/helm
+HELM_VERSION="v3.19.0"
+-- .env --
+# renovate: datasource=docker depName=postgres
+POSTGRES_TAG=17.6
+-- Dockerfile --
+# renovate: datasource=github-releases depName=gruntwork-io/terragrunt
+ARG TG_VERSION=1.2.1
+-- notes.txt --
+# renovate: datasource=docker depName=redis
+redis 8.2.1

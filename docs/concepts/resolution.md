@@ -19,6 +19,7 @@ field came from.
 | `github:owner/repo` | `github:jdx/hk` | the repository itself, or the tool that has it |
 | `aqua:package` | `aqua:hashicorp/terraform` | the embedded aqua index |
 | `tfprovider:namespace/name` | `tfprovider:integrations/github` | the registries, then the Terraform registry |
+| `tfmodule:namespace/name/provider` | `tfmodule:terraform-aws-modules/vpc/aws` | the Terraform registry |
 | `chart:repo/name`, `chart:name` | `chart:argo/argo-cd` | Artifact Hub |
 | `npm:package` | `npm:prettier` | the registries, then the npm registry |
 | `pypi:package` | `pypi:black` | the registries, then PyPI |
@@ -84,5 +85,5 @@ Here every field but `version.line` comes from the curated entry, `mise_source` 
 registry came from the snapshot, and `relgap_source` says the entry is the embedded one, not an
 updated copy. A scan names pins through the same layers without any lookup, so `relgap pins`
 stays offline; `relgap outdated` makes the Terraform registry and Artifact Hub lookups for
-tfprovider and chart pins when it compares them. [Map unresolved pins and private tools](/guides/unresolved) shows
+tfprovider, tfmodule and chart pins when it compares them. [Map unresolved pins and private tools](/guides/unresolved) shows
 what to do with a pin that resolves to nothing.

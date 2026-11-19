@@ -14,7 +14,7 @@ files only and makes no network call.
 
 Each pin has the name as written (`TERRAFORM_VERSION`, `hashicorp/aws`), the value as written, the
 file and line, the detector that found it, and the tool name relgap maps it to. A pin has one of
-five kinds:
+six kinds:
 
 | Kind | Tool name | Example |
 |---|---|---|
@@ -22,7 +22,14 @@ five kinds:
 | image | `image:` and the image | `image:golang` from a Dockerfile `FROM` |
 | action | `action:` and the action | `action:actions/checkout`, with `scan.detectors.ci_actions` |
 | tfprovider | `tfprovider:` and the provider | `tfprovider:hashicorp/aws` |
-| chart | `chart:` and the chart | `chart:argo/argo-cd` from `Chart.yaml` |
+| tfmodule | `tfmodule:` and the registry module | `tfmodule:terraform-aws-modules/vpc/aws` from a `module` block |
+| chart | `chart:` and the chart | `chart:argo-cd` from `Chart.yaml` |
+
+A chart pin also keeps the Helm repository URL it names (`registry_url` in JSON), from a
+`Chart.yaml` dependency's `repository` or a Renovate comment's `registryUrl`. `relgap outdated`
+and `relgap digest --base` use it to find the chart's Artifact Hub repository. A module whose
+source is a git repository on github.com with `?ref=` is a tool pin of `github:owner/repo`, and
+its ref counts as a version only when it is `1.2.3` or `v1.2.3`.
 
 The value decides which versions the pin allows. An exact pin such as `1.15.8` allows one
 version. relgap marks the other three forms with ≈:
@@ -64,6 +71,32 @@ A raw name becomes a tool name through the same layers as [`relgap resolve`](/co
 without any network lookup. A `NAME_VERSION` variable maps to the tool `name`, with underscores
 read as hyphens: `TERRAFORM_VERSION` is terraform. In a Dockerfile, a `# renovate:` comment above
 an `ARG` or `ENV` names the tool for the line below, as Renovate's custom managers read it.
+
+## Renovate comments
+
+The `renovate-comment` detector reads the comments that Renovate's regex custom managers use, in
+`.tf`, `.tfvars`, `.hcl`, YAML, Makefiles, `pom.xml`, shell scripts, `.env` files and the files
+`scan.extra_files` names:
+
+```hcl
+variable "karpenter" {
+  type = object({
+    # renovate: datasource=helm depName=karpenter registryUrl=oci://public.ecr.aws/karpenter
+    chart_version = optional(string, "1.8.1")
+  })
+}
+```
+
+The first line after the comment that is neither blank nor a comment must hold exactly one
+version, which becomes the pin. `//` and `<!-- -->` comments work too. The datasource sets the
+kind: `helm` gives a chart pin, `github-releases` and `github-tags` a `github:` pin,
+`terraform-provider` and `terraform-module` a provider or module pin, `docker` an image pin, and
+`aqua`, `npm` and `pypi` their package. Any other datasource looks the tool up by `packageName`,
+then `depName`. When another detector found a pin on the same line with the same value, the
+comment's pin replaces it. Dockerfiles keep their own detector, which reads these comments above
+`ARG` and `ENV`.
+
+## Unresolved pins
 
 A pin whose name maps to no tool keeps an empty tool. `relgap pins --unresolved` lists them, and
 `aliases` in the config maps a raw name to a tool. [Map unresolved pins](/guides/unresolved)

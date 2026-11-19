@@ -5,6 +5,7 @@ import (
 	"log/slog"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 	"testing"
 
@@ -248,7 +249,8 @@ func TestIgnored(t *testing.T) {
 }
 
 // TestDetectorDocs checks the detector table of the docs site: one row per detector, in the
-// order of Detectors, and every example path read by its detector and no other.
+// order of Detectors, and every example path read by its detector and no other. renovate-comment
+// reads files of other detectors too, so only its own examples count it.
 func TestDetectorDocs(t *testing.T) {
 	t.Parallel()
 	docs := scan.DetectorDocs()
@@ -258,7 +260,10 @@ func TestDetectorDocs(t *testing.T) {
 		assert.NotEmpty(t, d.Files, d.Name)
 		assert.NotEmpty(t, d.Pins, d.Name)
 		for _, ex := range d.Examples {
-			assert.Equal(t, []string{d.Name}, scan.MatchingDetectors(ex), "%s: example %s", d.Name, ex)
+			got := slices.DeleteFunc(scan.MatchingDetectors(ex), func(name string) bool {
+				return name == scan.DetectorRenovateComment && d.Name != scan.DetectorRenovateComment
+			})
+			assert.Equal(t, []string{d.Name}, got, "%s: example %s", d.Name, ex)
 		}
 	}
 	assert.Equal(t, scan.Detectors(), names)

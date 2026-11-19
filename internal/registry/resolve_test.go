@@ -306,7 +306,7 @@ func TestResolveErrors(t *testing.T) {
 		{
 			"core:node",
 			registry.ErrUnsupported,
-			`unknown prefix "core:" (relgap knows github, aqua, tfprovider, chart, npm and pypi)`,
+			`unknown prefix "core:" (relgap knows github, aqua, tfprovider, tfmodule, chart, npm and pypi)`,
 		},
 		{"github:not-a-repo", registry.ErrUnsupported, "github:owner/repo"},
 		{"aqua:nope/nope", registry.ErrUnknownTool, "aqua registry snapshot"},

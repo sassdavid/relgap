@@ -87,8 +87,8 @@ func (s *session) close(ctx context.Context) {
 	}
 }
 
-// resolve resolves a tool name, asking package registries for tfprovider:, chart:, npm: and
-// pypi: names that the registries don't know. Unknown tools are usage errors.
+// resolve resolves a tool name, asking package registries for tfprovider:, tfmodule:, chart:,
+// npm: and pypi: names that the registries don't know. Unknown tools are usage errors.
 func (s *session) resolve(ctx context.Context, name string) (*registry.Resolution, error) {
 	res, err := resolveName(ctx, s.resolver, name, registry.ResolveOptions{Finder: sessionFinder{s}, Guess: s.guess})
 	if err != nil {
@@ -194,6 +194,48 @@ func checkKinds(kinds []classify.Kind) error {
 		}
 	}
 	return nil
+}
+
+// chartRegistries names each chart pin that has a Helm repository URL after the Artifact Hub
+// repository at that URL, chart:<repo>/<name>, so a chart name that several repositories share
+// resolves. A pin whose URL Artifact Hub doesn't list, or whose lookup fails, keeps its name.
+func (s *session) chartRegistries(ctx context.Context, pins []*scan.Pin) {
+	type key struct{ url, chart string }
+	repos := map[key]string{}
+	for _, p := range pins {
+		chart, ok := strings.CutPrefix(p.Tool, registry.KindChart+":")
+		if p.Kind != scan.KindChart || p.Registry == "" || !ok || strings.Contains(chart, "/") {
+			continue
+		}
+		k := key{p.Registry, chart}
+		repo, seen := repos[k]
+		if !seen {
+			repo = s.chartRepo(ctx, k.url, k.chart)
+			repos[k] = repo
+		}
+		if repo != "" {
+			p.Tool = registry.KindChart + ":" + repo + "/" + chart
+		}
+	}
+}
+
+// chartRepo returns the Artifact Hub repository at registryURL with the chart, or "".
+func (s *session) chartRepo(ctx context.Context, registryURL, chart string) string {
+	gh, hc, err := s.clients(ctx)
+	if err != nil {
+		s.d.Logger.DebugContext(ctx, "can't look up a chart repository", "url", registryURL, "error", err)
+		return ""
+	}
+	repo, ok, err := remote.New(hc, repoSearcher{gh}, gh).ChartRepo(ctx, registryURL, chart)
+	switch {
+	case err != nil:
+		s.d.Logger.DebugContext(ctx, "can't look up a chart repository", "url", registryURL, "chart", chart,
+			"error", err)
+	case !ok:
+		s.d.Logger.DebugContext(ctx, "Artifact Hub lists no repository with the chart at this URL",
+			"url", registryURL, "chart", chart)
+	}
+	return repo
 }
 
 // scan scans roots for pins, naming repositories relative to base when it is set.

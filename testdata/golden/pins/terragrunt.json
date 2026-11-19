@@ -9,6 +9,51 @@
     ],
     "pins": [
       {
+        "tool": "github:terraform-aws-modules/terraform-aws-eks",
+        "raw_name": "git::git@github.com:terraform-aws-modules/terraform-aws-eks.git//modules/karpenter",
+        "kind": "tool",
+        "value": "v21.8.0",
+        "version": "21.8.0",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": ".",
+          "file": "live/prod/eks/terragrunt.hcl",
+          "line": 2,
+          "detector": "terragrunt"
+        }
+      },
+      {
+        "tool": "tfmodule:terraform-aws-modules/rds/aws",
+        "raw_name": "tfr://registry.opentofu.org/terraform-aws-modules/rds/aws//modules/db_instance",
+        "kind": "tfmodule",
+        "value": "7.0.0",
+        "version": "7.0.0",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": ".",
+          "file": "live/prod/rds/terragrunt.hcl",
+          "line": 2,
+          "detector": "terragrunt"
+        }
+      },
+      {
+        "tool": "tfmodule:terraform-aws-modules/vpc/aws",
+        "raw_name": "tfr:///terraform-aws-modules/vpc/aws",
+        "kind": "tfmodule",
+        "value": "6.5.0",
+        "version": "6.5.0",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": ".",
+          "file": "live/prod/vpc/terragrunt.hcl",
+          "line": 2,
+          "detector": "terragrunt"
+        }
+      },
+      {
         "tool": "terraform",
         "raw_name": "terraform_version_constraint",
         "kind": "tool",

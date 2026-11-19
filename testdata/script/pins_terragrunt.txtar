@@ -1,5 +1,6 @@
-# terragrunt: literal version constraints in any .hcl file. Expressions aren't evaluated, and
-# .hcl files without the attributes aren't parsed at all.
+# terragrunt: literal version constraints in any .hcl file, and terraform { source } with a
+# tfr:// ?version= (a tfmodule pin) or a git ?ref=. Expressions aren't evaluated, and a file that
+# fails to parse is reported only when it has a version constraint.
 env TEST_NOW=2026-11-11T00:00:00Z
 exec relgap pins --format json
 jsonschema pins-v1.json stdout
@@ -15,3 +16,24 @@ include "root" {
 terraform_version_constraint = local.tf_constraint
 -- packer/build.pkr.hcl --
 this is not { valid hcl
+source "amazon-ebs" "x" {}
+-- live/prod/vpc/terragrunt.hcl --
+terraform {
+  source = "tfr:///terraform-aws-modules/vpc/aws?version=6.5.0"
+}
+-- live/prod/eks/terragrunt.hcl --
+terraform {
+  source = "git::git@github.com:terraform-aws-modules/terraform-aws-eks.git//modules/karpenter?ref=v21.8.0"
+}
+-- live/prod/rds/terragrunt.hcl --
+terraform {
+  source = "tfr://registry.opentofu.org/terraform-aws-modules/rds/aws//modules/db_instance?version=7.0.0"
+}
+-- live/prod/app/terragrunt.hcl --
+terraform {
+  source = "${include.root.locals.modules}//app?ref=v1.0.0"
+}
+-- live/prod/local/terragrunt.hcl --
+terraform {
+  source = "../../../modules/local"
+}

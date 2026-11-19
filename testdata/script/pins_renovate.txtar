@@ -42,6 +42,14 @@ stderr 'read renovate report'
             ]
           }
         ],
+        "helmv3": [
+          {
+            "packageFile": "charts/app/Chart.yaml",
+            "deps": [
+              { "depName": "external-dns", "currentValue": "1.23.0", "datasource": "helm", "registryUrls": ["https://kubernetes-sigs.github.io/external-dns/"] }
+            ]
+          }
+        ],
         "github-actions": [
           {
             "packageFile": ".github/workflows/ci.yml",

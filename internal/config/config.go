@@ -39,7 +39,7 @@ type Scan struct {
 	Roots      []string  `json:"roots"       jsonschema_description:"Directories scanned by drift and pins when no roots are given."`
 	Exclude    []string  `json:"exclude"     jsonschema_description:"Glob patterns excluded from scanning."`
 	Detectors  Detectors `json:"detectors"`
-	ExtraFiles []string  `json:"extra_files" jsonschema_description:"Extra glob patterns scanned by the generic detector."`
+	ExtraFiles []string  `json:"extra_files" jsonschema_description:"Extra glob patterns read by the renovate-comment detector, and by the generic detector when it is on."`
 }
 
 // Detectors toggles opt-in pin detectors.

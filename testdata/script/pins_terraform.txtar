@@ -1,5 +1,6 @@
 # terraform: required_version and required_providers in .tf and .tf.json. A bare version is
-# exact; a provider without source is hashicorp/<name>.
+# exact; a provider without source is hashicorp/<name>. A module with a registry source and a
+# version is a tfmodule pin; a git source with ?ref= pins its repository, github: on github.com.
 env TEST_NOW=2026-11-11T00:00:00Z
 exec relgap pins --format json
 jsonschema pins-v1.json stdout
@@ -30,6 +31,43 @@ terraform {
 }
 -- modules/net/main.tf --
 resource "null_resource" "x" {}
+-- modules.tf --
+module "vpc" {
+  source  = "terraform-aws-modules/vpc/aws"
+  version = "~> 6.5"
+}
+module "endpoints" {
+  source  = "registry.terraform.io/terraform-aws-modules/vpc/aws//modules/vpc-endpoints"
+  version = "6.5.0"
+}
+module "private" {
+  source  = "app.terraform.io/example-org/network/aws"
+  version = "2.1.0"
+}
+module "eks" {
+  source = "git::https://github.com/terraform-aws-modules/terraform-aws-eks.git//modules/karpenter?ref=v21.8.0"
+}
+module "labels" {
+  source = "github.com/cloudposse/terraform-null-label?ref=0.25.0"
+}
+module "ssh" {
+  source = "git@github.com:example/terraform-modules.git//vpc?ref=vpc-v1.2.0"
+}
+module "gitlab" {
+  source = "git::https://gitlab.com/example/modules.git?ref=v3.0.0"
+}
+module "local" {
+  source = "./modules/net"
+}
+module "unpinned" {
+  source = "terraform-aws-modules/iam/aws"
+}
+module "computed" {
+  source  = "terraform-aws-modules/s3-bucket/aws"
+  version = var.s3_version
+}
+-- broken/main.tf --
+module "x" { this is not valid hcl
 -- modules/json/versions.tf.json --
 {
   "terraform": {
@@ -37,5 +75,8 @@ resource "null_resource" "x" {}
     "required_providers": {
       "azurerm": { "source": "hashicorp/azurerm", "version": "4.50.0" }
     }
+  },
+  "module": {
+    "rds": { "source": "terraform-aws-modules/rds/aws", "version": "7.0.0" }
   }
 }

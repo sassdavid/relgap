@@ -95,7 +95,7 @@ Detect NAME\_VERSION=x.y.z assignments in extra\_files.
 |---|---|---|---|---|
 | `list of string` | `[]` |  | `RELGAP_SCAN_EXTRA_FILES` |  |
 
-Extra glob patterns scanned by the generic detector.
+Extra glob patterns read by the renovate-comment detector, and by the generic detector when it is on.
 
 ## tools
 
@@ -263,7 +263,7 @@ schema_version: 1
 #   detectors:
 #     ci_actions: false           # also report GitHub Actions uses: pins in workflow files
 #     generic: false              # read NAME_VERSION=x.y.z lines in extra_files
-#   extra_files: []               # globs the generic detector reads, for example ["Makefile", "**/*.env"]
+#   extra_files: []               # globs the renovate-comment and generic detectors read, e.g. ["Makefile"]
 #
 # tools: {}                       # local registry entries, for example {hk: {repo: jdx/hk}}
 # aliases: {}                     # raw pin name to tool, for example {TG_VERSION: terragrunt}

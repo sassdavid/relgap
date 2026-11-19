@@ -13,6 +13,7 @@ type Kind string
 const (
 	KindTool       Kind = "tool"
 	KindTFProvider Kind = "tfprovider"
+	KindTFModule   Kind = "tfmodule"
 	KindChart      Kind = "chart"
 	KindImage      Kind = "image"
 	KindAction     Kind = "action"
@@ -43,13 +44,15 @@ type Pin struct {
 	Tool     string   `json:"tool"`     // name `relgap digest` accepts; empty when unresolved
 	RawName  string   `json:"raw_name"` // as written: TERRAFORM_VERSION, hashicorp/aws, http:kafka
 	Kind     Kind     `json:"kind"`
-	Value    string   `json:"value"`   // as written
-	Version  string   `json:"version"` // Value without a leading v or go, for comparison
+	Registry string   `json:"registry_url,omitempty"` // a chart pin's Helm repository URL
+	Value    string   `json:"value"`                  // as written
+	Version  string   `json:"version"`                // Value without a leading v or go, for comparison
 	Exact    bool     `json:"exact"`
 	Match    Match    `json:"match"`
 	Location Location `json:"location"`
 
-	lookup string // name to resolve when it differs from RawName
+	lookup   string // name to resolve when it differs from RawName
+	fallback string // tool name to use when neither lookup nor RawName resolves
 }
 
 // Location is where a pin was found.

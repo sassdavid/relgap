@@ -86,7 +86,7 @@ type Resolution struct {
 
 // ResolveOptions say what [Resolver.Resolve] may do beyond the embedded registries.
 type ResolveOptions struct {
-	Finder Finder // nil resolves offline: tfprovider:, chart:, npm: and pypi: then resolve only from registries
+	Finder Finder // nil resolves offline: tfprovider:, tfmodule:, chart:, npm: and pypi: then resolve only from registries
 	Guess  bool   // search GitHub for an unknown name; needs Finder
 }
 
@@ -318,7 +318,7 @@ type identity struct {
 
 // Resolve identifies input and merges every layer that knows the tool. input is a name, an
 // alias, a NAME_VERSION variable, github:owner/repo, aqua:package, tfprovider:namespace/name,
-// chart:repo/name, chart:name, npm:package or pypi:package.
+// tfmodule:namespace/name/provider, chart:repo/name, chart:name, npm:package or pypi:package.
 func (r *Resolver) Resolve(ctx context.Context, input string, opts ResolveOptions) (*Resolution, error) {
 	input = strings.TrimSpace(input)
 	if input == "" {
@@ -391,13 +391,16 @@ func (r *Resolver) relgapSource(name string) string {
 
 func isLookupPrefix(prefix string) bool {
 	switch prefix {
-	case KindTFProvider, KindChart, KindNPM, KindPyPI:
+	case KindTFProvider, KindTFModule, KindChart, KindNPM, KindPyPI:
 		return true
 	}
 	return false
 }
 
-// identifyLookup identifies tfprovider:, chart:, npm: and pypi: names. The registries answer
+// tfModuleParts is the number of parts in a registry module address: namespace, name, provider.
+const tfModuleParts = 3
+
+// identifyLookup identifies tfprovider:, tfmodule:, chart:, npm: and pypi: names. The registries answer
 // first, so curated tools resolve offline; finder asks the package registry otherwise.
 func (r *Resolver) identifyLookup(ctx context.Context, prefix, rest string, finder Finder) (identity, error) {
 	var (
@@ -418,6 +421,15 @@ func (r *Resolver) identifyLookup(ctx context.Context, prefix, rest string, find
 		}
 		// hashicorp/aws is hashicorp/terraform-provider-aws by HashiCorp's naming rule.
 		offline = func() (string, Layer, bool) { return r.byRepo(ns + "/terraform-provider-" + provider) }
+	case KindTFModule:
+		by, service = "terraform module", "the Terraform registry"
+		if parts := strings.Split(rest, "/"); len(parts) != tfModuleParts || slices.Contains(parts, "") {
+			return identity{}, fmt.Errorf(
+				"%w: tfmodule:%s is not tfmodule:<namespace>/<name>/<provider>",
+				ErrUnsupported,
+				rest,
+			)
+		}
 	case KindChart:
 		by, service = "chart", "Artifact Hub"
 	case KindNPM:
@@ -553,7 +565,7 @@ func (r *Resolver) identifyExplicit(prefix, rest string) (string, Match, *AquaEn
 		return path.Base(pkg.Name), match, pkg, "", nil
 	default:
 		return "", Match{}, nil, "", fmt.Errorf(
-			"%w: unknown prefix %q (relgap knows github, aqua, tfprovider, chart, npm and pypi)",
+			"%w: unknown prefix %q (relgap knows github, aqua, tfprovider, tfmodule, chart, npm and pypi)",
 			ErrUnsupported,
 			prefix+":",
 		)
