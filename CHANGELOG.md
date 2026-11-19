@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.10.0](https://github.com/sassdavid/relgap/compare/v0.9.1...v0.10.0) (2026-11-19)
+
+
+### Features
+
+* read Renovate comments, Terraform modules and Hugo links ([#90](https://github.com/sassdavid/relgap/issues/90)) ([c7ed92c](https://github.com/sassdavid/relgap/commit/c7ed92c854df13172a2ba9af2defefa6ee8dd087))
+
+
+### Bug Fixes
+
+* infer chart tag prefixes from tags and close digest gaps ([#87](https://github.com/sassdavid/relgap/issues/87)) ([d390ee0](https://github.com/sassdavid/relgap/commit/d390ee0bdadb5f8071d2e93b195b942400888a67))
+
 ## [0.9.1](https://github.com/sassdavid/relgap/compare/v0.9.0...v0.9.1) (2026-11-18)
 
 
