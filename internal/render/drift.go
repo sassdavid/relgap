@@ -102,7 +102,7 @@ func driftRows(d *report.Drift, all bool) ([][]cell, []string) {
 	}
 	header := []cell{{text: "REPO"}}
 	for _, t := range cols {
-		header = append(header, cell{text: t.Tool})
+		header = append(header, cell{text: toolName(t.Tool)})
 	}
 	rows := [][]cell{header}
 	if latest {
@@ -178,7 +178,7 @@ func agreeing(t *report.DriftTool) string {
 	if t.Latest != "" {
 		detail += ", latest " + t.Latest
 	}
-	return fmt.Sprintf("%s %s (%s)", t.Tool, text, detail)
+	return fmt.Sprintf("%s %s (%s)", toolName(t.Tool), text, detail)
 }
 
 func notCompared(t *report.DriftTool) string {
@@ -194,7 +194,7 @@ func notCompared(t *report.DriftTool) string {
 	if t.Latest != "" {
 		detail += ", latest " + t.Latest
 	}
-	return fmt.Sprintf("%s %s (%s)", t.Tool, strings.Join(values, " "), detail)
+	return fmt.Sprintf("%s %s (%s)", toolName(t.Tool), strings.Join(values, " "), detail)
 }
 
 func driftSummary(d *report.Drift) string {

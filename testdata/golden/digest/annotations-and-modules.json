@@ -6,6 +6,7 @@
   "data": {
     "tools": [
       {
+        "id": "tfmodule:terraform-aws-modules/vpc/aws",
         "tool": "terraform-aws-vpc",
         "repo": "terraform-aws-modules/terraform-aws-vpc",
         "from": "6.7.3",
@@ -93,6 +94,7 @@
         ]
       },
       {
+        "id": "github:cloudposse/terraform-null-label",
         "tool": "terraform-null-label",
         "repo": "cloudposse/terraform-null-label",
         "from": "0.24.1",
@@ -168,6 +170,7 @@
         ]
       },
       {
+        "id": "chart:external-dns/external-dns",
         "tool": "external-dns",
         "repo": "kubernetes-sigs/external-dns",
         "from": "1.23.0",

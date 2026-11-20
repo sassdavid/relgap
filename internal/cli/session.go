@@ -182,7 +182,12 @@ func (s *session) digest(ctx context.Context, a digestArgs) (*report.ToolDigest,
 	if err != nil {
 		return nil, err
 	}
+	id, known := s.resolver.Identify(a.tool)
+	if !known {
+		id = registry.ChartURLName(strings.TrimSpace(a.tool))
+	}
 	digest, err := s.digester(gh, hc).Digest(ctx, report.DigestRequest{
+		ID:                 id,
 		Tool:               resolution.Tool,
 		From:               a.from,
 		To:                 a.to,

@@ -11,8 +11,9 @@ about or the pins it scanned. It has no telemetry and no update check. `relgap p
 Scanned files name git hosts and image registries, so relgap contacts only the ones it knows:
 bitbucket.org, gitlab.com and the hosts in `gitlab.hosts` for git sources, and Docker Hub,
 ghcr.io, registry.k8s.io, quay.io, public.ecr.aws, mcr.microsoft.com and the hosts in
-`images.registries` for images. A pin on any other host stays unresolved or skipped, and
-relgap runs no `git ls-remote` against it.
+`images.registries` for images and for Helm charts behind an `oci://` URL that Artifact Hub
+doesn't list. A pin on any other host stays unresolved or skipped, and relgap runs no
+`git ls-remote` against it.
 
 ## Hosts
 

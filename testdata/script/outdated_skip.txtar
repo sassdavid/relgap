@@ -14,6 +14,11 @@ stdout '"tool": "action:actions/checkout",\s+"pin": \{[^{}]*"location": \{[^{}]*
 stdout '"tool": "tfprovider:hashicorp/aws",\s+"repo": "hashicorp/terraform-provider-aws",\s+"pin": \{[^{}]*"location": \{[^{}]*\}\s*\},\s+"status": "error"'
 stdout '"tool": "chart:https://argoproj.github.io/argo-helm/argo-cd",\s+"pin": \{[^{}]*"location": \{[^{}]*\}\s*\},\s+"status": "error"'
 
+# The table shows the chart by its short name, which resolve and digest accept too.
+exec expect-exit 1 relgap outdated --offline --format plain
+stdout '^chart:argoproj/argo-helm/argo-cd '
+! stdout '^chart:https://'
+
 -- repo/main.tf --
 terraform {
   required_providers {

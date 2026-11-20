@@ -6,6 +6,7 @@
   "data": {
     "tools": [
       {
+        "id": "claude-code",
         "tool": "claude-code",
         "repo": "anthropics/claude-code",
         "from": "2.1.300",

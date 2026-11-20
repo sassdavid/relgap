@@ -2,6 +2,7 @@ package registry_test
 
 import (
 	"context"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -166,4 +167,41 @@ func TestSpec_tool_resolution_3(t *testing.T) {
 	assert.Equal(t, "changelog-file", res.Tool.Sources[0].Kind)
 	assert.Equal(t, "CHANGELOG.md", res.Tool.Sources[0].PathTemplate)
 	assert.Empty(t, f.asked)
+}
+
+// TestChartShortName shortens chart names read through an oci:// or GitHub Pages URL for tables,
+// and reads the short form back as the same chart.
+func TestChartShortName(t *testing.T) {
+	t.Parallel()
+	tests := []struct{ long, short string }{
+		{
+			"chart:https://aws.github.io/secrets-store-csi-driver-provider-aws/secrets-store-csi-driver-provider-aws",
+			"chart:aws/secrets-store-csi-driver-provider-aws/secrets-store-csi-driver-provider-aws",
+		},
+		{"chart:https://o.github.io/site/charts/x", "chart:o/site/charts/x"},
+		{"chart:oci://quay.io/jetstack/charts/cert-manager", "chart:quay.io/jetstack/charts/cert-manager"},
+		{"chart:oci://localhost:5000/x", "chart:localhost:5000/x"},
+	}
+	for _, tt := range tests {
+		assert.Equal(t, tt.short, registry.ChartShortName(tt.long), tt.long)
+		assert.Equal(t, tt.long, registry.ChartURLName(tt.short), tt.short)
+		assert.Equal(t, tt.long, registry.ChartURLName(tt.long), "a URL name is already the identity")
+		longURL, longChart, ok := registry.SplitChartAt(strings.TrimPrefix(tt.long, "chart:"))
+		require.True(t, ok)
+		shortURL, shortChart, ok := registry.SplitChartAt(strings.TrimPrefix(tt.short, "chart:"))
+		require.True(t, ok)
+		assert.Equal(t, []string{longURL, longChart}, []string{shortURL, shortChart}, tt.short)
+	}
+	for _, same := range []string{
+		"chart:https://charts.jetstack.io/cert-manager", // not a Pages site
+		"chart:https://o.github.io/x",                   // no site path: the chart would be the site
+		"chart:argo/argo-cd",                            // an Artifact Hub repository
+		"chart:argo-cd",
+		"github:o/r",
+	} {
+		assert.Equal(t, same, registry.ChartShortName(same), same)
+		assert.Equal(t, same, registry.ChartURLName(same), same)
+	}
+	_, _, ok := registry.SplitChartAt("argo/argo-cd")
+	assert.False(t, ok, "two parts without a dot are an Artifact Hub repository and chart")
 }

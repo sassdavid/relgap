@@ -259,6 +259,7 @@ func (s *digestSet) get(ctx context.Context, d *Digester, tool string, req Diges
 		s.byKey[key] = e
 	}
 	s.mu.Unlock()
+	req.ID = tool
 	e.once.Do(func() { e.d, e.err = d.Digest(ctx, req) })
 	return e.d, e.err
 }

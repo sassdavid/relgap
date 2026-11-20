@@ -6,6 +6,7 @@
   "data": {
     "tools": [
       {
+        "id": "argocd",
         "tool": "argocd",
         "repo": "argoproj/argo-cd",
         "from": "3.2.5",

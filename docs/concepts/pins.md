@@ -30,9 +30,17 @@ A chart pin also keeps the Helm repository URL it names (`registry_url` in JSON)
 and `relgap digest --base` use it to find the chart's Artifact Hub repository. When Artifact Hub
 has no repository at that URL with the chart, the pin is named `chart:<url>/<name>`. A GitHub
 Pages URL (`https://<owner>.github.io/<repo>`) then reads the chart's versions from the
-`index.yaml` that chart-releaser publishes on the `gh-pages` branch, through the GitHub API. Any
-other URL is skipped with that reason; relgap never swaps in another repository's chart of the
-same name.
+`index.yaml` that chart-releaser publishes on the `gh-pages` branch, through the GitHub API. An
+`oci://` URL reads them from the registry's tags, when the registry is one relgap reads images
+from ([network](/concepts/network)), and takes the repository for notes from the chart's
+`org.opencontainers.image.source` annotation. Any other URL is skipped with that reason; relgap
+never swaps in another repository's chart of the same name.
+
+Tables show such a chart in a short form, which `relgap resolve` and `relgap digest` accept too:
+`chart:aws/secrets-store-csi-driver-provider-aws/secrets-store-csi-driver-provider-aws` for
+`https://aws.github.io/secrets-store-csi-driver-provider-aws`, and
+`chart:quay.io/jetstack/charts/cert-manager` for `oci://quay.io/jetstack/charts`. JSON keeps the
+URL.
 
 A `# renovate:` comment with `extractVersion=^<prefix>(?<version>...)$` on a `github-releases` or
 `github-tags` datasource names the tool `github:<owner>/<repo>@<prefix>`, whose tags carry that

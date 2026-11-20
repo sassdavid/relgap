@@ -305,8 +305,59 @@ func (r *Remote) chartAt(ctx context.Context, registryURL, chart string) (*regis
 	if pagesRepo, dir, isPages := githubPagesDir(registryURL); isPages && r.gh != nil {
 		return r.pagesChart(ctx, registryURL, pagesRepo, dir, chart)
 	}
+	if dir, isOCI := strings.CutPrefix(registryURL, "oci://"); isOCI && r.images != nil {
+		return r.ociChart(ctx, strings.Trim(dir, "/")+"/"+chart, chart)
+	}
 	return nil, fmt.Errorf("%w: registryUrl %s is not an Artifact Hub repository with a chart named %s",
 		registry.ErrUnknownTool, registryURL, chart)
+}
+
+// ociChart reads the versions of a chart in an OCI registry from its tags, where Helm writes a
+// version's + as _. The org.opencontainers.image.source annotation that helm push takes from the
+// chart's first sources entry names its repository. Without a GitHub one, the chart has versions
+// and no notes.
+func (r *Remote) ociChart(ctx context.Context, image, chart string) (*registry.Found, error) {
+	ref, err := oci.ParseRef(image)
+	if err != nil {
+		return nil, fmt.Errorf("%w: %w", registry.ErrUnsupported, err)
+	}
+	tags, err := r.images.Tags(ctx, ref)
+	switch {
+	case errors.Is(err, oci.ErrNotAllowed):
+		return nil, fmt.Errorf("%w: chart %s: %w; add the registry to images.registries", registry.ErrUnsupported,
+			ref, err)
+	case errors.Is(err, httpx.ErrNotFound), errors.Is(err, httpx.ErrUnauthorized):
+		return nil, fmt.Errorf("%w: chart %s: not found, or private (relgap reads public charts only): %w",
+			registry.ErrUnknownTool, ref, err)
+	case err != nil:
+		return nil, fmt.Errorf("chart %s: %w", ref, err)
+	}
+	refs := make([]version.Ref, len(tags))
+	for i, t := range tags {
+		refs[i] = version.Ref{Tag: strings.ReplaceAll(t, "_", "+")}
+	}
+	f := &registry.Found{Name: chart, Layer: registry.LayerHelmRepo}
+	versionsURL := r.images.URL(ref)
+	newest := newestStable(refs)
+	f.Versions, f.VersionsURL = refs, versionsURL
+	if newest == "" {
+		return f, nil
+	}
+	src, err := r.images.Source(ctx, ref, strings.ReplaceAll(newest, "+", "_"))
+	if err != nil {
+		if ctx.Err() != nil {
+			return nil, fmt.Errorf("chart %s: %w", ref, ctx.Err())
+		}
+		// A manifest that can't be read only costs the notes, as for an image.
+		return f, nil
+	}
+	repo, _, isGitHub := ParseGitHubURL(src)
+	if !isGitHub || r.gh == nil {
+		return f, nil
+	}
+	f.Versions, f.VersionsURL = nil, ""
+	f.Repo = repo
+	return r.chartVersions(ctx, f, chart, refs, versionsURL)
 }
 
 // pagesBranch and pagesIndex are where chart-releaser publishes a GitHub Pages Helm repository

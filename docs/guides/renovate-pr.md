@@ -23,7 +23,9 @@ Added, removed and other changed pins are listed on stderr and get no digest.
 
 In JSON, each digest has a `pins` array with the changed pins it covers: `repo`, `file`, `line`,
 `raw_name`, and `base` and `head`, the values as written. Use it to match a digest to your own
-records by file and line.
+records by file and line. Each digest's `id` is the tool's identity, the name `relgap outdated`
+prints in `tool`, such as `chart:aws/aws-for-fluent-bit` or `github:aws/aws-for-fluent-bit`. Key
+digests on `id`: `tool` is the short name, which a chart and its application can share.
 
 The base commit must be in the clone, so the checkout needs `fetch-depth: 0`. When the base commit
 is missing, relgap tries the target branch from Renovate's comment, then the pull request's base

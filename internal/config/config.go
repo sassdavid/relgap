@@ -67,9 +67,9 @@ type GitLabHost struct {
 	TokenEnv string `json:"token_env,omitempty" jsonschema:"pattern=^[A-Za-z_][A-Za-z0-9_]*$"            jsonschema_description:"Env var with this host's token, sent in PRIVATE-TOKEN to this host only. Empty means GITLAB_TOKEN when GITLAB_HOST names this host."`
 }
 
-// Images configures the image registries outdated reads tags from.
+// Images configures the registries outdated reads image and oci:// chart tags from.
 type Images struct {
-	Registries []string `json:"registries" jsonschema_description:"Registries to read besides Docker Hub, ghcr.io, registry.k8s.io, quay.io, public.ecr.aws and mcr.microsoft.com. relgap asks every registry for anonymous tokens only."`
+	Registries []string `json:"registries" jsonschema_description:"Registries to read images and oci:// charts from besides Docker Hub, ghcr.io, registry.k8s.io, quay.io, public.ecr.aws and mcr.microsoft.com. relgap asks every registry for anonymous tokens only."`
 }
 
 // IgnoreRule suppresses the pins that match every field it sets: a tool, a raw name, a path.

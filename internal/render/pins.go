@@ -51,7 +51,7 @@ func pinRows(pins []scan.Pin, unresolved bool) [][]string {
 	}
 	rows := [][]string{{first, "VALUE", "DETECTOR", "LOCATION"}}
 	for _, p := range pins {
-		name := p.Tool
+		name := toolName(p.Tool)
 		if unresolved {
 			name = p.RawName
 		} else if name == "" {

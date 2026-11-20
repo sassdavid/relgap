@@ -7,6 +7,8 @@ import (
 	"strings"
 	"unicode/utf8"
 
+	"github.com/sassdavid/relgap/internal/registry"
+
 	"github.com/sassdavid/relgap/internal/classify"
 	"github.com/sassdavid/relgap/internal/enrich"
 	"github.com/sassdavid/relgap/internal/report"
@@ -134,8 +136,11 @@ func outdatedRows(o *report.Outdated) ([][]cell, []string) {
 			notes = append(notes, n)
 		}
 		if p.EOL != nil && p.EOL.Current != nil && p.EOL.Current.Note != "" {
-			notes = append(notes, fmt.Sprintf("%s %s (%s): %s", p.Tool, p.Current, PinLocation(p.Pin.Location),
-				p.EOL.Current.Note))
+			notes = append(
+				notes,
+				fmt.Sprintf("%s %s (%s): %s", toolName(p.Tool), p.Current, PinLocation(p.Pin.Location),
+					p.EOL.Current.Note),
+			)
 		}
 	}
 	return rows, notes
@@ -150,7 +155,7 @@ func outdatedRow(p *report.OutdatedPin) []cell {
 		current = ApproxMark + current
 	}
 	row := []cell{
-		{text: p.Tool},
+		{text: toolName(p.Tool)},
 		{text: current},
 		{text: noValue},
 		{text: noValue},
@@ -253,7 +258,7 @@ func binaryLines(bins []*enrich.Binary) []string {
 
 // outdatedNote explains a non-exact pin or a pin that wasn't compared.
 func outdatedNote(p *report.OutdatedPin) string {
-	where := fmt.Sprintf("%s %s (%s)", p.Tool, p.Pin.Value, PinLocation(p.Pin.Location))
+	where := fmt.Sprintf("%s %s (%s)", toolName(p.Tool), p.Pin.Value, PinLocation(p.Pin.Location))
 	switch {
 	case p.Status == report.StatusUnknown || p.Status == report.StatusError:
 		return where + ": " + p.Note
@@ -298,3 +303,7 @@ func pinsWord(n int, one, many string) string {
 	}
 	return many
 }
+
+// toolName is the name a table shows for a tool: the short form of a chart read through a URL.
+// JSON, SARIF and the CLI's inputs keep the full name.
+func toolName(name string) string { return registry.ChartShortName(name) }

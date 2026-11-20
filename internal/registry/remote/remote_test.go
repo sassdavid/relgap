@@ -445,3 +445,36 @@ func TestRemoteImage(t *testing.T) {
 	_, err = remote.New(hc, nil, nil).Find(t.Context(), registry.KindImage, "alpine")
 	require.ErrorIs(t, err, registry.ErrUnsupported, "without an image reader")
 }
+
+// TestSpec_tool_resolution_9 reads a chart behind an oci:// registryUrl that Artifact Hub doesn't list
+// from the registry's tags. demo's source annotation names a GitHub repository whose tags cover
+// the newest chart version, so it gets notes; plain names none and gets versions only; a registry
+// relgap doesn't read gets no request.
+func TestSpec_tool_resolution_9(t *testing.T) {
+	t.Parallel()
+	rt := vcr.ForTest(
+		t,
+		filepath.Join("..", "..", "..", "testdata", "cassettes", "non-github", "oci-charts"),
+		vcr.Scrubber{},
+	)
+	hc := httpx.New(httpx.Options{Logger: slog.New(slog.DiscardHandler), Transport: rt})
+	gh := &fakeTags{tags: []string{"demo-1.0.0", "demo-1.1.0", "demo-1.2.1+build.5", "v9.0.0"}}
+	r := remote.New(hc, nil, gh).WithImages(oci.New(hc, oci.Options{}))
+
+	found, err := r.Find(t.Context(), registry.KindChart, "oci://quay.io/example/charts/demo")
+	require.NoError(t, err)
+	assert.Equal(t, registry.Found{
+		Repo: "example-org/demo", Name: "demo", TagPrefix: "demo-", Layer: registry.LayerHelmRepo,
+	}, *found)
+
+	found, err = r.Find(t.Context(), registry.KindChart, "registry-1.docker.io/examplecharts/plain")
+	require.NoError(t, err, "the short form of oci://registry-1.docker.io/examplecharts/plain")
+	assert.Empty(t, found.Repo)
+	assert.Equal(t, "plain", found.Name)
+	assert.Equal(t, []string{"0.1.0", "0.2.0", "0.3.0"}, tagsOfRefs(found.Versions))
+	assert.Equal(t, "https://registry-1.docker.io/v2/examplecharts/plain/tags/list", found.VersionsURL)
+
+	_, err = r.Find(t.Context(), registry.KindChart, "oci://registry.internal.test/charts/x")
+	require.ErrorIs(t, err, registry.ErrUnsupported)
+	assert.ErrorContains(t, err, "images.registries")
+}

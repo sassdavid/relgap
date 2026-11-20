@@ -37,7 +37,9 @@ Terraform registry, Artifact Hub, the npm registry or PyPI, which name the sourc
 module's tag prefix comes from the tag of its latest version. chart:name without a repository
 resolves only when one Artifact Hub repository has a chart of that name. chart:url/name names the
 chart by its Helm repository URL (https://charts.jetstack.io/cert-manager) and resolves only
-through the Artifact Hub repository at that URL.
+through the Artifact Hub repository at that URL, the gh-pages index of a GitHub Pages URL, or the
+tags of an oci:// registry relgap reads images from. The short forms tables show,
+chart:owner/repo/name for a GitHub Pages URL and chart:registry/path/name for oci://, work too.
 
 Layers, highest precedence first:
 

@@ -6,6 +6,7 @@
   "data": {
     "tools": [
       {
+        "id": "helm",
         "tool": "helm",
         "repo": "helm/helm",
         "from": "3.21.0",

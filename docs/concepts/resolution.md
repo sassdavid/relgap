@@ -64,15 +64,18 @@ Artifact Hub. A chart takes no other tool's entry, because a chart's versions ar
 application's. `chart:name` without a repository resolves only when one Artifact Hub repository
 has a chart of that name. `chart:<url>/<name>`, such as
 `chart:https://charts.jetstack.io/cert-manager`, names the chart by its Helm repository URL and
-resolves only through the Artifact Hub repository at that URL, or through the `gh-pages` index of
-a GitHub Pages URL.
+resolves only through the Artifact Hub repository at that URL, through the `gh-pages` index of
+a GitHub Pages URL, or through the tags of an `oci://` registry relgap reads images from. The short
+forms tables show, `chart:<owner>/<repo>/<name>` and `chart:<registry>/<path>/<name>`, resolve the
+same way.
 
 A chart's versions come from its repository's tags when a tag prefix covers the newest version the
 chart lists. Some repositories tag every release once for all their charts: aws/eks-charts tags
 `v0.0.252`. Then the versions come from Artifact Hub, or from the Helm repository index, and the
 tool has the universe `chart`. `outdated` shows latest and behind, with `-` for the counts, and a
 digest lists the versions with a warning that says why it has no notes. Pin the application's own
-repository as well to read its release notes.
+repository as well to read its release notes. A chart in an OCI registry whose source annotation
+names no GitHub repository has the universe `chart` with no repository at all.
 
 An `image:` name lists the tags of the image's registry, and the tool has the universe `image`.
 Only tags with the name's tag pattern count: `image:nginx:*-alpine` reads `1.27.0-alpine` as

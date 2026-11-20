@@ -6,6 +6,7 @@
   "data": {
     "tools": [
       {
+        "id": "chart:argo/argo-cd",
         "tool": "argo-cd",
         "repo": "argoproj/argo-helm",
         "from": "10.16.0",

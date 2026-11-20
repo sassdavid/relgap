@@ -1,0 +1,347 @@
+---
+# Written by hand from the Artifact Hub API, the OCI distribution spec, each registry's documented token flow and the manifest annotations helm push writes (helm/helm pkg/registry/chart.go). quay.io answers with a source annotation and a tag with _ for +; Docker Hub with no source. Not a recording.
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: artifacthub.io
+        url: "https://artifacthub.io/api/v1/repositories/search?kind=0&limit=60&url=oci%3A%2F%2Fquay.io%2Fexample%2Fcharts%2Fdemo"
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 2
+        body: "[]"
+        headers:
+            Content-Type:
+                - "application/json"
+        status: 200 OK
+        code: 200
+        duration: 0s
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: artifacthub.io
+        url: "https://artifacthub.io/api/v1/repositories/search?kind=0&limit=60&url=oci%3A%2F%2Fquay.io%2Fexample%2Fcharts"
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 2
+        body: "[]"
+        headers:
+            Content-Type:
+                - "application/json"
+        status: 200 OK
+        code: 200
+        duration: 0s
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: quay.io
+        headers:
+            Accept:
+                - "application/json"
+        url: "https://quay.io/v2/example/charts/demo/tags/list?n=1000"
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 99
+        body: "{\"errors\":[{\"code\":\"UNAUTHORIZED\",\"message\":\"access to the requested resource is not authorized\"}]}"
+        headers:
+            Www-Authenticate:
+                - "Bearer realm=\"https://quay.io/v2/auth\",service=\"quay.io\",scope=\"repository:example/charts/demo:pull\""
+            Content-Type:
+                - "application/json"
+        status: 401 Unauthorized
+        code: 401
+        duration: 0s
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: quay.io
+        headers:
+            Accept:
+                - "application/json"
+        url: "https://quay.io/v2/auth?scope=repository%3Aexample%2Fcharts%2Fdemo%3Apull&service=quay.io"
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 32
+        body: "{\"token\":\"anonymous-test-token\"}"
+        headers:
+            Content-Type:
+                - "application/json"
+        status: 200 OK
+        code: 200
+        duration: 0s
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: quay.io
+        headers:
+            Accept:
+                - "application/json"
+        url: "https://quay.io/v2/example/charts/demo/tags/list?n=1000"
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 84
+        body: "{\"name\":\"example/charts/demo\",\"tags\":[\"1.0.0\",\"1.1.0\",\"1.2.0-rc.1\",\"1.2.1_build.5\"]}"
+        headers:
+            Content-Type:
+                - "application/json"
+        status: 200 OK
+        code: 200
+        duration: 0s
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: quay.io
+        headers:
+            Accept:
+                - "application/vnd.oci.image.index.v1+json, application/vnd.docker.distribution.manifest.list.v2+json, application/vnd.oci.image.manifest.v1+json, application/vnd.docker.distribution.manifest.v2+json"
+        url: "https://quay.io/v2/example/charts/demo/manifests/1.2.1_build.5"
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 645
+        body: "{\"schemaVersion\":2,\"mediaType\":\"application/vnd.oci.image.manifest.v1+json\",\"config\":{\"mediaType\":\"application/vnd.cncf.helm.config.v1+json\",\"digest\":\"sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee\",\"size\":117},\"layers\":[{\"mediaType\":\"application/vnd.cncf.helm.chart.content.v1.tar.gz\",\"digest\":\"sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff\",\"size\":3561}],\"annotations\":{\"org.opencontainers.image.title\":\"demo\",\"org.opencontainers.image.version\":\"1.2.1+build.5\",\"org.opencontainers.image.created\":\"2026-11-02T10:00:00Z\",\"org.opencontainers.image.source\":\"https://github.com/example-org/demo\"}}"
+        headers:
+            Content-Type:
+                - "application/vnd.oci.image.manifest.v1+json"
+        status: 200 OK
+        code: 200
+        duration: 0s
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: artifacthub.io
+        url: "https://artifacthub.io/api/v1/repositories/search?kind=0&limit=60&url=oci%3A%2F%2Fregistry-1.docker.io%2Fexamplecharts%2Fplain"
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 2
+        body: "[]"
+        headers:
+            Content-Type:
+                - "application/json"
+        status: 200 OK
+        code: 200
+        duration: 0s
+    - id: 7
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: artifacthub.io
+        url: "https://artifacthub.io/api/v1/repositories/search?kind=0&limit=60&url=oci%3A%2F%2Fregistry-1.docker.io%2Fexamplecharts"
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 2
+        body: "[]"
+        headers:
+            Content-Type:
+                - "application/json"
+        status: 200 OK
+        code: 200
+        duration: 0s
+    - id: 8
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: registry-1.docker.io
+        headers:
+            Accept:
+                - "application/json"
+        url: "https://registry-1.docker.io/v2/examplecharts/plain/tags/list?n=1000"
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 72
+        body: "{\"errors\":[{\"code\":\"UNAUTHORIZED\",\"message\":\"authentication required\"}]}"
+        headers:
+            Www-Authenticate:
+                - "Bearer realm=\"https://auth.docker.io/token\",service=\"registry.docker.io\",scope=\"repository:examplecharts/plain:pull\""
+            Content-Type:
+                - "application/json"
+        status: 401 Unauthorized
+        code: 401
+        duration: 0s
+    - id: 9
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: auth.docker.io
+        headers:
+            Accept:
+                - "application/json"
+        url: "https://auth.docker.io/token?scope=repository%3Aexamplecharts%2Fplain%3Apull&service=registry.docker.io"
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 49
+        body: "{\"token\":\"anonymous-test-token\",\"expires_in\":300}"
+        headers:
+            Content-Type:
+                - "application/json"
+        status: 200 OK
+        code: 200
+        duration: 0s
+    - id: 10
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: registry-1.docker.io
+        headers:
+            Accept:
+                - "application/json"
+        url: "https://registry-1.docker.io/v2/examplecharts/plain/tags/list?n=1000"
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 63
+        body: "{\"name\":\"examplecharts/plain\",\"tags\":[\"0.1.0\",\"0.2.0\",\"0.3.0\"]}"
+        headers:
+            Content-Type:
+                - "application/json"
+        status: 200 OK
+        code: 200
+        duration: 0s
+    - id: 11
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: registry-1.docker.io
+        headers:
+            Accept:
+                - "application/vnd.oci.image.index.v1+json, application/vnd.docker.distribution.manifest.list.v2+json, application/vnd.oci.image.manifest.v1+json, application/vnd.docker.distribution.manifest.v2+json"
+        url: "https://registry-1.docker.io/v2/examplecharts/plain/manifests/0.3.0"
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 566
+        body: "{\"schemaVersion\":2,\"mediaType\":\"application/vnd.oci.image.manifest.v1+json\",\"config\":{\"mediaType\":\"application/vnd.cncf.helm.config.v1+json\",\"digest\":\"sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee\",\"size\":117},\"layers\":[{\"mediaType\":\"application/vnd.cncf.helm.chart.content.v1.tar.gz\",\"digest\":\"sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff\",\"size\":3561}],\"annotations\":{\"org.opencontainers.image.title\":\"plain\",\"org.opencontainers.image.version\":\"0.3.0\",\"org.opencontainers.image.created\":\"2026-11-02T10:00:00Z\"}}"
+        headers:
+            Content-Type:
+                - "application/vnd.oci.image.manifest.v1+json"
+        status: 200 OK
+        code: 200
+        duration: 0s
+    - id: 12
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: registry-1.docker.io
+        url: "https://registry-1.docker.io/v2/examplecharts/plain/blobs/sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 108
+        body: "{\"name\":\"plain\",\"version\":\"0.3.0\",\"apiVersion\":\"v2\",\"appVersion\":\"2.0.0\",\"home\":\"https://example.org/plain\"}"
+        headers:
+            Content-Type:
+                - "application/json"
+        status: 200 OK
+        code: 200
+        duration: 0s
+    - id: 13
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: artifacthub.io
+        url: "https://artifacthub.io/api/v1/repositories/search?kind=0&limit=60&url=oci%3A%2F%2Fregistry.internal.test%2Fcharts%2Fx"
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 2
+        body: "[]"
+        headers:
+            Content-Type:
+                - "application/json"
+        status: 200 OK
+        code: 200
+        duration: 0s
+    - id: 14
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: artifacthub.io
+        url: "https://artifacthub.io/api/v1/repositories/search?kind=0&limit=60&url=oci%3A%2F%2Fregistry.internal.test%2Fcharts"
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 2
+        body: "[]"
+        headers:
+            Content-Type:
+                - "application/json"
+        status: 200 OK
+        code: 200
+        duration: 0s
