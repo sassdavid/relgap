@@ -1,6 +1,7 @@
 package registry
 
 import (
+	"cmp"
 	"context"
 	"errors"
 	"net/url"
@@ -104,6 +105,11 @@ func ChartShortName(name string) string {
 		return name
 	}
 	return KindChart + ":" + owner + "/" + site + "/" + chart
+}
+
+// CompareTools orders tool names by the name a table shows, [ChartShortName], then by identity.
+func CompareTools(a, b string) int {
+	return cmp.Or(cmp.Compare(ChartShortName(a), ChartShortName(b)), cmp.Compare(a, b))
 }
 
 // ChartURLName returns the chart:<registryURL>/<chart> form of a short chart name, the tool's

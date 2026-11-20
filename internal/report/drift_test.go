@@ -8,8 +8,10 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/sassdavid/relgap/internal/github"
+	"github.com/sassdavid/relgap/internal/registry"
 	"github.com/sassdavid/relgap/internal/report"
 	"github.com/sassdavid/relgap/internal/scan"
+	"github.com/sassdavid/relgap/internal/version"
 )
 
 func driftPins() []scan.Pin {
@@ -128,4 +130,17 @@ func toolsOf(ts []report.DriftTool) []string {
 		out = append(out, t.Tool)
 	}
 	return out
+}
+
+func TestDriftSortsByShownName(t *testing.T) {
+	t.Parallel()
+	resolve := func(tool string) (registry.ToolSpec, error) {
+		return registry.ToolSpec{Name: tool, Version: registry.VersionSpec{Scheme: version.SchemeLoose}}, nil
+	}
+	d, err := report.NewDrifter(slog.New(slog.DiscardHandler), nil).Drift(t.Context(), report.DriftRequest{
+		Repos: []string{"r1"}, Pins: chartSortPins(), Resolve: resolve,
+	})
+	require.NoError(t, err)
+	assert.Equal(t, []string{pagesChart, "chart:gpu-operator/gpu-operator", "chart:metrics-server/metrics-server"},
+		toolsOf(d.Tools))
 }

@@ -81,7 +81,8 @@ func (tw *textWriter) tool(t *report.ToolDigest) {
 	for i, v := range t.Versions {
 		versions[i] = v.Version
 	}
-	tw.line(fmt.Sprintf("%d versions: %s", len(t.Versions), strings.Join(versions, ", ")))
+	tw.line(fmt.Sprintf("%d %s: %s", len(t.Versions), pinsWord(len(t.Versions), "version", "versions"),
+		strings.Join(versions, ", ")))
 	counts := make([]string, 0, len(classify.Kinds()))
 	for _, k := range classify.Kinds() {
 		counts = append(counts, fmt.Sprintf("%s %d", k, t.Counts[k]))

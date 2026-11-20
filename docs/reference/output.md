@@ -36,8 +36,8 @@ Every `--format json` report has the same outer object, described by
 
 A report with entries in `errors` is partial. The exit code says whether a `--fail-on` value
 matched anyway ([exit codes](/reference/exit-codes)). The text and Markdown formats of `digest`
-have no place for errors, so relgap prints each one on stderr as
-`relgap: failed: <target>: <message>`.
+print each one on stderr as `relgap: failed: <target>: <message>`. The Markdown also starts with
+a "Not digested" section that lists them, with the pins `digest` skipped and why.
 
 ```sh
 relgap outdated --format json | jq '.data.pins[] | select(.status == "outdated")'
@@ -47,11 +47,13 @@ relgap digest terraform 1.15.8..1.17.1 --format json | jq '.data.tools[].entries
 ## Markdown
 
 `--format md` writes Markdown that a pull request comment, an issue or a step summary renders.
-A digest puts each version in a `<details>` block. Mentions and issue references in quoted
+A digest puts each version in a `<details>` block, and a partial digest starts with a "Not
+digested" section, so a pull request comment shows what is missing. Mentions and issue references in quoted
 release notes are broken with a zero-width space, and issue links go through
 `redirect.github.com`, so a comment notifies nobody. Output longer than `--md-max-chars`
 (60,000 characters by default, under GitHub's comment limit of 65,536) is cut between table rows
-or sections, and a footer says what was left out. `--md-max-chars 0` never cuts.
+or sections from the end, and a footer says what was left out. The "Not digested" section comes
+first, so a cut never drops it. `--md-max-chars 0` never cuts.
 
 ## Several formats from one run
 

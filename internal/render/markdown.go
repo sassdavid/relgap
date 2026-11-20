@@ -6,14 +6,17 @@ import (
 	"strings"
 
 	"github.com/sassdavid/relgap/internal/classify"
+	"github.com/sassdavid/relgap/internal/forge"
 	"github.com/sassdavid/relgap/internal/report"
 )
 
 // DigestMarkdown writes d as PR-ready Markdown: counts, then breaking changes and security
 // entries of every version, then one <details> block per version with the other kinds. A
-// --summarize summary comes first, labelled as LLM output.
-func DigestMarkdown(w io.Writer, d *report.Digest) error {
+// "Not digested" section, which lists failed digests and pins without a digest, comes first so
+// truncation never cuts it, then a --summarize summary labelled as LLM output.
+func DigestMarkdown(w io.Writer, d *report.Digest, failed []Error, notes []string) error {
 	mw := &textWriter{w: w}
+	markdownMissed(mw, failed, notes)
 	if d.Summary != nil {
 		mw.summaryMarkdown(d.Summary, sourceURLs(d))
 		mw.line("")
@@ -28,6 +31,23 @@ func DigestMarkdown(w io.Writer, d *report.Digest) error {
 		return fmt.Errorf("write digest: %w", mw.err)
 	}
 	return nil
+}
+
+// markdownMissed writes the failures and notes that the other formats print on stderr, so a pull
+// request comment shows that the report is partial.
+func markdownMissed(mw *textWriter, failed []Error, notes []string) {
+	if len(failed) == 0 && len(notes) == 0 {
+		return
+	}
+	mw.line("## Not digested")
+	mw.line("")
+	for _, e := range failed {
+		mw.line("- " + silence(e.Target+": failed: "+e.Message))
+	}
+	for _, n := range notes {
+		mw.line("- " + silence(n))
+	}
+	mw.line("")
 }
 
 func markdownTool(mw *textWriter, t *report.ToolDigest) {
@@ -60,8 +80,8 @@ func markdownSummary(mw *textWriter, t *report.ToolDigest) {
 			versions[i] = fmt.Sprintf("[%s](%s)", v.Version, v.URL)
 		}
 	}
-	mw.line(fmt.Sprintf("Repository: [%s](https://github.com/%s). %d versions: %s.",
-		t.Repo, t.Repo, len(t.Versions), strings.Join(versions, ", ")))
+	mw.line(fmt.Sprintf("Repository: [%s](%s). %d %s: %s.", t.Repo, forge.RepoURL(t.Host, t.Repo),
+		len(t.Versions), pinsWord(len(t.Versions), "version", "versions"), strings.Join(versions, ", ")))
 	mw.line("")
 	counts := make([]string, 0, len(classify.Kinds()))
 	for _, k := range classify.Kinds() {

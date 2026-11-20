@@ -39,8 +39,8 @@ never swaps in another repository's chart of the same name.
 Tables show such a chart in a short form, which `relgap resolve` and `relgap digest` accept too:
 `chart:aws/secrets-store-csi-driver-provider-aws/secrets-store-csi-driver-provider-aws` for
 `https://aws.github.io/secrets-store-csi-driver-provider-aws`, and
-`chart:quay.io/jetstack/charts/cert-manager` for `oci://quay.io/jetstack/charts`. JSON keeps the
-URL.
+`chart:quay.io/jetstack/charts/cert-manager` for `oci://quay.io/jetstack/charts`. Tables sort
+by that short form, and so does the JSON of `outdated` and `drift`. JSON keeps the URL.
 
 A `# renovate:` comment with `extractVersion=^<prefix>(?<version>...)$` on a `github-releases` or
 `github-tags` datasource names the tool `github:<owner>/<repo>@<prefix>`, whose tags carry that

@@ -247,8 +247,8 @@ func readSaved(path string) (ghcomment.Post, error) {
 	case kindDigest:
 		var data report.Digest
 		if err = json.Unmarshal(env.Data, &data); err == nil {
-			open = len(data.Tools) > 0
-			err = render.DigestMarkdown(&md, &data)
+			open = len(data.Tools) > 0 || len(env.Errors) > 0
+			err = render.DigestMarkdown(&md, &data, env.Errors, nil)
 		}
 	case kindOutdated:
 		var data report.Outdated

@@ -235,7 +235,7 @@ func runDigest(cmd *cobra.Command, d *app.Deps, g *globals, f digestFlags, tool,
 	}
 	data := &report.Digest{Tools: []report.ToolDigest{*digest}}
 	summarizeDigest(cmd, d, g, f, data)
-	if err = writeDigest(cmd, d, g, data, []render.Error{}); err != nil {
+	if err = writeDigest(cmd, d, g, data, []render.Error{}, nil); err != nil {
 		return err
 	}
 	return gateExit(cmd, d, gate.Matches(gate.CheckDigests(data.Tools)), nil)
@@ -245,20 +245,29 @@ func digestFormats() []render.Format {
 	return []render.Format{render.FormatTTY, render.FormatPlain, render.FormatMD, render.FormatJSON}
 }
 
-func writeDigest(cmd *cobra.Command, d *app.Deps, g *globals, data *report.Digest, errs []render.Error) error {
+// writeDigest writes data in the chosen format. errs are the failed digests and notes the pins
+// without a digest; JSON and Markdown carry the failures, and Markdown the notes too.
+func writeDigest(
+	cmd *cobra.Command,
+	d *app.Deps,
+	g *globals,
+	data *report.Digest,
+	errs []render.Error,
+	notes []string,
+) error {
 	return g.sink(cmd, d).Write(func(w io.Writer, f render.Format) error {
 		if f == render.FormatJSON {
 			env := render.NewEnvelope(buildinfo.Get().Version, d.Clock(), data)
 			env.Errors = errs
 			return render.JSON(w, env)
 		}
-		// Only the JSON envelope has a place for errors, so the other formats name them on stderr.
+		// Text has no place for errors, so the other formats also name them on stderr.
 		for _, e := range errs {
 			_, _ = fmt.Fprintf(d.Stderr, "%s: failed: %s: %s\n", config.AppName, e.Target, e.Message)
 		}
 		switch f {
 		case render.FormatMD:
-			return render.DigestMarkdown(w, data)
+			return render.DigestMarkdown(w, data, errs, notes)
 		case render.FormatAuto, render.FormatTTY, render.FormatPlain, render.FormatCSV, render.FormatSARIF,
 			render.FormatGitHub, render.FormatJSON:
 		}
@@ -297,30 +306,41 @@ func runDigestProject(cmd *cobra.Command, d *app.Deps, g *globals, f digestFlags
 		data.Tools[i].Entries = report.EntriesOf(data.Tools[i].Entries, kinds)
 	}
 	summarizeDigest(cmd, d, g, f, data)
-	if err = writeDigest(cmd, d, g, data, run.errors()); err != nil {
+	missed := run.missed()
+	if err = writeDigest(cmd, d, g, data, run.errors(), missed); err != nil {
 		return err
 	}
 	run.warn(cmd, d)
-	run.notDigested(d)
+	run.notDigested(d, missed)
 	return run.exit(cmd, d, gate)
 }
 
-// notDigested tells on stderr which compared pins have no digest and why.
-func (c *comparison) notDigested(d *app.Deps) {
-	var latest, other []string
+// missed names the compared pins whose versions relgap couldn't compare, and why.
+func (c *comparison) missed() []string {
+	var out []string
+	for _, p := range c.out.Pins {
+		if p.Status == report.StatusUnknown {
+			out = append(
+				out,
+				fmt.Sprintf("%s %s (%s): %s", p.Tool, p.Pin.Value, render.PinLocation(p.Pin.Location), p.Note),
+			)
+		}
+	}
+	return out
+}
+
+// notDigested tells on stderr which compared pins have no digest and why; other are the notes
+// from [comparison.missed].
+func (c *comparison) notDigested(d *app.Deps, other []string) {
+	var latest []string
 	skipped := 0
 	for _, p := range c.out.Pins {
 		switch p.Status {
 		case report.StatusCurrent:
 			latest = append(latest, p.Tool+" "+p.Current)
-		case report.StatusUnknown:
-			other = append(
-				other,
-				fmt.Sprintf("%s %s (%s): %s", p.Tool, p.Pin.Value, render.PinLocation(p.Pin.Location), p.Note),
-			)
 		case report.StatusSkipped:
 			skipped++
-		case report.StatusOutdated, report.StatusError:
+		case report.StatusOutdated, report.StatusError, report.StatusUnknown:
 		}
 	}
 	if len(latest) > 0 {

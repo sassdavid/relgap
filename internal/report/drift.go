@@ -121,7 +121,7 @@ func (d *Drifter) group(req DriftRequest) []*driftGroup {
 		}
 		g.pins = append(g.pins, p)
 	}
-	slices.SortFunc(groups, func(a, b *driftGroup) int { return cmp.Compare(a.tool.Tool, b.tool.Tool) })
+	slices.SortFunc(groups, func(a, b *driftGroup) int { return registry.CompareTools(a.tool.Tool, b.tool.Tool) })
 	return groups
 }
 

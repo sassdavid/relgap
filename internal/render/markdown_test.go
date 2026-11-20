@@ -57,7 +57,7 @@ func TestDigestMarkdown(t *testing.T) {
 		},
 	}}
 	var buf bytes.Buffer
-	require.NoError(t, render.DigestMarkdown(&buf, d))
+	require.NoError(t, render.DigestMarkdown(&buf, d, nil, nil))
 	assert.Equal(t, `## tool 1.0.0..2.0.0
 
 Repository: [o/r](https://github.com/o/r). 2 versions: [1.1.0](https://x.test/v1.1.0), 2.0.0.
@@ -135,7 +135,7 @@ func TestDigestMarkdownTruncation(t *testing.T) {
 	for seed := range uint64(300) {
 		r := rand.New(rand.NewPCG(seed, 99))
 		var buf bytes.Buffer
-		require.NoError(t, render.DigestMarkdown(&buf, genDigest(r)))
+		require.NoError(t, render.DigestMarkdown(&buf, genDigest(r), nil, nil))
 		md := buf.String()
 		n := utf8.RuneCountInString(md)
 		for _, limit := range []int{n, n - 1, n / 2, r.IntN(n) + 1, 400} {
@@ -213,8 +213,45 @@ func TestDigestMarkdownSilence(t *testing.T) {
 				Entries:  []classify.Entry{{Version: "1.1.0", Kind: classify.KindFix, Text: tt.text}},
 			}}}
 			var buf bytes.Buffer
-			require.NoError(t, render.DigestMarkdown(&buf, d))
+			require.NoError(t, render.DigestMarkdown(&buf, d, nil, nil))
 			assert.Contains(t, buf.String(), "\n- "+tt.want+"\n")
 		})
 	}
+}
+
+// TestDigestMarkdownNotDigested: the Markdown starts with the failed digests and pins without a
+// digest, so a pull request comment shows the report is partial even when it is truncated. One version is "1 version", and a tool on
+// another host links to that host.
+func TestDigestMarkdownNotDigested(t *testing.T) {
+	t.Parallel()
+	d := &report.Digest{Tools: []report.ToolDigest{{
+		Tool: "mod", Repo: "ws/mod", Host: "bitbucket.org", From: "2.0.0", To: "2.1.0",
+		Versions: []report.Version{{Version: "2.1.0"}},
+	}}}
+	failed := []render.Error{{Target: "bitbucket:ws/private@main.tf:1", Message: "404 from @owner"}}
+	notes := []string{"chart:x 1.0.0 (Chart.yaml:3): no versions"}
+	var buf bytes.Buffer
+	require.NoError(t, render.DigestMarkdown(&buf, d, failed, notes))
+	out := buf.String()
+	assert.Contains(t, out, "Repository: [ws/mod](https://bitbucket.org/ws/mod). 1 version: 2.1.0.")
+	assert.True(t, strings.HasPrefix(out, "## Not digested\n\n"+
+		"- bitbucket:ws/private@main.tf:1: failed: 404 from @&#8203;owner\n"+
+		"- chart:x 1.0.0 (Chart.yaml:3): no versions\n\n## mod 2.0.0..2.1.0\n"), out)
+	cut := render.TruncateMarkdown(out, len(out)-1, "")
+	assert.Contains(t, cut, "Truncated to")
+	assert.True(t, strings.HasPrefix(cut, "## Not digested\n"), "truncation keeps the section: %s", cut)
+
+	buf.Reset()
+	require.NoError(t, render.DigestMarkdown(&buf, d, nil, nil))
+	assert.NotContains(t, buf.String(), "Not digested")
+}
+
+func TestDigestTextOneVersion(t *testing.T) {
+	t.Parallel()
+	d := &report.Digest{Tools: []report.ToolDigest{{
+		Tool: "mod", Repo: "ws/mod", From: "2.0.0", To: "2.1.0", Versions: []report.Version{{Version: "2.1.0"}},
+	}}}
+	var buf bytes.Buffer
+	require.NoError(t, render.DigestText(&buf, d, false))
+	assert.Contains(t, buf.String(), "\n1 version: 2.1.0\n")
 }
