@@ -53,7 +53,7 @@ llm:                            # only for digest --summarize
   nothing until edited. It writes `.relgap.yaml` in the working directory, the path, or with `--user` the
   user file, and refuses to replace a file (exit 2) without `--force`. A wizard (huh, with a TTY) is post-MVP.
 - `tools.<name>` takes only `repo`. It wins over every registry layer for that field; versions, sources, EOL and OSV come from the lower layers or the defaults.
-- `ignore` rules drop pins in `drift`, `outdated`, `digest --from-mise|--all` and `digest --base|--pull-request`. `tool` may be an alias. `path` is a glob on `repo/file` or the repo-relative file, with `**` for any directories. `pins` lists every pin.
+- `ignore` rules drop pins in `drift`, `outdated`, `digest --from-mise|--all` and `digest --base|--pull-request`. A rule sets at least one of `tool`, `name` and `path` and drops the pins that match every field it sets ([ADR-0017](../adr/0017-chart-versions-extract-version-and-floors.md)). `tool` may be an alias. `name` is a glob on the raw name, ignoring case, whose `*` spans slashes, so it matches unresolved pins. `path` is a glob on `repo/file` or the repo-relative file, with `**` for any directories. Ignored pins leave the "no known tool" count. `pins` lists every pin.
 - Env vars: `RELGAP_GITHUB_CONCURRENCY`, `RELGAP_CACHE_DIR`, `RELGAP_LLM_PROVIDER`, and so on. Tokens are **never** read from config files, only from env, gh or the keyring.
 
 ## Acceptance criteria
@@ -64,3 +64,6 @@ llm:                            # only for digest --summarize
   once uncommented (`TestSpec_config_4`). `testdata/script/config_init.txtar` covers the command.
 - [x] The project-file search stops at the git root or `config.Options.StopDir` and reads only the
   working directory outside both (`TestSpec_config_5`).
+- [x] An ignore rule with only `name` or only `path` drops the pins it matches, unresolved ones
+  included, and a rule with none of the three fields is a schema error (`TestIgnoredByName`,
+  `TestSpec_config_3`).

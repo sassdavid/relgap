@@ -249,6 +249,36 @@
           "line": 19,
           "detector": "renovate-comment"
         }
+      },
+      {
+        "tool": "github:kubernetes/autoscaler@cluster-autoscaler-",
+        "raw_name": "kubernetes/autoscaler",
+        "kind": "tool",
+        "value": "v1.37.0",
+        "version": "1.37.0",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": ".",
+          "file": "variables.tf",
+          "line": 21,
+          "detector": "renovate-comment"
+        }
+      },
+      {
+        "tool": "",
+        "raw_name": "kubernetes/autoscaler",
+        "kind": "tool",
+        "value": "1.0.0",
+        "version": "1.0.0",
+        "exact": true,
+        "match": "exact",
+        "location": {
+          "repo": ".",
+          "file": "variables.tf",
+          "line": 23,
+          "detector": "renovate-comment"
+        }
       }
     ]
   },

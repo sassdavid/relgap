@@ -822,6 +822,13 @@ func TestSpec_output_and_ci_8(t *testing.T) {
 	testscript.Run(t, scriptParams(t, filepath.Join(scriptDir, "spec_output_and_ci_8.txtar")))
 }
 
+// TestSpec_output_and_ci_9: digest --base digests a raised lower bound from the old bound to the
+// new one, and every digest lists the changed pins it covers.
+func TestSpec_output_and_ci_9(t *testing.T) {
+	t.Parallel()
+	testscript.Run(t, scriptParams(t, filepath.Join(scriptDir, "spec_output_and_ci_9.txtar")))
+}
+
 // TestSpec_output_and_ci_5: outdated over a 10-pin project matches the goldens in tty, plain, md
 // and json, and its counts equal those of the full digests of the same ranges.
 func TestSpec_output_and_ci_5(t *testing.T) {

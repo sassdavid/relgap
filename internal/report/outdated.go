@@ -122,7 +122,7 @@ func (o *Outdater) Outdated(ctx context.Context, req OutdatedRequest) (*Outdated
 	tools := groupTools(req)
 	var queries []github.RecentQuery
 	for _, t := range tools {
-		if t.err == nil {
+		if t.err == nil && t.spec.Version.Universe != registry.UniverseChart {
 			queries = append(queries, recentQuery(t.spec))
 		}
 	}
@@ -321,6 +321,9 @@ func (c *comparer) compare(ctx context.Context, i int) OutdatedPin {
 	}
 	row.Latest, row.Digest, row.Hidden = d.To, d, d.Hidden
 	row.Counts = countsOf(d.Counts)
+	if t.Version.Universe == registry.UniverseChart {
+		row.Counts, row.Note = nil, ChartVersionsNote(t)
+	}
 	row.Behind = behind(rules.Scheme, current, d.Versions)
 	row.Status = StatusOutdated
 	if row.Behind.Releases == 0 {

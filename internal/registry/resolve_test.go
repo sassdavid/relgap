@@ -367,3 +367,29 @@ func TestSnapshots(t *testing.T) {
 	assert.Equal(t, "https://github.com/aquaproj/aqua-registry", meta.Source)
 	assert.Greater(t, len(aqua), 2000)
 }
+
+// TestResolveTagPrefix: github:owner/repo@prefix is a tool of its own with that tag prefix, even
+// when a registry lists the repository.
+func TestResolveTagPrefix(t *testing.T) {
+	t.Parallel()
+	r := snapshotResolver(t, registry.ConfigLayer{})
+
+	res, err := r.Resolve(t.Context(), "github:kubernetes/autoscaler@cluster-autoscaler-", registry.ResolveOptions{})
+	require.NoError(t, err)
+	assert.Equal(t, "kubernetes/autoscaler", res.Tool.Repo)
+	assert.Equal(t, "cluster-autoscaler-", res.Tool.Version.TagPrefix)
+	assert.Equal(t, []registry.Layer{registry.LayerExplicit}, res.Provenance["version.tag_prefix"])
+
+	res, err = r.Resolve(t.Context(), "github:hashicorp/terraform@release-", registry.ResolveOptions{})
+	require.NoError(t, err)
+	assert.Equal(t, "terraform", res.Tool.Name, "the registry's entry still supplies the rest")
+	assert.Equal(t, "release-", res.Tool.Version.TagPrefix)
+
+	name, ok := r.Identify("github:hashicorp/terraform@release-")
+	assert.True(t, ok)
+	assert.Equal(t, "github:hashicorp/terraform@release-", name, "never the registry's name")
+	_, ok = r.Identify("github:not-a-repo@x-")
+	assert.False(t, ok)
+	_, err = r.Resolve(t.Context(), "github:not-a-repo@x-", registry.ResolveOptions{})
+	require.ErrorIs(t, err, registry.ErrUnsupported)
+}

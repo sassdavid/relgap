@@ -1,13 +1,16 @@
 # renovate-comment: a # renovate:, // renovate: or <!-- renovate: --> comment names the one
 # version on the next line that is neither blank nor a comment. The datasource sets the kind, a
 # helm registryUrl is kept, and the comment's pin replaces another detector's pin on that line.
+# An extractVersion with a literal prefix names github:owner/repo@prefix; another form leaves the
+# pin unresolved.
 # Dockerfiles stay with the dockerfile detector, and files outside the list are read only when
 # scan.extra_files names them.
 env TEST_NOW=2026-11-19T00:00:00Z
 exec relgap pins --format json
 jsonschema pins-v1.json stdout
 golden stdout pins/renovate_comment.json
-! stdout 'versions\.txt|image:alpine|redis|kubernetes'
+! stdout 'versions\.txt|image:alpine|redis|kubernetes/kubernetes'
+stdout '"tool": "github:kubernetes/autoscaler@cluster-autoscaler-"'
 ! stdout '"detector": "(ci|helm)"'
 
 exec relgap pins --format json --config extra.yaml
@@ -40,6 +43,10 @@ locals {
   vpc_module = "6.5.0" # 6.6.0 needs aws 6.25
   # renovate: datasource=custom.kubectl depName=kubectl
   kubectl = "1.34.2"
+  # renovate: datasource=github-tags depName=kubernetes/autoscaler extractVersion=^cluster-autoscaler-(?<version>.+)$
+  cluster_autoscaler = "v1.37.0"
+  # renovate: datasource=github-releases depName=kubernetes/autoscaler extractVersion=^v(?<version>.*)-alpine$
+  unreadable_extract = "1.0.0"
 }
 -- values.yaml --
 image:

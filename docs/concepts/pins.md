@@ -28,8 +28,18 @@ six kinds:
 A chart pin also keeps the Helm repository URL it names (`registry_url` in JSON), from a
 `Chart.yaml` dependency's `repository` or a Renovate comment's `registryUrl`. `relgap outdated`
 and `relgap digest --base` use it to find the chart's Artifact Hub repository. When Artifact Hub
-has no repository at that URL with the chart, the pin is named `chart:<url>/<name>` and skipped
-with that reason; relgap never swaps in another repository's chart of the same name. A module whose
+has no repository at that URL with the chart, the pin is named `chart:<url>/<name>`. A GitHub
+Pages URL (`https://<owner>.github.io/<repo>`) then reads the chart's versions from the
+`index.yaml` that chart-releaser publishes on the `gh-pages` branch, through the GitHub API. Any
+other URL is skipped with that reason; relgap never swaps in another repository's chart of the
+same name.
+
+A `# renovate:` comment with `extractVersion=^<prefix>(?<version>...)$` on a `github-releases` or
+`github-tags` datasource names the tool `github:<owner>/<repo>@<prefix>`, whose tags carry that
+prefix: `extractVersion=^cluster-autoscaler-(?<version>.+)$` on `kubernetes/autoscaler` reads only
+the `cluster-autoscaler-1.37.0` tags. A trailing `v?` is allowed. Any other form leaves the pin
+unresolved, because comparing it with every tag of the repository would be wrong. relgap ignores
+`versioning` and orders versions with the tool's scheme. A module whose
 source is a git repository on github.com with `?ref=` is a tool pin of `github:owner/repo`, and
 its ref counts as a version only when it is `1.2.3` or `v1.2.3`.
 

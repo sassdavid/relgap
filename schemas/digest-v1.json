@@ -109,7 +109,24 @@
           }
         },
         "hidden": { "description": "Entries below the minimum confidence.", "type": "integer", "minimum": 0 },
-        "warnings": { "type": "array", "items": { "type": "string" } }
+        "warnings": { "type": "array", "items": { "type": "string" } },
+        "pins": {
+          "description": "Only with --base or --pull-request: the changed pins this digest covers, located where the head has them.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["repo", "file", "line", "raw_name", "base", "head"],
+            "properties": {
+              "repo": { "description": "Repository directory, slash-separated.", "type": "string" },
+              "file": { "description": "File relative to repo, slash-separated.", "type": "string", "minLength": 1 },
+              "line": { "description": "Line of the pin; 0 when the source has no lines.", "type": "integer", "minimum": 0 },
+              "raw_name": { "description": "The pin's name as written.", "type": "string" },
+              "base": { "description": "The pin's value at the base, as written.", "type": "string" },
+              "head": { "description": "The pin's value at the head, as written.", "type": "string" }
+            }
+          }
+        }
       }
     }
   }

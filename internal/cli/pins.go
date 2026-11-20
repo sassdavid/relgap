@@ -96,7 +96,8 @@ func runPins(cmd *cobra.Command, d *app.Deps, g *globals, f pinsFlags, args []st
 			}
 		}
 	}
-	if err = writePins(cmd, d, g, res, pins, f.unresolved); err != nil {
+	ignore := ignoreRules(resolver, cfg.Config.Ignore)
+	if err = writePins(cmd, d, g, res, pins, f.unresolved, ignore); err != nil {
 		return err
 	}
 	for _, p := range res.Problems {
@@ -140,6 +141,7 @@ func pinsFormats() []render.Format {
 
 func writePins(
 	cmd *cobra.Command, d *app.Deps, g *globals, res *scan.Result, pins []scan.Pin, unresolved bool,
+	ignore []scan.Ignore,
 ) error {
 	err := g.sink(cmd, d).Write(func(w io.Writer, f render.Format) error {
 		switch f {
@@ -163,17 +165,17 @@ func writePins(
 		_, _ = fmt.Fprintf(d.Stderr, "%s: map these names to tools with aliases.<raw name>: <tool> in %s\n",
 			config.AppName, config.ProjectFileName)
 	}
-	if n := countUnresolved(res.Pins); !unresolved && n > 0 {
+	if n := countUnresolved(res.Pins, ignore); !unresolved && n > 0 {
 		_, _ = fmt.Fprintf(d.Stderr, "%s: %d %s no known tool; list them with --unresolved\n",
 			config.AppName, n, plural(n, "pin has", "pins have"))
 	}
 	return nil
 }
 
-func countUnresolved(pins []scan.Pin) int {
+func countUnresolved(pins []scan.Pin, ignore []scan.Ignore) int {
 	n := 0
 	for _, p := range pins {
-		if !p.Resolved() {
+		if !p.Resolved() && !scan.Ignored(ignore, &p) {
 			n++
 		}
 	}

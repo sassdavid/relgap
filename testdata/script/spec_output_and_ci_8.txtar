@@ -1,6 +1,6 @@
 # digest --base and --pull-request digest the pins a change upgrades. The base commit pins
 # kubectl 1.36.0 and helm 3.21.0; the change moves them to 1.37.2 and 3.22.1, adds terraform,
-# removes gh, changes a constraint and leaves a Dockerfile pin as it was.
+# removes gh, changes a constraint's operator and leaves a Dockerfile pin as it was.
 [!git] skip
 usegit
 env TEST_NOW=2026-11-12T12:00:00Z
@@ -20,10 +20,11 @@ exec relgap digest --base main --format json
 jsonschema digest-v1.json stdout
 stdout '"tool": "helm",\n\s+"repo": "helm/helm",\n\s+"from": "3\.21\.0",\n\s+"to": "3\.22\.1"'
 stdout '"tool": "kubectl",\n\s+"repo": "kubernetes/kubernetes",\n\s+"from": "1\.36\.0",\n\s+"to": "1\.37\.2"'
+stdout '"file": "mise\.toml",\n\s+"line": 2,\n\s+"raw_name": "kubectl",\n\s+"base": "1\.36\.0",\n\s+"head": "1\.37\.2"'
 ! stdout '"tool": "terraform"'
 stderr '^relgap: not digested: gh 2\.80\.0 \(mise\.toml:4\): removed$'
 stderr '^relgap: not digested: terraform 1\.15\.8 \(mise\.toml:4\): added$'
-stderr '^relgap: not digested: tfprovider:hashicorp/aws ~> 6\.0 to ~> 6\.1 \(versions\.tf:5\): not an exact version on both sides$'
+stderr '^relgap: not digested: tfprovider:hashicorp/aws ~> 6\.0 to >= 6\.0, < 7\.0 \(versions\.tf:5\): neither an exact version on both sides nor a raised lower bound$'
 ! stderr 'Dockerfile'
 
 # Each digest counts once for --fail-on.
@@ -103,7 +104,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 6.1"
+      version = ">= 6.0, < 7.0"
     }
   }
 }

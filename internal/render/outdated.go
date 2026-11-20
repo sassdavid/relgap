@@ -172,6 +172,9 @@ func outdatedRow(p *report.OutdatedPin) []cell {
 		return row
 	}
 	row[3] = cell{text: strconv.Itoa(p.Behind.Releases)}
+	if p.Counts == nil {
+		return row // no release notes to count
+	}
 	breaking := p.Counts[classify.KindBreaking]
 	row[4] = cell{text: strconv.Itoa(breaking)}
 	if breaking > 0 {
@@ -256,6 +259,8 @@ func outdatedNote(p *report.OutdatedPin) string {
 		return where + ": " + p.Note
 	case p.Via != "":
 		return where + ": " + p.Via
+	case p.Note != "":
+		return where + ": " + p.Note
 	default:
 		return ""
 	}

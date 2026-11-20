@@ -27,8 +27,11 @@ type VersionSpec struct {
 	Extract   string `json:"extract,omitempty"    yaml:"extract"`
 	TagPrefix string `json:"tag_prefix,omitempty" yaml:"tag_prefix"`
 	Exclude   string `json:"exclude,omitempty"    yaml:"exclude"`
-	Universe  string `json:"universe"             yaml:"universe"` // releases or tags
+	Universe  string `json:"universe"             yaml:"universe"` // releases or tags; chart only from a lookup
 	Line      string `json:"line"                 yaml:"line"`     // none, major or minor
+	// VersionsURL is where a chart universe's versions come from: an Artifact Hub package page
+	// or a Helm repository index.
+	VersionsURL string `json:"versions_url,omitempty" yaml:"-"`
 }
 
 // Rules builds the version rules for this spec.
@@ -54,6 +57,9 @@ func (v VersionSpec) Rules() (version.Rules, error) {
 const (
 	UniverseReleases = "releases"
 	UniverseTags     = "tags"
+	// UniverseChart takes the versions a chart lookup listed, for a chart whose repository has no
+	// tag per chart version. They carry no release notes.
+	UniverseChart = "chart"
 )
 
 // Source is one changelog source of a tool.
@@ -95,13 +101,14 @@ type OSVPackage struct {
 
 // ToolSpec is a resolved tool: where it lives, how its versions are read and where its notes are.
 type ToolSpec struct {
-	Name            string       `json:"name"`
-	Aliases         []string     `json:"aliases"`
-	Repo            string       `json:"repo"`
-	Version         VersionSpec  `json:"version"`
-	Sources         []Source     `json:"sources"` // empty means auto-discovery
-	EOL             *EOL         `json:"eol,omitempty"`
-	OSV             []OSVPackage `json:"osv"`
-	BreakingMarkers []string     `json:"breaking_markers"`
-	Bin             []string     `json:"bin"` // executable names; empty means the tool name
+	Name            string        `json:"name"`
+	Aliases         []string      `json:"aliases"`
+	Repo            string        `json:"repo"`
+	Version         VersionSpec   `json:"version"`
+	Sources         []Source      `json:"sources"` // empty means auto-discovery
+	EOL             *EOL          `json:"eol,omitempty"`
+	OSV             []OSVPackage  `json:"osv"`
+	BreakingMarkers []string      `json:"breaking_markers"`
+	Bin             []string      `json:"bin"` // executable names; empty means the tool name
+	Versions        []version.Ref `json:"-"`   // the versions of a [UniverseChart] tool
 }

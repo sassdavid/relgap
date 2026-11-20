@@ -26,7 +26,7 @@
       "required": ["tool", "raw_name", "kind", "value", "version", "exact", "match", "location"],
       "properties": {
         "tool": {
-          "description": "Name relgap digest accepts: a registry name, github:owner/repo, aqua:package, npm:package, pypi:package, or kind:name for tfprovider, tfmodule, chart, image and action pins. Empty when the pin maps to no known tool.",
+          "description": "Name relgap digest accepts: a registry name, github:owner/repo (github:owner/repo@tag-prefix when a Renovate extractVersion names one), aqua:package, npm:package, pypi:package, or kind:name for tfprovider, tfmodule, chart, image and action pins. Empty when the pin maps to no known tool.",
           "type": "string"
         },
         "raw_name": {

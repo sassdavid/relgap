@@ -1,0 +1,49 @@
+# digest --base digests a raised lower bound, such as >= 3.6.0 to >= 3.7.0 in required_providers,
+# from the old bound to the new one, and says so on stderr. Each digest lists the changed pins it
+# covers, so a consumer can join it to its own records by file and line.
+[!git] skip
+usegit
+env TEST_NOW=2026-11-20T12:00:00Z
+env GH_TOKEN=$TEST_GH_TOKEN
+env TEST_CASSETTE=$CASSETTES/digest/random-3.6.0..3.7.0.yaml
+
+cd repo
+exec git init -q -b main
+exec git add .
+exec git commit -q -m base
+cp ../change/versions.tf versions.tf
+
+exec relgap digest --base main --format json
+jsonschema digest-v1.json stdout
+stdout '"tool": "terraform-provider-random",\n\s+"repo": "hashicorp/terraform-provider-random",\n\s+"from": "3\.6\.0",\n\s+"to": "3\.7\.0"'
+stdout '"pins": \[\n\s+\{\n\s+"repo": "\.",\n\s+"file": "versions\.tf",\n\s+"line": 5,\n\s+"raw_name": "hashicorp/random",\n\s+"base": ">= 3\.6\.0, < 4\.0\.0",\n\s+"head": ">= 3\.7\.0, < 4\.0\.0"'
+stderr '^relgap: tfprovider:hashicorp/random >= 3\.6\.0, < 4\.0\.0 to >= 3\.7\.0, < 4\.0\.0 \(versions\.tf:5\): digested from the old lower bound to the new one$'
+stderr '^relgap: not digested: tfprovider:hashicorp/null >= 3\.0\.0 to < 4\.0\.0 \(versions\.tf:9\): neither an exact version on both sides nor a raised lower bound$'
+! stderr 'hashicorp/random.*not digested'
+
+-- repo/versions.tf --
+terraform {
+  required_providers {
+    random = {
+      source  = "hashicorp/random"
+      version = ">= 3.6.0, < 4.0.0"
+    }
+    null = {
+      source  = "hashicorp/null"
+      version = ">= 3.0.0"
+    }
+  }
+}
+-- change/versions.tf --
+terraform {
+  required_providers {
+    random = {
+      source  = "hashicorp/random"
+      version = ">= 3.7.0, < 4.0.0"
+    }
+    null = {
+      source  = "hashicorp/null"
+      version = "< 4.0.0"
+    }
+  }
+}

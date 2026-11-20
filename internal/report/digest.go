@@ -58,6 +58,18 @@ type ToolDigest struct {
 	Counts   map[classify.Kind]int `json:"counts"`   // entries at or above the minimum confidence, per kind, listed or not
 	Hidden   int                   `json:"hidden"`   // entries below the minimum confidence
 	Warnings []string              `json:"warnings"`
+	Pins     []PinChange           `json:"pins,omitempty"` // the changed pins a --base or --pull-request digest covers
+}
+
+// PinChange is one changed pin that a digest covers: where the head has it, its raw name, and
+// its value on each side as written.
+type PinChange struct {
+	Repo    string `json:"repo"`
+	File    string `json:"file"`
+	Line    int    `json:"line"`
+	RawName string `json:"raw_name"`
+	Base    string `json:"base"`
+	Head    string `json:"head"`
 }
 
 // Version is one version in a digested range.
@@ -103,7 +115,7 @@ type Digester struct {
 
 // refKey is what a version list is fetched by. Two tools can share a name, such as a chart and
 // the application it installs, so the name isn't part of it.
-type refKey struct{ repo, universe string }
+type refKey struct{ repo, universe, versionsURL string }
 
 // refList is a tool's version universe as listed once per digester.
 type refList struct {
@@ -141,7 +153,7 @@ func (d *Digester) Universe(ctx context.Context, t registry.ToolSpec) (*version.
 }
 
 func (d *Digester) list(ctx context.Context, t registry.ToolSpec) ([]version.Ref, map[string]github.Release, error) {
-	k := refKey{repo: strings.ToLower(t.Repo), universe: t.Version.Universe}
+	k := refKey{repo: strings.ToLower(t.Repo), universe: t.Version.Universe, versionsURL: t.Version.VersionsURL}
 	d.mu.Lock()
 	l, ok := d.refs[k]
 	if !ok {
@@ -195,6 +207,10 @@ func (d *Digester) Digest(ctx context.Context, req DigestRequest) (*ToolDigest, 
 	}
 	for _, v := range r.Versions {
 		out.Versions = append(out.Versions, versionOf(v, releases[v.Tag]))
+	}
+	if t.Version.Universe == registry.UniverseChart {
+		out.Warnings = append(out.Warnings, ChartVersionsNote(t))
+		return out, nil
 	}
 	var from version.V
 	if r.Base != nil {
@@ -290,6 +306,9 @@ func (d *Digester) fetchRefs(
 	t registry.ToolSpec,
 ) ([]version.Ref, map[string]github.Release, error) {
 	byTag := map[string]github.Release{}
+	if t.Version.Universe == registry.UniverseChart {
+		return slices.Clone(t.Versions), byTag, nil
+	}
 	if t.Version.Universe == registry.UniverseTags {
 		tags, err := d.gh.Tags(ctx, t.Repo)
 		if err != nil {
@@ -397,8 +416,16 @@ func newestStable(u *version.Universe) version.V {
 	return newest
 }
 
+// ChartVersionsNote explains why a [registry.UniverseChart] tool has versions but no notes.
+func ChartVersionsNote(t registry.ToolSpec) string {
+	return fmt.Sprintf("%s has no tag per %s chart version, so the versions come from %s without notes; "+
+		"for notes, pin the application's repository too (datasource=github-releases)",
+		t.Repo, t.Name, t.Version.VersionsURL)
+}
+
 // noNotesWarning says that a range shows no entries, and why: it has none, or all of them are
 // below the minimum confidence, as release bodies that only link to a docs site are.
+
 func noNotesWarning(repo string, r *version.Range, hidden int, minConfidence float64) string {
 	if hidden == 0 {
 		return "no release notes found; compare the versions at " + compareURL(repo, r)

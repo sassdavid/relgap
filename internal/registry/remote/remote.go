@@ -14,8 +14,12 @@ import (
 	"regexp"
 	"slices"
 	"strings"
+	"time"
+
+	"go.yaml.in/yaml/v4"
 
 	"github.com/sassdavid/relgap/internal/registry"
+	"github.com/sassdavid/relgap/internal/version"
 )
 
 var repoRe = regexp.MustCompile(`^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$`)
@@ -44,22 +48,23 @@ type RepoSearcher interface {
 	SearchRepos(ctx context.Context, name string) ([]RepoHit, error)
 }
 
-// TagLister lists the tag names of a GitHub repository.
-type TagLister interface {
+// GitHubReader lists the tag names of a GitHub repository and reads a file at a ref.
+type GitHubReader interface {
 	Tags(ctx context.Context, repo string) ([]string, error)
+	File(ctx context.Context, repo, ref, path string) ([]byte, error)
 }
 
 // Remote is a [registry.Finder] that asks the Terraform registry, Artifact Hub, npm, PyPI and GitHub.
 type Remote struct {
 	hc     *http.Client
 	search RepoSearcher
-	tags   TagLister
+	gh     GitHubReader
 }
 
-// New returns a [Remote] that sends requests through hc, searches with search and reads a
-// chart repository's tags with tags.
-func New(hc *http.Client, search RepoSearcher, tags TagLister) *Remote {
-	return &Remote{hc: hc, search: search, tags: tags}
+// New returns a [Remote] that sends requests through hc, searches with search, and reads a
+// chart repository's tags and a GitHub Pages Helm repository's index through gh.
+func New(hc *http.Client, search RepoSearcher, gh GitHubReader) *Remote {
+	return &Remote{hc: hc, search: search, gh: gh}
 }
 
 const maxLookupBody = 8 << 20
@@ -217,7 +222,9 @@ type chartPackage struct {
 		URL  string `json:"url"`
 	} `json:"repository"`
 	AvailableVersions []struct {
-		Version string `json:"version"`
+		Version    string `json:"version"`
+		Prerelease bool   `json:"prerelease"`
+		TS         int64  `json:"ts"`
 	} `json:"available_versions"`
 }
 
@@ -251,21 +258,18 @@ func (r *Remote) chart(ctx context.Context, name string) (*registry.Found, error
 			registry.ErrNoRepo, repoName, chart)
 	}
 	f.Name = chart
-	if r.tags == nil || len(pkg.AvailableVersions) == 0 {
+	if r.gh == nil || len(pkg.AvailableVersions) == 0 {
 		return f, nil
 	}
-	tags, err := r.tags.Tags(ctx, f.Repo)
-	if err != nil {
-		return nil, fmt.Errorf("chart:%s/%s: %w", repoName, chart, err)
-	}
-	versions := make([]string, len(pkg.AvailableVersions))
+	refs := make([]version.Ref, len(pkg.AvailableVersions))
 	for i, v := range pkg.AvailableVersions {
-		versions[i] = v.Version
+		refs[i] = version.Ref{Tag: v.Version, Prerelease: v.Prerelease}
+		if v.TS > 0 {
+			refs[i].PublishedAt = time.Unix(v.TS, 0).UTC()
+		}
 	}
-	if prefix, found := chartTagPrefix(chart, versions, tags); found {
-		f.TagPrefix = prefix
-	}
-	return f, nil
+	return r.chartVersions(ctx, f, repoName+"/"+chart, refs,
+		"https://"+ArtifactHubHost+"/packages/helm/"+repoName+"/"+chart)
 }
 
 // chartAt resolves the chart in the Helm repository at registryURL through the Artifact Hub
@@ -276,18 +280,117 @@ func (r *Remote) chartAt(ctx context.Context, registryURL, chart string) (*regis
 	if err != nil {
 		return nil, fmt.Errorf("look up registryUrl %s on Artifact Hub: %w", registryURL, err)
 	}
-	if !ok {
-		return nil, fmt.Errorf("%w: registryUrl %s is not an Artifact Hub repository with a chart named %s",
+	if ok {
+		return r.chart(ctx, repo+"/"+chart)
+	}
+	if pagesRepo, dir, isPages := githubPagesDir(registryURL); isPages && r.gh != nil {
+		return r.pagesChart(ctx, registryURL, pagesRepo, dir, chart)
+	}
+	return nil, fmt.Errorf("%w: registryUrl %s is not an Artifact Hub repository with a chart named %s",
+		registry.ErrUnknownTool, registryURL, chart)
+}
+
+// pagesBranch and pagesIndex are where chart-releaser publishes a GitHub Pages Helm repository
+// by default (its --pages-branch and --pages-index-path).
+const (
+	pagesBranch = "gh-pages"
+	pagesIndex  = "index.yaml"
+)
+
+// helmIndex is the part of a Helm repository's index.yaml that a lookup reads.
+type helmIndex struct {
+	Entries map[string][]struct {
+		Version string    `yaml:"version"`
+		Created time.Time `yaml:"created"`
+		URLs    []string  `yaml:"urls"`
+	} `yaml:"entries"`
+}
+
+// pagesChart reads the chart's versions from the index.yaml that the GitHub Pages Helm repository
+// at registryURL publishes on its gh-pages branch, through the GitHub API. The chart's
+// repository is the Pages repository, unless the newest version's package is a GitHub release
+// asset of another one.
+func (r *Remote) pagesChart(ctx context.Context, registryURL, pagesRepo, dir, chart string) (*registry.Found, error) {
+	file := path.Join(dir, pagesIndex)
+	data, err := r.gh.File(ctx, pagesRepo, pagesBranch, file)
+	if err != nil {
+		return nil, fmt.Errorf("%w: registryUrl %s is not an Artifact Hub repository, and %s of %s at %s "+
+			"can't be read: %w", registry.ErrUnknownTool, registryURL, file, pagesRepo, pagesBranch, err)
+	}
+	var idx helmIndex
+	if err = yaml.Unmarshal(data, &idx); err != nil {
+		return nil, fmt.Errorf("decode %s of %s: %w", file, pagesRepo, err)
+	}
+	entries := idx.Entries[chart]
+	if len(entries) == 0 {
+		return nil, fmt.Errorf("%w: the Helm repository at %s has no chart named %s",
 			registry.ErrUnknownTool, registryURL, chart)
 	}
-	return r.chart(ctx, repo+"/"+chart)
+	refs := make([]version.Ref, 0, len(entries))
+	for _, e := range entries {
+		refs = append(refs, version.Ref{Tag: e.Version, PublishedAt: e.Created})
+	}
+	repo := pagesRepo
+	if urls := entries[0].URLs; len(urls) > 0 && strings.Contains(urls[0], "/releases/download/") {
+		if released, _, found := ParseGitHubURL(urls[0]); found {
+			repo = released
+		}
+	}
+	f := &registry.Found{Repo: repo, Name: chart, Layer: registry.LayerHelmRepo}
+	indexURL := "https://github.com/" + pagesRepo + "/blob/" + pagesBranch + "/" + file
+	return r.chartVersions(ctx, f, chart, refs, indexURL)
+}
+
+// chartVersions sets the tag prefix of the chart's repository from its tags when they cover the
+// newest chart version. Otherwise the repository has no tag per chart version, such as
+// aws/eks-charts with its v0.0.N tags, and the chart's own versions become the universe.
+func (r *Remote) chartVersions(
+	ctx context.Context,
+	f *registry.Found,
+	chart string,
+	refs []version.Ref,
+	versionsURL string,
+) (*registry.Found, error) {
+	tags, err := r.gh.Tags(ctx, f.Repo)
+	if err != nil {
+		return nil, fmt.Errorf("chart %s: %w", chart, err)
+	}
+	versions := make([]string, len(refs))
+	for i, ref := range refs {
+		versions[i] = ref.Tag
+	}
+	if prefix, found := chartTagPrefix(chart, versions, newestStable(refs), tags); found {
+		f.TagPrefix = prefix
+		return f, nil
+	}
+	f.TagPrefix, f.Versions, f.VersionsURL = "", refs, versionsURL
+	return f, nil
+}
+
+// newestStable returns the newest version in refs that isn't a prerelease, or "".
+func newestStable(refs []version.Ref) string {
+	s := version.Loose()
+	var best version.V
+	newest := ""
+	for _, ref := range refs {
+		v, err := s.Parse(ref.Tag)
+		if err != nil || ref.Prerelease || s.IsPrerelease(v) {
+			continue
+		}
+		if newest == "" || s.Compare(v, best) > 0 {
+			best, newest = v, ref.Tag
+		}
+	}
+	return newest
 }
 
 // chartTagPrefix finds the prefix of the tags that name the chart's versions. Each tag that
-// ends in a version Artifact Hub lists gives the rest of the tag as a candidate. The candidate
-// that covers the most versions wins; on a tie, one that holds the chart's name, then the
-// longer one. So external-dns-helm-chart- beats the app's v in kubernetes-sigs/external-dns.
-func chartTagPrefix(chart string, versions, tags []string) (string, bool) {
+// ends in a version Artifact Hub lists gives the rest of the tag as a candidate. A candidate must
+// cover newest, the newest stable chart version, when there is one: a repository that stopped
+// tagging per chart can't say what is latest. Of the rest, the one that covers the most versions
+// wins; on a tie, one that holds the chart's name, then the longer one. So
+// external-dns-helm-chart- beats the app's v in kubernetes-sigs/external-dns.
+func chartTagPrefix(chart string, versions []string, newest string, tags []string) (string, bool) {
 	known := make(map[string]bool, len(versions))
 	for _, v := range versions {
 		known[strings.TrimPrefix(v, "v")] = true
@@ -305,6 +408,9 @@ func chartTagPrefix(chart string, versions, tags []string) (string, bool) {
 				covered[tag[:i]][v] = true
 			}
 		}
+	}
+	if newest = strings.TrimPrefix(newest, "v"); newest != "" {
+		maps.DeleteFunc(covered, func(_ string, vs map[string]bool) bool { return !vs[newest] })
 	}
 	if len(covered) == 0 {
 		return "", false
@@ -407,16 +513,23 @@ func chartSource(p chartPackage) (*registry.Found, bool) {
 // githubPages maps a chart repository served by GitHub Pages, https://<owner>.github.io/<repo>,
 // to owner/repo.
 func githubPages(raw string) (string, bool) {
+	repo, _, ok := githubPagesDir(raw)
+	return repo, ok
+}
+
+// githubPagesDir maps https://<owner>.github.io/<repo>/<dir> to owner/repo and the directory
+// inside the site.
+func githubPagesDir(raw string) (string, string, bool) {
 	u, err := url.Parse(raw)
-	if err != nil {
-		return "", false
+	if err != nil || u.Scheme != "https" && u.Scheme != "http" {
+		return "", "", false
 	}
 	owner, ok := strings.CutSuffix(strings.ToLower(u.Hostname()), ".github.io")
-	repo, _, _ := strings.Cut(strings.Trim(u.Path, "/"), "/")
+	repo, dir, _ := strings.Cut(strings.Trim(u.Path, "/"), "/")
 	if !ok || owner == "" || repo == "" || !repoRe.MatchString(owner+"/"+repo) {
-		return "", false
+		return "", "", false
 	}
-	return owner + "/" + repo, true
+	return owner + "/" + repo, dir, true
 }
 
 func (r *Remote) npm(ctx context.Context, name string) (*registry.Found, error) {

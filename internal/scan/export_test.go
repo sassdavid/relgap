@@ -10,3 +10,6 @@ func MatchingDetectors(rel string) []string {
 	}
 	return out
 }
+
+// ExtractPrefix exposes extractPrefix to the tests.
+func ExtractPrefix(extract string) (string, bool) { return extractPrefix(extract) }

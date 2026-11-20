@@ -138,7 +138,7 @@ func detectDockerfile(f file) ([]Pin, error) {
 // versionAssignments returns the <NAME>_VERSION pins of an ARG or ENV and records ARG defaults
 // in vars.
 func versionAssignments(in instruction, vars map[string]string) []Pin {
-	hint := renovateLookup(in.comments)
+	hint, readable := renovateLookup(in.comments)
 	var pins []Pin
 	for _, kv := range assignments(in.cmd, in.args) {
 		if in.cmd == "ARG" {
@@ -149,7 +149,7 @@ func versionAssignments(in instruction, vars map[string]string) []Pin {
 		}
 		pins = append(pins, Pin{
 			RawName: kv[0], Kind: KindTool, Value: kv[1], Location: Location{Line: in.line},
-			lookup: firstNonEmpty(hint, strings.ToUpper(kv[0])),
+			lookup: firstNonEmpty(hint, strings.ToUpper(kv[0])), noLookup: !readable,
 		})
 	}
 	return pins

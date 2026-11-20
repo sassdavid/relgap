@@ -248,6 +248,36 @@ func TestIgnored(t *testing.T) {
 	assert.False(t, scan.Ignored(nil, pin("java", ".", "mise.toml")))
 }
 
+// TestIgnoredByName: a name rule matches the raw name with a glob whose * spans slashes, so it
+// silences unresolved pins; a path-only rule drops every pin under the path; a rule with no field
+// drops nothing.
+func TestIgnoredByName(t *testing.T) {
+	t.Parallel()
+	pin := func(raw, file string) *scan.Pin {
+		return &scan.Pin{RawName: raw, Location: scan.Location{Repo: ".", File: file}}
+	}
+	rules := []scan.Ignore{
+		{Name: "git::*bitbucket.org*"},
+		{Name: "LEGACY_*_VERSION", Path: "ci/**"},
+		{Path: "vendor/**"},
+		{},
+	}
+	tests := []struct {
+		pin  *scan.Pin
+		want bool
+	}{
+		{pin("git::git@bitbucket.org:ws/repo.git//.", "main.tf"), true},
+		{pin("git::https://gitlab.com/g/repo.git", "main.tf"), false},
+		{pin("legacy_tool_version", "ci/build.sh"), true},
+		{pin("LEGACY_TOOL_VERSION", "Makefile"), false},
+		{pin("anything", "vendor/x/mise.toml"), true},
+		{pin("anything", "main.tf"), false},
+	}
+	for _, tt := range tests {
+		assert.Equal(t, tt.want, scan.Ignored(rules, tt.pin), "%s in %s", tt.pin.RawName, tt.pin.Location.File)
+	}
+}
+
 // TestDetectorDocs checks the detector table of the docs site: one row per detector, in the
 // order of Detectors, and every example path read by its detector and no other. renovate-comment
 // reads files of other detectors too, so only its own examples count it.
@@ -267,4 +297,31 @@ func TestDetectorDocs(t *testing.T) {
 		}
 	}
 	assert.Equal(t, scan.Detectors(), names)
+}
+
+// TestExtractPrefix: a Renovate extractVersion with a literal before the version group gives the
+// tag prefix; any other form can't be read.
+func TestExtractPrefix(t *testing.T) {
+	t.Parallel()
+	tests := []struct {
+		extract, want string
+		ok            bool
+	}{
+		{"", "", true},
+		{"^cluster-autoscaler-(?<version>.+)$", "cluster-autoscaler-", true},
+		{"^jq-(?P<version>.*)$", "jq-", true},
+		{`^release\.v(?<version>\d+\.\d+\.\d+)`, "release.v", true},
+		{"^v(?<version>.*)$", "", true},
+		{"^v?(?<version>.*)$", "", true},
+		{"^chart-v?(?<version>(\\d+)\\.(\\d+))$", "chart-", true},
+		{"cluster-autoscaler-(?<version>.+)$", "", false},
+		{"^v(?<version>.*)-alpine$", "", false},
+		{"^(cluster|vpa)-(?<version>.+)$", "", false},
+		{"^.*-(?<version>.+)$", "", false},
+		{"^v(?<major>\\d+)\\.(?<minor>\\d+)$", "", false},
+	}
+	for _, tt := range tests {
+		got, ok := scan.ExtractPrefix(tt.extract)
+		assert.Equal(t, []any{tt.want, tt.ok}, []any{got, ok}, tt.extract)
+	}
 }

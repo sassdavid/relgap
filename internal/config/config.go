@@ -17,7 +17,7 @@ type Config struct {
 	Scan          Scan                    `json:"scan"`
 	Tools         map[string]ToolOverride `json:"tools"                              jsonschema_description:"Local tool overrides and additions, keyed by tool name."`
 	Aliases       map[string]string       `json:"aliases"                            jsonschema_description:"Maps a raw pin name (e.g. TG_VERSION) to a tool name."`
-	Ignore        []IgnoreRule            `json:"ignore"                             jsonschema_description:"Tools (optionally limited to paths) that are never reported."`
+	Ignore        []IgnoreRule            `json:"ignore"                             jsonschema_description:"Pins that are never reported: by tool, by raw name or by path, alone or together."`
 	Policy        Policy                  `json:"policy"`
 	LLM           LLM                     `json:"llm"`
 }
@@ -53,10 +53,11 @@ type ToolOverride struct {
 	Repo string `json:"repo" jsonschema:"required,pattern=^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$" jsonschema_description:"GitHub owner/repo."`
 }
 
-// IgnoreRule suppresses a tool, optionally only under matching paths.
+// IgnoreRule suppresses the pins that match every field it sets: a tool, a raw name, a path.
 type IgnoreRule struct {
-	Tool string `json:"tool"           jsonschema:"required,minLength=1" jsonschema_description:"Tool name, as pins and digests show it, to leave out of reports."`
-	Path string `json:"path,omitempty"                                   jsonschema_description:"Glob; when set, the tool is ignored only under matching paths."`
+	Tool string `json:"tool,omitempty" jsonschema:"minLength=1,anyof_required=tool" jsonschema_description:"Tool name, as pins and digests show it, to leave out of reports."`
+	Name string `json:"name,omitempty" jsonschema:"minLength=1,anyof_required=name" jsonschema_description:"Glob on the pin's raw name, as relgap pins shows it; * matches any characters. Matches unresolved pins too."`
+	Path string `json:"path,omitempty" jsonschema:"anyof_required=path"             jsonschema_description:"Glob on the file path; with tool or name, the rule applies only under matching paths."`
 }
 
 // Policy holds CI defaults for --fail-on and related flags.

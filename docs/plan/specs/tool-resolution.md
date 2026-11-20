@@ -144,6 +144,15 @@ URL that has the chart, the lookup pin discovery's `registry_url` uses, and neve
 repository, it fails with "registryUrl <url> is not an Artifact Hub repository with a chart named
 <name>".
 
+A chart's tag prefix must cover the newest stable version the chart lists. When none does, as in
+aws/eks-charts, which tags `v0.0.N` for all its charts, the tool takes the universe `chart`: the
+versions Artifact Hub lists, or those of the Helm repository index, with `version.versions_url`
+saying where they come from. Such a tool has no release notes. For a GitHub Pages URL
+(`https://<owner>.github.io/<repo>[/<dir>]`) that Artifact Hub doesn't list, relgap reads
+`<dir>/index.yaml` on the `gh-pages` branch through the contents API (chart-releaser's defaults).
+`github:<owner>/<repo>@<prefix>` reads only the repository's tags with that prefix and never takes
+another tool's entry ([ADR-0017](../adr/0017-chart-versions-extract-version-and-floors.md)).
+
 Caches key on a tool's full name, never on the resolved spec's `name`: a chart and its
 application can both resolve to `aws-for-fluent-bit` in different repositories.
 
@@ -193,3 +202,9 @@ each.
   the URL in the message when there is none, never searching by name; a chart pin and a
   `github:` pin whose specs share a name each compare against their own repository.
   (`TestSpec_tool_resolution_7`, `TestOutdatedSameNameDifferentTools`)
+- [x] A chart in a repository without a tag per chart version takes Artifact Hub's versions, a
+  GitHub Pages Helm repository that Artifact Hub doesn't list is read from its `gh-pages` index,
+  and `outdated` shows latest and behind with a note and no counts for such a chart.
+  `github:owner/repo@prefix` reads only the tags with that prefix. (`TestSpec_tool_resolution_8`
+  with aws-for-fluent-bit and secrets-store-csi-driver-provider-aws, `TestOutdatedChartVersions`,
+  `TestResolveTagPrefix`)

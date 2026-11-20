@@ -101,3 +101,13 @@ relgap resolve TG_VERSION
 
 Run `relgap pins --unresolved` again: a mapped pin no longer shows. To leave a pin out of the
 reports instead of mapping it, add an `ignore` rule ([Configuration](/reference/config#ignore)).
+An unresolved pin has no tool, so match its raw name: `name` is a glob on the name that
+`relgap pins --unresolved` shows, and its `*` spans slashes. A rule with only `path` drops every
+pin under that glob. Ignored pins drop out of the "no known tool" count that `outdated`, `drift`
+and `pins` print, and `relgap pins` still lists them.
+
+```yaml
+ignore:
+  - name: "git::*bitbucket.org*"   # module sources on Bitbucket
+  - path: "examples/**"            # every pin in the examples
+```
