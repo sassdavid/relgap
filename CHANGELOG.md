@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.11.0](https://github.com/sassdavid/relgap/compare/v0.10.0...v0.11.0) (2026-11-20)
+
+
+### Features
+
+* read chart versions without per-chart tags and Renovate extractVersion ([#92](https://github.com/sassdavid/relgap/issues/92)) ([772a876](https://github.com/sassdavid/relgap/commit/772a876eddf21102bb2a84e9a54d5bef81ddaa11))
+* read versions and notes from Bitbucket, GitLab and image registries ([#95](https://github.com/sassdavid/relgap/issues/95)) ([9323e4a](https://github.com/sassdavid/relgap/commit/9323e4a0dcee30bc30a144c07009fa72aafd5588))
+
+
+### Bug Fixes
+
+* key caches by tool identity and keep chart registry URLs ([#91](https://github.com/sassdavid/relgap/issues/91)) ([6e5413c](https://github.com/sassdavid/relgap/commit/6e5413c52b5b09704367315535ff3e401ed360db))
+
 ## [0.10.0](https://github.com/sassdavid/relgap/compare/v0.9.1...v0.10.0) (2026-11-19)
 
 
