@@ -27,7 +27,9 @@ six kinds:
 
 A chart pin also keeps the Helm repository URL it names (`registry_url` in JSON), from a
 `Chart.yaml` dependency's `repository` or a Renovate comment's `registryUrl`. `relgap outdated`
-and `relgap digest --base` use it to find the chart's Artifact Hub repository. A module whose
+and `relgap digest --base` use it to find the chart's Artifact Hub repository. When Artifact Hub
+has no repository at that URL with the chart, the pin is named `chart:<url>/<name>` and skipped
+with that reason; relgap never swaps in another repository's chart of the same name. A module whose
 source is a git repository on github.com with `?ref=` is a tool pin of `github:owner/repo`, and
 its ref counts as a version only when it is `1.2.3` or `v1.2.3`.
 

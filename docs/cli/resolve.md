@@ -11,13 +11,15 @@ Resolves a tool name and prints the result with the layer that supplied each fie
 
 &lt;tool&gt; is a name or alias (terraform, tf), a NAME\_VERSION variable (TERRAFORM\_VERSION),
 github:owner/repo, aqua:package, tfprovider:namespace/name, tfmodule:namespace/name/provider,
-chart:repo/name, chart:name, npm:package or pypi:package. When a registry knows the tool, the
-result is the same as for its name.
+chart:repo/name, chart:name, chart:url/name, npm:package or pypi:package. When a registry knows
+the tool, the result is the same as for its name.
 
 tfprovider:, tfmodule:, chart:, npm: and pypi: names that no registry knows are looked up in the
 Terraform registry, Artifact Hub, the npm registry or PyPI, which name the source repository. A
 module's tag prefix comes from the tag of its latest version. chart:name without a repository
-resolves only when one Artifact Hub repository has a chart of that name.
+resolves only when one Artifact Hub repository has a chart of that name. chart:url/name names the
+chart by its Helm repository URL (https://charts.jetstack.io/cert-manager) and resolves only
+through the Artifact Hub repository at that URL.
 
 Layers, highest precedence first:
 

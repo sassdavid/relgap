@@ -41,27 +41,28 @@ type Recent struct {
 	Err      error
 }
 
-// Recent returns the newest releases or tags of every repository, keyed by repo. With a token it
+// Recent returns the newest releases or tags of every repository, keyed by query, so a repository
+// asked for both releases and tags gets both. With a token it
 // sends GraphQL queries of [RecentBatchMin] to [RecentBatchMax] repositories, as many at once as the
 // client's concurrency allows; without one it makes REST calls per repo.
 // The error is set only when nothing could be asked; per-repo failures are in [Recent.Err].
-func (c *Client) Recent(ctx context.Context, qs []RecentQuery) (map[string]Recent, error) {
-	out := make(map[string]Recent, len(qs))
+func (c *Client) Recent(ctx context.Context, qs []RecentQuery) (map[RecentQuery]Recent, error) {
+	out := make(map[RecentQuery]Recent, len(qs))
 	var mu sync.Mutex
-	set := func(repo string, r Recent) {
+	set := func(q RecentQuery, r Recent) {
 		mu.Lock()
 		defer mu.Unlock()
-		out[repo] = r
+		out[q] = r
 	}
 	valid := make([]RecentQuery, 0, len(qs))
-	seen := map[string]bool{}
+	seen := map[RecentQuery]bool{}
 	for _, q := range qs {
-		if seen[q.Repo] {
+		if seen[q] {
 			continue
 		}
-		seen[q.Repo] = true
+		seen[q] = true
 		if _, _, err := splitRepo(q.Repo); err != nil {
-			out[q.Repo] = Recent{Err: err}
+			out[q] = Recent{Err: err}
 			continue
 		}
 		valid = append(valid, q)
@@ -73,8 +74,8 @@ func (c *Client) Recent(ctx context.Context, qs []RecentQuery) (map[string]Recen
 		for i := 0; i < len(valid); i += size {
 			batch := valid[i:min(i+size, len(valid))]
 			g.Go(func() error {
-				for repo, r := range c.gqlRecent(gctx, batch) {
-					set(repo, r)
+				for q, r := range c.gqlRecent(gctx, batch) {
+					set(q, r)
 				}
 				return nil
 			})
@@ -83,7 +84,7 @@ func (c *Client) Recent(ctx context.Context, qs []RecentQuery) (map[string]Recen
 		for _, q := range valid {
 			g.Go(func() error {
 				rs, err := c.restRecent(gctx, q)
-				set(q.Repo, Recent{Releases: rs, Err: err})
+				set(q, Recent{Releases: rs, Err: err})
 				return nil
 			})
 		}
@@ -108,7 +109,7 @@ type recentTags struct {
 }
 
 // gqlRecent asks about every repository in qs with one aliased query.
-func (c *Client) gqlRecent(ctx context.Context, qs []RecentQuery) map[string]Recent {
+func (c *Client) gqlRecent(ctx context.Context, qs []RecentQuery) map[RecentQuery]Recent {
 	fields := make([]reflect.StructField, len(qs))
 	vars := map[string]any{"first": githubv4.Int(RecentWindow)}
 	for i, q := range qs {
@@ -128,11 +129,11 @@ func (c *Client) gqlRecent(ctx context.Context, qs []RecentQuery) map[string]Rec
 	}
 	q := reflect.New(reflect.StructOf(fields))
 	err := c.gql.Query(ctx, q.Interface(), vars)
-	out := make(map[string]Recent, len(qs))
+	out := make(map[RecentQuery]Recent, len(qs))
 	for i, rq := range qs {
 		f := q.Elem().Field(i)
 		if f.IsNil() {
-			out[rq.Repo] = Recent{Err: recentError(rq.Repo, err)}
+			out[rq] = Recent{Err: recentError(rq.Repo, err)}
 			continue
 		}
 		var rs []Release
@@ -147,7 +148,7 @@ func (c *Client) gqlRecent(ctx context.Context, qs []RecentQuery) map[string]Rec
 				rs = append(rs, r.release(""))
 			}
 		}
-		out[rq.Repo] = Recent{Releases: rs}
+		out[rq] = Recent{Releases: rs}
 	}
 	return out
 }

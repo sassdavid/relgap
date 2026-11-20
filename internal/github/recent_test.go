@@ -95,7 +95,7 @@ func TestSpec_source_adapters_6(t *testing.T) {
 	assert.LessOrEqual(t, int(counter.count.Load()), 5, "GraphQL queries for 45 repositories")
 	assert.Len(t, got, len(qs))
 	for _, q := range qs {
-		r := got[q.Repo]
+		r := got[q]
 		if assert.NoError(t, r.Err, q.Repo) {
 			assert.NotEmpty(t, r.Releases, q.Repo)
 			assert.LessOrEqual(t, len(r.Releases), github.RecentWindow, q.Repo)
@@ -103,11 +103,11 @@ func TestSpec_source_adapters_6(t *testing.T) {
 	}
 	assert.Contains(
 		t,
-		tagsOf(got["helm/helm"].Releases),
+		tagsOf(got[github.RecentQuery{Repo: "helm/helm"}].Releases),
 		"v3.22.1",
 		"the window holds the newest v3 release next to v4",
 	)
-	assert.Contains(t, tagsOf(got["golang/go"].Releases), "go1.27.4")
+	assert.Contains(t, tagsOf(got[github.RecentQuery{Repo: "golang/go", Tags: true}].Releases), "go1.27.4")
 }
 
 func tagsOf(rs []github.Release) []string {
@@ -158,10 +158,10 @@ func TestRecent_REST(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	assert.Equal(t, []string{"v1.1.0", "v1.0.0"}, tagsOf(got["o/rel"].Releases))
-	assert.Equal(t, []string{"v2.0.0", "v1.9.0"}, tagsOf(got["o/tags"].Releases))
-	require.ErrorIs(t, got["o/missing"].Err, github.ErrNotFound)
-	require.Error(t, got["not-a-repo"].Err)
+	assert.Equal(t, []string{"v1.1.0", "v1.0.0"}, tagsOf(got[github.RecentQuery{Repo: "o/rel"}].Releases))
+	assert.Equal(t, []string{"v2.0.0", "v1.9.0"}, tagsOf(got[github.RecentQuery{Repo: "o/tags", Tags: true}].Releases))
+	require.ErrorIs(t, got[github.RecentQuery{Repo: "o/missing"}].Err, github.ErrNotFound)
+	require.Error(t, got[github.RecentQuery{Repo: "not-a-repo"}].Err)
 	assert.Contains(t, api.paths, "/repos/o/rel/releases?per_page=30", "one page of the newest releases")
 }
 

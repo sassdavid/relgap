@@ -3,6 +3,7 @@ package registry
 import (
 	"context"
 	"errors"
+	"strings"
 )
 
 // Lookup kinds: the explicit prefixes that need a package registry, and a GitHub search.
@@ -17,6 +18,26 @@ const (
 
 // ErrAmbiguous is wrapped by lookup errors when a name matches more than one package.
 var ErrAmbiguous = errors.New("ambiguous name")
+
+// ChartAt returns the name of the chart called chart in the Helm repository at registryURL:
+// chart:<registryURL>/<chart>.
+func ChartAt(registryURL, chart string) string {
+	return KindChart + ":" + strings.TrimRight(registryURL, "/") + "/" + chart
+}
+
+// SplitChartAt splits the part of a chart:<registryURL>/<chart> name after the prefix into the
+// repository URL and the chart, and reports whether rest is such a name.
+func SplitChartAt(rest string) (string, string, bool) {
+	if !strings.Contains(rest, "://") {
+		return "", "", false
+	}
+	i := strings.LastIndex(rest, "/")
+	registryURL, chart := rest[:i], rest[i+1:]
+	if chart == "" || strings.HasSuffix(registryURL, ":/") {
+		return "", "", false
+	}
+	return registryURL, chart, true
+}
 
 // Found is what a lookup learned about a tool.
 type Found struct {

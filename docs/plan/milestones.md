@@ -588,3 +588,12 @@ comment. Decisions: [ADR-0015](adr/0015-renovate-annotations-and-terraform-modul
   `site_url: https://karpenter.sh/`, and `{{% alert %}}` lines are dropped. The 11 karpenter.sh
   links in a live `digest karpenter 1.0.0..1.12.0` answer 200, and the 9 with a fragment have that
   id on the page.)
+
+Found with 0.10.0 on a Terraform module repository (Helm chart versions in variable defaults under
+`# renovate:` comments):
+- [x] A chart pin and a `github:` pin whose specs share a name (`aws-for-fluent-bit`) each compare
+  against their own repository: caches key on the full tool name or on what they fetch, never on
+  the spec's name. A chart `registryUrl` that Artifact Hub doesn't list becomes
+  `chart:<url>/<name>` and never falls back to a search by name.
+  ([ADR-0016](adr/0016-tool-identity-and-chart-registry-urls.md), tool-resolution criterion 7,
+  `TestSpec_tool_resolution_7` and `TestOutdatedSameNameDifferentTools`)

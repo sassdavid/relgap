@@ -204,7 +204,7 @@ Input schema:
   "additionalProperties": false,
   "properties": {
     "tool": {
-      "description": "Tool name or alias (terraform, tf), a NAME_VERSION variable, github:owner/repo, aqua:package, tfprovider:namespace/name, tfmodule:namespace/name/provider, chart:repo/name, npm:package or pypi:package.",
+      "description": "Tool name or alias (terraform, tf), a NAME_VERSION variable, github:owner/repo, aqua:package, tfprovider:namespace/name, tfmodule:namespace/name/provider, chart:repo/name, chart:url/name, npm:package or pypi:package.",
       "type": "string"
     }
   },

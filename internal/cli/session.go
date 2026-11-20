@@ -198,7 +198,8 @@ func checkKinds(kinds []classify.Kind) error {
 
 // chartRegistries names each chart pin that has a Helm repository URL after the Artifact Hub
 // repository at that URL, chart:<repo>/<name>, so a chart name that several repositories share
-// resolves. A pin whose URL Artifact Hub doesn't list, or whose lookup fails, keeps its name.
+// resolves. A pin whose URL Artifact Hub doesn't list, or whose lookup fails, becomes
+// chart:<url>/<name>, whose resolution says why: it never falls back to a search by name.
 func (s *session) chartRegistries(ctx context.Context, pins []*scan.Pin) {
 	type key struct{ url, chart string }
 	repos := map[key]string{}
@@ -215,6 +216,8 @@ func (s *session) chartRegistries(ctx context.Context, pins []*scan.Pin) {
 		}
 		if repo != "" {
 			p.Tool = registry.KindChart + ":" + repo + "/" + chart
+		} else {
+			p.Tool = registry.ChartAt(p.Registry, chart)
 		}
 	}
 }

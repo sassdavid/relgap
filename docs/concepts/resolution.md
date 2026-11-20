@@ -20,7 +20,7 @@ field came from.
 | `aqua:package` | `aqua:hashicorp/terraform` | the embedded aqua index |
 | `tfprovider:namespace/name` | `tfprovider:integrations/github` | the registries, then the Terraform registry |
 | `tfmodule:namespace/name/provider` | `tfmodule:terraform-aws-modules/vpc/aws` | the Terraform registry |
-| `chart:repo/name`, `chart:name` | `chart:argo/argo-cd` | Artifact Hub |
+| `chart:repo/name`, `chart:name`, `chart:url/name` | `chart:argo/argo-cd` | Artifact Hub |
 | `npm:package` | `npm:prettier` | the registries, then the npm registry |
 | `pypi:package` | `pypi:black` | the registries, then PyPI |
 
@@ -57,7 +57,9 @@ is `hashicorp/terraform-provider-aws`. A name no registry knows is looked up in 
 registry, the npm registry or PyPI, which name the source repository. `chart:` names always go to
 Artifact Hub. A chart takes no other tool's entry, because a chart's versions are not its
 application's. `chart:name` without a repository resolves only when one Artifact Hub repository
-has a chart of that name.
+has a chart of that name. `chart:<url>/<name>`, such as
+`chart:https://charts.jetstack.io/cert-manager`, names the chart by its Helm repository URL and
+resolves only through the Artifact Hub repository at that URL.
 
 These lookups go through the HTTP cache like every other request. [Network, privacy and
 tokens](/concepts/network) lists the hosts.

@@ -258,9 +258,7 @@ func (d *Drifter) latest(ctx context.Context, groups []*driftGroup) error {
 	var queries []github.RecentQuery
 	for _, g := range groups {
 		if g.err == nil && g.spec.Repo != "" {
-			queries = append(queries, github.RecentQuery{
-				Repo: g.spec.Repo, Tags: g.spec.Version.Universe == registry.UniverseTags,
-			})
+			queries = append(queries, recentQuery(g.spec))
 		}
 	}
 	recent, err := d.recent.Recent(ctx, queries)
@@ -277,7 +275,7 @@ func (d *Drifter) latest(ctx context.Context, groups []*driftGroup) error {
 			t.Note = "not looked up: the tool has no GitHub repository"
 			continue
 		}
-		r := recent[g.spec.Repo]
+		r := recent[recentQuery(g.spec)]
 		if errors.Is(r.Err, github.ErrAuth) {
 			return r.Err
 		}
