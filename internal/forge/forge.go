@@ -23,6 +23,21 @@ const (
 	KindGitLab    Kind = "gitlab"
 )
 
+// Canonical returns host in lowercase, with a forge's SSH host name replaced by its web host:
+// Bitbucket Cloud's ssh.bitbucket.org and altssh.bitbucket.org, GitHub's ssh.github.com and
+// GitLab.com's altssh.gitlab.com. git reaches the same repositories through them.
+func Canonical(host string) string {
+	switch host = strings.ToLower(host); host {
+	case "ssh.bitbucket.org", "altssh.bitbucket.org":
+		return Bitbucket
+	case "ssh.github.com":
+		return GitHub
+	case "altssh.gitlab.com":
+		return GitLab
+	}
+	return host
+}
+
 // KindOf returns the kind of host: an empty host or github.com is GitHub, bitbucket.org is
 // Bitbucket Cloud, and any other host is GitLab, because only GitLab hosts can be configured.
 func KindOf(host string) Kind {

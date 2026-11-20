@@ -34,7 +34,16 @@ aliases:
 ```
 
 The tool on the right must resolve. An alias that points to an unknown tool is an error that
-names the alias. A variable named after its tool needs no alias: `TERRAFORM_VERSION` resolves as
+names the alias. The key is the raw name as `relgap pins --unresolved` prints it, colons
+included, so a git source on a host relgap doesn't read can be mapped too. An alias wins over
+every other way of naming the pin:
+
+```yaml
+# .relgap.yaml
+aliases:
+  "git::git@git.acme.internal:infra/network.git//.": network-module
+```
+ A variable named after its tool needs no alias: `TERRAFORM_VERSION` resolves as
 `terraform`, and `GOLANGCI_LINT_VERSION` as `golangci-lint`.
 
 ## Add a private or unlisted tool
@@ -67,7 +76,10 @@ data, vulnerabilities or curated release-note sources, the tool needs a registry
 
 A git module source with `?ref=` pins the repository it names. On bitbucket.org it becomes a
 `bitbucket:` pin, and on gitlab.com a `gitlab:` pin, in the https, `git::`, `ssh://` and
-`git@host:` forms. A `//subdir` and `.git` are dropped:
+`git@host:` forms. A `//subdir` and `.git` are dropped. The SSH hosts the forges document count
+as their web host: `ssh.bitbucket.org` and `altssh.bitbucket.org` as bitbucket.org,
+`ssh.github.com` as github.com, and `altssh.gitlab.com` as gitlab.com. Bitbucket Cloud refuses
+SSH on bitbucket.org itself after 10 December 2026:
 
 ```hcl
 module "network" {

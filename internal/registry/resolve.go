@@ -396,6 +396,8 @@ func (r *Resolver) identify(ctx context.Context, input string, opts ResolveOptio
 		tagPrefix string
 	)
 	switch {
+	case r.isConfigAlias(input):
+		id.name, id.match, err = r.identifyName(input)
 	case explicit && isLookupPrefix(prefix):
 		id, err = r.identifyLookup(ctx, prefix, rest, opts.Finder)
 	case explicit && isForgePrefix(prefix):
@@ -633,7 +635,7 @@ func (r *Resolver) Identify(input string) (string, bool) {
 		return "", false
 	}
 	prefix, rest, explicit := strings.Cut(input, ":")
-	if !explicit {
+	if !explicit || r.isConfigAlias(input) {
 		name, _, err := r.identifyName(input)
 		return name, err == nil
 	}
@@ -706,6 +708,23 @@ func (r *Resolver) identifyExplicit(prefix, rest string) (string, Match, *AquaEn
 			prefix+":",
 		)
 	}
+}
+
+// Alias returns the tool that the config alias input points to, and false when input isn't a
+// config alias or its tool is unknown.
+func (r *Resolver) Alias(input string) (string, bool) {
+	if !r.isConfigAlias(strings.TrimSpace(input)) {
+		return "", false
+	}
+	name, _, err := r.identifyName(strings.TrimSpace(input))
+	return name, err == nil
+}
+
+// isConfigAlias reports whether input is a key of the config's aliases. Such a key wins over
+// any prefix in it, because a raw name such as git::git@host:ws/repo.git has a colon.
+func (r *Resolver) isConfigAlias(input string) bool {
+	_, ok := r.configAlias[strings.ToLower(input)]
+	return ok
 }
 
 func (r *Resolver) identifyName(input string) (string, Match, error) {

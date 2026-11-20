@@ -1,0 +1,38 @@
+# digest --base names each failed digest on stderr in the text and markdown formats, where the
+# report has no place for errors. JSON keeps them in the envelope. Bitbucket answers 404 for the
+# private module without a token, so its digest fails and kubectl's goes on.
+[!git] skip
+usegit
+env TEST_NOW=2026-11-12T12:00:00Z
+env GH_TOKEN=$TEST_GH_TOKEN
+env TEST_CASSETTE=$CASSETTES/digest/kubectl-1.36.0..1.37.2.yaml,$CASSETTES/non-github/bitbucket.yaml
+
+cd repo
+exec git init -q -b main
+exec git add .
+exec git commit -q -m base
+cp ../change/mise.toml mise.toml
+cp ../change/main.tf main.tf
+
+exec expect-exit 1 relgap digest --base main --format plain
+stdout 'kubectl 1\.36\.0\.\.1\.37\.2'
+stderr '^relgap: failed: bitbucket:example-ws/private-mod@main\.tf:1: .+'
+stderr '^relgap: 1 digest failed; the report is partial$'
+
+exec expect-exit 1 relgap digest --base main --format md
+stderr '^relgap: failed: bitbucket:example-ws/private-mod@main\.tf:1: .+'
+
+exec expect-exit 1 relgap digest --base main --format json
+stdout '"target": "bitbucket:example-ws/private-mod@main\.tf:1"'
+! stderr 'relgap: failed:'
+
+-- repo/mise.toml --
+[tools]
+kubectl = "1.36.0"
+-- repo/main.tf --
+module "m" { source = "git::https://bitbucket.org/example-ws/private-mod.git?ref=1.0.0" }
+-- change/mise.toml --
+[tools]
+kubectl = "1.37.2"
+-- change/main.tf --
+module "m" { source = "git::https://bitbucket.org/example-ws/private-mod.git?ref=1.1.0" }

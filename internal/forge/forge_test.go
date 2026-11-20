@@ -40,4 +40,14 @@ func TestLinks(t *testing.T) {
 	assert.Equal(t, forge.KindGitHub, forge.KindOf("GitHub.com"))
 	assert.Equal(t, forge.KindBitbucket, forge.KindOf("bitbucket.org"))
 	assert.Equal(t, forge.KindGitLab, forge.KindOf("gitlab.com"))
+	for in, want := range map[string]string{
+		"ssh.bitbucket.org":    "bitbucket.org",
+		"AltSSH.bitbucket.org": "bitbucket.org",
+		"ssh.github.com":       "github.com",
+		"altssh.gitlab.com":    "gitlab.com",
+		"git.bitbucket.org":    "git.bitbucket.org",
+		"GitLab.Acme.Internal": "gitlab.acme.internal",
+	} {
+		assert.Equal(t, want, forge.Canonical(in), in)
+	}
 }

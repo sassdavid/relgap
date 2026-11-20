@@ -35,7 +35,9 @@ Every `--format json` report has the same outer object, described by
 | `page` | only in MCP results that were split: `items`, `returned`, `total` and `next_cursor` |
 
 A report with entries in `errors` is partial. The exit code says whether a `--fail-on` value
-matched anyway ([exit codes](/reference/exit-codes)).
+matched anyway ([exit codes](/reference/exit-codes)). The text and Markdown formats of `digest`
+have no place for errors, so relgap prints each one on stderr as
+`relgap: failed: <target>: <message>`.
 
 ```sh
 relgap outdated --format json | jq '.data.pins[] | select(.status == "outdated")'

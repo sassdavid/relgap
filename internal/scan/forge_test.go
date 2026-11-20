@@ -24,6 +24,11 @@ func TestGitRemote(t *testing.T) {
 		{"ssh://git@gitlab.internal.test:2222/infra/tf-vpc.git", "gitlab.internal.test", "infra/tf-vpc", true},
 		{"git@GitHub.com:o/r.git", "github.com", "o/r", true},
 		{"https://user@git.other.test/team/x", "git.other.test", "team/x", true},
+		{"git::git@ssh.bitbucket.org:ws/repo.git//.", "bitbucket.org", "ws/repo", true},
+		{"ssh://git@altssh.bitbucket.org:443/ws/repo.git", "bitbucket.org", "ws/repo", true},
+		{"ssh.bitbucket.org/ws/repo", "bitbucket.org", "ws/repo", true},
+		{"ssh://git@ssh.github.com:443/o/r.git", "github.com", "o/r", true},
+		{"git@altssh.gitlab.com:g/sub/repo.git", "gitlab.com", "g/sub/repo", true},
 		{"https://gitlab.com/repo", "", "", false},
 		{"./modules/vpc", "", "", false},
 		{"localhost/a/b", "", "", false},
@@ -66,6 +71,8 @@ func (echo) Identify(input string) (string, bool) {
 	}
 	return "", false
 }
+
+func (echo) Alias(string) (string, bool) { return "", false }
 
 // TestForgeAndImagePins names git sources on Bitbucket, gitlab.com and a configured GitLab host,
 // leaves the source on an unlisted host unresolved, reads the Renovate datasources of those hosts,
@@ -123,4 +130,46 @@ module "d" { source = "git::https://git.other.test/team/misc.git?ref=1.0.0" }
 		"Dockerfile v2.1.0":         "image:ghcr.io/o/app exact",
 		"Dockerfile latest":         "image:busybox channel",
 	}, got, "a host that isn't configured and an unreadable extractVersion leave the pin unresolved")
+}
+
+// TestForgeSSHHosts names a source on a forge's SSH host as a source on its web host, in every
+// form that reads a git address: Terraform module sources, Terragrunt sources and Renovate
+// git-tags and git-refs comments.
+func TestForgeSSHHosts(t *testing.T) {
+	t.Parallel()
+	root := t.TempDir()
+	write(t, root, map[string]string{
+		"main.tf": `module "a" { source = "git::git@ssh.bitbucket.org:ws/a.git//.?ref=1.0.0" }
+module "b" { source = "git::ssh://git@altssh.bitbucket.org:443/ws/b.git?ref=1.1.0" }
+module "c" { source = "git::ssh://git@ssh.github.com:443/o/c.git?ref=v1.2.0" }
+module "d" { source = "git::ssh://git@altssh.gitlab.com:443/g/sub/d.git?ref=1.3.0" }
+`,
+		"live/terragrunt.hcl": `terraform {
+  source = "git::git@ssh.bitbucket.org:ws/e.git//modules/x?ref=1.4.0"
+}
+`,
+		"versions.tf": `locals {
+  # renovate: datasource=git-tags depName=git@ssh.bitbucket.org:ws/f.git
+  f = "1.5.0"
+  # renovate: datasource=git-refs depName=ssh://git@altssh.bitbucket.org:443/ws/g.git
+  g = "1.6.0"
+}
+`,
+	})
+	s := scan.New(slog.New(slog.DiscardHandler), noGit{}, echo{}, scan.Options{})
+	res, err := s.Scan(t.Context(), []string{root})
+	require.NoError(t, err)
+	got := map[string]string{}
+	for _, p := range res.Pins {
+		got[p.Value] = p.Tool
+	}
+	assert.Equal(t, map[string]string{
+		"1.0.0":  "bitbucket:ws/a",
+		"1.1.0":  "bitbucket:ws/b",
+		"v1.2.0": "github:o/c",
+		"1.3.0":  "gitlab:g/sub/d",
+		"1.4.0":  "bitbucket:ws/e",
+		"1.5.0":  "bitbucket:ws/f",
+		"1.6.0":  "bitbucket:ws/g",
+	}, got)
 }

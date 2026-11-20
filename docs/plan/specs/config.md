@@ -53,6 +53,7 @@ llm:                            # only for digest --summarize
   nothing until edited. It writes `.relgap.yaml` in the working directory, the path, or with `--user` the
   user file, and refuses to replace a file (exit 2) without `--force`. A wizard (huh, with a TTY) is post-MVP.
 - `tools.<name>` takes only `repo`. It wins over every registry layer for that field; versions, sources, EOL and OSV come from the lower layers or the defaults.
+- An `aliases` key is a raw pin name, matched ignoring case. It wins over every other way of naming a pin, and over a prefix in it, so `"git::git@host:ws/repo.git//.": mod` maps a git source on a host relgap doesn't read.
 - `ignore` rules drop pins in `drift`, `outdated`, `digest --from-mise|--all` and `digest --base|--pull-request`. A rule sets at least one of `tool`, `name` and `path` and drops the pins that match every field it sets ([ADR-0017](../adr/0017-chart-versions-extract-version-and-floors.md)). `tool` may be an alias. `name` is a glob on the raw name, ignoring case, whose `*` spans slashes, so it matches unresolved pins. `path` is a glob on `repo/file` or the repo-relative file, with `**` for any directories. Ignored pins leave the "no known tool" count. `pins` lists every pin.
 - Env vars: `RELGAP_GITHUB_CONCURRENCY`, `RELGAP_CACHE_DIR`, `RELGAP_LLM_PROVIDER`, and so on. Tokens are **never** read from config files, only from env, gh or the keyring.
 
