@@ -1,0 +1,147 @@
+---
+# Written by hand from the registry API shapes: Docker Hub's anonymous token flow for library/alpine, a cut-down tag list and a manifest without a source label. Not a recording.
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: registry-1.docker.io
+        headers:
+            Accept:
+                - "application/json"
+        url: "https://registry-1.docker.io/v2/library/alpine/tags/list?n=1000"
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 72
+        body: "{\"errors\":[{\"code\":\"UNAUTHORIZED\",\"message\":\"authentication required\"}]}"
+        headers:
+            Www-Authenticate:
+                - "Bearer realm=\"https://auth.docker.io/token\",service=\"registry.docker.io\",scope=\"repository:library/alpine:pull\""
+            Content-Type:
+                - "application/json"
+        status: 401 Unauthorized
+        code: 401
+        duration: 0s
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: auth.docker.io
+        headers:
+            Accept:
+                - "application/json"
+        url: "https://auth.docker.io/token?scope=repository%3Alibrary%2Falpine%3Apull&service=registry.docker.io"
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 49
+        body: "{\"token\":\"anonymous-test-token\",\"expires_in\":300}"
+        headers:
+            Content-Type:
+                - "application/json"
+        status: 200 OK
+        code: 200
+        duration: 0s
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: registry-1.docker.io
+        headers:
+            Accept:
+                - "application/json"
+        url: "https://registry-1.docker.io/v2/library/alpine/tags/list?n=1000"
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 150
+        body: "{\"name\":\"library/alpine\",\"tags\":[\"3.20\",\"3.20.0\",\"3.20.3\",\"3.21\",\"3.21.0\",\"3.21.4\",\"3.22\",\"3.22.0\",\"3.22.1\",\"3.22.2\",\"3.23\",\"3.23.0\",\"edge\",\"latest\"]}"
+        headers:
+            Content-Type:
+                - "application/json"
+        status: 200 OK
+        code: 200
+        duration: 0s
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: registry-1.docker.io
+        headers:
+            Accept:
+                - "application/vnd.oci.image.index.v1+json, application/vnd.docker.distribution.manifest.list.v2+json, application/vnd.oci.image.manifest.v1+json, application/vnd.docker.distribution.manifest.v2+json"
+        url: "https://registry-1.docker.io/v2/library/alpine/manifests/3.23"
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 630
+        body: "{\"schemaVersion\":2,\"mediaType\":\"application/vnd.oci.image.index.v1+json\",\"manifests\":[{\"mediaType\":\"application/vnd.oci.image.manifest.v1+json\",\"digest\":\"sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"size\":1022,\"platform\":{\"os\":\"linux\",\"architecture\":\"amd64\"},\"annotations\":{\"com.docker.official-images.bashbrew.arch\":\"amd64\"}},{\"mediaType\":\"application/vnd.oci.image.manifest.v1+json\",\"digest\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"size\":566,\"platform\":{\"os\":\"unknown\",\"architecture\":\"unknown\"},\"annotations\":{\"vnd.docker.reference.type\":\"attestation-manifest\"}}]}"
+        headers:
+            Content-Type:
+                - "application/vnd.oci.image.index.v1+json"
+        status: 200 OK
+        code: 200
+        duration: 0s
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: registry-1.docker.io
+        headers:
+            Accept:
+                - "application/vnd.oci.image.index.v1+json, application/vnd.docker.distribution.manifest.list.v2+json, application/vnd.oci.image.manifest.v1+json, application/vnd.docker.distribution.manifest.v2+json"
+        url: "https://registry-1.docker.io/v2/library/alpine/manifests/sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 249
+        body: "{\"schemaVersion\":2,\"mediaType\":\"application/vnd.oci.image.manifest.v1+json\",\"config\":{\"mediaType\":\"application/vnd.oci.image.config.v1+json\",\"digest\":\"sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\",\"size\":1471},\"layers\":[]}"
+        headers:
+            Content-Type:
+                - "application/vnd.oci.image.manifest.v1+json"
+        status: 200 OK
+        code: 200
+        duration: 0s
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: registry-1.docker.io
+        url: "https://registry-1.docker.io/v2/library/alpine/blobs/sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 62
+        body: "{\"architecture\":\"amd64\",\"os\":\"linux\",\"config\":{\"Labels\":null}}"
+        headers:
+            Content-Type:
+                - "application/json"
+        status: 200 OK
+        code: 200
+        duration: 0s

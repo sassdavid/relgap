@@ -257,7 +257,7 @@ func reference(vs []DriftVersion) string {
 func (d *Drifter) latest(ctx context.Context, groups []*driftGroup) error {
 	var queries []github.RecentQuery
 	for _, g := range groups {
-		if g.err == nil && g.spec.Repo != "" && g.spec.Version.Universe != registry.UniverseChart {
+		if g.err == nil && fromRecent(g.spec) {
 			queries = append(queries, recentQuery(g.spec))
 		}
 	}
@@ -271,8 +271,12 @@ func (d *Drifter) latest(ctx context.Context, groups []*driftGroup) error {
 		case g.err != nil:
 			t.Note = "not looked up: " + g.err.Error()
 			continue
-		case g.spec.Repo == "":
+		case g.spec.Repo == "" && g.spec.Image == "":
 			t.Note = "not looked up: the tool has no GitHub repository"
+			continue
+		case !fromRecent(g.spec):
+			t.Note = "not looked up: drift --latest reads the newest GitHub releases only; " +
+				"relgap outdated compares this tool"
 			continue
 		}
 		r := recent[recentQuery(g.spec)]

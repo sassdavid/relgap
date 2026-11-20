@@ -614,15 +614,14 @@ Found with 0.10.0 on a Terraform module repository (Helm chart versions in varia
 ### M28: Versions and notes outside GitHub (relgap only) ([non-github-sources](specs/non-github-sources.md))
 Scope: Terraform module sources on Bitbucket Cloud and GitLab, and `image:` pins in `outdated`.
 Found on 2026-11-20 with relgap 0.10.0 on a Terraform module repository. Decisions:
-[ADR-0018](adr/0018-non-github-version-sources.md), proposed; settle its open questions with the
-owner before coding.
-- [ ] Bitbucket Cloud module sources compare and digest from the repository's changelog file.
+[ADR-0018](adr/0018-non-github-version-sources.md), accepted on 2026-11-20 with the owner's answers.
+- [x] Bitbucket Cloud module sources compare and digest from the repository's changelog file.
   (non-github-sources criterion 1)
-- [ ] gitlab.com and configured self-managed GitLab sources compare and digest from releases.
+- [x] gitlab.com and configured self-managed GitLab sources compare and digest from releases.
   (non-github-sources criterion 2)
-- [ ] Tokens reach only their host and never the cache or a cassette. (non-github-sources
+- [x] Tokens reach only their host and never the cache or a cassette. (non-github-sources
   criterion 3)
-- [ ] `outdated` compares `image:` pins against registry tags and digests the source label's
+- [x] `outdated` compares `image:` pins against registry tags and digests the source label's
   repository. (non-github-sources criterion 4)
-- [ ] `pins --unresolved` no longer lists these sources, and the network page names every new
+- [x] `pins --unresolved` no longer lists these sources, and the network page names every new
   host and token. (non-github-sources criterion 5)

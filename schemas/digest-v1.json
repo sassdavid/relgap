@@ -50,7 +50,12 @@
       "required": ["tool", "repo", "from", "to", "versions", "entries", "counts", "hidden", "warnings"],
       "properties": {
         "tool": { "description": "Canonical tool name.", "type": "string", "minLength": 1 },
-        "repo": { "description": "GitHub owner/repo.", "type": "string", "minLength": 1 },
+        "repo": {
+          "description": "Repository the notes come from: GitHub owner/repo, or the project path on host. Empty for an image whose source label names no GitHub repository.",
+          "type": "string"
+        },
+        "host": { "description": "Host of repo when it isn't github.com: bitbucket.org, gitlab.com or a self-managed GitLab host.", "type": "string", "minLength": 1 },
+        "image": { "description": "registry/repository of an image tool, whose versions are its tags.", "type": "string", "minLength": 1 },
         "from": { "description": "Start of the range, excluded.", "type": "string", "minLength": 1 },
         "to": { "description": "End of the range, included.", "type": "string", "minLength": 1 },
         "versions": {

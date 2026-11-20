@@ -78,7 +78,7 @@ func (a *StructuredJSON) get(
 	if a.src.PathTemplate != "" {
 		k := mdindex.Key{Repo: t.Repo, Ref: Expand(a.src.Ref, s, v), Path: Expand(a.src.PathTemplate, s, v)}
 		b, err := a.files.File(ctx, k.Repo, k.Ref, k.Path)
-		return b, FileURL(k), err //nolint:wrapcheck // File names the file in its errors
+		return b, FileURL(t.Host, k), err //nolint:wrapcheck // File names the file in its errors
 	}
 	u := expandURL(a.src.URLTemplate, s, v, version.V{})
 	if a.web == nil {

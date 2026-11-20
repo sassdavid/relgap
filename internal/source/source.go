@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/sassdavid/relgap/internal/github"
+	"github.com/sassdavid/relgap/internal/httpx"
 	"github.com/sassdavid/relgap/internal/registry"
 	"github.com/sassdavid/relgap/internal/version"
 )
@@ -49,7 +50,7 @@ var ErrNotFound = errors.New("page not found")
 
 // missing reports whether err means the file or page doesn't exist, which adapters skip.
 func missing(err error) bool {
-	return errors.Is(err, ErrNotFound) || errors.Is(err, github.ErrNotFound)
+	return errors.Is(err, ErrNotFound) || errors.Is(err, github.ErrNotFound) || errors.Is(err, httpx.ErrNotFound)
 }
 
 // Ref says where a piece of notes came from.

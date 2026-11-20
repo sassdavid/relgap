@@ -6,6 +6,7 @@ import (
 	"log/slog"
 	"strings"
 
+	"github.com/sassdavid/relgap/internal/forge"
 	"github.com/sassdavid/relgap/internal/mdindex"
 	"github.com/sassdavid/relgap/internal/registry"
 	"github.com/sassdavid/relgap/internal/version"
@@ -92,19 +93,15 @@ func (a *ChangelogFile) Fetch(
 			Version:  v,
 			Markdown: md,
 			Line:     line,
-			Source:   Ref{Adapter: KindChangelogFile, URL: FileURL(k), Heading: sec.Heading},
+			Source:   Ref{Adapter: KindChangelogFile, URL: FileURL(t.Host, k), Heading: sec.Heading},
 		})
 	}
 	return out, nil
 }
 
-// FileURL returns the GitHub page of the file k names.
-func FileURL(k mdindex.Key) string {
-	ref := k.Ref
-	if ref == "" {
-		ref = "HEAD"
-	}
-	return fmt.Sprintf("https://github.com/%s/blob/%s/%s", k.Repo, ref, strings.TrimPrefix(k.Path, "/"))
+// FileURL returns the web page of the file k names in a repository on host.
+func FileURL(host string, k mdindex.Key) string {
+	return forge.FileURL(host, k.Repo, k.Ref, k.Path)
 }
 
 // Expand fills a path or ref template: {version}, {major}, {minor} (the minor number alone)

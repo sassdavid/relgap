@@ -96,7 +96,9 @@ func TestNetworkHosts(t *testing.T) {
 		t.Fatalf("found hosts %v in the cassettes, want more", seen)
 	}
 	for h := range seen {
-		if !listed[h] {
+		// Cassettes stand for a host in gitlab.hosts or images.registries with one under .test,
+		// the TLD RFC 2606 reserves, and the table names those as config entries.
+		if !listed[h] && !strings.HasSuffix(h, ".test") {
 			t.Errorf("a cassette sends a request to %s, which the network host table doesn't list", h)
 		}
 	}

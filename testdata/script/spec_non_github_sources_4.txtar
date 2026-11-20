@@ -1,0 +1,46 @@
+# non-github-sources criterion 4: outdated compares image: pins from Docker Hub, ghcr.io,
+# registry.k8s.io and public.ecr.aws against their tags, with an anonymous token where the
+# registry asks for one. A Renovate extractVersion keeps the variant in the tool name, and only
+# tags with that variant count. The source label of example/api names a GitHub repository, so its
+# digest is that repository's; the other images have versions only, and the agent's label points
+# to GitLab, which isn't a GitHub repository.
+env TEST_NOW=2026-11-20T12:00:00Z
+env TEST_CASSETTE=$CASSETTES/non-github/images.yaml
+cd project
+
+exec relgap pins --format plain
+stdout '^image:example/api\s+1\.4\.0\s+dockerfile\s+Dockerfile:1$'
+stdout '^image:registry\.k8s\.io/kube-proxy\s+v1\.33\.4\s+dockerfile\s+Dockerfile:2$'
+stdout '^image:ghcr\.io/example-org/worker\s+2\.0\.0\s+ci\s+\.gitlab-ci\.yml:2$'
+stdout '^image:public\.ecr\.aws/example/agent:\*-al2023\s+2\.4\.0-al2023\s+renovate-comment\s+agent\.tf:3$'
+
+exec relgap outdated --format json
+jsonschema outdated-v1.json stdout
+cp stdout $WORK/outdated.json
+stdout '"tool": "image:example/api",\s+"repo": "example-org/api",'
+stdout '"current": "1.4.0",\s+"latest": "1.6.0",\s+"behind": \{\s+"releases": 2,'
+stdout '"breaking": 1,\s+"deprecation": 1,'
+stdout '"tool": "image:ghcr.io/example-org/worker",[^}]*\}[^}]*\},\s+"current": "2.0.0",\s+"latest": "2.2.0",'
+stdout '"tool": "image:registry.k8s.io/kube-proxy",[^}]*\}[^}]*\},\s+"current": "1.33.4",\s+"latest": "1.34.2",'
+stdout '"tool": "image:public.ecr.aws/example/agent:\*-al2023",[^}]*\}[^}]*\},\s+"current": "2.4.0",\s+"latest": "2.5.0",\s+"behind": \{\s+"releases": 1,'
+stdout 'public.ecr.aws/example/agent has no source label that names a GitHub repository'
+! grep 'Authorization|anonymous-test-token' $WORK/requests.log
+
+exec relgap digest image:example/api 1.4.0..1.6.0 --format json
+jsonschema digest-v1.json stdout
+golden stdout digest/image-example-api.json
+[!recording] cp stdout $WORK/api.json
+[!recording] countsmatch $WORK/outdated.json $WORK/api.json
+
+-- project/Dockerfile --
+FROM example/api:1.4.0 AS api
+FROM registry.k8s.io/kube-proxy:v1.33.4
+-- project/.gitlab-ci.yml --
+build:
+  image: ghcr.io/example-org/worker:2.0.0
+  script: make
+-- project/agent.tf --
+locals {
+  # renovate: datasource=docker depName=public.ecr.aws/example/agent extractVersion=^(?<version>.+)-al2023$
+  agent_tag = "2.4.0-al2023"
+}

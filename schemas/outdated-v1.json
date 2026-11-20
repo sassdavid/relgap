@@ -32,7 +32,12 @@
       "required": ["tool", "pin", "status"],
       "properties": {
         "tool": { "description": "The pin's tool, as relgap digest accepts it.", "type": "string", "minLength": 1 },
-        "repo": { "description": "GitHub owner/repo of the tool. Absent when the pin was skipped.", "type": "string", "minLength": 1 },
+        "repo": {
+          "description": "Repository of the tool: GitHub owner/repo, or the project path on host. Absent when the pin was skipped or for an image without a GitHub source.",
+          "type": "string",
+          "minLength": 1
+        },
+        "host": { "description": "Host of repo when it isn't github.com: bitbucket.org, gitlab.com or a self-managed GitLab host.", "type": "string", "minLength": 1 },
         "pin": { "$ref": "pins-v1.json#/$defs/pin" },
         "current": { "description": "The version the pin stands for.", "type": "string", "minLength": 1 },
         "via": {

@@ -1,0 +1,50 @@
+# non-github-sources criterion 2: a gitlab.com module source with nested groups gives a gitlab:
+# pin, and digest reads its releases. A self-managed host works once gitlab.hosts lists it; its
+# project has no releases, so the notes come from CHANGELOG.md. A git source on a host that isn't
+# listed stays unresolved and causes no request.
+env TEST_NOW=2026-11-20T12:00:00Z
+env TEST_CASSETTE=$CASSETTES/non-github/gitlab.yaml
+cd project
+
+exec relgap pins --format plain
+stdout '^gitlab:example-group/platform/tf-dns\s+v1\.2\.0\s+terraform\s+main\.tf:2$'
+stdout '^gitlab:gitlab\.internal\.test/infra/modules/tf-vpc\s+0\.4\.0\s+terragrunt\s+live/terragrunt\.hcl:2$'
+
+exec relgap pins --unresolved --format plain
+stdout 'git::https://git\.other\.test/team/tf-misc\.git'
+! stdout 'gitlab'
+
+exec relgap outdated --format json
+jsonschema outdated-v1.json stdout
+stdout '"tool": "gitlab:example-group/platform/tf-dns",\s+"repo": "example-group/platform/tf-dns",\s+"host": "gitlab.com"'
+stdout '"current": "1.2.0",\s+"latest": "1.3.0",\s+"behind": \{\s+"releases": 2,'
+stdout '"tool": "gitlab:gitlab.internal.test/infra/modules/tf-vpc",\s+"repo": "infra/modules/tf-vpc",\s+"host": "gitlab.internal.test"'
+stdout '"current": "0.4.0",\s+"latest": "0.5.0"'
+! grep 'git.other.test' $WORK/requests.log
+
+exec relgap digest gitlab:example-group/platform/tf-dns v1.2.0..v1.3.0 --format json
+jsonschema digest-v1.json stdout
+golden stdout digest/gitlab-tf-dns.json
+
+exec relgap digest gitlab:gitlab.internal.test/infra/modules/tf-vpc 0.4.0..0.5.0 --format json
+jsonschema digest-v1.json stdout
+stdout '"adapter": "changelog-file",\s+"url": "https://gitlab.internal.test/infra/modules/tf-vpc/-/blob/HEAD/CHANGELOG.md#L7"'
+stdout '"feature": 1,'
+
+-- project/.relgap.yaml --
+schema_version: 1
+gitlab:
+  hosts:
+    - host: gitlab.internal.test
+-- project/main.tf --
+module "dns" {
+  source = "git::https://gitlab.com/example-group/platform/tf-dns.git//modules/zone?ref=v1.2.0"
+}
+
+module "misc" {
+  source = "git::https://git.other.test/team/tf-misc.git?ref=1.0.0"
+}
+-- project/live/terragrunt.hcl --
+terraform {
+  source = "git::ssh://git@gitlab.internal.test/infra/modules/tf-vpc.git?ref=0.4.0"
+}

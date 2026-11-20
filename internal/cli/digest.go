@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"strings"
+	"sync"
 
 	"github.com/spf13/cobra"
 
@@ -361,8 +362,6 @@ func newGitHubClient(
 	concurrency := d.Config.Config.GitHub.Concurrency
 	if token == "" {
 		concurrency = min(concurrency, unauthenticatedConcurrency)
-		d.Logger.WarnContext(ctx, "no GitHub token found; using the REST API (60 requests per hour) "+
-			"with 2 concurrent requests. Set GH_TOKEN or run `gh auth login`")
 	}
 	d.Logger.DebugContext(ctx, "github client",
 		"authenticated", token != "", "token_source", tokenSource, "concurrency", concurrency)
@@ -377,11 +376,34 @@ func newGitHubClient(
 		RetryPOST: true, // GraphQL queries
 		Wrap:      cache.Wrap,
 	})
-	gh, err := github.New(hc, github.Options{Token: token, Logger: d.Logger, Concurrency: concurrency})
+	ghHC := hc
+	if token == "" {
+		// The warning waits for the first GitHub request, so a run that reads only Bitbucket,
+		// GitLab or image registries doesn't print it.
+		ghHC = &http.Client{Transport: &firstGitHubRequest{next: hc.Transport, do: func() {
+			d.Logger.WarnContext(ctx, "no GitHub token found; using the REST API (60 requests per hour) "+
+				"with 2 concurrent requests. Set GH_TOKEN or run `gh auth login`")
+		}}}
+	}
+	gh, err := github.New(ghHC, github.Options{Token: token, Logger: d.Logger, Concurrency: concurrency})
 	if err != nil {
 		return nil, nil, fmt.Errorf("create github client: %w", err)
 	}
 	return gh, hc, nil
+}
+
+// firstGitHubRequest runs do once, before the first request to the GitHub API.
+type firstGitHubRequest struct {
+	next http.RoundTripper
+	once sync.Once
+	do   func()
+}
+
+func (f *firstGitHubRequest) RoundTrip(req *http.Request) (*http.Response, error) {
+	if req.URL.Host == httpx.GitHubAPIHost {
+		f.once.Do(f.do)
+	}
+	return f.next.RoundTrip(req) //nolint:wrapcheck // a transport passes errors through unchanged
 }
 
 func digestError(err error) error {

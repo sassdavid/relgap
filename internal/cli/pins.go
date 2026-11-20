@@ -72,7 +72,7 @@ func runPins(cmd *cobra.Command, d *app.Deps, g *globals, f pinsFlags, args []st
 	if err != nil {
 		return err
 	}
-	opts, err := pinsOptions(cfg.Config.Scan, f)
+	opts, err := pinsOptions(cfg.Config, f)
 	if err != nil {
 		return err
 	}
@@ -109,13 +109,15 @@ func runPins(cmd *cobra.Command, d *app.Deps, g *globals, f pinsFlags, args []st
 	return nil
 }
 
-func pinsOptions(sc config.Scan, f pinsFlags) (scan.Options, error) {
+func pinsOptions(c config.Config, f pinsFlags) (scan.Options, error) {
+	sc := c.Scan
 	opts := scan.Options{
-		Exclude:    sc.Exclude,
-		ExtraFiles: sc.ExtraFiles,
-		Generic:    sc.Detectors.Generic,
-		Actions:    sc.Detectors.CIActions,
-		Submodules: f.submodules,
+		Exclude:     sc.Exclude,
+		ExtraFiles:  sc.ExtraFiles,
+		Generic:     sc.Detectors.Generic,
+		Actions:     sc.Detectors.CIActions,
+		Submodules:  f.submodules,
+		GitLabHosts: gitLabHosts(c),
 	}
 	if f.renovate != "" {
 		data, err := os.ReadFile(f.renovate)

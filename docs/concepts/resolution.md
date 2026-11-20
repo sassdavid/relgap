@@ -1,13 +1,13 @@
 ---
-description: How relgap turns a tool name, alias, variable or prefixed name into a GitHub repository, version rules and release-note sources, and which layer supplies each field.
+description: How relgap turns a tool name, alias, variable or prefixed name into a repository on GitHub, Bitbucket or GitLab or an image, version rules and release-note sources, and which layer supplies each field.
 ---
 
 # Tool resolution
 
 Before relgap can list versions or read release notes, it needs to know where a tool lives and
 how its tags read. Resolution turns the name you type, or the name a pin carries, into a tool
-spec: the GitHub repository, the version rules, the release-note sources, the endoflife.date
-product and the OSV packages. [`relgap resolve`](/cli/resolve) prints that spec and where each
+spec: the repository and its host (GitHub unless the spec says `host`), the version rules, the
+release-note sources, the endoflife.date product and the OSV packages. [`relgap resolve`](/cli/resolve) prints that spec and where each
 field came from.
 
 ## What you can type
@@ -18,12 +18,16 @@ field came from.
 | a `NAME_VERSION` variable | `TERRAFORM_VERSION` | the name with underscores as hyphens, `terraform` |
 | `github:owner/repo` | `github:jdx/hk` | the repository itself, or the tool that has it |
 | `github:owner/repo@prefix` | `github:kubernetes/autoscaler@cluster-autoscaler-` | the repository, reading only the tags with that prefix |
+| `bitbucket:workspace/repo` | `bitbucket:acme-ws/tf-network` | the Bitbucket Cloud repository; its tags are the versions |
+| `gitlab:group/.../repo` | `gitlab:acme/platform/tf-dns` | the gitlab.com project; its tags are the versions, its releases the notes |
+| `gitlab:host/group/.../repo` | `gitlab:gitlab.acme.internal/infra/tf-vpc` | a project on a host in `gitlab.hosts` |
 | `aqua:package` | `aqua:hashicorp/terraform` | the embedded aqua index |
 | `tfprovider:namespace/name` | `tfprovider:integrations/github` | the registries, then the Terraform registry |
 | `tfmodule:namespace/name/provider` | `tfmodule:terraform-aws-modules/vpc/aws` | the Terraform registry |
 | `chart:repo/name`, `chart:name`, `chart:url/name` | `chart:argo/argo-cd` | Artifact Hub |
 | `npm:package` | `npm:prettier` | the registries, then the npm registry |
 | `pypi:package` | `pypi:black` | the registries, then PyPI |
+| `image:name`, `image:name:<prefix>*<suffix>` | `image:nginx:*-alpine` | the image registry's tags; the source label's GitHub repository becomes the notes tool |
 
 When a registry knows the tool, every form gives the same result as its name: `github:hashicorp/terraform`
 and `TERRAFORM_VERSION` both resolve to terraform with its curated entry.
@@ -33,8 +37,8 @@ and `TERRAFORM_VERSION` both resolve to terraform with its curated entry.
 Each field comes from the highest layer that sets it, so a lower layer fills only what the
 higher ones leave empty:
 
-1. config: `tools.<name>.repo` and `aliases` in your config file. `tools.<name>` sets only the
-   repository, which wins over every registry.
+1. config: `tools.<name>.repo`, `tools.<name>.host` and `aliases` in your config file.
+   `tools.<name>` sets only the repository and its host, which win over every registry.
 2. relgap registry: the curated entries embedded in relgap (the [supported tools](/reference/tools)),
    or the newer copies [`relgap registry update`](/cli/registry/update) downloaded.
 3. mise registry: `mise registry --json` when mise is on `PATH`, otherwise the embedded snapshot
@@ -69,6 +73,18 @@ chart lists. Some repositories tag every release once for all their charts: aws/
 tool has the universe `chart`. `outdated` shows latest and behind, with `-` for the counts, and a
 digest lists the versions with a warning that says why it has no notes. Pin the application's own
 repository as well to read its release notes.
+
+An `image:` name lists the tags of the image's registry, and the tool has the universe `image`.
+Only tags with the name's tag pattern count: `image:nginx:*-alpine` reads `1.27.0-alpine` as
+version 1.27.0 and skips `1.27.0` and `1.27.0-bookworm`. relgap reads the manifest of the newest
+stable tag, then the linux/amd64 image of an index, then the image config, for the source label
+(`org.opencontainers.image.source`, then `org.label-schema.vcs-url`). When it names a GitHub
+repository, that repository resolves like `github:owner/repo` and becomes the tool's `notes`, and
+a digest of the image is that tool's digest over the same versions. Without one, the image has
+versions only, like a `chart` universe tool.
+
+`bitbucket:` and `gitlab:` names need no lookup: they resolve to the repository on that host with
+the `tags` universe.
 
 These lookups go through the HTTP cache like every other request. [Network, privacy and
 tokens](/concepts/network) lists the hosts.

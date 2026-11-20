@@ -1,0 +1,138 @@
+{
+  "schema_version": "1",
+  "tool": "relgap",
+  "version": "dev",
+  "generated_at": "2026-11-20T12:00:00Z",
+  "data": {
+    "tools": [
+      {
+        "tool": "image:example/api",
+        "repo": "example-org/api",
+        "image": "docker.io/example/api",
+        "from": "1.4.0",
+        "to": "1.6.0",
+        "versions": [
+          {
+            "version": "1.5.0",
+            "tag": "1.5.0"
+          },
+          {
+            "version": "1.6.0",
+            "tag": "1.6.0"
+          }
+        ],
+        "entries": [
+          {
+            "id": "e-6f0a5a47",
+            "version": "1.5.0",
+            "kind": "deprecation",
+            "confidence": 0.9,
+            "text": "The `/v1/jobs` endpoint is deprecated and will be removed in 1.6.0. Move clients to `/v2/jobs` now.",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/example-org/api/releases/tag/v1.5.0",
+              "heading": [
+                "Deprecations"
+              ]
+            }
+          },
+          {
+            "id": "e-e54533f0",
+            "version": "1.5.0",
+            "kind": "fix",
+            "confidence": 0.9,
+            "text": "Job listings no longer skip the first page when the caller sends `page=0`, and the response says how many jobs match.",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/example-org/api/releases/tag/v1.5.0",
+              "heading": [
+                "Bug fixes"
+              ]
+            }
+          },
+          {
+            "id": "e-ec487f63",
+            "version": "1.5.0",
+            "kind": "fix",
+            "confidence": 0.9,
+            "text": "Graceful shutdown waits for running jobs up to the configured timeout instead of stopping them at once.",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/example-org/api/releases/tag/v1.5.0",
+              "heading": [
+                "Bug fixes"
+              ]
+            }
+          },
+          {
+            "id": "e-02bb2148",
+            "version": "1.6.0",
+            "kind": "breaking",
+            "confidence": 0.95,
+            "text": "The `/v1/jobs` endpoint is removed. Clients must call `/v2/jobs`, which pages its results with a cursor instead of an offset.",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/example-org/api/releases/tag/v1.6.0",
+              "heading": [
+                "Breaking changes"
+              ]
+            }
+          },
+          {
+            "id": "e-10e318a3",
+            "version": "1.6.0",
+            "kind": "feature",
+            "confidence": 0.9,
+            "text": "The API accepts an `Idempotency-Key` header on every POST request and replays the first answer for 24 hours.",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/example-org/api/releases/tag/v1.6.0",
+              "heading": [
+                "Features"
+              ]
+            }
+          },
+          {
+            "id": "e-76a32516",
+            "version": "1.6.0",
+            "kind": "feature",
+            "confidence": 0.9,
+            "text": "Health checks report the database pool size and the number of waiting connections.",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/example-org/api/releases/tag/v1.6.0",
+              "heading": [
+                "Features"
+              ]
+            }
+          },
+          {
+            "id": "e-edbeab25",
+            "version": "1.6.0",
+            "kind": "feature",
+            "confidence": 0.9,
+            "text": "The container image runs as the non-root user `api` (uid 10001) and keeps no shell in the final layer.",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://github.com/example-org/api/releases/tag/v1.6.0",
+              "heading": [
+                "Features"
+              ]
+            }
+          }
+        ],
+        "counts": {
+          "breaking": 1,
+          "deprecation": 1,
+          "feature": 3,
+          "fix": 2,
+          "other": 0,
+          "security": 0
+        },
+        "hidden": 0,
+        "warnings": []
+      }
+    ]
+  },
+  "errors": []
+}

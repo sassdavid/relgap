@@ -26,8 +26,9 @@ type VersionSpec struct {
 	Scheme    string `json:"scheme"               yaml:"scheme"`
 	Extract   string `json:"extract,omitempty"    yaml:"extract"`
 	TagPrefix string `json:"tag_prefix,omitempty" yaml:"tag_prefix"`
+	TagSuffix string `json:"tag_suffix,omitempty" yaml:"-"` // an image variant such as -alpine
 	Exclude   string `json:"exclude,omitempty"    yaml:"exclude"`
-	Universe  string `json:"universe"             yaml:"universe"` // releases or tags; chart only from a lookup
+	Universe  string `json:"universe"             yaml:"universe"` // releases or tags; chart and image only from a lookup
 	Line      string `json:"line"                 yaml:"line"`     // none, major or minor
 	// VersionsURL is where a chart universe's versions come from: an Artifact Hub package page
 	// or a Helm repository index.
@@ -44,7 +45,7 @@ func (v VersionSpec) Rules() (version.Rules, error) {
 	if err != nil {
 		return version.Rules{}, fmt.Errorf("version scheme: %w", err)
 	}
-	r := version.Rules{Scheme: s, TagPrefix: v.TagPrefix}
+	r := version.Rules{Scheme: s, TagPrefix: v.TagPrefix, TagSuffix: v.TagSuffix}
 	if v.Exclude != "" {
 		if r.Exclude, err = regexp.Compile(v.Exclude); err != nil {
 			return version.Rules{}, fmt.Errorf("version exclude: %w", err)
@@ -60,6 +61,9 @@ const (
 	// UniverseChart takes the versions a chart lookup listed, for a chart whose repository has no
 	// tag per chart version. They carry no release notes.
 	UniverseChart = "chart"
+	// UniverseImage takes the tags an image registry listed. Notes come from the GitHub repository
+	// the image's source label names, as the tool in [ToolSpec.Notes].
+	UniverseImage = "image"
 )
 
 // Source is one changelog source of a tool.
@@ -103,12 +107,20 @@ type OSVPackage struct {
 type ToolSpec struct {
 	Name            string        `json:"name"`
 	Aliases         []string      `json:"aliases"`
-	Repo            string        `json:"repo"`
+	Repo            string        `json:"repo"`            // owner/repo, or the project path on Host
+	Host            string        `json:"host,omitempty"`  // bitbucket.org, gitlab.com or a GitLab host; empty means github.com
+	Image           string        `json:"image,omitempty"` // registry/repository of a [UniverseImage] tool
+	Notes           *ToolSpec     `json:"notes,omitempty"` // the tool whose notes an image's digest reads
 	Version         VersionSpec   `json:"version"`
 	Sources         []Source      `json:"sources"` // empty means auto-discovery
 	EOL             *EOL          `json:"eol,omitempty"`
 	OSV             []OSVPackage  `json:"osv"`
 	BreakingMarkers []string      `json:"breaking_markers"`
 	Bin             []string      `json:"bin"` // executable names; empty means the tool name
-	Versions        []version.Ref `json:"-"`   // the versions of a [UniverseChart] tool
+	Versions        []version.Ref `json:"-"`   // the versions of a [UniverseChart] or [UniverseImage] tool
+}
+
+// Listed reports whether the tool's versions come from a lookup instead of its repository.
+func (t ToolSpec) Listed() bool {
+	return t.Version.Universe == UniverseChart || t.Version.Universe == UniverseImage
 }

@@ -116,7 +116,7 @@ func escapePath(p string) string {
 // File is an entry of a repository directory listing.
 type File struct {
 	Name string `json:"name"`
-	Size int    `json:"size"`
+	Size int    `json:"size"` // -1 when the host doesn't say
 	Dir  bool   `json:"dir"`
 }
 

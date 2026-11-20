@@ -5,12 +5,12 @@ import (
 	"net/url"
 	"regexp"
 	"slices"
-	"strconv"
 	"strings"
 
 	"github.com/yuin/goldmark/v2/ast"
 	"github.com/yuin/goldmark/v2/parser"
 
+	"github.com/sassdavid/relgap/internal/forge"
 	"github.com/sassdavid/relgap/internal/source"
 )
 
@@ -273,7 +273,7 @@ func (w *walker) add(start int, text string) {
 	ref := w.n.Source
 	ref.Heading = path
 	if w.n.Line > 0 {
-		ref.URL += "#L" + strconv.Itoa(w.n.Line+bytes.Count(w.src[:start], []byte("\n")))
+		ref.URL = forge.LineURL(ref.URL, w.n.Line+bytes.Count(w.src[:start], []byte("\n")))
 	}
 	w.out = append(w.out, Entry{
 		Version:    w.n.Version.V.String(),

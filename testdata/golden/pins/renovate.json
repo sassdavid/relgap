@@ -24,7 +24,7 @@
         }
       },
       {
-        "tool": "image:node",
+        "tool": "image:node:*-alpine",
         "raw_name": "node",
         "kind": "image",
         "value": "24.11.0-alpine",

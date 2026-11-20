@@ -18,6 +18,8 @@ import (
 
 	"go.yaml.in/yaml/v4"
 
+	"github.com/sassdavid/relgap/internal/httpx"
+	"github.com/sassdavid/relgap/internal/oci"
 	"github.com/sassdavid/relgap/internal/registry"
 	"github.com/sassdavid/relgap/internal/version"
 )
@@ -54,17 +56,32 @@ type GitHubReader interface {
 	File(ctx context.Context, repo, ref, path string) ([]byte, error)
 }
 
-// Remote is a [registry.Finder] that asks the Terraform registry, Artifact Hub, npm, PyPI and GitHub.
+// ImageReader lists an image's tags and reads its source label; [oci.Client] implements it.
+type ImageReader interface {
+	Tags(ctx context.Context, r oci.Ref) ([]string, error)
+	Source(ctx context.Context, r oci.Ref, tag string) (string, error)
+	URL(r oci.Ref) string
+}
+
+// Remote is a [registry.Finder] that asks the Terraform registry, Artifact Hub, npm, PyPI, image
+// registries and GitHub.
 type Remote struct {
 	hc     *http.Client
 	search RepoSearcher
 	gh     GitHubReader
+	images ImageReader
 }
 
 // New returns a [Remote] that sends requests through hc, searches with search, and reads a
 // chart repository's tags and a GitHub Pages Helm repository's index through gh.
 func New(hc *http.Client, search RepoSearcher, gh GitHubReader) *Remote {
 	return &Remote{hc: hc, search: search, gh: gh}
+}
+
+// WithImages returns r with an image reader for image: lookups.
+func (r *Remote) WithImages(images ImageReader) *Remote {
+	r.images = images
+	return r
 }
 
 const maxLookupBody = 8 << 20
@@ -82,6 +99,8 @@ func (r *Remote) Find(ctx context.Context, kind, name string) (*registry.Found, 
 		return r.npm(ctx, name)
 	case registry.KindPyPI:
 		return r.pypi(ctx, name)
+	case registry.KindImage:
+		return r.image(ctx, name)
 	case registry.KindGuess:
 		return r.guess(ctx, name)
 	}
@@ -701,4 +720,62 @@ func cleanRepo(s, sub string) (string, string, bool) {
 		return "", "", false
 	}
 	return s, sub, true
+}
+
+// image lists the tags of image:<name>[:<prefix>*<suffix>] and reads the source label of its
+// newest stable tag with that pattern. A label that names no GitHub repository, or a manifest
+// relgap can't read, leaves the tool without notes.
+func (r *Remote) image(ctx context.Context, name string) (*registry.Found, error) {
+	if r.images == nil {
+		return nil, fmt.Errorf("%w: image:%s needs an image registry, which this command doesn't read",
+			registry.ErrUnsupported, name)
+	}
+	image, prefix, suffix, ok := registry.SplitImage(name)
+	if !ok {
+		return nil, fmt.Errorf("%w: image:%s is not image:<name> or image:<name>:<prefix>*<suffix>",
+			registry.ErrUnsupported, name)
+	}
+	ref, err := oci.ParseRef(image)
+	if err != nil {
+		return nil, fmt.Errorf("%w: %w", registry.ErrUnsupported, err)
+	}
+	tags, err := r.images.Tags(ctx, ref)
+	switch {
+	case errors.Is(err, oci.ErrNotAllowed):
+		return nil, fmt.Errorf("%w: %w", registry.ErrUnsupported, err)
+	case errors.Is(err, httpx.ErrNotFound), errors.Is(err, httpx.ErrUnauthorized):
+		return nil, fmt.Errorf("%w: image %s: not found, or private (relgap reads public images only): %w",
+			registry.ErrUnknownTool, ref, err)
+	case err != nil:
+		return nil, fmt.Errorf("image %s: %w", ref, err)
+	}
+	refs := make([]version.Ref, 0, len(tags))
+	var matching []version.Ref
+	for _, t := range tags {
+		refs = append(refs, version.Ref{Tag: t})
+		if rest, hasPrefix := strings.CutPrefix(t, prefix); hasPrefix {
+			if v, hasSuffix := strings.CutSuffix(rest, suffix); hasSuffix && v != "" {
+				matching = append(matching, version.Ref{Tag: v})
+			}
+		}
+	}
+	found := &registry.Found{
+		Name: registry.KindImage + ":" + name, TagPrefix: prefix, TagSuffix: suffix, Layer: registry.LayerImage,
+		Versions: refs, VersionsURL: r.images.URL(ref), Image: ref.String(),
+	}
+	newest := newestStable(matching)
+	if newest == "" {
+		return found, nil
+	}
+	src, err := r.images.Source(ctx, ref, prefix+newest+suffix)
+	if err != nil {
+		if ctx.Err() != nil {
+			return nil, fmt.Errorf("image %s: %w", ref, ctx.Err())
+		}
+		return found, nil
+	}
+	if repo, _, isGitHub := ParseGitHubURL(src); isGitHub {
+		found.Repo = repo
+	}
+	return found, nil
 }

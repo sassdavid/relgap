@@ -529,7 +529,9 @@ type digestToolJSON struct {
 	Counts   map[string]int    `json:"counts"`
 }
 
-// match checks d against every outdated pin with its tool and current version and marks them.
+// match checks d against every outdated pin with its tool and current version and marks them. A
+// pin without counts has versions only, as a chart or image without notes has, so its counts
+// aren't compared.
 func (o *outdatedJSON) match(d digestToolJSON, matched map[int]bool) error {
 	found := false
 	for i, p := range o.Data.Pins {
@@ -538,7 +540,7 @@ func (o *outdatedJSON) match(d digestToolJSON, matched map[int]bool) error {
 		}
 		found, matched[i] = true, true
 		if p.Latest != d.To || p.Behind == nil || p.Behind.Releases != len(d.Versions) ||
-			!maps.Equal(p.Counts, d.Counts) {
+			(p.Counts != nil && !maps.Equal(p.Counts, d.Counts)) {
 			return fmt.Errorf("%s %s..%s: digest has %d versions and counts %v; outdated has latest %s, %+v, counts %v",
 				d.Tool, d.From, d.To, len(d.Versions), d.Counts, p.Latest, p.Behind, p.Counts)
 		}
@@ -547,6 +549,29 @@ func (o *outdatedJSON) match(d digestToolJSON, matched map[int]bool) error {
 		return fmt.Errorf("%s %s..%s matches no outdated pin", d.Tool, d.From, d.To)
 	}
 	return nil
+}
+
+// TestSpec_non_github_sources_1: a Bitbucket Cloud module source gives a bitbucket: pin that
+// outdated compares and digest reads from the repository's changelog, through pagination, a 429
+// retried and a 404 for a private repository.
+func TestSpec_non_github_sources_1(t *testing.T) {
+	t.Parallel()
+	testscript.Run(t, scriptParams(t, filepath.Join(scriptDir, "spec_non_github_sources_1.txtar")))
+}
+
+// TestSpec_non_github_sources_2: a gitlab.com module source with nested groups gives a gitlab:
+// pin whose digest reads its releases, and a self-managed host works once configured.
+func TestSpec_non_github_sources_2(t *testing.T) {
+	t.Parallel()
+	testscript.Run(t, scriptParams(t, filepath.Join(scriptDir, "spec_non_github_sources_2.txtar")))
+}
+
+// TestSpec_non_github_sources_4: outdated compares image: pins from Docker Hub, ghcr.io,
+// registry.k8s.io and public.ecr.aws against their tags, honours extractVersion, and digests the
+// GitHub repository the source label names.
+func TestSpec_non_github_sources_4(t *testing.T) {
+	t.Parallel()
+	testscript.Run(t, scriptParams(t, filepath.Join(scriptDir, "spec_non_github_sources_4.txtar")))
 }
 
 // TestScripts runs every testdata/script/*.txtar that isn't bound to a spec criterion.

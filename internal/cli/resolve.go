@@ -133,10 +133,7 @@ func newResolver(
 	res *config.Result,
 	runner misex.Runner,
 ) (*registry.Resolver, error) {
-	cfg := registry.ConfigLayer{Tools: map[string]string{}, Aliases: res.Config.Aliases}
-	for tool, t := range res.Config.Tools {
-		cfg.Tools[tool] = t.Repo
-	}
+	cfg := configLayer(res.Config)
 	updated, err := registryDir(d)
 	if err != nil {
 		return nil, err
@@ -292,10 +289,6 @@ func completionTools(d *app.Deps, g *globals) complete.Source {
 			if err != nil {
 				return registry.ConfigLayer{}, err //nolint:wrapcheck // config errors name the file
 			}
-			layer := registry.ConfigLayer{Tools: map[string]string{}, Aliases: res.Config.Aliases}
-			for tool, t := range res.Config.Tools {
-				layer.Tools[tool] = t.Repo
-			}
-			return layer, nil
+			return configLayer(res.Config), nil
 		})
 }

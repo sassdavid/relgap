@@ -22,7 +22,6 @@ import (
 	"github.com/sassdavid/relgap/internal/report"
 	"github.com/sassdavid/relgap/internal/sarif"
 	"github.com/sassdavid/relgap/internal/scan"
-	"github.com/sassdavid/relgap/internal/source"
 )
 
 const flagBinaries = "binaries"
@@ -51,8 +50,11 @@ constraint and prefix pins start loading it at the same time.
 tfprovider, tfmodule and chart pins are looked up in the Terraform registry and Artifact Hub,
 which name the repository. A chart pin with a repository URL (a Chart.yaml repository or a
 Renovate comment's registryUrl) uses the Artifact Hub repository at that URL, so a chart name
-that several repositories share still resolves. Pins of tools without a GitHub repository, and
-image and action pins, are skipped; --format json lists them with the reason.
+that several repositories share still resolves. bitbucket: and gitlab: pins read the tags of
+their repository on that host. Image pins compare with the tags of their registry, and their
+notes come from the GitHub repository the image's source label names. Pins of tools without a
+repository relgap can read, images on a registry relgap doesn't read, and action pins are
+skipped; --format json lists them with the reason.
 
 EOL shows whether CURRENT's release cycle has reached its end on endoflife.date (yes, no, or
 ? when endoflife.date doesn't list the cycle), for tools whose registry entry names a
@@ -177,7 +179,7 @@ func (s *session) compare(
 	if err != nil {
 		return nil, err
 	}
-	out, err := report.NewOutdater(report.NewDigester(s.d.Logger, gh, source.NewWeb(hc)), gh).
+	out, err := report.NewOutdater(s.digester(gh, hc), gh).
 		Outdated(ctx, report.OutdatedRequest{
 			Repos:         res.Repos,
 			Pins:          pins,

@@ -20,7 +20,7 @@ golden stdout drift/latest.md
 exec relgap drift tree --latest --format json
 jsonschema drift-v1.json stdout
 stdout '"latest": "1\.17\.2"'
-stdout '"note": "not looked up: unsupported tool syntax: unknown prefix \\"image:\\"'
+stdout '"note": "not looked up: unsupported tool syntax: image:node needs a lookup in the image registry'
 stdout '"latest": "26\.13\.1"'
 stdout '"latest": "6\.73\.0"'
 

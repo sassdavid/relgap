@@ -131,9 +131,9 @@ func (a *UpgradeGuide) document(
 		}
 		idx, err := a.files.Get(ctx, k, mdindex.Options{Scheme: s})
 		if err != nil {
-			return "", FileURL(k), err //nolint:wrapcheck // the fetch names the file
+			return "", FileURL(t.Host, k), err //nolint:wrapcheck // the fetch names the file
 		}
-		return idx.Whole(), FileURL(k), nil
+		return idx.Whole(), FileURL(t.Host, k), nil
 	}
 	where := expandURL(a.src.URLTemplate, s, v, prev)
 	doc, err := a.pages.Get(ctx, where)

@@ -281,3 +281,26 @@ func TestLatest(t *testing.T) {
 	require.True(t, ok)
 	assert.Equal(t, "4.3.1", got.V.String(), "a zero version means any line")
 }
+
+// TestTagSuffix keeps only the tags of one image variant and reads their versions without it.
+func TestTagSuffix(t *testing.T) {
+	t.Parallel()
+	refs := []version.Ref{
+		{Tag: "1.26.3-alpine"},
+		{Tag: "1.27.0"},
+		{Tag: "1.27.0-alpine"},
+		{Tag: "1.27.0-bookworm"},
+		{Tag: "-alpine"},
+		{Tag: "1.28.0-rc1-alpine"},
+	}
+	u := universe(t, refs, version.Rules{Scheme: version.Loose(), TagSuffix: "-alpine"})
+	assert.Equal(t, []string{"1.26.3-alpine", "1.27.0-alpine", "1.28.0-rc1-alpine"}, tags(u.Versions()))
+	latest, ok := u.Latest(version.V{}, version.LineNone)
+	require.True(t, ok)
+	assert.Equal(t, "1.27.0-alpine", latest.Tag, "the release candidate is a prerelease")
+	for _, in := range []string{"1.27.0", "1.27.0-alpine"} {
+		v, err := u.Parse(in)
+		require.NoError(t, err, in)
+		assert.Equal(t, "1.27.0", v.String(), in)
+	}
+}

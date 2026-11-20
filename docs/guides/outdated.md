@@ -57,8 +57,18 @@ registry entry names no endoflife.date product or OSV package.
 ## Skipped pins
 
 `tfprovider:` pins are looked up in the Terraform registry and `chart:` pins in Artifact Hub,
-which name the source repository. Image pins, GitHub Action pins and tools without a GitHub
-repository are skipped. The last line counts them, and `--format json` lists each with the
+which name the source repository. `bitbucket:` and `gitlab:` pins read the tags of their
+repository ([Terraform modules on Bitbucket and GitLab](/guides/unresolved#terraform-modules-on-bitbucket-and-gitlab)).
+
+Image pins compare with the tags of their registry: Docker Hub, ghcr.io, registry.k8s.io,
+quay.io, public.ecr.aws, mcr.microsoft.com and the hosts in `images.registries`. Only tags with
+the pin's variant count, so `nginx:1.27.0-alpine` is `image:nginx:*-alpine` and moves to a newer
+`-alpine` tag. When the image's source label (`org.opencontainers.image.source`) names a GitHub
+repository, the counts come from that repository's notes; otherwise the row has versions only
+and a note says why.
+
+GitHub Action pins, tools without a repository relgap can read, and images on another or a
+private registry are skipped. The last line counts them, and `--format json` lists each with the
 reason:
 
 ```sh

@@ -53,7 +53,8 @@ func Boilerplate(body string) bool {
 }
 
 // PickChangelog returns the changelog file of a repository's top directory. It prefers .md over
-// .rst over .txt over other names, and never picks .json files or files under 100 bytes.
+// .rst over .txt over other names, and never picks .json files or files under 100 bytes. A
+// negative size is unknown and passes.
 func PickChangelog(files []github.File) (string, bool) {
 	rank := func(name string) int {
 		switch strings.ToLower(path.Ext(name)) {
@@ -70,7 +71,8 @@ func PickChangelog(files []github.File) (string, bool) {
 	var picks []string
 	for _, f := range files {
 		ext := strings.ToLower(path.Ext(f.Name))
-		if f.Dir || ext == ".json" || f.Size < minChangelogBytes || !changelogName.MatchString(f.Name) {
+		if f.Dir || ext == ".json" || (f.Size >= 0 && f.Size < minChangelogBytes) ||
+			!changelogName.MatchString(f.Name) {
 			continue
 		}
 		picks = append(picks, f.Name)

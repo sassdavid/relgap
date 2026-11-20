@@ -135,7 +135,8 @@ func (u *Universe) ResolvePrefix(prefix string) (V, error) {
 	if err != nil {
 		return V{}, err
 	}
-	release, _, _ := strings.Cut(trimV(strings.TrimPrefix(prefix, u.rules.TagPrefix)), "-")
+	release, _, _ := strings.Cut(trimV(strings.TrimSuffix(strings.TrimPrefix(prefix, u.rules.TagPrefix),
+		u.rules.TagSuffix)), "-")
 	size := len(strings.Split(release, "."))
 	for _, v := range slices.Backward(u.versions) {
 		if !v.Prerelease && samePrefix(v.V.rel, p.rel, size) {

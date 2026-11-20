@@ -11,6 +11,7 @@ import (
 	"io"
 	"log/slog"
 	"net/http"
+	"slices"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -313,10 +314,11 @@ func (c *Cache) ttl(m meta, now time.Time) time.Duration {
 const OSVHost = "api.osv.dev"
 
 // cacheable reports whether req is a GET, a GraphQL POST or an OSV batch query, without its own
-// conditional headers. The POSTs only read, and the body is part of the key.
+// conditional headers or Cache-Control: no-store. The POSTs only read, and the body is part of
+// the key.
 func cacheable(req *http.Request) bool {
 	if req.Header.Get("If-None-Match") != "" || req.Header.Get("If-Modified-Since") != "" ||
-		req.Header.Get("Range") != "" {
+		req.Header.Get("Range") != "" || noStore(req.Header) {
 		return false
 	}
 	switch req.Method {
@@ -352,10 +354,13 @@ func bodyFuncs(b []byte) (io.ReadCloser, func() (io.ReadCloser, error)) {
 }
 
 // cacheKey hashes what selects a response: method, URL, Accept, the request body and whether a
-// token was sent. Only the presence of a token goes into the key, never its value.
+// token was sent. Only the presence of a token goes into the key, never its value. A request
+// marked with [WithAnonymousToken] counts as sent without one.
 func cacheKey(req *http.Request, body []byte) string {
 	h := sha256.New()
-	authed := req.Header.Get("Authorization") != ""
+	authed := !anonymousToken(req.Context()) && slices.ContainsFunc(CredentialHeaders(), func(k string) bool {
+		return req.Header.Get(k) != ""
+	})
 	_, _ = fmt.Fprintf(h, "%s\n%s\n%s\n%t\n", req.Method, req.URL.String(), req.Header.Get("Accept"), authed)
 	_, _ = h.Write(body)
 	return hex.EncodeToString(h.Sum(nil))
@@ -374,4 +379,24 @@ func graphQLErrors(body []byte) bool {
 		return true
 	}
 	return len(r.Errors) > 0 && string(r.Errors) != "null"
+}
+
+// CredentialHeaders returns the request headers that carry a token: Authorization, and GitLab's
+// PRIVATE-TOKEN and JOB-TOKEN.
+func CredentialHeaders() []string {
+	return []string{"Authorization", "Private-Token", "Job-Token"}
+}
+
+type anonymousKey struct{}
+
+// WithAnonymousToken marks requests made with ctx as carrying an anonymous token, such as an
+// image registry's pull token, so the cache keys them like requests without a token and
+// --offline still finds them.
+func WithAnonymousToken(ctx context.Context) context.Context {
+	return context.WithValue(ctx, anonymousKey{}, true)
+}
+
+func anonymousToken(ctx context.Context) bool {
+	v, _ := ctx.Value(anonymousKey{}).(bool)
+	return v
 }

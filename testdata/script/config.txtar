@@ -74,7 +74,11 @@ cache:
 github:
   concurrency: 8
   host: github.com
+gitlab:
+  hosts: []
 ignore: []
+images:
+  registries: []
 llm:
   api: ""
   api_key_env: ""

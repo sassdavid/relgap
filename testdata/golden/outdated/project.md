@@ -3,6 +3,7 @@
 | gh | 2.103.3 | 2.103.3 | 0 | 0 | 0 | - | 0 | mise.toml:4 |
 | go | ≈1.25.14 | 1.27.4 | 17 | 0 | 0 | yes (2026-08-19) | 15 (15 fixed) | .github/workflows/ci.yml:9 |
 | helm | 3.21.0 | 3.22.1 | 6 | 0 | 0 | - | 0 | mise.toml:3 |
+| image:alpine | 3.22 | 3.23 | 3 | - | - | - | - | Dockerfile:1 |
 | k9s | 0.50.16 | 0.51.0 | 3 | 1 | 0 | - | - | Dockerfile:2 |
 | node | ≈lts | - | - | - | - | - | - | mise.toml:7 |
 | ruff | ≈0.17.4 | 0.17.4 | 0 | 0 | 0 | - | - | mise.toml:6 |
@@ -11,9 +12,10 @@
 | uv | ≈0.13.7 | 0.13.7 | 0 | 0 | 0 | - | 0 | mise.toml:5 |
 
 - go 1.25 (.github/workflows/ci.yml:9): highest stable version with this prefix
+- image:alpine 3.22 (Dockerfile:1): docker.io/library/alpine has no source label that names a GitHub repository, so the versions come from https://registry-1.docker.io/v2/library/alpine/tags/list without notes
 - node lts (mise.toml:7): can't compare: "lts" is a channel
 - ruff latest (mise.toml:6): latest channel
 - terraform ~> 1.15.0 (main.tf:2): highest installed or locked version
 - uv 0.13 (mise.toml:5): highest stable version with this prefix
 
-5 of 8 compared pins are behind latest. 1 pin skipped (see --format json).
+6 of 9 compared pins are behind latest.

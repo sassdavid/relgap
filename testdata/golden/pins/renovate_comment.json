@@ -14,8 +14,8 @@
         "kind": "image",
         "value": "17.6",
         "version": "17.6",
-        "exact": false,
-        "match": "prefix",
+        "exact": true,
+        "match": "exact",
         "location": {
           "repo": ".",
           "file": ".env",

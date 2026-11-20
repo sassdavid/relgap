@@ -17,7 +17,7 @@
 - [Use relgap-action](https://relgap.sasskovacs.dev/guides/action): Install a verified relgap release in GitHub Actions with relgap-action, and run outdated, drift or the pull request digest with one step.
 - [Upload SARIF to code scanning](https://relgap.sasskovacs.dev/guides/sarif): Write SARIF from relgap outdated or relgap drift and upload it to GitHub code scanning, so each finding shows at the pin's file and line.
 - [Feed tfcensus inventory into drift](https://relgap.sasskovacs.dev/guides/from-tfcensus): Read the Terraform and OpenTofu versions that tfcensus found in your state files into relgap drift, alone or next to scanned repositories.
-- [Map unresolved pins and private tools](https://relgap.sasskovacs.dev/guides/unresolved): Find the pins relgap can't map to a tool, map them with aliases, add private tools with tools.<name>.repo, and check the result with relgap resolve.
+- [Map unresolved pins and private tools](https://relgap.sasskovacs.dev/guides/unresolved): Find the pins relgap can't map to a tool, map them with aliases, add private tools with tools.<name>.repo, read Terraform modules on Bitbucket and GitLab, and check the result with relgap resolve.
 - [Use Renovate's extract report as a pin source](https://relgap.sasskovacs.dev/guides/renovate-report): Add the dependencies Renovate extracts from a repository to relgap pins, for files relgap's own detectors don't read.
 - [Write or fix a registry entry](https://relgap.sasskovacs.dev/guides/registry-entry): Write a relgap registry entry for a tool, check it with registry lint, try it live with registry test, and send it upstream.
 - [Use relgap from an MCP client](https://relgap.sasskovacs.dev/guides/mcp): Register relgap as an MCP server in Claude Code or another client, choose the directories it may read, and use its tools, pages and upgrade_review prompt.
@@ -28,13 +28,13 @@
 ## Concepts
 
 - [Pins and detectors](https://relgap.sasskovacs.dev/concepts/pins): What relgap counts as a pin, how it finds repositories and files, which detector reads which file, and how config narrows the scan.
-- [Tool resolution](https://relgap.sasskovacs.dev/concepts/resolution): How relgap turns a tool name, alias, variable or prefixed name into a GitHub repository, version rules and release-note sources, and which layer supplies each field.
+- [Tool resolution](https://relgap.sasskovacs.dev/concepts/resolution): How relgap turns a tool name, alias, variable or prefixed name into a repository on GitHub, Bitbucket or GitLab or an image, version rules and release-note sources, and which layer supplies each field.
 - [Versions, ranges and release lines](https://relgap.sasskovacs.dev/concepts/ranges): How relgap reads tags as versions, orders them, picks the versions in a range, and keeps the end of a range on a release line.
 - [Release-note sources](https://relgap.sasskovacs.dev/concepts/sources): Where relgap reads release notes from, how a registry entry names its sources, how notes from several sources merge, and what happens for a tool without an entry.
 - [Classification and confidence](https://relgap.sasskovacs.dev/concepts/classification): How relgap splits release notes into entries, gives each a kind and a confidence, hides weak guesses, and gives every entry a stable ID.
 - [EOL and vulnerabilities](https://relgap.sasskovacs.dev/concepts/enrichment): How relgap adds end-of-life dates from endoflife.date and known vulnerabilities from OSV to the pins relgap outdated compares, and what it does when either source is down.
 - [Drift](https://relgap.sasskovacs.dev/concepts/drift): What relgap means by drift, how each kind of pin counts toward it, how the majority version is chosen, and what the drift matrix shows.
-- [Network, privacy and tokens](https://relgap.sasskovacs.dev/concepts/network): Every host relgap sends requests to, the programs it runs, where the GitHub token goes, what the cache keeps and what --summarize sends to a model.
+- [Network, privacy and tokens](https://relgap.sasskovacs.dev/concepts/network): Every host relgap sends requests to, the programs it runs, where each token goes, what the cache keeps and what --summarize sends to a model.
 
 ## Reference
 

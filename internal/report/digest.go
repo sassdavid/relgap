@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/sassdavid/relgap/internal/classify"
+	"github.com/sassdavid/relgap/internal/forge"
 	"github.com/sassdavid/relgap/internal/github"
 	"github.com/sassdavid/relgap/internal/mdindex"
 	"github.com/sassdavid/relgap/internal/registry"
@@ -51,6 +52,8 @@ type Claim struct {
 type ToolDigest struct {
 	Tool     string                `json:"tool"`
 	Repo     string                `json:"repo"`
+	Host     string                `json:"host,omitempty"`  // the host of Repo when it isn't github.com
+	Image    string                `json:"image,omitempty"` // registry/repository of an image tool
 	From     string                `json:"from"`
 	To       string                `json:"to"`
 	Versions []Version             `json:"versions"` // oldest first
@@ -77,7 +80,7 @@ type Version struct {
 	Version     string     `json:"version"`
 	Tag         string     `json:"tag"`
 	PublishedAt *time.Time `json:"published_at,omitempty"`
-	URL         string     `json:"url,omitempty"` // the GitHub release page, when there is a release
+	URL         string     `json:"url,omitempty"` // the release page, when there is a release
 }
 
 // GitHub lists releases, tags and top-level files and fetches release bodies and files;
@@ -101,21 +104,30 @@ type DigestRequest struct {
 	Only               *int            // when set, only the source at this index of Tool.Sources runs
 }
 
-// Digester builds digests from GitHub.
+// HostClient returns the client of a git host other than GitHub, such as bitbucket.org.
+type HostClient func(host string) (GitHub, error)
+
+// TagLister lists tags with their dates; the Bitbucket and GitLab clients implement it.
+type TagLister interface {
+	TagRefs(ctx context.Context, repo string) ([]version.Ref, error)
+}
+
+// Digester builds digests from GitHub and the other git hosts.
 type Digester struct {
 	logger *slog.Logger
 	gh     GitHub
-	files  *mdindex.Cache
 	web    source.WebFetcher
 	pages  *source.PageCache
+	hosts  HostClient
 
-	mu   sync.Mutex
-	refs map[refKey]*refList
+	mu    sync.Mutex
+	refs  map[refKey]*refList
+	files map[string]*mdindex.Cache // by host; "" is GitHub
 }
 
 // refKey is what a version list is fetched by. Two tools can share a name, such as a chart and
 // the application it installs, so the name isn't part of it.
-type refKey struct{ repo, universe, versionsURL string }
+type refKey struct{ host, repo, universe, versionsURL string }
 
 // refList is a tool's version universe as listed once per digester.
 type refList struct {
@@ -132,11 +144,40 @@ func NewDigester(logger *slog.Logger, gh GitHub, web source.WebFetcher) *Digeste
 	return &Digester{
 		logger: logger,
 		gh:     gh,
-		files:  source.NewFileCache(gh),
+		files:  map[string]*mdindex.Cache{"": source.NewFileCache(gh)},
 		web:    web,
 		pages:  source.NewPageCache(web),
 		refs:   map[refKey]*refList{},
 	}
+}
+
+// WithHosts returns d reading tools on other git hosts through hosts.
+func (d *Digester) WithHosts(hosts HostClient) *Digester {
+	d.hosts = hosts
+	return d
+}
+
+// client returns the client and the file cache of the tool's host.
+func (d *Digester) client(t registry.ToolSpec) (GitHub, *mdindex.Cache, error) {
+	if forge.IsGitHub(t.Host) {
+		return d.gh, d.files[""], nil
+	}
+	if d.hosts == nil {
+		return nil, nil, fmt.Errorf("%s: relgap can't read %s here", t.Name, t.Host)
+	}
+	c, err := d.hosts(t.Host)
+	if err != nil {
+		return nil, nil, fmt.Errorf("%s: %w", t.Name, err)
+	}
+	d.mu.Lock()
+	defer d.mu.Unlock()
+	key := strings.ToLower(t.Host)
+	files, ok := d.files[key]
+	if !ok {
+		files = source.NewFileCache(c)
+		d.files[key] = files
+	}
+	return c, files, nil
 }
 
 // Universe returns every version of the tool, listed once per digester.
@@ -153,7 +194,10 @@ func (d *Digester) Universe(ctx context.Context, t registry.ToolSpec) (*version.
 }
 
 func (d *Digester) list(ctx context.Context, t registry.ToolSpec) ([]version.Ref, map[string]github.Release, error) {
-	k := refKey{repo: strings.ToLower(t.Repo), universe: t.Version.Universe, versionsURL: t.Version.VersionsURL}
+	k := refKey{
+		host: strings.ToLower(t.Host), repo: strings.ToLower(t.Repo), universe: t.Version.Universe,
+		versionsURL: t.Version.VersionsURL,
+	}
 	d.mu.Lock()
 	l, ok := d.refs[k]
 	if !ok {
@@ -195,6 +239,8 @@ func (d *Digester) Digest(ctx context.Context, req DigestRequest) (*ToolDigest, 
 	out := &ToolDigest{
 		Tool:     t.Name,
 		Repo:     t.Repo,
+		Host:     t.Host,
+		Image:    t.Image,
 		From:     r.From.String(),
 		To:       r.To.V.String(),
 		Versions: make([]Version, 0, len(r.Versions)),
@@ -211,6 +257,9 @@ func (d *Digester) Digest(ctx context.Context, req DigestRequest) (*ToolDigest, 
 	if t.Version.Universe == registry.UniverseChart {
 		out.Warnings = append(out.Warnings, ChartVersionsNote(t))
 		return out, nil
+	}
+	if t.Version.Universe == registry.UniverseImage {
+		return d.imageNotes(ctx, req, r, out)
 	}
 	var from version.V
 	if r.Base != nil {
@@ -241,6 +290,13 @@ func (d *Digester) Digest(ctx context.Context, req DigestRequest) (*ToolDigest, 
 		func(a, b classify.Entry) int { return cmp.Compare(order[a.Version], order[b.Version]) },
 	)
 	assignIDs(t.Name, entries)
+	out.add(entries, req, r)
+	return out, nil
+}
+
+// add counts entries, keeps those at or above the minimum confidence and of the requested kinds,
+// and warns when the range shows none.
+func (out *ToolDigest) add(entries []classify.Entry, req DigestRequest, r *version.Range) {
 	for _, e := range entries {
 		if e.Confidence < req.MinConfidence {
 			out.Hidden++
@@ -250,9 +306,42 @@ func (d *Digester) Digest(ctx context.Context, req DigestRequest) (*ToolDigest, 
 		out.Entries = append(out.Entries, e)
 	}
 	if len(r.Versions) > 0 && len(out.Entries) == 0 {
-		out.Warnings = append(out.Warnings, noNotesWarning(t.Repo, r, out.Hidden, req.MinConfidence))
+		out.Warnings = append(out.Warnings, noNotesWarning(req.Tool, r, out.Hidden, req.MinConfidence))
 	}
 	out.Entries = EntriesOf(out.Entries, req.Kinds)
+}
+
+// imageNotes fills out with the digest of the image's source repository over the same range. An
+// image without one, or a source without the range's versions, keeps its versions without notes.
+func (d *Digester) imageNotes(
+	ctx context.Context,
+	req DigestRequest,
+	r *version.Range,
+	out *ToolDigest,
+) (*ToolDigest, error) {
+	t := req.Tool
+	if t.Notes == nil {
+		out.Warnings = append(out.Warnings, ImageVersionsNote(t))
+		return out, nil
+	}
+	from := ""
+	if !r.From.IsZero() {
+		from = r.From.String()
+	}
+	notes := req
+	notes.Tool, notes.From, notes.To, notes.Only = *t.Notes, from, out.To, nil
+	nd, err := d.Digest(ctx, notes)
+	if errors.Is(err, version.ErrNotFound) {
+		out.Warnings = append(out.Warnings, fmt.Sprintf(
+			"%s, the source repository of %s, has no versions %s..%s, so the digest shows the image's versions "+
+				"without notes: %v", t.Notes.Repo, t.Image, cmp.Or(from, "start"), out.To, err))
+		return out, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+	out.Entries, out.Counts, out.Hidden = nd.Entries, nd.Counts, nd.Hidden
+	out.Warnings = append(out.Warnings, nd.Warnings...)
 	return out, nil
 }
 
@@ -306,13 +395,24 @@ func (d *Digester) fetchRefs(
 	t registry.ToolSpec,
 ) ([]version.Ref, map[string]github.Release, error) {
 	byTag := map[string]github.Release{}
-	if t.Version.Universe == registry.UniverseChart {
+	if t.Listed() {
 		return slices.Clone(t.Versions), byTag, nil
 	}
+	gh, _, err := d.client(t)
+	if err != nil {
+		return nil, nil, err
+	}
 	if t.Version.Universe == registry.UniverseTags {
-		tags, err := d.gh.Tags(ctx, t.Repo)
-		if err != nil {
-			return nil, nil, fmt.Errorf("%s: %w", t.Name, err)
+		if tl, ok := gh.(TagLister); ok {
+			refs, tagErr := tl.TagRefs(ctx, t.Repo)
+			if tagErr != nil {
+				return nil, nil, fmt.Errorf("%s: %w", t.Name, tagErr)
+			}
+			return refs, byTag, nil
+		}
+		tags, tagsErr := gh.Tags(ctx, t.Repo)
+		if tagsErr != nil {
+			return nil, nil, fmt.Errorf("%s: %w", t.Name, tagsErr)
 		}
 		refs := make([]version.Ref, len(tags))
 		for i, tag := range tags {
@@ -320,7 +420,7 @@ func (d *Digester) fetchRefs(
 		}
 		return refs, byTag, nil
 	}
-	releases, err := d.gh.Releases(ctx, t.Repo)
+	releases, err := gh.Releases(ctx, t.Repo)
 	if err != nil {
 		return nil, nil, fmt.Errorf("%s: %w", t.Name, err)
 	}
@@ -341,12 +441,16 @@ func (d *Digester) readers(
 	from, newest version.V,
 	only *int,
 ) ([]reader, error) {
+	gh, files, err := d.client(t)
+	if err != nil {
+		return nil, err
+	}
 	if len(t.Sources) == 0 {
-		c, err := classify.New(classify.Options{BreakingMarkers: t.BreakingMarkers})
-		if err != nil {
-			return nil, fmt.Errorf("%s: %w", t.Name, err)
+		c, classifyErr := classify.New(classify.Options{BreakingMarkers: t.BreakingMarkers})
+		if classifyErr != nil {
+			return nil, fmt.Errorf("%s: %w", t.Name, classifyErr)
 		}
-		a := source.NewAuto(d.logger, d.gh, d.gh, d.files, newest)
+		a := source.NewAuto(d.logger, gh, gh, files, newest)
 		return []reader{{adapter: a, classifier: c}}, nil
 	}
 	sources := slices.Clone(t.Sources)
@@ -364,24 +468,26 @@ func (d *Digester) readers(
 		var a source.Adapter
 		switch s.Kind {
 		case source.KindGHRelease:
-			a = source.NewGHRelease(d.gh)
+			a = source.NewGHRelease(gh)
 		case source.KindChangelogFile:
-			a = source.NewChangelogFile(d.logger, d.files, s)
+			a = source.NewChangelogFile(d.logger, files, s)
 		case source.KindStructuredJSON:
-			a = source.NewStructuredJSON(d.logger, d.gh, d.web, s)
+			a = source.NewStructuredJSON(d.logger, gh, d.web, s)
 		case source.KindWebDoc:
 			a = source.NewWebDoc(d.logger, d.pages, s, from)
 		case source.KindUpgradeGuide:
-			a = source.NewUpgradeGuide(d.logger, d.files, d.pages, s, from)
+			a = source.NewUpgradeGuide(d.logger, files, d.pages, s, from)
 		case source.KindUpgradeNotes:
-			a = source.NewUpgradeNotes(d.logger, d.files, s, changelogSource(t.Sources))
+			a = source.NewUpgradeNotes(d.logger, files, s, changelogSource(t.Sources))
 		default:
 			d.logger.DebugContext(ctx, "skipping a source kind relgap can't read", "tool", t.Name, "kind", s.Kind)
 			continue
 		}
-		c, err := classify.New(classify.Options{BreakingMarkers: t.BreakingMarkers, IgnoreSections: s.IgnoreSections})
-		if err != nil {
-			return nil, fmt.Errorf("%s: %w", t.Name, err)
+		c, classifyErr := classify.New(
+			classify.Options{BreakingMarkers: t.BreakingMarkers, IgnoreSections: s.IgnoreSections},
+		)
+		if classifyErr != nil {
+			return nil, fmt.Errorf("%s: %w", t.Name, classifyErr)
 		}
 		out = append(out, reader{adapter: a, classifier: c})
 	}
@@ -423,23 +529,32 @@ func ChartVersionsNote(t registry.ToolSpec) string {
 		t.Repo, t.Name, t.Version.VersionsURL)
 }
 
+// ImageVersionsNote explains why a [registry.UniverseImage] tool has versions but no notes.
+func ImageVersionsNote(t registry.ToolSpec) string {
+	return fmt.Sprintf("%s has no source label that names a GitHub repository, so the versions come from %s "+
+		"without notes", t.Image, t.Version.VersionsURL)
+}
+
 // noNotesWarning says that a range shows no entries, and why: it has none, or all of them are
 // below the minimum confidence, as release bodies that only link to a docs site are.
-
-func noNotesWarning(repo string, r *version.Range, hidden int, minConfidence float64) string {
+func noNotesWarning(t registry.ToolSpec, r *version.Range, hidden int, minConfidence float64) string {
 	if hidden == 0 {
-		return "no release notes found; compare the versions at " + compareURL(repo, r)
+		return "no release notes found; compare the versions at " + compareURL(t, r)
 	}
 	return fmt.Sprintf("all %d entries are below the minimum confidence %g; lower --min-confidence to see them, "+
-		"or compare the versions at %s", hidden, minConfidence, compareURL(repo, r))
+		"or compare the versions at %s", hidden, minConfidence, compareURL(t, r))
 }
 
 // tagHint says which tags a missing version was looked for in. A wrong tag prefix hides every
 // tag of the tool, so it names the prefix and up to 3 tags that hold the version.
 func tagHint(t registry.ToolSpec, refs []version.Ref, parsed int, want string) string {
-	hint := fmt.Sprintf("%d of %d tags of %s are versions", parsed, len(refs), t.Repo)
-	if p := t.Version.TagPrefix; p != "" {
-		hint = fmt.Sprintf("%d of %d tags of %s are versions after the tag prefix %q", parsed, len(refs), t.Repo, p)
+	where := cmp.Or(t.Image, t.Repo)
+	hint := fmt.Sprintf("%d of %d tags of %s are versions", parsed, len(refs), where)
+	switch p, sfx := t.Version.TagPrefix, t.Version.TagSuffix; {
+	case sfx != "":
+		hint = fmt.Sprintf("%d of %d tags of %s are versions between %q and %q", parsed, len(refs), where, p, sfx)
+	case p != "":
+		hint = fmt.Sprintf("%d of %d tags of %s are versions after the tag prefix %q", parsed, len(refs), where, p)
 	}
 	if want = strings.TrimPrefix(want, "v"); want != "" {
 		var holding []string
@@ -456,12 +571,13 @@ func tagHint(t registry.ToolSpec, refs []version.Ref, parsed int, want string) s
 		"relgap registry test <file.yaml> <range>"
 }
 
-// compareURL returns the GitHub page comparing the version before the range with its end.
-func compareURL(repo string, r *version.Range) string {
+// compareURL returns the page comparing the version before the range with its end, on the
+// tool's host.
+func compareURL(t registry.ToolSpec, r *version.Range) string {
 	if r.Base == nil {
-		return "https://github.com/" + repo + "/releases/tag/" + r.To.Tag
+		return forge.TagURL(t.Host, t.Repo, r.To.Tag)
 	}
-	return "https://github.com/" + repo + "/compare/" + r.Base.Tag + "..." + r.To.Tag
+	return forge.CompareURL(t.Host, t.Repo, r.Base.Tag, r.To.Tag)
 }
 
 var (

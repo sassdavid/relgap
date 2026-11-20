@@ -109,7 +109,8 @@ Each entry has these fields:
 
 | Field | Type | Description |
 |---|---|---|
-| `repo` | `string` | GitHub owner/repo. |
+| `repo` | `string` | owner/repo on GitHub, workspace/repo on Bitbucket Cloud, or the project path on GitLab. |
+| `host` | `string` | Host of repo: github.com (the default), bitbucket.org, gitlab.com or a host in gitlab.hosts. |
 
 ## aliases
 
@@ -235,6 +236,33 @@ Largest prompt, in estimated tokens. Lower-confidence entries are dropped first 
 
 Hard limit on the model call, as a Go duration. A timeout is a warning.
 
+## gitlab
+
+### gitlab.hosts
+
+| Type | Default | Allowed | Environment | Flag |
+|---|---|---|---|---|
+| `list of object` | `[]` |  |  |  |
+
+Self-managed GitLab hosts. A git source on a host that isn't listed stays unresolved.
+
+Each entry has these fields:
+
+| Field | Type | Description |
+|---|---|---|
+| `host` | `string` | Host name, such as gitlab.example.com. |
+| `token_env` | `string` | Env var with this host's token, sent in PRIVATE-TOKEN to this host only. Empty means GITLAB\_TOKEN when GITLAB\_HOST names this host. |
+
+## images
+
+### images.registries
+
+| Type | Default | Allowed | Environment | Flag |
+|---|---|---|---|---|
+| `list of string` | `[]` |  | `RELGAP_IMAGES_REGISTRIES` |  |
+
+Registries to read besides Docker Hub, ghcr.io, registry.k8s.io, quay.io, public.ecr.aws and mcr.microsoft.com. relgap asks every registry for anonymous tokens only.
+
 ## Template
 
 `relgap config init` writes this file:
@@ -266,7 +294,7 @@ schema_version: 1
 #     generic: false              # read NAME_VERSION=x.y.z lines in extra_files
 #   extra_files: []               # globs the renovate-comment and generic detectors read, e.g. ["Makefile"]
 #
-# tools: {}                       # local registry entries, for example {hk: {repo: jdx/hk}}
+# tools: {}                       # local registry entries, for example {hk: {repo: jdx/hk}} or {mod: {repo: ws/mod, host: bitbucket.org}}
 # aliases: {}                     # raw pin name to tool, for example {TG_VERSION: terragrunt}
 # ignore: []                      # pins never reported, for example [{tool: terraform, path: "**/legacy/**"}, {name: "git::*bitbucket.org*"}]
 #
@@ -285,4 +313,10 @@ schema_version: 1
 #   aws_profile: ""               # bedrock and bedrock-mantle; empty means the AWS default chain
 #   max_input_tokens: 30000
 #   timeout: 120s                 # Go duration, at most 2m
+#
+# gitlab:
+#   hosts: []                     # self-managed GitLab hosts, for example [{host: gitlab.example.com, token_env: MY_GITLAB_TOKEN}]
+#
+# images:
+#   registries: []                # image registries besides Docker Hub, ghcr.io, registry.k8s.io, quay.io, public.ecr.aws and mcr.microsoft.com
 ```

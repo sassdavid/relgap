@@ -21,6 +21,7 @@ type Ref struct {
 type Rules struct {
 	Scheme    Scheme
 	TagPrefix string         // stripped before parsing; tags without it are dropped
+	TagSuffix string         // stripped after the prefix, such as an image variant; tags without it are dropped
 	Exclude   *regexp.Regexp // matched against the whole tag; matching tags are dropped
 }
 
@@ -56,6 +57,10 @@ func NewUniverse(ctx context.Context, logger *slog.Logger, refs []Ref, rules Rul
 			logger.DebugContext(ctx, "dropped tag without prefix", "tag", r.Tag, "prefix", rules.TagPrefix)
 			continue
 		}
+		if text, ok = strings.CutSuffix(text, rules.TagSuffix); !ok || text == "" {
+			logger.DebugContext(ctx, "dropped tag without suffix", "tag", r.Tag, "suffix", rules.TagSuffix)
+			continue
+		}
 		v, err := rules.Scheme.Parse(text)
 		if err != nil {
 			logger.DebugContext(ctx, "dropped unparseable tag", "tag", r.Tag, "error", err)
@@ -79,12 +84,17 @@ func (u *Universe) Versions() []Version { return u.versions }
 // Scheme returns the scheme the universe was parsed with.
 func (u *Universe) Scheme() Scheme { return u.rules.Scheme }
 
-// Parse parses user input such as "1.30.0", "v1.30.0" or the full tag "atlascli/v1.30.0".
+// Parse parses user input such as "1.30.0", "v1.30.0", the full tag "atlascli/v1.30.0" or the
+// image tag "1.27.0-alpine".
 func (u *Universe) Parse(s string) (V, error) {
 	if text, ok := strings.CutPrefix(s, u.rules.TagPrefix); ok && text != "" {
+		text, _ = strings.CutSuffix(text, u.rules.TagSuffix)
 		if v, err := u.rules.Scheme.Parse(text); err == nil {
 			return v, nil
 		}
+	}
+	if text, ok := strings.CutSuffix(s, u.rules.TagSuffix); ok && text != "" {
+		s = text
 	}
 	return u.rules.Scheme.Parse(s) //nolint:wrapcheck // the scheme's error names the input
 }

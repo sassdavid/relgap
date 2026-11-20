@@ -1,6 +1,6 @@
 TOOL          VALUE       DETECTOR    LOCATION
 go            ≈1.25       ci          .github/workflows/ci.yml:9
-image:alpine  ≈3.22       dockerfile  Dockerfile:1
+image:alpine  3.22        dockerfile  Dockerfile:1
 k9s           0.50.16     dockerfile  Dockerfile:2
 terraform     ≈~> 1.15.0  terraform   main.tf:2
 terraform     1.15.8      mise        mise.toml:2

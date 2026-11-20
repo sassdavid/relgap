@@ -1,0 +1,122 @@
+{
+  "schema_version": "1",
+  "tool": "relgap",
+  "version": "dev",
+  "generated_at": "2026-11-20T12:00:00Z",
+  "data": {
+    "tools": [
+      {
+        "tool": "tf-network",
+        "repo": "example-ws/tf-network",
+        "host": "bitbucket.org",
+        "from": "2.1.0",
+        "to": "3.0.0",
+        "versions": [
+          {
+            "version": "2.2.0",
+            "tag": "2.2.0",
+            "published_at": "2026-09-14T10:00:00Z"
+          },
+          {
+            "version": "3.0.0",
+            "tag": "3.0.0",
+            "published_at": "2026-11-02T10:00:00Z"
+          }
+        ],
+        "entries": [
+          {
+            "id": "e-be9afb19",
+            "version": "2.2.0",
+            "kind": "feature",
+            "confidence": 0.9,
+            "text": "Optional VPC flow logs to CloudWatch Logs, switched on with `flow_logs_enabled`.",
+            "source": {
+              "adapter": "changelog-file",
+              "url": "https://bitbucket.org/example-ws/tf-network/src/HEAD/CHANGELOG.md#lines-26",
+              "heading": [
+                "Changelog",
+                "[2.2.0] - 2026-09-14",
+                "Added"
+              ]
+            }
+          },
+          {
+            "id": "e-5e16959d",
+            "version": "2.2.0",
+            "kind": "deprecation",
+            "confidence": 0.9,
+            "text": "The `single_nat_gateway` variable is deprecated in favour of `nat_gateway_mode`.",
+            "source": {
+              "adapter": "changelog-file",
+              "url": "https://bitbucket.org/example-ws/tf-network/src/HEAD/CHANGELOG.md#lines-30",
+              "heading": [
+                "Changelog",
+                "[2.2.0] - 2026-09-14",
+                "Deprecated"
+              ]
+            }
+          },
+          {
+            "id": "e-053f8621",
+            "version": "2.2.0",
+            "kind": "fix",
+            "confidence": 0.9,
+            "text": "NAT gateways now carry the `Name` tag from `var.name`.",
+            "source": {
+              "adapter": "changelog-file",
+              "url": "https://bitbucket.org/example-ws/tf-network/src/HEAD/CHANGELOG.md#lines-34",
+              "heading": [
+                "Changelog",
+                "[2.2.0] - 2026-09-14",
+                "Fixed"
+              ]
+            }
+          },
+          {
+            "id": "e-e5144047",
+            "version": "3.0.0",
+            "kind": "breaking",
+            "confidence": 0.9,
+            "text": "BREAKING: the `enable_classiclink` variable is gone. Remove it from every module call before you upgrade.",
+            "source": {
+              "adapter": "changelog-file",
+              "url": "https://bitbucket.org/example-ws/tf-network/src/HEAD/CHANGELOG.md#lines-10",
+              "heading": [
+                "Changelog",
+                "[3.0.0] - 2026-11-02",
+                "Removed"
+              ]
+            }
+          },
+          {
+            "id": "e-3cda88f0",
+            "version": "3.0.0",
+            "kind": "feature",
+            "confidence": 0.9,
+            "text": "The `ipv6_cidr_block` output returns the IPv6 block of the VPC.",
+            "source": {
+              "adapter": "changelog-file",
+              "url": "https://bitbucket.org/example-ws/tf-network/src/HEAD/CHANGELOG.md#lines-14",
+              "heading": [
+                "Changelog",
+                "[3.0.0] - 2026-11-02",
+                "Added"
+              ]
+            }
+          }
+        ],
+        "counts": {
+          "breaking": 1,
+          "deprecation": 1,
+          "feature": 2,
+          "fix": 1,
+          "other": 0,
+          "security": 0
+        },
+        "hidden": 0,
+        "warnings": []
+      }
+    ]
+  },
+  "errors": []
+}

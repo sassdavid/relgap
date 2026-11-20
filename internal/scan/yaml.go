@@ -214,5 +214,5 @@ func imagePin(ref string, loc Location) (Pin, bool) {
 		return Pin{}, false
 	}
 	name, tag := ref[:colon], ref[colon+1:]
-	return Pin{Tool: "image:" + name, RawName: name, Kind: KindImage, Value: tag, Location: loc}, true
+	return Pin{RawName: name, Kind: KindImage, Value: tag, Location: loc, image: &imageRef{name: name}}, true
 }
