@@ -206,3 +206,9 @@ the exit codes.
   kubectl and helm move up, terraform is added, gh is removed and a provider constraint changes,
   then runs `--base` against the working tree and against `--head`, `--pull-request` with a
   Renovate branch and a group branch, the base fallbacks and the usage errors).
+- [x] `digest --base` digests a constraint whose lower bound moved, with the operator and the
+  other clauses unchanged, from the old bound to the new one and says so on stderr; each digest
+  of `--base` and `--pull-request` lists the changed pins it covers under `pins`
+  ([ADR-0017](../adr/0017-chart-versions-extract-version-and-floors.md);
+  `TestSpec_output_and_ci_9` with `hashicorp/random` `>= 3.6.0, < 4.0.0` to `>= 3.7.0, < 4.0.0`,
+  `TestFloorRaise`).

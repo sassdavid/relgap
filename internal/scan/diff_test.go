@@ -245,3 +245,37 @@ func TestResolveRefRejectsOptions(t *testing.T) {
 	_, err := scan.ResolveRef(t.Context(), noGit{}, ".", "--output=/tmp/x")
 	require.ErrorIs(t, err, scan.ErrRefNotFound)
 }
+
+// TestFloorRaise: a constraint whose lower bound moved, with the operator and the other clauses
+// unchanged, digests from the old bound to the new one.
+func TestFloorRaise(t *testing.T) {
+	t.Parallel()
+	constraint := func(tool, value string) *scan.Pin {
+		return &scan.Pin{Tool: tool, Kind: scan.KindTool, Value: value, Match: scan.MatchConstraint}
+	}
+	tests := []struct {
+		base, head string
+		from, to   string
+		ok         bool
+	}{
+		{">= 6.62.0", ">= 6.72.0", "6.62.0", "6.72.0", true},
+		{"~> 1.5", "~>1.7", "1.5", "1.7", true},
+		{">= 3.6.0, < 4.0.0", ">= 3.7.0, < 4.0.0", "3.6.0", "3.7.0", true},
+		{"^v2.1.0", "^v2.3.0", "2.1.0", "2.3.0", true},
+		{">= 3.6.0, < 4.0.0", ">= 3.7.0, < 5.0.0", "", "", false},
+		{">= 6.62.0", "~> 6.72", "", "", false},
+		{">= 6.62.0", ">= 6.62.0", "", "", false},
+		{"< 2.0", "< 3.0", "", "", false},
+		{">= 1.0 || >= 2.0", ">= 1.1 || >= 2.0", "", "", false},
+		{">= 1.0, >= 1.2", ">= 1.1, >= 1.2", "", "", false},
+		{"~> 1.x", "~> 2.x", "", "", false},
+	}
+	for _, tt := range tests {
+		c := scan.Change{Base: constraint("terraform", tt.base), Head: constraint("terraform", tt.head)}
+		from, to, ok := c.FloorRaise()
+		assert.Equal(t, []any{tt.from, tt.to, tt.ok}, []any{from, to, ok}, "%s to %s", tt.base, tt.head)
+	}
+	unresolved := scan.Change{Base: constraint("", ">= 1.0"), Head: constraint("", ">= 1.1")}
+	_, _, ok := unresolved.FloorRaise()
+	assert.False(t, ok, "an unresolved pin has no digest")
+}

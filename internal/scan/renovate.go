@@ -32,43 +32,118 @@ func renovateFields(comment string) (map[string]string, bool) {
 	return fields, true
 }
 
-// renovateLookup returns the name to resolve from the last renovate comment in comments.
-func renovateLookup(comments []string) string {
+// renovateLookup returns the name to resolve from the last renovate comment in comments. It
+// reports false when the comment's extractVersion is a form relgap can't read, so the pin must
+// stay unresolved.
+func renovateLookup(comments []string) (string, bool) {
 	for _, c := range slices.Backward(comments) {
 		if fields, ok := renovateFields(c); ok {
 			return datasourceLookup(fields["datasource"], firstNonEmpty(fields["packageName"], fields["lookupName"]),
-				fields["depName"])
+				fields["depName"], fields["extractVersion"])
 		}
 	}
-	return ""
+	return "", true
 }
 
 // datasourceLookup maps a Renovate datasource and package to a name the resolver understands.
-// github-releases and github-tags name a repository; other datasources use the package name.
-func datasourceLookup(datasource, pkg, dep string) string {
+// github-releases and github-tags name a repository, with the tag prefix that extractVersion
+// gives as github:owner/repo@prefix; other datasources use the package name. It reports false
+// for a github datasource whose extractVersion isn't a literal prefix before the version.
+func datasourceLookup(datasource, pkg, dep, extract string) (string, bool) {
 	name := firstNonEmpty(pkg, dep)
 	switch datasource {
 	case "github-releases", "github-tags":
-		if strings.Count(name, "/") == 1 {
-			return prefixGitHub + name
+		if strings.Count(name, "/") != 1 {
+			break
 		}
+		prefix, ok := extractPrefix(extract)
+		if !ok {
+			return "", false
+		}
+		if prefix != "" {
+			return prefixGitHub + name + "@" + prefix, true
+		}
+		return prefixGitHub + name, true
 	case DetectorAqua:
-		return prefixAqua + name
+		return prefixAqua + name, true
 	default:
 	}
-	return name
+	return name, true
+}
+
+// extractGroup matches Renovate's named version group, in JavaScript's or RE2's syntax.
+var extractGroup = regexp.MustCompile(`\(\?P?<version>`)
+
+// extractPrefix reads a Renovate extractVersion of the form ^<literal>(?<version>...)$ and
+// returns the literal, the part of every tag before the version. A trailing v? and a lone v are
+// dropped, because version parsing already skips a v. It reports false for any other form, such
+// as a pattern after the group or a wildcard before it. An empty extract is a prefix of "".
+func extractPrefix(extract string) (string, bool) {
+	if extract == "" {
+		return "", true
+	}
+	rest, anchored := strings.CutPrefix(extract, "^")
+	loc := extractGroup.FindStringIndex(rest)
+	if !anchored || loc == nil || !groupEndsPattern(rest[loc[1]:]) {
+		return "", false
+	}
+	literal, ok := unescapeLiteral(strings.TrimSuffix(rest[:loc[0]], "v?"))
+	if !ok || literal == "v" {
+		return "", ok
+	}
+	return literal, true
+}
+
+// groupEndsPattern reports whether the version group that starts at the beginning of s (after
+// its opening) closes at the end of the pattern, before an optional $.
+func groupEndsPattern(s string) bool {
+	depth := 1
+	for i := 0; i < len(s); i++ {
+		switch s[i] {
+		case '\\':
+			i++
+		case '(':
+			depth++
+		case ')':
+			if depth--; depth == 0 {
+				tail := s[i+1:]
+				return tail == "" || tail == "$"
+			}
+		}
+	}
+	return false
+}
+
+// unescapeLiteral returns the text a regular expression matches when it has no metacharacters,
+// with escapes such as \. and \- removed, and reports false otherwise.
+func unescapeLiteral(re string) (string, bool) {
+	var b strings.Builder
+	for i := 0; i < len(re); i++ {
+		c := re[i]
+		switch {
+		case c == '\\' && i+1 < len(re) && strings.IndexByte(`.-_/+*?()[]{}|^$\\`, re[i+1]) >= 0:
+			i++
+			b.WriteByte(re[i])
+		case strings.IndexByte(`\\.+*?()[]{}|^$`, c) >= 0:
+			return "", false
+		default:
+			b.WriteByte(c)
+		}
+	}
+	return b.String(), true
 }
 
 // renovatePackageFile is one entry of packageFiles in a Renovate report.
 type renovatePackageFile struct {
 	PackageFile string `json:"packageFile"`
 	Deps        []struct {
-		DepName      string   `json:"depName"`
-		PackageName  string   `json:"packageName"`
-		CurrentValue string   `json:"currentValue"`
-		Datasource   string   `json:"datasource"`
-		SkipReason   string   `json:"skipReason"`
-		RegistryURLs []string `json:"registryUrls"`
+		DepName        string   `json:"depName"`
+		PackageName    string   `json:"packageName"`
+		CurrentValue   string   `json:"currentValue"`
+		Datasource     string   `json:"datasource"`
+		SkipReason     string   `json:"skipReason"`
+		RegistryURLs   []string `json:"registryUrls"`
+		ExtractVersion string   `json:"extractVersion"`
 	} `json:"deps"`
 }
 
@@ -102,7 +177,7 @@ func renovatePins(repo string, files renovatePackageFiles) []Pin {
 				if d.CurrentValue == "" || d.SkipReason != "" || d.DepName == "" {
 					continue
 				}
-				p := renovateDepPin(manager, d.Datasource, d.DepName, d.PackageName)
+				p := renovateDepPin(manager, d.Datasource, d.DepName, d.PackageName, d.ExtractVersion)
 				if p.Kind == KindChart && len(d.RegistryURLs) > 0 {
 					p.Registry = chartRegistry(d.RegistryURLs[0])
 				}
@@ -117,7 +192,7 @@ func renovatePins(repo string, files renovatePackageFiles) []Pin {
 
 // renovateDepPin sets the kind and the tool or lookup name of a Renovate dependency. An npm or
 // PyPI package that no registry names by itself becomes npm:<name> or pypi:<name>.
-func renovateDepPin(manager, datasource, dep, pkg string) Pin {
+func renovateDepPin(manager, datasource, dep, pkg, extract string) Pin {
 	p := Pin{RawName: dep, Kind: KindTool}
 	name := firstNonEmpty(pkg, dep)
 	switch {
@@ -137,7 +212,10 @@ func renovateDepPin(manager, datasource, dep, pkg string) Pin {
 	case datasource == "npm" || datasource == "pypi":
 		p.lookup, p.fallback = name, datasource+":"+name
 	default:
-		p.lookup = datasourceLookup(datasource, pkg, dep)
+		var ok bool
+		if p.lookup, ok = datasourceLookup(datasource, pkg, dep, extract); !ok {
+			p.noLookup = true
+		}
 	}
 	return p
 }
@@ -229,7 +307,7 @@ func annotationPin(fields map[string]string) Pin {
 		datasource, dep = "docker", image
 	}
 	pkg := firstNonEmpty(fields["packageName"], fields["lookupName"])
-	p := renovateDepPin("", datasource, firstNonEmpty(dep, pkg), pkg)
+	p := renovateDepPin("", datasource, firstNonEmpty(dep, pkg), pkg, fields["extractVersion"])
 	if p.Kind == KindChart {
 		p.Registry = chartRegistry(fields["registryUrl"])
 	}

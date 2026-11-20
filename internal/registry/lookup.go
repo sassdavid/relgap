@@ -4,6 +4,8 @@ import (
 	"context"
 	"errors"
 	"strings"
+
+	"github.com/sassdavid/relgap/internal/version"
 )
 
 // Lookup kinds: the explicit prefixes that need a package registry, and a GitHub search.
@@ -39,6 +41,16 @@ func SplitChartAt(rest string) (string, string, bool) {
 	return registryURL, chart, true
 }
 
+// SplitTagPrefix splits github:owner/repo@prefix, without github:, into the repository and the
+// tag prefix, and reports whether rest has a prefix.
+func SplitTagPrefix(rest string) (string, string, bool) {
+	repo, tagPrefix, ok := strings.Cut(rest, "@")
+	if !ok || tagPrefix == "" {
+		return rest, "", false
+	}
+	return repo, tagPrefix, true
+}
+
 // Found is what a lookup learned about a tool.
 type Found struct {
 	Repo         string   // owner/repo on GitHub
@@ -46,6 +58,10 @@ type Found struct {
 	TagPrefix    string   // set for a chart in a repository with several charts, and for a Terraform module
 	Layer        Layer    // the service that answered
 	Alternatives []string // other repositories a guess could have picked
+	// Versions are a chart's versions when its repository has no tag per chart version; the tool
+	// then gets [UniverseChart].
+	Versions    []version.Ref
+	VersionsURL string // where Versions come from
 }
 
 // Finder looks a tool up in a package registry, or guesses its repository with kind [KindGuess].

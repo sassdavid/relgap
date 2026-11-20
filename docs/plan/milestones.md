@@ -597,3 +597,16 @@ Found with 0.10.0 on a Terraform module repository (Helm chart versions in varia
   `chart:<url>/<name>` and never falls back to a search by name.
   ([ADR-0016](adr/0016-tool-identity-and-chart-registry-urls.md), tool-resolution criterion 7,
   `TestSpec_tool_resolution_7` and `TestOutdatedSameNameDifferentTools`)
+- [x] A chart in a repository without a tag per chart version (aws/eks-charts tags `v0.0.N`)
+  shows latest and behind from Artifact Hub, with a note that names the reason and no counts, and
+  its digest says so. A GitHub Pages `registryUrl` that Artifact Hub doesn't list reads the
+  `gh-pages` `index.yaml`. (tool-resolution criterion 8, `TestSpec_tool_resolution_8`)
+- [x] A `# renovate:` comment's `extractVersion=^<prefix>(?<version>...)$` on a github datasource
+  names `github:<owner>/<repo>@<prefix>`. (pin-discovery criterion 8, `TestExtractPrefix`,
+  `TestResolveTagPrefix`)
+- [x] `digest --base` digests a raised lower bound from the old bound to the new one, and each
+  digest lists the changed pins it covers. (output-and-ci criterion 9, `TestSpec_output_and_ci_9`)
+- [x] Ignore rules match a raw name (glob) or a path alone, so unresolved pins can be silenced.
+  (config criterion 6, `TestIgnoredByName`)
+  Decisions: [ADR-0017](adr/0017-chart-versions-extract-version-and-floors.md). Bitbucket Cloud and
+  GitLab module sources and image tags in `outdated` are M28.

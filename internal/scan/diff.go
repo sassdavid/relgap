@@ -3,6 +3,7 @@ package scan
 import (
 	"cmp"
 	"slices"
+	"strings"
 )
 
 // Change is a pin whose value differs between two scans of the same tree. Base is nil for a pin
@@ -17,6 +18,59 @@ type Change struct {
 func (c Change) Upgrade() bool {
 	return c.Base != nil && c.Head != nil && c.Base.Resolved() && c.Base.Exact && c.Head.Exact &&
 		c.Base.Version != c.Head.Version
+}
+
+// FloorRaise returns the lower bounds of a constraint whose bound moved while its operator and
+// every other clause stayed, such as >= 6.62.0 to >= 6.72.0, ~> 1.5 to ~> 1.7, or
+// >= 3.6.0, < 4.0.0 to >= 3.7.0, < 4.0.0, and reports whether c is one. Each side has exactly one
+// clause with >=, ~>, ^ or ~, and both name the same resolved tool.
+func (c Change) FloorRaise() (string, string, bool) {
+	if c.Base == nil || c.Head == nil || !c.Base.Resolved() || c.Base.Match != MatchConstraint ||
+		c.Head.Match != MatchConstraint {
+		return "", "", false
+	}
+	base, okBase := lowerBound(c.Base.Value)
+	head, okHead := lowerBound(c.Head.Value)
+	if !okBase || !okHead || base.op != head.op || base.others != head.others || base.version == head.version {
+		return "", "", false
+	}
+	return base.version, head.version, true
+}
+
+// bound is the lower-bound clause of a constraint and the clauses next to it.
+type bound struct {
+	op, version string
+	others      string // the other clauses, normalized
+}
+
+// lowerBound finds the one clause of a comma-separated constraint with a lower-bounding operator.
+// An alternative (||), a hyphen range or a wildcard in it isn't read.
+func lowerBound(value string) (bound, bool) {
+	if strings.Contains(value, "||") || strings.Contains(value, " - ") {
+		return bound{}, false
+	}
+	var (
+		out    bound
+		found  bool
+		others []string
+	)
+	for clause := range strings.SplitSeq(value, ",") {
+		clause = strings.Join(strings.Fields(clause), "")
+		op := constraintOp.FindString(clause)
+		switch op {
+		case ">=", "~>", "^", "~":
+		default:
+			others = append(others, clause)
+			continue
+		}
+		version := strings.TrimPrefix(clause[len(op):], "v")
+		if found || version == "" || wildcard.MatchString(version) {
+			return bound{}, false
+		}
+		out.op, out.version, found = op, version, true
+	}
+	out.others = strings.Join(others, ",")
+	return out, found
 }
 
 type diffKey struct {

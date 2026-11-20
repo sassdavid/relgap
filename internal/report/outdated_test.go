@@ -468,3 +468,33 @@ func TestOutdatedSameNameDifferentTools(t *testing.T) {
 	}
 	assert.Equal(t, map[string]string{"chart:o/foo": "0.1.0..0.2.0", "github:o/foo": "3.5.0..3.5.9"}, latest)
 }
+
+// TestOutdatedChartVersions: a chart whose repository has no tag per chart version compares
+// against the versions its lookup listed, with no counts and a note that says why.
+func TestOutdatedChartVersions(t *testing.T) {
+	t.Parallel()
+	gh := &multiGitHub{listed: map[string]int{}, bodies: map[string]int{}}
+	spec := registry.ToolSpec{
+		Name: "foo", Repo: "o/charts",
+		Version: registry.VersionSpec{
+			Scheme: version.SchemeLoose, Universe: registry.UniverseChart,
+			VersionsURL: "https://artifacthub.io/packages/helm/o/foo",
+		},
+		Versions: []version.Ref{{Tag: "0.2.1"}, {Tag: "0.2.0"}, {Tag: "0.1.35"}},
+	}
+	resolve := func(string) (registry.ToolSpec, error) { return spec, nil }
+	digester := report.NewDigester(slog.New(slog.DiscardHandler), gh, nil)
+	got, err := report.NewOutdater(digester, gh).Outdated(t.Context(), report.OutdatedRequest{
+		Pins: []scan.Pin{pin("chart:o/foo", "0.1.35", scan.MatchExact, ".", "main.tf", 1)}, Resolve: resolve,
+		Concurrency: 1,
+	})
+	require.NoError(t, err)
+
+	p := got.Pins[0]
+	assert.Equal(t, []any{report.StatusOutdated, "0.2.1", 2}, []any{p.Status, p.Latest, p.Behind.Releases})
+	assert.Nil(t, p.Counts, "no notes to count")
+	assert.Equal(t, report.ChartVersionsNote(spec), p.Note)
+	assert.Contains(t, p.Note, "o/charts has no tag per foo chart version")
+	assert.Empty(t, gh.recentQs[0], "no GitHub lookup for the chart's versions")
+	assert.Empty(t, gh.listed)
+}

@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"log/slog"
 	"os"
 	"path/filepath"
@@ -12,10 +13,12 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/sassdavid/relgap/internal/github"
 	"github.com/sassdavid/relgap/internal/httpx"
 	"github.com/sassdavid/relgap/internal/registry"
 	"github.com/sassdavid/relgap/internal/registry/remote"
 	"github.com/sassdavid/relgap/internal/testutil/vcr"
+	"github.com/sassdavid/relgap/internal/version"
 )
 
 type fakeSearcher []remote.RepoHit
@@ -106,8 +109,13 @@ func TestSpec_tool_resolution_6(t *testing.T) {
 	}
 	_, ok := remote.ChartTagPrefix("x", []string{"1.0.0"}, []string{"v2.0.0", "x-1.0.0.1"})
 	assert.False(t, ok, "no tag ends in a known version")
-	got, _ := remote.ChartTagPrefix("x", []string{"1.0.0", "1.1.0"}, []string{"v1.0.0", "x-1.0.0", "11.0.0"})
+	got, _ := remote.ChartTagPrefix("x", []string{"1.0.0", "1.1.0"},
+		[]string{"v1.0.0", "v1.1.0", "x-1.0.0", "x-1.1.0", "11.0.0"})
 	assert.Equal(t, "x-", got, "a tie goes to the prefix with the chart's name; 11.0.0 isn't 1.0.0")
+	_, ok = remote.ChartTagPrefix("x", []string{"1.0.0", "1.1.0", "2.0.0-rc.1"}, []string{"x-1.0.0"})
+	assert.False(t, ok, "no tag names the newest stable version, 1.1.0")
+	got, _ = remote.ChartTagPrefix("x", []string{"1.0.0", "1.1.0"}, []string{"x-1.0.0", "1.1.0"})
+	assert.Empty(t, got, "a repository that moved to plain tags: only the plain prefix covers the newest")
 }
 
 type fakeTags struct {
@@ -117,8 +125,12 @@ type fakeTags struct {
 
 func (f *fakeTags) Tags(context.Context, string) ([]string, error) { return f.tags, f.err }
 
-// TestRemoteChartTags: a chart lookup reads the repository's tags and keeps chart-releaser's
-// default prefix when none of them ends in a version Artifact Hub lists.
+func (f *fakeTags) File(context.Context, string, string, string) ([]byte, error) {
+	return nil, errors.New("no files")
+}
+
+// TestRemoteChartTags: a chart lookup reads the repository's tags. When none of them names the
+// newest version Artifact Hub lists, the chart's versions come from Artifact Hub.
 func TestRemoteChartTags(t *testing.T) {
 	t.Parallel()
 	find := func(tags *fakeTags) (*registry.Found, error) {
@@ -130,20 +142,26 @@ func TestRemoteChartTags(t *testing.T) {
 		hc := httpx.New(httpx.Options{Logger: slog.New(slog.DiscardHandler), Transport: rt})
 		return remote.New(hc, nil, tags).Find(t.Context(), registry.KindChart, "argo/argo-cd")
 	}
-	got, err := find(&fakeTags{tags: []string{"v3.0.0", "argo-cd-9.1.0", "argo-cd-9.0.0"}})
+	got, err := find(&fakeTags{tags: []string{"v3.0.0", "argo-cd-10.18.0", "argo-cd-9.0.0"}})
 	require.NoError(t, err)
 	assert.Equal(t, "argo-cd-", got.TagPrefix)
 
-	got, err = find(&fakeTags{tags: []string{"chart-v9.1.0", "chart-v9.0.0", "argo-cd-9.0.0"}})
+	got, err = find(&fakeTags{tags: []string{"chart-v10.18.0", "chart-v9.0.0", "argo-cd-10.18.0"}})
 	require.NoError(t, err)
 	assert.Equal(t, "chart-v", got.TagPrefix, "the prefix that covers more versions wins")
 
+	got, err = find(&fakeTags{tags: []string{"chart-v9.1.0", "chart-v9.0.0", "argo-cd-9.0.0"}})
+	require.NoError(t, err)
+	assert.Empty(t, got.TagPrefix, "tags that stop before the newest chart version say nothing about it")
+
 	got, err = find(&fakeTags{tags: []string{"v99.0.0"}})
 	require.NoError(t, err)
-	assert.Equal(t, "argo-cd-", got.TagPrefix, "no evidence keeps the default")
+	assert.Empty(t, got.TagPrefix, "no tag per chart version")
+	assert.NotEmpty(t, got.Versions, "the versions come from Artifact Hub")
+	assert.Equal(t, "https://artifacthub.io/packages/helm/argo/argo-cd", got.VersionsURL)
 
 	_, err = find(&fakeTags{err: errors.New("rate limited")})
-	require.ErrorContains(t, err, "chart:argo/argo-cd: rate limited")
+	require.ErrorContains(t, err, "chart argo/argo-cd: rate limited")
 }
 
 func TestRemoteGuess(t *testing.T) {
@@ -323,4 +341,75 @@ func TestSplitChartAt(t *testing.T) {
 		"chart:https://charts.jetstack.io/cert-manager",
 		registry.ChartAt("https://charts.jetstack.io/", "cert-manager"),
 	)
+}
+
+// fixtureGitHub serves tag lists and GitHub Pages indexes from testdata/helmindex, as they were
+// on 2026-11-20.
+type fixtureGitHub struct{ t *testing.T }
+
+func (f fixtureGitHub) read(name string) []byte {
+	f.t.Helper()
+	data, err := os.ReadFile(filepath.Join("..", "..", "..", "testdata", "helmindex", name))
+	require.NoError(f.t, err)
+	return data
+}
+
+func (f fixtureGitHub) Tags(_ context.Context, repo string) ([]string, error) {
+	var tags []string
+	require.NoError(f.t, json.Unmarshal(f.read(filepath.Base(repo)+".tags.json"), &tags))
+	return tags, nil
+}
+
+func (f fixtureGitHub) File(_ context.Context, repo, ref, path string) ([]byte, error) {
+	if repo != "aws/secrets-store-csi-driver-provider-aws" || ref != "gh-pages" || path != "index.yaml" {
+		return nil, fmt.Errorf("fetch %s of %s at %q: %w", path, repo, ref, github.ErrNotFound)
+	}
+	return f.read(filepath.Base(repo) + ".yaml"), nil
+}
+
+// TestSpec_tool_resolution_8: a chart whose repository has no tag per chart version takes its
+// versions from Artifact Hub, and a GitHub Pages Helm repository that Artifact Hub doesn't list
+// is read from its gh-pages index.yaml.
+func TestSpec_tool_resolution_8(t *testing.T) {
+	t.Parallel()
+	rt := vcr.ForTest(t, filepath.Join("..", "..", "..", "testdata", "cassettes", "resolve", "chart-versions"),
+		vcr.Scrubber{})
+	r := remote.New(httpx.New(httpx.Options{Logger: slog.New(slog.DiscardHandler), Transport: rt}), nil,
+		fixtureGitHub{t})
+
+	// aws/eks-charts tags every release v0.0.N for all its charts.
+	got, err := r.Find(t.Context(), registry.KindChart, "https://aws.github.io/eks-charts/aws-for-fluent-bit")
+	require.NoError(t, err)
+	assert.Equal(t, "aws/eks-charts", got.Repo)
+	assert.Empty(t, got.TagPrefix)
+	assert.Equal(t, "https://artifacthub.io/packages/helm/aws/aws-for-fluent-bit", got.VersionsURL)
+	assert.Contains(t, tagsOfRefs(got.Versions), "0.1.35")
+	assert.Equal(t, registry.LayerArtifactHub, got.Layer)
+
+	// Artifact Hub lists no repository at this URL. The chart's tags moved from
+	// secrets-store-csi-driver-provider-aws-<version> to plain <version> at 3.0.0.
+	got, err = r.Find(t.Context(), registry.KindChart,
+		"https://aws.github.io/secrets-store-csi-driver-provider-aws/secrets-store-csi-driver-provider-aws")
+	require.NoError(t, err)
+	assert.Equal(t, registry.Found{
+		Repo: "aws/secrets-store-csi-driver-provider-aws", Name: "secrets-store-csi-driver-provider-aws",
+		Layer: registry.LayerHelmRepo,
+	}, *got)
+
+	_, err = r.Find(
+		t.Context(),
+		registry.KindChart,
+		"https://aws.github.io/secrets-store-csi-driver-provider-aws/other",
+	)
+	require.ErrorIs(t, err, registry.ErrUnknownTool)
+	require.ErrorContains(t, err, "the Helm repository at https://aws.github.io/secrets-store-csi-driver-provider-aws "+
+		"has no chart named other")
+}
+
+func tagsOfRefs(refs []version.Ref) []string {
+	out := make([]string, len(refs))
+	for i, r := range refs {
+		out[i] = r.Tag
+	}
+	return out
 }

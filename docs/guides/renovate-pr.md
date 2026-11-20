@@ -13,8 +13,17 @@ between. `relgap digest --pull-request` digests every tool a pull request upgrad
 In a GitHub Actions `pull_request` run, `relgap digest --pull-request` reads the pull request
 from the event file in `GITHUB_EVENT_PATH`. It scans the pins of the base commit and of the
 checkout, pairs them by file, tool and name, and digests each tool whose exact version changed,
-from the base version to the new one. Added, removed and constraint pins are listed on stderr and
-get no digest.
+from the base version to the new one.
+
+A constraint whose lower bound moved digests from the old bound to the new one, when its operator
+and its other clauses stayed the same. `>= 6.62.0` to `>= 6.72.0` in `required_providers`,
+`~> 1.5` to `~> 1.7` and `>= 3.6.0, < 4.0.0` to `>= 3.7.0, < 4.0.0` qualify, and stderr says that
+the digest read the lower bounds. Renovate's `bump` range strategy opens such pull requests.
+Added, removed and other changed pins are listed on stderr and get no digest.
+
+In JSON, each digest has a `pins` array with the changed pins it covers: `repo`, `file`, `line`,
+`raw_name`, and `base` and `head`, the values as written. Use it to match a digest to your own
+records by file and line.
 
 The base commit must be in the clone, so the checkout needs `fetch-depth: 0`. When the base commit
 is missing, relgap tries the target branch from Renovate's comment, then the pull request's base

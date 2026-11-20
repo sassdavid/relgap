@@ -38,6 +38,7 @@ const (
 
 	LayerTerraform   Layer = "terraform registry"
 	LayerArtifactHub Layer = "artifact hub"
+	LayerHelmRepo    Layer = "helm repository"
 	LayerNPM         Layer = "npm registry"
 	LayerPyPI        Layer = "pypi"
 	LayerGuess       Layer = "github search"
@@ -327,14 +328,19 @@ func (r *Resolver) Resolve(ctx context.Context, input string, opts ResolveOption
 	}
 	prefix, rest, explicit := strings.Cut(input, ":")
 	var (
-		id  identity
-		err error
+		id        identity
+		err       error
+		tagPrefix string // from github:owner/repo@prefix
 	)
 	switch {
 	case explicit && isLookupPrefix(prefix):
 		id, err = r.identifyLookup(ctx, prefix, rest, opts.Finder)
 	case explicit:
-		id.name, id.match, id.pkg, id.repo, err = r.identifyExplicit(prefix, rest)
+		explicitRest := rest
+		if prefix == backendGitHub {
+			explicitRest, tagPrefix, _ = SplitTagPrefix(rest)
+		}
+		id.name, id.match, id.pkg, id.repo, err = r.identifyExplicit(prefix, explicitRest)
 	default:
 		id.name, id.match, err = r.identifyName(input)
 		if errors.Is(err, ErrUnknownTool) && opts.Guess && opts.Finder != nil {
@@ -360,6 +366,15 @@ func (r *Resolver) Resolve(ctx context.Context, input string, opts ResolveOption
 	}
 	if id.found != nil {
 		b.setString("version.tag_prefix", &b.spec.Version.TagPrefix, id.found.TagPrefix, id.found.Layer)
+		if id.found.Versions != nil {
+			b.setString("version.universe", &b.spec.Version.Universe, UniverseChart, id.found.Layer)
+			b.setString("version.versions_url", &b.spec.Version.VersionsURL, id.found.VersionsURL, id.found.Layer)
+			b.spec.Versions = id.found.Versions
+		}
+	}
+	if tagPrefix != "" {
+		b.spec.Version.TagPrefix = tagPrefix
+		b.prov["version.tag_prefix"] = []Layer{LayerExplicit}
 	}
 	b.defaults()
 	res := &Resolution{
@@ -520,6 +535,10 @@ func (r *Resolver) Identify(input string) (string, bool) {
 	}
 	if prefix != backendGitHub && prefix != backendAqua {
 		return "", false
+	}
+	if repo, tagPrefix, qualified := SplitTagPrefix(rest); prefix == backendGitHub && qualified {
+		// The tag prefix makes this a tool of its own, never the one a registry lists for the repo.
+		return "github:" + repo + "@" + tagPrefix, repoRe.MatchString(repo)
 	}
 	name, match, pkg, repo, err := r.identifyExplicit(prefix, rest)
 	switch {

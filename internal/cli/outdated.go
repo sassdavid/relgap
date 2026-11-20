@@ -136,6 +136,7 @@ func runOutdated(cmd *cobra.Command, d *app.Deps, g *globals, root string) error
 // comparison is the outcome of scanning a project and comparing its pins.
 type comparison struct {
 	scan     *scan.Result
+	ignore   []scan.Ignore
 	out      *report.Outdated
 	problems []enrich.Problem
 }
@@ -187,7 +188,7 @@ func (s *session) compare(
 	if err != nil {
 		return nil, digestError(err)
 	}
-	run := &comparison{scan: res, out: out}
+	run := &comparison{scan: res, ignore: ignore, out: out}
 	if with.enrich {
 		if err = s.enrich(ctx, run, hc, pins, with.binaries); err != nil {
 			return nil, err
@@ -265,7 +266,7 @@ func ignoreRules(resolver *registry.Resolver, rules []config.IgnoreRule) []scan.
 		if name, ok := resolver.Identify(tool); ok {
 			tool = name
 		}
-		out = append(out, scan.Ignore{Tool: tool, Path: r.Path})
+		out = append(out, scan.Ignore{Tool: tool, Name: r.Name, Path: r.Path})
 	}
 	return out
 }
@@ -331,7 +332,7 @@ func (c *comparison) warn(cmd *cobra.Command, d *app.Deps) {
 		d.Logger.WarnContext(cmd.Context(), "enrichment source failed; the report continues without it",
 			"source", p.Source, "tool", p.Tool, "error", p.Err)
 	}
-	if n := countUnresolved(c.scan.Pins); n > 0 {
+	if n := countUnresolved(c.scan.Pins, c.ignore); n > 0 {
 		_, _ = fmt.Fprintf(d.Stderr, "%s: %d %s no known tool; list them with 'relgap pins --unresolved'\n",
 			config.AppName, n, plural(n, "pin has", "pins have"))
 	}

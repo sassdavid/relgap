@@ -257,7 +257,7 @@ func reference(vs []DriftVersion) string {
 func (d *Drifter) latest(ctx context.Context, groups []*driftGroup) error {
 	var queries []github.RecentQuery
 	for _, g := range groups {
-		if g.err == nil && g.spec.Repo != "" {
+		if g.err == nil && g.spec.Repo != "" && g.spec.Version.Universe != registry.UniverseChart {
 			queries = append(queries, recentQuery(g.spec))
 		}
 	}

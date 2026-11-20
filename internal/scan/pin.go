@@ -53,6 +53,7 @@ type Pin struct {
 
 	lookup   string // name to resolve when it differs from RawName
 	fallback string // tool name to use when neither lookup nor RawName resolves
+	noLookup bool   // leave the pin unresolved, as for an extractVersion relgap can't read
 }
 
 // Location is where a pin was found.

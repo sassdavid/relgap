@@ -144,7 +144,7 @@ func runDrift(cmd *cobra.Command, d *app.Deps, g *globals, f driftFlags, args []
 	}); err != nil {
 		return err
 	}
-	warnDrift(cmd, d, res, out, tools)
+	warnDrift(cmd, d, res, out, tools, ignoreRules(s.resolver, d.Config.Config.Ignore))
 	return gateExit(cmd, d, gate.Matches(gate.CheckDrift(out)), driftPartial(res, out))
 }
 
@@ -292,7 +292,9 @@ func driftErrors(res *scan.Result, out *report.Drift) []render.Error {
 	return errs
 }
 
-func warnDrift(cmd *cobra.Command, d *app.Deps, res *scan.Result, out *report.Drift, tools []string) {
+func warnDrift(
+	cmd *cobra.Command, d *app.Deps, res *scan.Result, out *report.Drift, tools []string, ignore []scan.Ignore,
+) {
 	for _, p := range res.Problems {
 		d.Logger.WarnContext(cmd.Context(), "can't read pins", "repo", p.Repo, "file", p.File, "error", p.Message)
 	}
@@ -301,7 +303,7 @@ func warnDrift(cmd *cobra.Command, d *app.Deps, res *scan.Result, out *report.Dr
 			d.Logger.WarnContext(cmd.Context(), "no repository pins this tool", "tool", t)
 		}
 	}
-	if n := countUnresolved(res.Pins); n > 0 {
+	if n := countUnresolved(res.Pins, ignore); n > 0 {
 		_, _ = fmt.Fprintf(d.Stderr, "%s: %d %s no known tool; list them with 'relgap pins --unresolved'\n",
 			config.AppName, n, plural(n, "pin has", "pins have"))
 	}

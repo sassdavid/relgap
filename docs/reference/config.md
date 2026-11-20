@@ -125,14 +125,15 @@ Maps a raw pin name (e.g. TG\_VERSION) to a tool name.
 |---|---|---|---|---|
 | `list of object` | `[]` |  |  |  |
 
-Tools (optionally limited to paths) that are never reported.
+Pins that are never reported: by tool, by raw name or by path, alone or together.
 
 Each entry has these fields:
 
 | Field | Type | Description |
 |---|---|---|
 | `tool` | `string` | Tool name, as pins and digests show it, to leave out of reports. |
-| `path` | `string` | Glob; when set, the tool is ignored only under matching paths. |
+| `name` | `string` | Glob on the pin's raw name, as relgap pins shows it; \* matches any characters. Matches unresolved pins too. |
+| `path` | `string` | Glob on the file path; with tool or name, the rule applies only under matching paths. |
 
 ## policy
 
@@ -267,7 +268,7 @@ schema_version: 1
 #
 # tools: {}                       # local registry entries, for example {hk: {repo: jdx/hk}}
 # aliases: {}                     # raw pin name to tool, for example {TG_VERSION: terragrunt}
-# ignore: []                      # pins never reported, for example [{tool: terraform, path: "**/legacy/**"}]
+# ignore: []                      # pins never reported, for example [{tool: terraform, path: "**/legacy/**"}, {name: "git::*bitbucket.org*"}]
 #
 # policy:                         # defaults for the CI flags
 #   fail_on: []                   # breaking, deprecation, eol, vuln, drift, outdated

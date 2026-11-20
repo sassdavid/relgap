@@ -251,7 +251,7 @@ func (s *Scanner) run(ctx context.Context, t task) taskResult {
 // its raw name, then takes its fallback.
 func (s *Scanner) finish(p *Pin, bareExact bool) {
 	p.classify(bareExact)
-	if p.Tool != "" || p.Kind != KindTool {
+	if p.Tool != "" || p.Kind != KindTool || p.noLookup {
 		return
 	}
 	for _, name := range []string{p.lookup, p.RawName} {

@@ -63,6 +63,11 @@ the version is a pin. The datasource sets the kind through `renovateDepPin` in
 
 A comment's pin replaces another detector's pin on the same line with the same value.
 
+On `github-releases` and `github-tags`, `extractVersion=^<prefix>(?<version>...)$` names the tool
+`github:<owner>/<repo>@<prefix>` (a trailing `v?` is allowed, and `v` or an empty prefix adds
+nothing). Any other `extractVersion` leaves the pin unresolved. `versioning` is ignored
+([ADR-0017](../adr/0017-chart-versions-extract-version-and-floors.md)).
+
 `module "x" { source = "<ns>/<name>/<provider>" version = "..." }` and a Terragrunt
 `terraform { source = "tfr:///<ns>/<name>/<provider>?version=<v>" }` give a `tfmodule:` pin. It
 resolves through `registry.terraform.io/v1/modules/<ns>/<name>`, whose entry for the provider has
@@ -89,8 +94,9 @@ groups by `chart:<name>`.
   scanned roots and from a file or stdin. Another `tool` or `schema_version` exits 2.
 - [x] A `# renovate:` comment (also `//` and `<!-- -->`) above a line with one version makes it a
   pin in the files ADR-0015 lists, with the kind its datasource gives and a helm `registryUrl`
-  kept; it replaces another detector's pin on that line. (`TestSpec_pindiscovery_8`, fixture
-  `pins_renovate_comment.txtar`)
+  kept; it replaces another detector's pin on that line. An `extractVersion` with a literal prefix
+  names `github:<owner>/<repo>@<prefix>`, and any other form leaves the pin unresolved.
+  (`TestSpec_pindiscovery_8`, fixture `pins_renovate_comment.txtar`, `TestExtractPrefix`)
 - [x] `module` blocks with a registry source and a `version`, and Terragrunt `tfr://` sources,
   give `tfmodule:` pins that resolve through the Terraform registry with the latest tag's prefix;
   GitHub git sources with `?ref=` give `github:` pins. (`TestSpec_pindiscovery_9`,

@@ -71,7 +71,7 @@ tools:
     repo: not-a-repo
     version: 1
 ignore:
-  - path: "**/legacy/**"
+  - name: ""
 policy:
   fail_on: [eol, sometimes]
 color: true
@@ -90,7 +90,7 @@ relgap: invalid configuration:
   $WORK/.relgap.yaml:3:16: github.concurrency: wrong type: got number, want integer
   $WORK/.relgap.yaml:6:11: tools.hk.repo: 'not-a-repo' does not match pattern '^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$'
   $WORK/.relgap.yaml:7:5: tools.hk.version: unknown key
-  $WORK/.relgap.yaml:9:5: ignore.0: missing property 'tool'
+  $WORK/.relgap.yaml:9:11: ignore.0.name: minLength: got 0, want 1
   $WORK/.relgap.yaml:11:18: policy.fail_on.1: value must be one of 'breaking', 'deprecation', 'eol', 'vuln', 'drift', 'outdated'
   $WORK/.relgap.yaml:12:1: color: unknown key
 -- want-explicit.txt --

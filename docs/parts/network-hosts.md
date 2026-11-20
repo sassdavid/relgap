@@ -2,7 +2,7 @@
 
 | Host | What relgap asks for | When | GitHub token |
 |---|---|---|---|
-| `api.github.com` | releases, tags, files and repository search (REST and GraphQL), and the pull request comment of `relgap notify` | every command that looks up a tool | yes, when one is found |
+| `api.github.com` | releases, tags, files and repository search (REST and GraphQL), the `index.yaml` of a GitHub Pages Helm repository, and the pull request comment of `relgap notify` | every command that looks up a tool | yes, when one is found |
 | `endoflife.date` | release cycles and their end-of-life dates | a tool whose registry entry names an endoflife.date product | no |
 | `api.osv.dev` | known vulnerabilities of the pinned and latest versions | a tool whose registry entry names OSV packages | no |
 | `registry.terraform.io` | provider versions and source repositories | `tfprovider:` pins and inputs | no |

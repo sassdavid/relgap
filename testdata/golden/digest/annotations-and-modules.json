@@ -80,7 +80,17 @@
           "security": 0
         },
         "hidden": 0,
-        "warnings": []
+        "warnings": [],
+        "pins": [
+          {
+            "repo": ".",
+            "file": "modules.tf",
+            "line": 3,
+            "raw_name": "terraform-aws-modules/vpc/aws",
+            "base": "6.7.3",
+            "head": "6.8.0"
+          }
+        ]
       },
       {
         "tool": "terraform-null-label",
@@ -145,7 +155,17 @@
           "security": 0
         },
         "hidden": 23,
-        "warnings": []
+        "warnings": [],
+        "pins": [
+          {
+            "repo": ".",
+            "file": "modules.tf",
+            "line": 7,
+            "raw_name": "git::https://github.com/cloudposse/terraform-null-label.git",
+            "base": "0.24.1",
+            "head": "0.25.0"
+          }
+        ]
       },
       {
         "tool": "external-dns",
@@ -213,7 +233,17 @@
           "security": 0
         },
         "hidden": 3,
-        "warnings": []
+        "warnings": [],
+        "pins": [
+          {
+            "repo": ".",
+            "file": "variables.tf",
+            "line": 4,
+            "raw_name": "external-dns",
+            "base": "1.23.0",
+            "head": "1.24.0"
+          }
+        ]
       }
     ]
   },

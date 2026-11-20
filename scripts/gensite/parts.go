@@ -142,8 +142,11 @@ func networkHosts() ([]host, error) {
 	}
 	eol, anthropic, mantle := parsed[0], parsed[1], parsed[2]
 	hosts := []host{
-		{httpx.GitHubAPIHost, "releases, tags, files and repository search (REST and GraphQL), and the " +
-			"pull request comment of `relgap notify`", "every command that looks up a tool", true},
+		{
+			httpx.GitHubAPIHost, "releases, tags, files and repository search (REST and GraphQL), the " +
+				"`index.yaml` of a GitHub Pages Helm repository, and the pull request comment of `relgap notify`",
+			"every command that looks up a tool", true,
+		},
 		{eol.Host, "release cycles and their end-of-life dates", "a tool whose registry entry names an " +
 			"endoflife.date product", false},
 		{httpx.OSVHost, "known vulnerabilities of the pinned and latest versions", "a tool whose registry " +

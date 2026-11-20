@@ -17,6 +17,7 @@ field came from.
 | a name or alias | `terraform`, `tf` | the layers below |
 | a `NAME_VERSION` variable | `TERRAFORM_VERSION` | the name with underscores as hyphens, `terraform` |
 | `github:owner/repo` | `github:jdx/hk` | the repository itself, or the tool that has it |
+| `github:owner/repo@prefix` | `github:kubernetes/autoscaler@cluster-autoscaler-` | the repository, reading only the tags with that prefix |
 | `aqua:package` | `aqua:hashicorp/terraform` | the embedded aqua index |
 | `tfprovider:namespace/name` | `tfprovider:integrations/github` | the registries, then the Terraform registry |
 | `tfmodule:namespace/name/provider` | `tfmodule:terraform-aws-modules/vpc/aws` | the Terraform registry |
@@ -59,7 +60,15 @@ Artifact Hub. A chart takes no other tool's entry, because a chart's versions ar
 application's. `chart:name` without a repository resolves only when one Artifact Hub repository
 has a chart of that name. `chart:<url>/<name>`, such as
 `chart:https://charts.jetstack.io/cert-manager`, names the chart by its Helm repository URL and
-resolves only through the Artifact Hub repository at that URL.
+resolves only through the Artifact Hub repository at that URL, or through the `gh-pages` index of
+a GitHub Pages URL.
+
+A chart's versions come from its repository's tags when a tag prefix covers the newest version the
+chart lists. Some repositories tag every release once for all their charts: aws/eks-charts tags
+`v0.0.252`. Then the versions come from Artifact Hub, or from the Helm repository index, and the
+tool has the universe `chart`. `outdated` shows latest and behind, with `-` for the counts, and a
+digest lists the versions with a warning that says why it has no notes. Pin the application's own
+repository as well to read its release notes.
 
 These lookups go through the HTTP cache like every other request. [Network, privacy and
 tokens](/concepts/network) lists the hosts.

@@ -83,9 +83,12 @@ take the project path as their only argument (default: the current directory).
 
 --base <ref> digests the pins a change upgrades: it scans the files the base commit has under
 the path and the working tree (or --head <ref>), pairs the pins by file, tool and name, and
-digests each tool whose exact version changed, from the base version to the head version.
-The base files come from 'git archive', so paths marked export-ignore aren't compared. Added,
-removed and constraint pins are listed on stderr and get no digest.
+digests each tool whose exact version changed, from the base version to the head version. A
+constraint whose lower bound moved while its operator and other clauses stayed (>= 6.62.0 to
+>= 6.72.0) digests from the old bound to the new one, with a note on stderr. The base files come
+from 'git archive', so paths marked export-ignore aren't compared. Added, removed and other
+changed pins are listed on stderr and get no digest. In JSON, each digest lists the changed pins
+it covers under pins, with file, line, raw name and both values.
 
 --pull-request does the same in GitHub Actions. It reads the pull request from the
 GITHUB_EVENT_PATH event and uses its base commit, which the clone must have (actions/checkout

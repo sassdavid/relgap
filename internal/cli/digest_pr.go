@@ -144,7 +144,7 @@ func runDigestPR(cmd *cobra.Command, d *app.Deps, g *globals, f digestFlags, roo
 	}
 	changes := renovateFilter(d, in, diff.changes)
 	s.chartRegistries(ctx, upgradedPins(changes))
-	jobs, skipped := planPRDigests(changes)
+	jobs, skipped, floors := planPRDigests(changes)
 	tools, errs, notes, err := s.runPRDigests(ctx, jobs, digestArgs{
 		line:               string(version.LineNone),
 		includePrereleases: f.includePrereleases,
@@ -159,7 +159,7 @@ func runDigestPR(cmd *cobra.Command, d *app.Deps, g *globals, f digestFlags, roo
 	if err = writeDigest(cmd, d, g, data, errs); err != nil {
 		return err
 	}
-	prNotes(d, diff.base, diff.head, len(changes), append(skipped, notes...))
+	prNotes(d, diff.base, diff.head, len(changes), floors, append(skipped, notes...))
 	var partial error
 	if len(errs) > 0 {
 		partial = fmt.Errorf("%d %s failed; the report is partial", len(errs), plural(len(errs), "digest", "digests"))
@@ -261,7 +261,7 @@ func renovateFilter(d *app.Deps, in prInput, changes []scan.Change) []scan.Chang
 	}
 	var keep, drop []scan.Change
 	for _, c := range changes {
-		if c.Upgrade() && scan.RenovateTopicMatches(topic, depNames(c.Head)...) {
+		if digestible(c) && scan.RenovateTopicMatches(topic, depNames(c.Head)...) {
 			keep = append(keep, c)
 		} else {
 			drop = append(drop, c)
@@ -289,11 +289,17 @@ func depNames(p *scan.Pin) []string {
 	return names
 }
 
-// upgradedPins returns the base and head pins of each upgrade.
+// digestible reports whether a change gets a digest: an exact upgrade or a raised lower bound.
+func digestible(c scan.Change) bool {
+	_, _, floor := c.FloorRaise()
+	return c.Upgrade() || floor
+}
+
+// upgradedPins returns the base and head pins of each change that gets a digest.
 func upgradedPins(changes []scan.Change) []*scan.Pin {
 	var out []*scan.Pin
 	for _, c := range changes {
-		if c.Upgrade() {
+		if digestible(c) {
 			out = append(out, c.Base, c.Head)
 		}
 	}
@@ -301,17 +307,25 @@ func upgradedPins(changes []scan.Change) []*scan.Pin {
 }
 
 // planPRDigests groups the upgrades by tool and range and says why each other change has no
-// digest.
-func planPRDigests(changes []scan.Change) ([]*prDigest, []string) {
+// digest. A raised lower bound digests from the old bound to the new one, the versions a
+// consumer now has to accept, and gets a note that says so.
+func planPRDigests(changes []scan.Change) ([]*prDigest, []string, []string) {
 	var jobs []*prDigest
 	byRange := map[[3]string]*prDigest{}
-	var notes []string
+	var skipped, floors []string
 	for _, c := range changes {
-		if !c.Upgrade() {
-			notes = append(notes, changeText(c)+": "+changeReason(c))
+		var from, to string
+		switch lower, upper, floor := c.FloorRaise(); {
+		case c.Upgrade():
+			from, to = c.Base.Version, c.Head.Version
+		case floor:
+			from, to = lower, upper
+			floors = append(floors, changeText(c)+": digested from the old lower bound to the new one")
+		default:
+			skipped = append(skipped, changeText(c)+": "+changeReason(c))
 			continue
 		}
-		k := [3]string{c.Head.Tool, c.Base.Version, c.Head.Version}
+		k := [3]string{c.Head.Tool, from, to}
 		j := byRange[k]
 		if j == nil {
 			j = &prDigest{tool: k[0], from: k[1], to: k[2]}
@@ -320,7 +334,7 @@ func planPRDigests(changes []scan.Change) ([]*prDigest, []string) {
 		}
 		j.changes = append(j.changes, c)
 	}
-	return jobs, notes
+	return jobs, skipped, floors
 }
 
 // runPRDigests digests each range with the options in common. An auth error or a canceled context stops the run; a
@@ -346,6 +360,7 @@ func (s *session) runPRDigests(
 				failures[i] = err
 				return nil
 			}
+			res.Pins = pinChanges(j.changes)
 			results[i] = res
 			return nil
 		})
@@ -374,6 +389,19 @@ func (s *session) runPRDigests(
 		}
 	}
 	return tools, errs, notes, nil
+}
+
+// pinChanges locates the changed pins a digest covers where the head has them.
+func pinChanges(changes []scan.Change) []report.PinChange {
+	out := make([]report.PinChange, len(changes))
+	for i, c := range changes {
+		loc := c.Head.Location
+		out[i] = report.PinChange{
+			Repo: loc.Repo, File: loc.File, Line: loc.Line, RawName: c.Head.RawName,
+			Base: c.Base.Value, Head: c.Head.Value,
+		}
+	}
+	return out
 }
 
 // changeText names a changed pin, its values and where the head has it.
@@ -405,15 +433,19 @@ func changeReason(c scan.Change) string {
 	case !c.Head.Resolved():
 		return "no known tool"
 	default:
-		return "not an exact version on both sides"
+		return "neither an exact version on both sides nor a raised lower bound"
 	}
 }
 
-// prNotes tells on stderr what the diff found and which changed pins have no digest.
-func prNotes(d *app.Deps, base, head string, changed int, notes []string) {
+// prNotes tells on stderr what the diff found, which digests read lower bounds and which changed
+// pins have no digest.
+func prNotes(d *app.Deps, base, head string, changed int, floors, notes []string) {
 	if changed == 0 {
 		_, _ = fmt.Fprintf(d.Stderr, "%s: no pin changed between %s and %s\n", config.AppName, shortRef(base), head)
 		return
+	}
+	for _, n := range floors {
+		_, _ = fmt.Fprintf(d.Stderr, "%s: %s\n", config.AppName, n)
 	}
 	for _, n := range notes {
 		_, _ = fmt.Fprintf(d.Stderr, "%s: not digested: %s\n", config.AppName, n)

@@ -26,7 +26,7 @@ schema_version: 1
 #
 # tools: {}                       # local registry entries, for example {hk: {repo: jdx/hk}}
 # aliases: {}                     # raw pin name to tool, for example {TG_VERSION: terragrunt}
-# ignore: []                      # pins never reported, for example [{tool: terraform, path: "**/legacy/**"}]
+# ignore: []                      # pins never reported, for example [{tool: terraform, path: "**/legacy/**"}, {name: "git::*bitbucket.org*"}]
 #
 # policy:                         # defaults for the CI flags
 #   fail_on: []                   # breaking, deprecation, eol, vuln, drift, outdated
