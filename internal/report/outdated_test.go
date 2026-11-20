@@ -504,3 +504,41 @@ func TestOutdatedChartVersions(t *testing.T) {
 	assert.Empty(t, gh.recentQs[0], "no GitHub lookup for the chart's versions")
 	assert.Empty(t, gh.listed)
 }
+
+// pagesChart is a chart read through a GitHub Pages index, which tables show as
+// chart:aws/secrets-store-csi-driver-provider-aws/secrets-store-csi-driver-provider-aws.
+const pagesChart = "chart:https://aws.github.io/secrets-store-csi-driver-provider-aws/" +
+	"secrets-store-csi-driver-provider-aws"
+
+// chartSortPins mixes a GitHub Pages chart with Artifact Hub charts whose names sort around its
+// URL name.
+func chartSortPins() []scan.Pin {
+	return []scan.Pin{
+		pin("chart:metrics-server/metrics-server", "3.12.0", scan.MatchExact, "r1", "main.tf", 1),
+		pin(pagesChart, "0.3.0", scan.MatchExact, "r1", "main.tf", 2),
+		pin("chart:gpu-operator/gpu-operator", "24.0.0", scan.MatchExact, "r1", "main.tf", 3),
+	}
+}
+
+func TestOutdatedSortsByShownName(t *testing.T) {
+	t.Parallel()
+	gh := &multiGitHub{listed: map[string]int{}, bodies: map[string]int{}}
+	resolve := func(tool string) (registry.ToolSpec, error) {
+		return registry.ToolSpec{
+			Name:     tool,
+			Version:  registry.VersionSpec{Scheme: version.SchemeLoose, Universe: registry.UniverseChart},
+			Versions: []version.Ref{{Tag: "99.0.0"}},
+		}, nil
+	}
+	digester := report.NewDigester(slog.New(slog.DiscardHandler), gh, nil)
+	got, err := report.NewOutdater(digester, gh).Outdated(t.Context(), report.OutdatedRequest{
+		Pins: chartSortPins(), Resolve: resolve, Concurrency: 1,
+	})
+	require.NoError(t, err)
+	tools := make([]string, 0, len(got.Pins))
+	for _, p := range got.Pins {
+		tools = append(tools, p.Tool)
+	}
+	assert.Equal(t, []string{pagesChart, "chart:gpu-operator/gpu-operator", "chart:metrics-server/metrics-server"},
+		tools, "chart:aws/... sorts first, as the table shows it")
+}

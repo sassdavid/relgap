@@ -1,5 +1,6 @@
-# digest --base names each failed digest on stderr in the text and markdown formats, where the
-# report has no place for errors. JSON keeps them in the envelope. Bitbucket answers 404 for the
+# digest --base names each failed digest on stderr in the text and markdown formats. The
+# markdown also starts with them under "Not digested", for a pull request comment, and JSON
+# keeps them in the envelope. Bitbucket answers 404 for the
 # private module without a token, so its digest fails and kubectl's goes on.
 [!git] skip
 usegit
@@ -18,9 +19,11 @@ exec expect-exit 1 relgap digest --base main --format plain
 stdout 'kubectl 1\.36\.0\.\.1\.37\.2'
 stderr '^relgap: failed: bitbucket:example-ws/private-mod@main\.tf:1: .+'
 stderr '^relgap: 1 digest failed; the report is partial$'
+! stdout 'Not digested'
 
 exec expect-exit 1 relgap digest --base main --format md
 stderr '^relgap: failed: bitbucket:example-ws/private-mod@main\.tf:1: .+'
+stdout '\A## Not digested\n\n- bitbucket:example-ws/private-mod@main\.tf:1: failed: .+\n\n## kubectl 1\.36\.0\.\.1\.37\.2\n'
 
 exec expect-exit 1 relgap digest --base main --format json
 stdout '"target": "bitbucket:example-ws/private-mod@main\.tf:1"'

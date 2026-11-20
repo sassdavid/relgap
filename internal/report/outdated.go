@@ -168,7 +168,7 @@ func (o *Outdater) Outdated(ctx context.Context, req OutdatedRequest) (*Outdated
 	}
 	slices.SortStableFunc(out.Pins, func(a, b OutdatedPin) int {
 		return cmp.Or(
-			cmp.Compare(a.Tool, b.Tool),
+			registry.CompareTools(a.Tool, b.Tool),
 			cmp.Compare(a.Pin.Location.Repo, b.Pin.Location.Repo),
 			cmp.Compare(a.Pin.Location.File, b.Pin.Location.File),
 			cmp.Compare(a.Pin.Location.Line, b.Pin.Location.Line),

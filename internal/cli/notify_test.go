@@ -86,10 +86,11 @@ func (f *fakePR) takeWrites() []string {
 	return out
 }
 
-func (f *fakePR) body(i int) string {
+// body returns the first comment relgap posted, after the one the fake starts with.
+func (f *fakePR) body() string {
 	f.mu.Lock()
 	defer f.mu.Unlock()
-	s, _ := f.comments[i]["body"].(string)
+	s, _ := f.comments[1]["body"].(string)
 	return s
 }
 
@@ -168,7 +169,7 @@ func TestNotifyPRComment(t *testing.T) {
 	require.Equal(t, cli.ExitOK, code, stderr)
 	assert.Equal(t, "github-pr-comment  acme/tools#7  create  drift\n", stdout)
 	assert.Equal(t, []string{"POST " + prComments}, n.fake.takeWrites())
-	body := n.fake.body(1)
+	body := n.fake.body()
 	assert.True(t, strings.HasPrefix(body, `<!-- relgap:v1 {"kind":"drift","scope":"pull-request","hash":"sha256:`))
 	assert.Contains(t, body, "## relgap drift\n\n")
 	assert.Contains(t, body, "1.33.5")
@@ -188,12 +189,12 @@ func TestNotifyPRComment(t *testing.T) {
 	code, _, _ = notify(more)
 	require.Equal(t, cli.ExitOK, code)
 	assert.Equal(t, []string{"PATCH /repos/acme/tools/issues/comments/2"}, n.fake.takeWrites())
-	assert.Contains(t, n.fake.body(1), "1.32.0")
+	assert.Contains(t, n.fake.body(), "1.32.0")
 
 	code, stdout, _ = notify(agreed)
 	require.Equal(t, cli.ExitOK, code)
 	assert.Equal(t, "github-pr-comment  acme/tools#7  resolve  drift\n", stdout)
-	assert.Contains(t, n.fake.body(1), "## relgap drift\n\nNothing to report.\n")
+	assert.Contains(t, n.fake.body(), "## relgap drift\n\nNothing to report.\n")
 	n.fake.takeWrites()
 
 	code, stdout, _ = notify(agreed)
@@ -274,4 +275,18 @@ func TestNotifyErrors(t *testing.T) {
 		assert.Equal(t, tt.code, got, tt.name)
 		assert.Contains(t, errOut, tt.want, tt.name)
 	}
+}
+
+// TestNotifySavedDigestErrors: a saved digest whose only content is a failed digest posts a
+// comment that lists the failure under "Not digested", not "Nothing to report".
+func TestNotifySavedDigestErrors(t *testing.T) {
+	t.Parallel()
+	n := newNotifyEnv(t)
+	saved := filepath.Join(n.dir, "digest.json")
+	require.NoError(t, os.WriteFile(saved, []byte(`{"schema_version":1,"tool":"relgap","data":{"tools":[]},`+
+		`"errors":[{"target":"bitbucket:ws/mod@main.tf:1","message":"HTTP 404"}]}`), 0o600))
+	code, stdout, stderr := n.run(t, n.env, "notify", "--from", saved, "--notify", "github-pr-comment")
+	require.Equal(t, cli.ExitOK, code, stderr)
+	assert.Equal(t, "github-pr-comment  acme/tools#7  create  digest\n", stdout)
+	assert.Contains(t, n.fake.body(), "## Not digested\n\n- bitbucket:ws/mod@main.tf:1: failed: HTTP 404\n")
 }

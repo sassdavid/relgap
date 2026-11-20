@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"slices"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -142,7 +143,7 @@ func runDigestPR(cmd *cobra.Command, d *app.Deps, g *globals, f digestFlags, roo
 	if err != nil {
 		return err
 	}
-	changes := renovateFilter(d, in, diff.changes)
+	changes, dropped := renovateFilter(in, diff.changes)
 	s.chartRegistries(ctx, upgradedPins(changes))
 	jobs, skipped, floors := planPRDigests(changes)
 	tools, errs, notes, err := s.runPRDigests(ctx, jobs, digestArgs{
@@ -156,10 +157,11 @@ func runDigestPR(cmd *cobra.Command, d *app.Deps, g *globals, f digestFlags, roo
 	}
 	data := &report.Digest{Tools: tools}
 	summarizeDigest(cmd, d, g, f, data)
-	if err = writeDigest(cmd, d, g, data, errs); err != nil {
+	missed := slices.Concat(dropped, skipped, notes)
+	if err = writeDigest(cmd, d, g, data, errs, missed); err != nil {
 		return err
 	}
-	prNotes(d, diff.base, diff.head, len(changes), floors, append(skipped, notes...))
+	prNotes(d, diff.base, diff.head, len(changes), floors, missed)
 	var partial error
 	if len(errs) > 0 {
 		partial = fmt.Errorf("%d %s failed; the report is partial", len(errs), plural(len(errs), "digest", "digests"))
@@ -250,14 +252,14 @@ func scanRef(ctx context.Context, s *session, root, commit string) ([]scan.Pin, 
 
 // renovateFilter keeps the upgrades a Renovate branch names, when the pull request comes from
 // Renovate and its branch names at least one upgraded pin. Group branches name none, so they
-// keep every change.
-func renovateFilter(d *app.Deps, in prInput, changes []scan.Change) []scan.Change {
+// keep every change. It returns the changes to digest and a note for each one it drops.
+func renovateFilter(in prInput, changes []scan.Change) ([]scan.Change, []string) {
 	if in.branch == "" {
-		return changes
+		return changes, nil
 	}
 	topic, prefixed := scan.RenovateTopic(in.branch)
 	if _, commented := scan.RenovateTargetBranch(in.body); !prefixed && !commented {
-		return changes
+		return changes, nil
 	}
 	var keep, drop []scan.Change
 	for _, c := range changes {
@@ -268,13 +270,16 @@ func renovateFilter(d *app.Deps, in prInput, changes []scan.Change) []scan.Chang
 		}
 	}
 	if len(keep) == 0 {
-		return changes
+		return changes, nil
 	}
+	notes := make([]string, 0, len(drop))
 	for _, c := range drop {
-		_, _ = fmt.Fprintf(d.Stderr, "%s: not digested: %s: the Renovate branch %s names another dependency\n",
-			config.AppName, changeText(c), in.branch)
+		notes = append(
+			notes,
+			fmt.Sprintf("%s: the Renovate branch %s names another dependency", changeText(c), in.branch),
+		)
 	}
-	return keep
+	return keep, notes
 }
 
 // depNames lists the names Renovate may have used for a pin's dependency.
