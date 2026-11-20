@@ -1,0 +1,465 @@
+---
+# Written by hand from the OCI distribution spec and each registry's documented token flow: Docker Hub with a source label, ghcr.io with Link paging, registry.k8s.io without a token (its redirect to Artifact Registry left out), public.ecr.aws with scope aws, and the GitHub releases the label names. Not a recording.
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: registry-1.docker.io
+        headers:
+            Accept:
+                - "application/json"
+        url: "https://registry-1.docker.io/v2/example/api/tags/list?n=1000"
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 72
+        body: "{\"errors\":[{\"code\":\"UNAUTHORIZED\",\"message\":\"authentication required\"}]}"
+        headers:
+            Www-Authenticate:
+                - "Bearer realm=\"https://auth.docker.io/token\",service=\"registry.docker.io\",scope=\"repository:example/api:pull\""
+            Content-Type:
+                - "application/json"
+        status: 401 Unauthorized
+        code: 401
+        duration: 0s
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: auth.docker.io
+        headers:
+            Accept:
+                - "application/json"
+        url: "https://auth.docker.io/token?scope=repository%3Aexample%2Fapi%3Apull&service=registry.docker.io"
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 49
+        body: "{\"token\":\"anonymous-test-token\",\"expires_in\":300}"
+        headers:
+            Content-Type:
+                - "application/json"
+        status: 200 OK
+        code: 200
+        duration: 0s
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: registry-1.docker.io
+        headers:
+            Accept:
+                - "application/json"
+        url: "https://registry-1.docker.io/v2/example/api/tags/list?n=1000"
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 99
+        body: "{\"name\":\"example/api\",\"tags\":[\"1.3.0\",\"1.4.0\",\"1.5.0\",\"1.6.0-rc.1\",\"1.6.0\",\"latest\",\"sha-4f2a9c1\"]}"
+        headers:
+            Content-Type:
+                - "application/json"
+        status: 200 OK
+        code: 200
+        duration: 0s
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: registry-1.docker.io
+        headers:
+            Accept:
+                - "application/vnd.oci.image.index.v1+json, application/vnd.docker.distribution.manifest.list.v2+json, application/vnd.oci.image.manifest.v1+json, application/vnd.docker.distribution.manifest.v2+json"
+        url: "https://registry-1.docker.io/v2/example/api/manifests/1.6.0"
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 701
+        body: "{\"schemaVersion\":2,\"mediaType\":\"application/vnd.oci.image.index.v1+json\",\"manifests\":[{\"mediaType\":\"application/vnd.oci.image.manifest.v1+json\",\"digest\":\"sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"size\":1022,\"platform\":{\"os\":\"linux\",\"architecture\":\"amd64\"},\"annotations\":{\"com.docker.official-images.bashbrew.arch\":\"amd64\",\"org.opencontainers.image.source\":\"https://github.com/example-org/api\"}},{\"mediaType\":\"application/vnd.oci.image.manifest.v1+json\",\"digest\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"size\":566,\"platform\":{\"os\":\"unknown\",\"architecture\":\"unknown\"},\"annotations\":{\"vnd.docker.reference.type\":\"attestation-manifest\"}}]}"
+        headers:
+            Content-Type:
+                - "application/vnd.oci.image.index.v1+json"
+        status: 200 OK
+        code: 200
+        duration: 0s
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: ghcr.io
+        headers:
+            Accept:
+                - "application/json"
+        url: "https://ghcr.io/v2/example-org/worker/tags/list?n=1000"
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 72
+        body: "{\"errors\":[{\"code\":\"UNAUTHORIZED\",\"message\":\"authentication required\"}]}"
+        headers:
+            Www-Authenticate:
+                - "Bearer realm=\"https://ghcr.io/token\",service=\"ghcr.io\",scope=\"repository:example-org/worker:pull\""
+            Content-Type:
+                - "application/json"
+        status: 401 Unauthorized
+        code: 401
+        duration: 0s
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: ghcr.io
+        headers:
+            Accept:
+                - "application/json"
+        url: "https://ghcr.io/token?scope=repository%3Aexample-org%2Fworker%3Apull&service=ghcr.io"
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 32
+        body: "{\"token\":\"anonymous-test-token\"}"
+        headers:
+            Content-Type:
+                - "application/json"
+        status: 200 OK
+        code: 200
+        duration: 0s
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: ghcr.io
+        headers:
+            Accept:
+                - "application/json"
+        url: "https://ghcr.io/v2/example-org/worker/tags/list?n=1000"
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 62
+        body: "{\"name\":\"example-org/worker\",\"tags\":[\"1.9.0\",\"2.0.0\",\"2.1.0\"]}"
+        headers:
+            Link:
+                - "</v2/example-org/worker/tags/list?last=2.1.0&n=1000>; rel=\"next\""
+            Content-Type:
+                - "application/json"
+        status: 200 OK
+        code: 200
+        duration: 0s
+    - id: 7
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: ghcr.io
+        headers:
+            Accept:
+                - "application/json"
+        url: "https://ghcr.io/v2/example-org/worker/tags/list?last=2.1.0&n=1000"
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 53
+        body: "{\"name\":\"example-org/worker\",\"tags\":[\"2.2.0\",\"main\"]}"
+        headers:
+            Content-Type:
+                - "application/json"
+        status: 200 OK
+        code: 200
+        duration: 0s
+    - id: 8
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: ghcr.io
+        headers:
+            Accept:
+                - "application/vnd.oci.image.index.v1+json, application/vnd.docker.distribution.manifest.list.v2+json, application/vnd.oci.image.manifest.v1+json, application/vnd.docker.distribution.manifest.v2+json"
+        url: "https://ghcr.io/v2/example-org/worker/manifests/2.2.0"
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 248
+        body: "{\"schemaVersion\":2,\"mediaType\":\"application/vnd.oci.image.manifest.v1+json\",\"config\":{\"mediaType\":\"application/vnd.oci.image.config.v1+json\",\"digest\":\"sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd\",\"size\":900},\"layers\":[]}"
+        headers:
+            Content-Type:
+                - "application/vnd.oci.image.manifest.v1+json"
+        status: 200 OK
+        code: 200
+        duration: 0s
+    - id: 9
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: ghcr.io
+        url: "https://ghcr.io/v2/example-org/worker/blobs/sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 62
+        body: "{\"architecture\":\"amd64\",\"os\":\"linux\",\"config\":{\"Labels\":null}}"
+        headers:
+            Content-Type:
+                - "application/json"
+        status: 200 OK
+        code: 200
+        duration: 0s
+    - id: 10
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: registry.k8s.io
+        headers:
+            Accept:
+                - "application/json"
+        url: "https://registry.k8s.io/v2/kube-proxy/tags/list?n=1000"
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 88
+        body: "{\"name\":\"kube-proxy\",\"tags\":[\"v1.33.0\",\"v1.33.4\",\"v1.34.0\",\"v1.34.2\",\"v1.35.0-alpha.1\"]}"
+        headers:
+            Content-Type:
+                - "application/json"
+        status: 200 OK
+        code: 200
+        duration: 0s
+    - id: 11
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: registry.k8s.io
+        headers:
+            Accept:
+                - "application/vnd.oci.image.index.v1+json, application/vnd.docker.distribution.manifest.list.v2+json, application/vnd.oci.image.manifest.v1+json, application/vnd.docker.distribution.manifest.v2+json"
+        url: "https://registry.k8s.io/v2/kube-proxy/manifests/v1.34.2"
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 248
+        body: "{\"schemaVersion\":2,\"mediaType\":\"application/vnd.oci.image.manifest.v1+json\",\"config\":{\"mediaType\":\"application/vnd.oci.image.config.v1+json\",\"digest\":\"sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd\",\"size\":900},\"layers\":[]}"
+        headers:
+            Content-Type:
+                - "application/vnd.oci.image.manifest.v1+json"
+        status: 200 OK
+        code: 200
+        duration: 0s
+    - id: 12
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: registry.k8s.io
+        url: "https://registry.k8s.io/v2/kube-proxy/blobs/sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 86
+        body: "{\"architecture\":\"amd64\",\"os\":\"linux\",\"config\":{\"Labels\":{\"description\":\"kube-proxy\"}}}"
+        headers:
+            Content-Type:
+                - "application/json"
+        status: 200 OK
+        code: 200
+        duration: 0s
+    - id: 13
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: public.ecr.aws
+        headers:
+            Accept:
+                - "application/json"
+        url: "https://public.ecr.aws/v2/example/agent/tags/list?n=1000"
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 57
+        body: "{\"errors\":[{\"code\":\"DENIED\",\"message\":\"Not Authorized\"}]}"
+        headers:
+            Www-Authenticate:
+                - "Bearer realm=\"https://public.ecr.aws/token/\",service=\"public.ecr.aws\",scope=\"aws\""
+            Content-Type:
+                - "application/json"
+        status: 401 Unauthorized
+        code: 401
+        duration: 0s
+    - id: 14
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: public.ecr.aws
+        headers:
+            Accept:
+                - "application/json"
+        url: "https://public.ecr.aws/token/?scope=aws&service=public.ecr.aws"
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 32
+        body: "{\"token\":\"anonymous-test-token\"}"
+        headers:
+            Content-Type:
+                - "application/json"
+        status: 200 OK
+        code: 200
+        duration: 0s
+    - id: 15
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: public.ecr.aws
+        headers:
+            Accept:
+                - "application/json"
+        url: "https://public.ecr.aws/v2/example/agent/tags/list?n=1000"
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 105
+        body: "{\"name\":\"example/agent\",\"tags\":[\"2.3.0-al2023\",\"2.4.0-al2023\",\"2.5.0\",\"2.5.0-al2023\",\"2.6.0-rc1-al2023\"]}"
+        headers:
+            Content-Type:
+                - "application/json"
+        status: 200 OK
+        code: 200
+        duration: 0s
+    - id: 16
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: public.ecr.aws
+        headers:
+            Accept:
+                - "application/vnd.oci.image.index.v1+json, application/vnd.docker.distribution.manifest.list.v2+json, application/vnd.oci.image.manifest.v1+json, application/vnd.docker.distribution.manifest.v2+json"
+        url: "https://public.ecr.aws/v2/example/agent/manifests/2.5.0-al2023"
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 248
+        body: "{\"schemaVersion\":2,\"mediaType\":\"application/vnd.oci.image.manifest.v1+json\",\"config\":{\"mediaType\":\"application/vnd.oci.image.config.v1+json\",\"digest\":\"sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd\",\"size\":900},\"layers\":[]}"
+        headers:
+            Content-Type:
+                - "application/vnd.oci.image.manifest.v1+json"
+        status: 200 OK
+        code: 200
+        duration: 0s
+    - id: 17
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: public.ecr.aws
+        url: "https://public.ecr.aws/v2/example/agent/blobs/sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 121
+        body: "{\"architecture\":\"amd64\",\"os\":\"linux\",\"config\":{\"Labels\":{\"org.label-schema.vcs-url\":\"https://gitlab.com/example/agent\"}}}"
+        headers:
+            Content-Type:
+                - "application/json"
+        status: 200 OK
+        code: 200
+        duration: 0s
+    - id: 18
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.github.com
+        headers:
+            Accept:
+                - "application/vnd.github.v3+json"
+        url: "https://api.github.com/repos/example-org/api/releases?per_page=100"
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 1732
+        body: "[{\"url\":\"https://github.com/example-org/api/releases/tag/v1.6.0\",\"html_url\":\"https://github.com/example-org/api/releases/tag/v1.6.0\",\"tag_name\":\"v1.6.0\",\"name\":\"v1.6.0\",\"draft\":false,\"prerelease\":false,\"created_at\":\"2026-11-12T08:00:00Z\",\"published_at\":\"2026-11-12T08:00:00Z\",\"body\":\"## Breaking changes\\n\\n- The `/v1/jobs` endpoint is removed. Clients must call `/v2/jobs`, which pages its results with a cursor instead of an offset.\\n\\n## Features\\n\\n- The API accepts an `Idempotency-Key` header on every POST request and replays the first answer for 24 hours.\\n- Health checks report the database pool size and the number of waiting connections.\\n- The container image runs as the non-root user `api` (uid 10001) and keeps no shell in the final layer.\\n\"},{\"url\":\"https://github.com/example-org/api/releases/tag/v1.5.0\",\"html_url\":\"https://github.com/example-org/api/releases/tag/v1.5.0\",\"tag_name\":\"v1.5.0\",\"name\":\"v1.5.0\",\"draft\":false,\"prerelease\":false,\"created_at\":\"2026-09-30T08:00:00Z\",\"published_at\":\"2026-09-30T08:00:00Z\",\"body\":\"## Deprecations\\n\\n- The `/v1/jobs` endpoint is deprecated and will be removed in 1.6.0. Move clients to `/v2/jobs` now.\\n\\n## Bug fixes\\n\\n- Job listings no longer skip the first page when the caller sends `page=0`, and the response says how many jobs match.\\n- Graceful shutdown waits for running jobs up to the configured timeout instead of stopping them at once.\\n\"},{\"url\":\"https://github.com/example-org/api/releases/tag/v1.4.0\",\"html_url\":\"https://github.com/example-org/api/releases/tag/v1.4.0\",\"tag_name\":\"v1.4.0\",\"name\":\"v1.4.0\",\"draft\":false,\"prerelease\":false,\"created_at\":\"2026-07-15T08:00:00Z\",\"published_at\":\"2026-07-15T08:00:00Z\",\"body\":\"First release with the jobs API.\"}]"
+        headers:
+            X-Ratelimit-Limit:
+                - "60"
+            X-Ratelimit-Remaining:
+                - "59"
+            X-Ratelimit-Reset:
+                - "1795694460"
+            Content-Type:
+                - "application/json"
+        status: 200 OK
+        code: 200
+        duration: 0s

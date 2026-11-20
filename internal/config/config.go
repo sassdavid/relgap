@@ -20,6 +20,8 @@ type Config struct {
 	Ignore        []IgnoreRule            `json:"ignore"                             jsonschema_description:"Pins that are never reported: by tool, by raw name or by path, alone or together."`
 	Policy        Policy                  `json:"policy"`
 	LLM           LLM                     `json:"llm"`
+	GitLab        GitLab                  `json:"gitlab"`
+	Images        Images                  `json:"images"`
 }
 
 // GitHub configures the GitHub API client.
@@ -50,7 +52,24 @@ type Detectors struct {
 
 // ToolOverride is a local registry entry.
 type ToolOverride struct {
-	Repo string `json:"repo" jsonschema:"required,pattern=^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$" jsonschema_description:"GitHub owner/repo."`
+	Repo string `json:"repo"           jsonschema:"required,pattern=^[A-Za-z0-9_.-]+(/[A-Za-z0-9_.-]+)+$" jsonschema_description:"owner/repo on GitHub, workspace/repo on Bitbucket Cloud, or the project path on GitLab."`
+	Host string `json:"host,omitempty" jsonschema:"pattern=^[A-Za-z0-9.-]+$"                              jsonschema_description:"Host of repo: github.com (the default), bitbucket.org, gitlab.com or a host in gitlab.hosts."`
+}
+
+// GitLab configures self-managed GitLab hosts.
+type GitLab struct {
+	Hosts []GitLabHost `json:"hosts" jsonschema_description:"Self-managed GitLab hosts. A git source on a host that isn't listed stays unresolved."`
+}
+
+// GitLabHost is one self-managed GitLab host.
+type GitLabHost struct {
+	Host     string `json:"host"                jsonschema:"required,pattern=^[A-Za-z0-9.-]+(:[0-9]+)?$" jsonschema_description:"Host name, such as gitlab.example.com."`
+	TokenEnv string `json:"token_env,omitempty" jsonschema:"pattern=^[A-Za-z_][A-Za-z0-9_]*$"            jsonschema_description:"Env var with this host's token, sent in PRIVATE-TOKEN to this host only. Empty means GITLAB_TOKEN when GITLAB_HOST names this host."`
+}
+
+// Images configures the image registries outdated reads tags from.
+type Images struct {
+	Registries []string `json:"registries" jsonschema_description:"Registries to read besides Docker Hub, ghcr.io, registry.k8s.io, quay.io, public.ecr.aws and mcr.microsoft.com. relgap asks every registry for anonymous tokens only."`
 }
 
 // IgnoreRule suppresses the pins that match every field it sets: a tool, a raw name, a path.
@@ -102,6 +121,8 @@ func Default() Config {
 		},
 		Tools:   map[string]ToolOverride{},
 		Aliases: map[string]string{},
+		GitLab:  GitLab{Hosts: []GitLabHost{}},
+		Images:  Images{Registries: []string{}},
 		Ignore:  []IgnoreRule{},
 		Policy: Policy{
 			FailOn:        []string{},

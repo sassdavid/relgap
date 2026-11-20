@@ -13,8 +13,8 @@ lists the sources of its tool, and `relgap resolve <tool>` shows them.
 
 <!--@include: ../parts/source-kinds.md-->
 
-Files come from the tool's GitHub repository through the API, at the `ref` the source names or the
-default branch. Web pages come only from the hosts below; `relgap registry lint` rejects a
+Files come from the tool's repository through its host's API (GitHub, Bitbucket Cloud or GitLab),
+at the `ref` the source names or the default branch. Web pages come only from the hosts below; `relgap registry lint` rejects a
 `url_template` on any other host:
 
 <!--@include: ../parts/web-hosts.md-->
@@ -54,15 +54,17 @@ confidence 0.6. A major release with no notes still shows up as a risk.
 A tool without sources, which is every tool that only mise or aqua knows, gets auto-discovery,
 the way Renovate and Dependabot find notes:
 
-1. The GitHub release bodies of the range, when at least one holds real notes. A body under 400
-   bytes, or one with only headings, links and checksums, is boilerplate.
+1. The release bodies of the range, when at least one holds real notes: GitHub releases, or
+   GitLab release descriptions. Bitbucket Cloud has no releases. A body under 400 bytes, or one
+   with only headings, links and checksums, is boilerplate.
 2. Otherwise a changelog file in the repository's top directory, named by Renovate's changelog
    file name rule (`CHANGELOG`, `HISTORY`, `RELEASES`, `release-notes` and so on). `.md` wins over
    `.rst` over `.txt`; `.json` files and files under 100 bytes are skipped. A file whose newest
    version is older than the newest release is stale: relgap ignores it and warns.
 3. Otherwise whatever release bodies there are.
 
-A range with no notes at all warns and prints the GitHub compare link of the two versions.
+A range with no notes at all warns and prints the compare link of the two versions on the
+tool's host.
 [Supported tools](/reference/tools) lists the tools whose entry names their sources, and
 [Write or fix a registry entry](/guides/registry-entry) shows how to add one.
 

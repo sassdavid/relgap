@@ -373,8 +373,8 @@
           "kind": "image",
           "value": "3.22",
           "version": "3.22",
-          "exact": false,
-          "match": "prefix",
+          "exact": true,
+          "match": "exact",
           "location": {
             "repo": ".",
             "file": "Dockerfile",
@@ -382,8 +382,16 @@
             "detector": "dockerfile"
           }
         },
-        "status": "skipped",
-        "note": "unsupported tool syntax: unknown prefix \"image:\" (relgap knows github, aqua, tfprovider, tfmodule, chart, npm and pypi)"
+        "current": "3.22",
+        "latest": "3.23",
+        "behind": {
+          "releases": 3,
+          "major": 0,
+          "minor": 1,
+          "patch": 2
+        },
+        "status": "outdated",
+        "note": "docker.io/library/alpine has no source label that names a GitHub repository, so the versions come from https://registry-1.docker.io/v2/library/alpine/tags/list without notes"
       },
       {
         "tool": "k9s",

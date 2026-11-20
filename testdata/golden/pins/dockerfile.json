@@ -14,8 +14,8 @@
         "kind": "image",
         "value": "2026.11",
         "version": "2026.11",
-        "exact": false,
-        "match": "prefix",
+        "exact": true,
+        "match": "exact",
         "location": {
           "repo": ".",
           "file": "Containerfile",
@@ -39,7 +39,7 @@
         }
       },
       {
-        "tool": "image:golang",
+        "tool": "image:golang:*-alpine",
         "raw_name": "golang",
         "kind": "image",
         "value": "1.27.3-alpine",
@@ -119,8 +119,8 @@
         "kind": "image",
         "value": "3.22",
         "version": "3.22",
-        "exact": false,
-        "match": "prefix",
+        "exact": true,
+        "match": "exact",
         "location": {
           "repo": ".",
           "file": "Dockerfile",
@@ -129,13 +129,13 @@
         }
       },
       {
-        "tool": "image:python",
+        "tool": "image:python:*-slim",
         "raw_name": "python",
         "kind": "image",
         "value": "3.14-slim",
         "version": "3.14-slim",
-        "exact": false,
-        "match": "prefix",
+        "exact": true,
+        "match": "exact",
         "location": {
           "repo": ".",
           "file": "docker/app.Dockerfile",

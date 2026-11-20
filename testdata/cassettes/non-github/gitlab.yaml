@@ -1,0 +1,207 @@
+---
+# Written by hand from the GitLab REST API reference: tags on two pages linked with Link rel=next, releases of a nested-group project on gitlab.com, and a self-managed host without releases whose notes are in CHANGELOG.md and whose rate limit is almost used up. Not a recording.
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: gitlab.com
+        headers:
+            Accept:
+                - "application/json"
+        url: "https://gitlab.com/api/v4/projects/example-group%2Fplatform%2Ftf-dns/repository/tags?per_page=100"
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 661
+        body: "[{\"name\":\"v1.3.0\",\"message\":\"\",\"target\":\"ffffffffffffffffffffffffffffffffffffffff\",\"commit\":{\"id\":\"ffffffffffffffffffffffffffffffffffffffff\",\"created_at\":\"2026-11-05T09:00:00.000+00:00\"},\"release\":null,\"protected\":false},{\"name\":\"v1.2.1\",\"message\":\"\",\"target\":\"ffffffffffffffffffffffffffffffffffffffff\",\"commit\":{\"id\":\"ffffffffffffffffffffffffffffffffffffffff\",\"created_at\":\"2026-09-20T09:00:00.000+00:00\"},\"release\":null,\"protected\":false},{\"name\":\"v1.2.0\",\"message\":\"\",\"target\":\"ffffffffffffffffffffffffffffffffffffffff\",\"commit\":{\"id\":\"ffffffffffffffffffffffffffffffffffffffff\",\"created_at\":\"2026-08-12T09:00:00.000+00:00\"},\"release\":null,\"protected\":false}]"
+        headers:
+            Ratelimit-Limit:
+                - "500"
+            Ratelimit-Remaining:
+                - "498"
+            Ratelimit-Reset:
+                - "1795694460"
+            Link:
+                - "<https://gitlab.com/api/v4/projects/example-group%2Fplatform%2Ftf-dns/repository/tags?id=example-group%2Fplatform%2Ftf-dns&order_by=updated&page=2&per_page=100&sort=desc>; rel=\"next\""
+            X-Next-Page:
+                - "2"
+            X-Page:
+                - "1"
+            X-Per-Page:
+                - "100"
+            Content-Type:
+                - "application/json"
+        status: 200 OK
+        code: 200
+        duration: 0s
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: gitlab.com
+        headers:
+            Accept:
+                - "application/json"
+        url: "https://gitlab.com/api/v4/projects/example-group%2Fplatform%2Ftf-dns/repository/tags?id=example-group%2Fplatform%2Ftf-dns&order_by=updated&page=2&per_page=100&sort=desc"
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 441
+        body: "[{\"name\":\"v1.1.0\",\"message\":\"\",\"target\":\"ffffffffffffffffffffffffffffffffffffffff\",\"commit\":{\"id\":\"ffffffffffffffffffffffffffffffffffffffff\",\"created_at\":\"2026-05-02T09:00:00.000+00:00\"},\"release\":null,\"protected\":false},{\"name\":\"v1.0.0\",\"message\":\"\",\"target\":\"ffffffffffffffffffffffffffffffffffffffff\",\"commit\":{\"id\":\"ffffffffffffffffffffffffffffffffffffffff\",\"created_at\":\"2026-01-15T09:00:00.000+00:00\"},\"release\":null,\"protected\":false}]"
+        headers:
+            Ratelimit-Limit:
+                - "500"
+            Ratelimit-Remaining:
+                - "498"
+            Ratelimit-Reset:
+                - "1795694460"
+            X-Next-Page:
+                - ""
+            X-Page:
+                - "2"
+            X-Per-Page:
+                - "100"
+            Content-Type:
+                - "application/json"
+        status: 200 OK
+        code: 200
+        duration: 0s
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: gitlab.com
+        headers:
+            Accept:
+                - "application/json"
+        url: "https://gitlab.com/api/v4/projects/example-group%2Fplatform%2Ftf-dns/releases?per_page=100"
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 1157
+        body: "[{\"tag_name\":\"v1.3.0\",\"name\":\"v1.3.0\",\"description\":\"## Breaking changes\\n\\n- The `zone_id` output is renamed to `hosted_zone_id`. Update every reference in the calling modules before you upgrade, because Terraform fails the plan on the old name.\\n\\n## Features\\n\\n- Records accept a `set_identifier`, so weighted and latency-based routing policies work without a second module.\\n- The module creates the DNSSEC signing key when `dnssec_enabled` is true.\\n\\n## Bug fixes\\n\\n- Private zones attach to every VPC in `vpc_ids` instead of the first one only.\\n\",\"created_at\":\"2026-11-05T09:00:00.000Z\",\"released_at\":\"2026-11-05T09:00:00.000Z\",\"upcoming_release\":false},{\"tag_name\":\"v1.2.1\",\"name\":\"v1.2.1\",\"description\":\"## Bug fixes\\n\\n- Alias records keep `evaluate_target_health` when the target changes, instead of falling back to false on the next apply.\\n- The `ttl` variable is ignored for alias records, as the Route 53 API requires, and no longer produces a perpetual diff.\\n- Health checks created for failover records carry the module tags.\\n\",\"created_at\":\"2026-09-20T09:00:00.000Z\",\"released_at\":\"2026-09-20T09:00:00.000Z\",\"upcoming_release\":false}]"
+        headers:
+            Ratelimit-Limit:
+                - "500"
+            Ratelimit-Remaining:
+                - "498"
+            Ratelimit-Reset:
+                - "1795694460"
+            Content-Type:
+                - "application/json"
+        status: 200 OK
+        code: 200
+        duration: 0s
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: gitlab.internal.test
+        headers:
+            Accept:
+                - "application/json"
+        url: "https://gitlab.internal.test/api/v4/projects/infra%2Fmodules%2Ftf-vpc/repository/tags?per_page=100"
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 658
+        body: "[{\"name\":\"0.5.0\",\"message\":\"\",\"target\":\"ffffffffffffffffffffffffffffffffffffffff\",\"commit\":{\"id\":\"ffffffffffffffffffffffffffffffffffffffff\",\"created_at\":\"2026-11-10T09:00:00.000+00:00\"},\"release\":null,\"protected\":false},{\"name\":\"0.4.0\",\"message\":\"\",\"target\":\"ffffffffffffffffffffffffffffffffffffffff\",\"commit\":{\"id\":\"ffffffffffffffffffffffffffffffffffffffff\",\"created_at\":\"2026-08-01T09:00:00.000+00:00\"},\"release\":null,\"protected\":false},{\"name\":\"0.3.0\",\"message\":\"\",\"target\":\"ffffffffffffffffffffffffffffffffffffffff\",\"commit\":{\"id\":\"ffffffffffffffffffffffffffffffffffffffff\",\"created_at\":\"2026-04-01T09:00:00.000+00:00\"},\"release\":null,\"protected\":false}]"
+        headers:
+            Ratelimit-Limit:
+                - "500"
+            Ratelimit-Remaining:
+                - "40"
+            Ratelimit-Reset:
+                - "1795694460"
+            Content-Type:
+                - "application/json"
+        status: 200 OK
+        code: 200
+        duration: 0s
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: gitlab.internal.test
+        headers:
+            Accept:
+                - "application/json"
+        url: "https://gitlab.internal.test/api/v4/projects/infra%2Fmodules%2Ftf-vpc/releases?per_page=100"
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 2
+        body: "[]"
+        headers:
+            Content-Type:
+                - "application/json"
+        status: 200 OK
+        code: 200
+        duration: 0s
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: gitlab.internal.test
+        headers:
+            Accept:
+                - "application/json"
+        url: "https://gitlab.internal.test/api/v4/projects/infra%2Fmodules%2Ftf-vpc/repository/tree?per_page=100"
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 353
+        body: "[{\"id\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"name\":\"CHANGELOG.md\",\"type\":\"blob\",\"path\":\"CHANGELOG.md\",\"mode\":\"100644\"},{\"id\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"name\":\"modules\",\"type\":\"tree\",\"path\":\"modules\",\"mode\":\"040000\"},{\"id\":\"cccccccccccccccccccccccccccccccccccccccc\",\"name\":\"main.tf\",\"type\":\"blob\",\"path\":\"main.tf\",\"mode\":\"100644\"}]"
+        headers:
+            Content-Type:
+                - "application/json"
+        status: 200 OK
+        code: 200
+        duration: 0s
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: gitlab.internal.test
+        url: "https://gitlab.internal.test/api/v4/projects/infra%2Fmodules%2Ftf-vpc/repository/files/CHANGELOG.md/raw"
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 320
+        body: "# Changelog\n\n## 0.5.0 (2026-11-10)\n\n### Features\n\n- Subnets take an `ipv6_prefix` so dual-stack VPCs need no extra module.\n\n### Bug fixes\n\n- The default security group no longer allows all egress when `lockdown_default_sg` is true.\n\n## 0.4.0 (2026-08-01)\n\n### Features\n\n- First version with transit gateway attachments.\n"
+        headers:
+            Content-Type:
+                - "text/plain; charset=utf-8"
+        status: 200 OK
+        code: 200
+        duration: 0s

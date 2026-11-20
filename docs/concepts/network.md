@@ -1,12 +1,18 @@
 ---
-description: Every host relgap sends requests to, the programs it runs, where the GitHub token goes, what the cache keeps and what --summarize sends to a model.
+description: Every host relgap sends requests to, the programs it runs, where each token goes, what the cache keeps and what --summarize sends to a model.
 ---
 
 # Network, privacy and tokens
 
 relgap sends requests only to the hosts on this page, and only to look up the tools you ask
-about. It has no telemetry and no update check. `relgap pins` and `relgap drift` without
-`--latest` read files only and make no request at all.
+about or the pins it scanned. It has no telemetry and no update check. `relgap pins` and
+`relgap drift` without `--latest` read files only and make no request at all.
+
+Scanned files name git hosts and image registries, so relgap contacts only the ones it knows:
+bitbucket.org, gitlab.com and the hosts in `gitlab.hosts` for git sources, and Docker Hub,
+ghcr.io, registry.k8s.io, quay.io, public.ecr.aws, mcr.microsoft.com and the hosts in
+`images.registries` for images. A pin on any other host stays unresolved or skipped, and
+relgap runs no `git ls-remote` against it.
 
 ## Hosts
 
@@ -31,7 +37,13 @@ and `relgap registry lint` rejects an entry whose URL points anywhere else:
 Without git, relgap walks the directories itself. Without mise, it uses the embedded copy of
 mise's registry ([registry snapshots](/reference/snapshots)).
 
-## The GitHub token
+## Tokens
+
+Each token goes only to the host it belongs to. relgap never sends one host's token to another,
+never writes a token to the cache or the logs, and names in the debug log only whether a client
+has a token and which variable it came from.
+
+### GitHub
 
 relgap looks for a token the way gh does, and takes the first it finds:
 
@@ -45,14 +57,45 @@ repositories; a private repository needs a token that can read its contents. `re
 needs a token that can write pull request comments.
 
 Without a token, relgap uses the REST API only, sends at most 2 requests at once, and GitHub
-allows 60 requests an hour. relgap warns when the remaining requests run low. A token raises the
-limit to GitHub's authenticated one and lets relgap batch release bodies into GraphQL queries.
+allows 60 requests an hour. relgap warns on the first GitHub request, and again when the
+remaining requests run low. A token raises the limit to GitHub's authenticated one and lets
+relgap batch release bodies into GraphQL queries.
+
+### Bitbucket Cloud
+
+relgap sends `BITBUCKET_API_TOKEN` to `api.bitbucket.org` only, as `Authorization: Bearer`. A
+user API token with the `read:repository:bitbucket` scope works, and so do repository, project
+and workspace access tokens. relgap reads no username or email, because a Bearer token needs
+none. Without a token, relgap warns once, and Bitbucket allows 60 anonymous requests an hour per
+IP; a private repository then answers 404.
+
+### GitLab
+
+relgap reads GitLab tokens the way glab does and sends each to one host:
+
+1. the variable that a `gitlab.hosts` entry names in `token_env`, to that entry's host
+2. `GITLAB_TOKEN`, then `GITLAB_ACCESS_TOKEN`, to the host in `GITLAB_HOST` (default gitlab.com)
+3. `CI_JOB_TOKEN`, to the host in `CI_SERVER_HOST`, when that host has no other token
+
+A personal, project or group token goes in `PRIVATE-TOKEN` and needs `read_api`. A CI job token
+goes in `JOB-TOKEN`; it reads tags, releases and raw files of projects whose job token allowlist
+has the calling project, but not the directory listing that finds a changelog file. Without a
+token, gitlab.com allows 500 requests a minute per IP, and relgap warns when the remaining
+requests run low.
+
+### Image registries
+
+relgap reads no Docker credentials. When a registry answers 401 with a Bearer challenge, relgap
+asks the token URL in the challenge for an anonymous pull token and keeps it in memory for the run. A
+private image therefore stays skipped. Reading an image's source label costs one manifest
+request, which Docker Hub counts as a pull.
 
 ## The cache
 
 Answers are cached under `$XDG_CACHE_HOME/relgap/http`, or the `cache.dir` you set. The cache
-keeps response bodies and the headers needed to revalidate them. It never stores the
-`Authorization` header, cookies or rate-limit headers. `--offline` answers from the cache only,
+keeps response bodies and the headers needed to revalidate them. It never stores request
+headers, so `Authorization`, `PRIVATE-TOKEN` and `JOB-TOKEN` stay out, and it never stores
+cookies, rate-limit headers or the answers that carry an anonymous registry token. `--offline` answers from the cache only,
 `--no-cache` neither reads nor writes it, and `relgap cache clear` deletes it.
 
 ## Summaries from a model

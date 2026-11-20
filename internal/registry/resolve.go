@@ -12,6 +12,7 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/sassdavid/relgap/internal/forge"
 	"github.com/sassdavid/relgap/internal/misex"
 	"github.com/sassdavid/relgap/internal/version"
 	curated "github.com/sassdavid/relgap/registry"
@@ -41,6 +42,7 @@ const (
 	LayerHelmRepo    Layer = "helm repository"
 	LayerNPM         Layer = "npm registry"
 	LayerPyPI        Layer = "pypi"
+	LayerImage       Layer = "image registry"
 	LayerGuess       Layer = "github search"
 )
 
@@ -93,8 +95,10 @@ type ResolveOptions struct {
 
 // ConfigLayer is the part of the user config that takes part in resolution.
 type ConfigLayer struct {
-	Tools   map[string]string // tool name to owner/repo
-	Aliases map[string]string // raw name to tool name
+	Tools       map[string]string // tool name to owner/repo, or the project path on its host
+	Hosts       map[string]string // tool name to its host when it isn't github.com
+	Aliases     map[string]string // raw name to tool name
+	GitLabHosts []string          // self-managed GitLab hosts that gitlab:<host>/<path> may name
 }
 
 // Inputs are the layers a [Resolver] merges.
@@ -314,39 +318,20 @@ type identity struct {
 	match Match
 	pkg   *AquaEntry
 	repo  string // owner/repo when no layer knows the tool
+	host  string // the host of repo when it isn't github.com
 	found *Found // set when a lookup supplied repo
 }
 
 // Resolve identifies input and merges every layer that knows the tool. input is a name, an
-// alias, a NAME_VERSION variable, github:owner/repo, aqua:package, tfprovider:namespace/name,
-// tfmodule:namespace/name/provider, chart:repo/name, chart:name, chart:url/name, npm:package or
-// pypi:package.
+// alias, a NAME_VERSION variable, github:owner/repo, bitbucket:workspace/repo, gitlab:path,
+// aqua:package, tfprovider:namespace/name, tfmodule:namespace/name/provider, chart:repo/name,
+// chart:name, chart:url/name, npm:package, pypi:package or image:name.
 func (r *Resolver) Resolve(ctx context.Context, input string, opts ResolveOptions) (*Resolution, error) {
 	input = strings.TrimSpace(input)
 	if input == "" {
 		return nil, fmt.Errorf("%w: empty name", ErrUnknownTool)
 	}
-	prefix, rest, explicit := strings.Cut(input, ":")
-	var (
-		id        identity
-		err       error
-		tagPrefix string // from github:owner/repo@prefix
-	)
-	switch {
-	case explicit && isLookupPrefix(prefix):
-		id, err = r.identifyLookup(ctx, prefix, rest, opts.Finder)
-	case explicit:
-		explicitRest := rest
-		if prefix == backendGitHub {
-			explicitRest, tagPrefix, _ = SplitTagPrefix(rest)
-		}
-		id.name, id.match, id.pkg, id.repo, err = r.identifyExplicit(prefix, explicitRest)
-	default:
-		id.name, id.match, err = r.identifyName(input)
-		if errors.Is(err, ErrUnknownTool) && opts.Guess && opts.Finder != nil {
-			id, err = r.identifyGuess(ctx, input, opts.Finder, err)
-		}
-	}
+	id, tagPrefix, err := r.identify(ctx, input, opts)
 	if err != nil {
 		return nil, err
 	}
@@ -357,26 +342,34 @@ func (r *Resolver) Resolve(ctx context.Context, input string, opts ResolveOption
 		repoLayer, foundName = id.found.Layer, id.found.Name
 	}
 	b.setString("repo", &b.spec.Repo, id.repo, repoLayer)
+	b.setString("host", &b.spec.Host, id.host, repoLayer)
 	if b.spec.Name == "" {
 		b.setString(fieldName, &b.spec.Name, cmp.Or(foundName, path.Base(id.repo)), repoLayer)
 	}
-	if b.spec.Repo == "" {
+	image := id.found != nil && id.found.Image != ""
+	if b.spec.Repo == "" && !image {
 		return nil, fmt.Errorf("%w for %q: no registry has a GitHub repo for it%s; set tools.%s.repo in the config",
 			ErrNoRepo, input, r.backendHint(id.name), b.spec.Name)
 	}
 	if id.found != nil {
-		b.setString("version.tag_prefix", &b.spec.Version.TagPrefix, id.found.TagPrefix, id.found.Layer)
-		if id.found.Versions != nil {
-			b.setString("version.universe", &b.spec.Version.Universe, UniverseChart, id.found.Layer)
-			b.setString("version.versions_url", &b.spec.Version.VersionsURL, id.found.VersionsURL, id.found.Layer)
-			b.spec.Versions = id.found.Versions
-		}
+		b.fromFound(id.found)
+	}
+	if !forge.IsGitHub(b.spec.Host) {
+		// Bitbucket Cloud has no releases, and a GitLab project's tags exist with or without one.
+		b.setString("version.universe", &b.spec.Version.Universe, UniverseTags, LayerDefault)
 	}
 	if tagPrefix != "" {
 		b.spec.Version.TagPrefix = tagPrefix
 		b.prov["version.tag_prefix"] = []Layer{LayerExplicit}
 	}
 	b.defaults()
+	if image && b.spec.Repo != "" {
+		notes, notesErr := r.Resolve(ctx, backendGitHub+":"+b.spec.Repo, ResolveOptions{})
+		if notesErr != nil {
+			return nil, fmt.Errorf("resolve the source repository of %s: %w", input, notesErr)
+		}
+		b.spec.Notes = &notes.Tool
+	}
 	res := &Resolution{
 		Input:        input,
 		Match:        id.match,
@@ -394,6 +387,36 @@ func (r *Resolver) Resolve(ctx context.Context, input string, opts ResolveOption
 	return res, nil
 }
 
+// identify finds what input names, and the tag prefix of a github:, bitbucket: or gitlab: name.
+func (r *Resolver) identify(ctx context.Context, input string, opts ResolveOptions) (identity, string, error) {
+	prefix, rest, explicit := strings.Cut(input, ":")
+	var (
+		id        identity
+		err       error
+		tagPrefix string
+	)
+	switch {
+	case explicit && isLookupPrefix(prefix):
+		id, err = r.identifyLookup(ctx, prefix, rest, opts.Finder)
+	case explicit && isForgePrefix(prefix):
+		var forgeRest string
+		forgeRest, tagPrefix, _ = SplitTagPrefix(rest)
+		id, err = r.identifyForge(prefix, forgeRest)
+	case explicit:
+		explicitRest := rest
+		if prefix == backendGitHub {
+			explicitRest, tagPrefix, _ = SplitTagPrefix(rest)
+		}
+		id.name, id.match, id.pkg, id.repo, err = r.identifyExplicit(prefix, explicitRest)
+	default:
+		id.name, id.match, err = r.identifyName(input)
+		if errors.Is(err, ErrUnknownTool) && opts.Guess && opts.Finder != nil {
+			id, err = r.identifyGuess(ctx, input, opts.Finder, err)
+		}
+	}
+	return id, tagPrefix, err
+}
+
 func (r *Resolver) relgapSource(name string) string {
 	e := r.relgap[strings.ToLower(name)]
 	switch {
@@ -407,10 +430,84 @@ func (r *Resolver) relgapSource(name string) string {
 
 func isLookupPrefix(prefix string) bool {
 	switch prefix {
-	case KindTFProvider, KindTFModule, KindChart, KindNPM, KindPyPI:
+	case KindTFProvider, KindTFModule, KindChart, KindNPM, KindPyPI, KindImage:
 		return true
 	}
 	return false
+}
+
+func isForgePrefix(prefix string) bool { return prefix == KindBitbucket || prefix == KindGitLab }
+
+var projectPart = regexp.MustCompile(`^[A-Za-z0-9_.-]+$`)
+
+// minProjectParts is the number of parts in the shortest project path: a group or workspace and
+// the repository.
+const minProjectParts = 2
+
+// splitForge returns the host and repository of bitbucket:workspace/repo, gitlab:group/.../repo
+// and gitlab:host/group/.../repo, where host must be in the config's GitLab hosts.
+func (r *Resolver) splitForge(prefix, rest string) (string, string, error) {
+	host, repo := forge.Bitbucket, rest
+	if prefix == KindGitLab {
+		host = forge.GitLab
+		if first, tail, ok := strings.Cut(rest, "/"); ok && slices.ContainsFunc(r.in.Config.GitLabHosts,
+			func(h string) bool { return strings.EqualFold(h, first) }) {
+			host, repo = strings.ToLower(first), tail
+		}
+	}
+	parts := strings.Split(repo, "/")
+	ok := len(parts) >= minProjectParts &&
+		!slices.ContainsFunc(parts, func(p string) bool { return !projectPart.MatchString(p) })
+	if prefix == KindBitbucket && len(parts) != 2 {
+		ok = false
+	}
+	if !ok {
+		want := "bitbucket:<workspace>/<repo>"
+		if prefix == KindGitLab {
+			want = "gitlab:<group>/<repo>, or gitlab:<host>/<group>/<repo> for a host in gitlab.hosts"
+		}
+		return "", "", fmt.Errorf("%w: %s:%s is not %s", ErrUnsupported, prefix, rest, want)
+	}
+	return host, repo, nil
+}
+
+// identifyForge identifies bitbucket: and gitlab: names, which need no lookup.
+func (r *Resolver) identifyForge(prefix, rest string) (identity, error) {
+	host, repo, err := r.splitForge(prefix, rest)
+	if err != nil {
+		return identity{}, err
+	}
+	match := Match{By: "repo", Value: prefix + ":" + rest, Layer: LayerExplicit}
+	if name, ok := r.configByHostRepo(host, repo); ok {
+		match.Layer = LayerConfig
+		return identity{name: name, match: match}, nil
+	}
+	return identity{match: match, repo: repo, host: host}, nil
+}
+
+// configByHostRepo finds the config tool whose repository is repo on host.
+func (r *Resolver) configByHostRepo(host, repo string) (string, bool) {
+	for name, rp := range r.in.Config.Tools {
+		if strings.EqualFold(rp, repo) && strings.EqualFold(cmp.Or(r.in.Config.Hosts[name], forge.GitHub), host) {
+			return name, true
+		}
+	}
+	return "", false
+}
+
+// forgeName returns the bitbucket: or gitlab: name of repo on host.
+func forgeName(host, repo, tagPrefix string) string {
+	name := KindGitLab + ":" + repo
+	switch {
+	case forge.KindOf(host) == forge.KindBitbucket:
+		name = KindBitbucket + ":" + repo
+	case !strings.EqualFold(host, forge.GitLab):
+		name = KindGitLab + ":" + host + "/" + repo
+	}
+	if tagPrefix != "" {
+		name += "@" + tagPrefix
+	}
+	return name
 }
 
 // tfModuleParts is the number of parts in a registry module address: namespace, name, provider.
@@ -454,6 +551,12 @@ func (r *Resolver) identifyLookup(ctx context.Context, prefix, rest string, find
 	case KindPyPI:
 		by, service = "pypi package", "PyPI"
 		offline = func() (string, Layer, bool) { return r.byPackage("PyPI", "pipx:", rest) }
+	case KindImage:
+		by, service = "image", "the image registry"
+		if _, _, _, ok := SplitImage(rest); !ok {
+			return identity{}, fmt.Errorf("%w: image:%s is not image:<name> or image:<name>:<prefix>*<suffix>",
+				ErrUnsupported, rest)
+		}
 	}
 	if rest == "" {
 		return identity{}, fmt.Errorf("%w: %s: needs a name", ErrUnsupported, prefix)
@@ -475,8 +578,9 @@ func (r *Resolver) identifyLookup(ctx context.Context, prefix, rest string, find
 	}
 	match.Layer = f.Layer
 	// A chart's repository can be the application's own, whose curated entry describes app
-	// versions, so a chart never takes another tool's entry.
-	if prefix != KindChart {
+	// versions, so a chart never takes another tool's entry. An image's versions are its tags,
+	// and its source repository becomes the tool in Notes instead.
+	if prefix != KindChart && prefix != KindImage {
 		if name, layer, ok := r.byRepo(f.Repo); ok {
 			match.Layer = layer
 			return identity{name: name, match: match}, nil
@@ -533,6 +637,17 @@ func (r *Resolver) Identify(input string) (string, bool) {
 		name, _, err := r.identifyName(input)
 		return name, err == nil
 	}
+	if isForgePrefix(prefix) {
+		forgeRest, tagPrefix, _ := SplitTagPrefix(rest)
+		host, repo, err := r.splitForge(prefix, forgeRest)
+		if err != nil {
+			return "", false
+		}
+		if name, ok := r.configByHostRepo(host, repo); ok && tagPrefix == "" {
+			return name, true
+		}
+		return forgeName(host, repo, tagPrefix), true
+	}
 	if prefix != backendGitHub && prefix != backendAqua {
 		return "", false
 	}
@@ -585,7 +700,8 @@ func (r *Resolver) identifyExplicit(prefix, rest string) (string, Match, *AquaEn
 		return path.Base(pkg.Name), match, pkg, "", nil
 	default:
 		return "", Match{}, nil, "", fmt.Errorf(
-			"%w: unknown prefix %q (relgap knows github, aqua, tfprovider, tfmodule, chart, npm and pypi)",
+			"%w: unknown prefix %q (relgap knows github, bitbucket, gitlab, aqua, tfprovider, tfmodule, chart, "+
+				"npm, pypi and image)",
 			ErrUnsupported,
 			prefix+":",
 		)
@@ -646,7 +762,7 @@ func (r *Resolver) canonical(input string) (string, Match, bool) {
 func (r *Resolver) byRepo(repo string) (string, Layer, bool) {
 	key := strings.ToLower(repo)
 	for name, rp := range r.in.Config.Tools {
-		if strings.EqualFold(rp, repo) {
+		if strings.EqualFold(rp, repo) && forge.IsGitHub(r.in.Config.Hosts[name]) {
 			return name, LayerConfig, true
 		}
 	}
@@ -739,6 +855,9 @@ func (r *Resolver) merge(b *builder, name string, pkg *AquaEntry) {
 	}
 	if inConfig {
 		b.setString("repo", &b.spec.Repo, r.in.Config.Tools[cfgName], LayerConfig)
+		if host := r.in.Config.Hosts[cfgName]; !forge.IsGitHub(host) {
+			b.setString("host", &b.spec.Host, strings.ToLower(host), LayerConfig)
+		}
 	}
 	if e != nil {
 		b.fromEntry(e)
@@ -827,6 +946,24 @@ func (b *builder) fromEntry(e *Entry) {
 		b.spec.Bin = slices.Clone(e.Bin)
 		b.prov["bin"] = []Layer{l}
 	}
+}
+
+// fromFound takes the tag rules and the listed versions of a lookup: a chart's versions, or an
+// image's tags with its variant.
+func (b *builder) fromFound(f *Found) {
+	b.setString("version.tag_prefix", &b.spec.Version.TagPrefix, f.TagPrefix, f.Layer)
+	if f.Versions == nil {
+		return
+	}
+	universe := UniverseChart
+	if f.Image != "" {
+		universe = UniverseImage
+		b.setString("image", &b.spec.Image, f.Image, f.Layer)
+		b.setString("version.tag_suffix", &b.spec.Version.TagSuffix, f.TagSuffix, f.Layer)
+	}
+	b.setString("version.universe", &b.spec.Version.Universe, universe, f.Layer)
+	b.setString("version.versions_url", &b.spec.Version.VersionsURL, f.VersionsURL, f.Layer)
+	b.spec.Versions = f.Versions
 }
 
 // startsWith matches the one aqua version_filter form that maps to a tag prefix.

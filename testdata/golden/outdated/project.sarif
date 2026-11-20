@@ -818,6 +818,29 @@
           }
         },
         {
+          "ruleId": "outdated",
+          "ruleIndex": 3,
+          "level": "warning",
+          "message": {
+            "text": "image:alpine 3.22 is behind 3.23 by 3 releases (0 major, 1 minor, 2 patch)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "Dockerfile"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "outdated|image:alpine|Dockerfile|3.22"
+          }
+        },
+        {
           "ruleId": "breaking",
           "ruleIndex": 0,
           "level": "note",

@@ -70,5 +70,17 @@ written the JSON for the comment:
 <<< @/ci/digest.yml
 
 The `paths` filter lists the files that hold pins; add the ones your repository uses, as
-[Pins and detectors](/concepts/pins) lists them. [Use relgap-action](/guides/action) runs the
+[Pins and detectors](/concepts/pins) lists them.
+
+A Renovate branch that moves a Terraform module on Bitbucket or GitLab, or an image, is digested
+the same way: from the module's changelog or GitLab releases, and from the GitHub repository an
+image's source label names. A private module needs its host's token in the job's environment,
+from a repository secret; relgap sends it to that host only
+([Network, privacy and tokens](/concepts/network#tokens)):
+
+```yaml
+env:
+  BITBUCKET_API_TOKEN: ${{ secrets.BITBUCKET_API_TOKEN }}
+  GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
+``` [Use relgap-action](/guides/action) runs the
 same digest and comment in comment mode without a `mise.toml` entry.

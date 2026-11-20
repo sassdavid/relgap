@@ -45,6 +45,7 @@ type session struct {
 	cache *httpx.Cache
 	gh    *github.Client
 	hc    *http.Client
+	hosts *hostClients
 	err   error
 }
 
@@ -73,8 +74,22 @@ func (s *session) clients(ctx context.Context) (*github.Client, *http.Client, er
 			return
 		}
 		s.gh, s.hc, s.err = newGitHubClient(ctx, s.d, s.cache, s.tokenRunner)
+		if s.err == nil {
+			s.hosts = newHostClients(ctx, s.d, s.hc)
+		}
 	})
 	return s.gh, s.hc, s.err
+}
+
+// digester returns a digester that reads GitHub through gh and the other git hosts through the
+// session's host clients.
+func (s *session) digester(gh *github.Client, hc *http.Client) *report.Digester {
+	return report.NewDigester(s.d.Logger, gh, source.NewWeb(hc)).WithHosts(s.hosts.client)
+}
+
+// remote returns the package registry finder, with the image registries of the config.
+func (s *session) remote(gh *github.Client, hc *http.Client) *remote.Remote {
+	return remote.New(hc, repoSearcher{gh}, gh).WithImages(imageClient(s.d, hc))
 }
 
 // close logs the cache summary and closes the cache.
@@ -114,7 +129,7 @@ func (f sessionFinder) Find(ctx context.Context, kind, name string) (*registry.F
 	if err != nil {
 		return nil, err
 	}
-	found, err := remote.New(hc, repoSearcher{gh}, gh).Find(ctx, kind, name)
+	found, err := f.s.remote(gh, hc).Find(ctx, kind, name)
 	if err != nil {
 		return nil, fmt.Errorf("look up %s:%s: %w", kind, name, err)
 	}
@@ -167,7 +182,7 @@ func (s *session) digest(ctx context.Context, a digestArgs) (*report.ToolDigest,
 	if err != nil {
 		return nil, err
 	}
-	digest, err := report.NewDigester(s.d.Logger, gh, source.NewWeb(hc)).Digest(ctx, report.DigestRequest{
+	digest, err := s.digester(gh, hc).Digest(ctx, report.DigestRequest{
 		Tool:               resolution.Tool,
 		From:               a.from,
 		To:                 a.to,
@@ -229,7 +244,7 @@ func (s *session) chartRepo(ctx context.Context, registryURL, chart string) stri
 		s.d.Logger.DebugContext(ctx, "can't look up a chart repository", "url", registryURL, "error", err)
 		return ""
 	}
-	repo, ok, err := remote.New(hc, repoSearcher{gh}, gh).ChartRepo(ctx, registryURL, chart)
+	repo, ok, err := s.remote(gh, hc).ChartRepo(ctx, registryURL, chart)
 	switch {
 	case err != nil:
 		s.d.Logger.DebugContext(ctx, "can't look up a chart repository", "url", registryURL, "chart", chart,
@@ -243,7 +258,7 @@ func (s *session) chartRepo(ctx context.Context, registryURL, chart string) stri
 
 // scan scans roots for pins, naming repositories relative to base when it is set.
 func (s *session) scan(ctx context.Context, roots []string, submodules bool, base string) (*scan.Result, error) {
-	opts, err := pinsOptions(s.d.Config.Config.Scan, pinsFlags{submodules: submodules})
+	opts, err := pinsOptions(s.d.Config.Config, pinsFlags{submodules: submodules})
 	if err != nil {
 		return nil, err
 	}

@@ -1,0 +1,30 @@
+# non-github-sources criterion 5: relgap pins --unresolved no longer lists Terraform module sources
+# on Bitbucket Cloud and gitlab.com, or image pins. Only the source on a host relgap doesn't know
+# is left. pins reads files only and sends no request.
+cd project
+exec relgap pins --unresolved --format plain
+stdout '^git::https://git\.other\.test/team/tf-misc\.git\s+1\.0\.0\s+terraform\s+main\.tf:10$'
+! stdout 'bitbucket|gitlab|image|alpine'
+! exists $WORK/requests.log
+
+exec relgap pins --format json
+stdout '"tool": "bitbucket:example-ws/tf-network"'
+stdout '"tool": "gitlab:example-group/platform/tf-dns"'
+stdout '"tool": "image:alpine"'
+stdout '"tool": "image:node:\*-alpine"'
+
+-- project/main.tf --
+module "network" {
+  source = "git::git@bitbucket.org:example-ws/tf-network.git//.?ref=2.1.0"
+}
+
+module "dns" {
+  source = "git::git@gitlab.com:example-group/platform/tf-dns.git?ref=v1.2.0"
+}
+
+module "misc" {
+  source = "git::https://git.other.test/team/tf-misc.git?ref=1.0.0"
+}
+-- project/Dockerfile --
+FROM alpine:3.22
+FROM node:24.11.0-alpine

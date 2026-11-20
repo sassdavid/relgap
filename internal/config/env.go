@@ -7,6 +7,15 @@ func EnvVars() []EnvVar {
 		{"GH_TOKEN", "GitHub token, tried first. Without a token relgap reads gh's config file, then runs " +
 			"gh auth token, and otherwise sends unauthenticated requests (60 per hour)."},
 		{"GITHUB_TOKEN", "GitHub token, tried when GH_TOKEN is not set."},
+		{"BITBUCKET_API_TOKEN", "Bitbucket Cloud API token or access token, sent as Bearer to api.bitbucket.org " +
+			"only. Without it relgap sends anonymous requests (60 per hour per IP)."},
+		{"GITLAB_TOKEN", "GitLab token, sent in PRIVATE-TOKEN only to the host in GITLAB_HOST (default gitlab.com), " +
+			"unless a gitlab.hosts entry names its own token_env."},
+		{"GITLAB_ACCESS_TOKEN", "GitLab token, tried when GITLAB_TOKEN is not set."},
+		{"GITLAB_HOST", "The GitLab host that GITLAB_TOKEN belongs to; default gitlab.com."},
+		{"CI_JOB_TOKEN", "GitLab CI job token, sent in JOB-TOKEN only to CI_SERVER_HOST, when that host has no " +
+			"other token."},
+		{"CI_SERVER_HOST", "The GitLab host CI_JOB_TOKEN belongs to; GitLab CI sets it."},
 		{"ANTHROPIC_API_KEY", "API key for --summarize with the anthropic provider when llm.api_key_env is empty."},
 		{"AWS_*", "The AWS SDK reads its usual variables for --summarize with the bedrock provider, such as " +
 			"AWS_REGION and AWS_PROFILE."},

@@ -8,6 +8,7 @@ import (
 	"log/slog"
 	"os"
 	"path/filepath"
+	"regexp"
 	"runtime"
 	"slices"
 	"strings"
@@ -15,6 +16,8 @@ import (
 	"golang.org/x/sync/errgroup"
 
 	"github.com/sassdavid/relgap/internal/execx"
+	"github.com/sassdavid/relgap/internal/forge"
+	"github.com/sassdavid/relgap/internal/registry"
 )
 
 const (
@@ -33,6 +36,7 @@ type Options struct {
 	Concurrency int      // files read at once; 0 means 4 per CPU
 	Report      []Pin    // pins from a Renovate report, resolved and merged with the rest
 	Base        string   // when set, repositories are named relative to it, as if the scan ran there
+	GitLabHosts []string // self-managed GitLab hosts whose git sources become gitlab: pins
 }
 
 // Runner starts git; [execx.Runner] implements it.
@@ -248,8 +252,14 @@ func (s *Scanner) run(ctx context.Context, t task) taskResult {
 }
 
 // finish classifies the value and names the tool. A tool pin tries its lookup name first, then
-// its raw name, then takes its fallback.
+// its raw name, then takes its fallback. An image pin's name comes from its tag.
 func (s *Scanner) finish(p *Pin, bareExact bool) {
+	if p.image != nil && !p.noLookup {
+		finishImage(p)
+	}
+	if p.git != nil && p.lookup == "" && !p.noLookup {
+		p.lookup = s.forgeLookup(*p.git)
+	}
 	p.classify(bareExact)
 	if p.Tool != "" || p.Kind != KindTool || p.noLookup {
 		return
@@ -264,6 +274,55 @@ func (s *Scanner) finish(p *Pin, bareExact bool) {
 		}
 	}
 	p.Tool = p.fallback
+}
+
+// forgeLookup returns the bitbucket: or gitlab: name of a repository on bitbucket.org,
+// gitlab.com or a configured GitLab host, and "" on any other host.
+func (s *Scanner) forgeLookup(g gitSource) string {
+	var name string
+	switch {
+	case g.host == forge.Bitbucket && strings.Count(g.path, "/") == 1:
+		name = registry.KindBitbucket + ":" + g.path
+	case g.host == forge.GitLab:
+		name = registry.KindGitLab + ":" + g.path
+	case slices.ContainsFunc(s.opts.GitLabHosts, func(h string) bool { return strings.EqualFold(h, g.host) }):
+		name = registry.KindGitLab + ":" + g.host + "/" + g.path
+	default:
+		return ""
+	}
+	if g.tagPrefix != "" {
+		name += "@" + g.tagPrefix
+	}
+	return name
+}
+
+// imageTag splits an image tag into its version and its variant, as Renovate's docker
+// versioning does: 1.27.0-alpine is version 1.27.0 with the variant -alpine.
+var imageTag = regexp.MustCompile(`^(v?\d+(?:\.\d+)*)(.*)$`)
+
+// finishImage names an image pin image:<name>, or image:<name>:<prefix>*<suffix> when its tag
+// has a variant or its extractVersion a pattern. A tag with a version is an exact pin of that tag.
+func finishImage(p *Pin) {
+	im := p.image
+	tag := strings.TrimSpace(p.Value)
+	prefix, suffix, numeric := im.prefix, im.suffix, false
+	if im.pattern {
+		if rest, ok := strings.CutPrefix(tag, prefix); ok {
+			if v, hasSuffix := strings.CutSuffix(rest, suffix); hasSuffix {
+				m := imageTag.FindStringSubmatch(v)
+				numeric = m != nil && m[2] == ""
+			}
+		}
+	} else if m := imageTag.FindStringSubmatch(tag); m != nil {
+		suffix, numeric = m[2], true
+	}
+	p.Tool = registry.ImageName(im.name, prefix, suffix)
+	if numeric {
+		p.Match, p.Version = MatchExact, tag
+		if prefix == "" {
+			p.Version = strings.TrimPrefix(tag, "v")
+		}
+	}
 }
 
 // preferAnnotations drops a pin that a renovate comment also reports on the same line with the

@@ -6,9 +6,12 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/sassdavid/relgap/internal/bitbucket"
 	"github.com/sassdavid/relgap/internal/classify"
 	"github.com/sassdavid/relgap/internal/enrich"
+	"github.com/sassdavid/relgap/internal/forge"
 	"github.com/sassdavid/relgap/internal/httpx"
+	"github.com/sassdavid/relgap/internal/oci"
 	"github.com/sassdavid/relgap/internal/registry"
 	"github.com/sassdavid/relgap/internal/registry/remote"
 	"github.com/sassdavid/relgap/internal/scan"
@@ -123,9 +126,18 @@ const summaryPrompt = "the summary prompt"
 
 // host is one row of the network host table.
 type host struct {
-	name, purpose, when string
-	token               bool
+	name, purpose, when, token string
 }
+
+const (
+	noToken     = "no"
+	anonToken   = "an anonymous pull token"
+	apiKey      = "the API key"
+	imagesWhat  = "image tags, manifests and image configs, with an anonymous pull token when the registry asks for one"
+	gitlabWhat  = "tags, releases, files and the top directory of projects"
+	gitlabToken = "`GITLAB_TOKEN`, then `GITLAB_ACCESS_TOKEN`, when `GITLAB_HOST` names this host (default " +
+		"gitlab.com); `CI_JOB_TOKEN` when `CI_SERVER_HOST` does"
+)
 
 // networkHosts returns every host relgap sends requests to. The test checks it against the
 // hosts in the cassettes.
@@ -145,55 +157,89 @@ func networkHosts() ([]host, error) {
 		{
 			httpx.GitHubAPIHost, "releases, tags, files and repository search (REST and GraphQL), the " +
 				"`index.yaml` of a GitHub Pages Helm repository, and the pull request comment of `relgap notify`",
-			"every command that looks up a tool", true,
+			"every command that looks up a tool", "the GitHub token, when one is found",
+		},
+		{
+			bitbucket.APIHost,
+			"tags, files and the top directory of Bitbucket Cloud repositories",
+			"`bitbucket:` pins and inputs, from Terraform module sources on bitbucket.org",
+			"`BITBUCKET_API_TOKEN`, when set",
+		},
+		{
+			forge.GitLab,
+			gitlabWhat,
+			"`gitlab:` pins and inputs, from Terraform module sources on gitlab.com",
+			gitlabToken,
+		},
+		{
+			"a host in `gitlab.hosts`", gitlabWhat, "`gitlab:<host>/...` pins and inputs",
+			"the entry's `token_env`, else as for gitlab.com",
 		},
 		{eol.Host, "release cycles and their end-of-life dates", "a tool whose registry entry names an " +
-			"endoflife.date product", false},
+			"endoflife.date product", noToken},
 		{httpx.OSVHost, "known vulnerabilities of the pinned and latest versions", "a tool whose registry " +
-			"entry names OSV packages", false},
+			"entry names OSV packages", noToken},
 		{
 			remote.TerraformRegistryHost, "provider versions and source repositories", "`tfprovider:` pins and inputs",
-			false,
+			noToken,
 		},
-		{remote.ArtifactHubHost, "chart versions and source repositories", "`chart:` pins and inputs", false},
-		{remote.NPMHost, "package repositories", "`npm:` inputs", false},
-		{remote.PyPIHost, "package repositories", "`pypi:` inputs", false},
+		{remote.ArtifactHubHost, "chart versions and source repositories", "`chart:` pins and inputs", noToken},
+		{remote.NPMHost, "package repositories", "`npm:` inputs", noToken},
+		{remote.PyPIHost, "package repositories", "`pypi:` inputs", noToken},
+		{oci.DockerHubAPI, imagesWhat, "`image:` pins and inputs on Docker Hub", anonToken},
+		{oci.DockerHubAuth, "anonymous pull tokens for Docker Hub", "`image:` pins and inputs on Docker Hub", noToken},
 	}
+	for _, r := range oci.DefaultRegistries() {
+		if r != oci.DockerHub {
+			hosts = append(hosts, host{
+				r, imagesWhat, "`image:` pins and inputs on this registry",
+				anonToken,
+			})
+		}
+	}
+	hosts = append(hosts,
+		host{
+			"a registry in `images.registries`", imagesWhat, "`image:` pins and inputs on this registry",
+			anonToken,
+		},
+		host{
+			"the host a registry or its token URL redirects to", "the same answer, such as a blob from storage",
+			"a registry that redirects, as registry.k8s.io does", "no; a redirect to another domain gets no token",
+		},
+	)
 	for _, h := range registry.WebHosts() {
 		hosts = append(hosts, host{h, "release-note pages", "a registry entry with a web-doc, structured-json " +
-			"or upgrade-guide source on this host", false})
+			"or upgrade-guide source on this host", noToken})
 	}
 	hosts = append(hosts,
 		host{anthropic.Host, summaryPrompt, "`--summarize` with `llm.provider: anthropic` and no " +
-			"`llm.base_url`", false},
+			"`llm.base_url`", apiKey},
 		host{
 			strings.Replace(mantle.Host, "REGION", "<region>", 1), summaryPrompt,
-			"`--summarize` with `llm.provider: bedrock-mantle` and no `llm.base_url`", false,
+			"`--summarize` with `llm.provider: bedrock-mantle` and no `llm.base_url`", apiKey,
 		},
 		host{
 			"the Bedrock Runtime endpoint of the AWS region", summaryPrompt,
-			"`--summarize` with `llm.provider: bedrock`", false,
+			"`--summarize` with `llm.provider: bedrock`", "AWS credentials",
 		},
 		host{
-			"the host of `llm.base_url`", summaryPrompt,
-			"`--summarize` with `llm.provider: openai-compatible`, or any provider with `llm.base_url` set", false,
+			"the host of `llm.base_url`",
+			summaryPrompt,
+			"`--summarize` with `llm.provider: openai-compatible`, or any provider with `llm.base_url` set",
+			apiKey,
 		},
 	)
 	return hosts, nil
 }
 
 func networkHostsTable(hosts []host) string {
-	t := &table{head: []string{"Host", "What relgap asks for", "When", "GitHub token"}}
+	t := &table{head: []string{"Host", "What relgap asks for", "When", "Token"}}
 	for _, h := range hosts {
 		name := code(h.name)
 		if strings.Contains(h.name, " ") {
 			name = prose(h.name)
 		}
-		token := "no"
-		if h.token {
-			token = "yes, when one is found"
-		}
-		t.add(name, prose(h.purpose), prose(h.when), token)
+		t.add(name, prose(h.purpose), prose(h.when), prose(h.token))
 	}
 	return t.String()
 }

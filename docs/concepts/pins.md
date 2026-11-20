@@ -18,8 +18,8 @@ six kinds:
 
 | Kind | Tool name | Example |
 |---|---|---|
-| tool | the registry name | `terraform`, `node` |
-| image | `image:` and the image | `image:golang` from a Dockerfile `FROM` |
+| tool | the registry name, or the repository on its host | `terraform`, `node`, `bitbucket:acme-ws/tf-network`, `gitlab:acme/platform/tf-dns` |
+| image | `image:` and the image, with a tag pattern for a variant | `image:golang` from `FROM golang:1.27.3`, `image:golang:*-alpine` from `FROM golang:1.27.3-alpine` |
 | action | `action:` and the action | `action:actions/checkout`, with `scan.detectors.ci_actions` |
 | tfprovider | `tfprovider:` and the provider | `tfprovider:hashicorp/aws` |
 | tfmodule | `tfmodule:` and the registry module | `tfmodule:terraform-aws-modules/vpc/aws` from a `module` block |
@@ -41,7 +41,9 @@ the `cluster-autoscaler-1.37.0` tags. A trailing `v?` is allowed. Any other form
 unresolved, because comparing it with every tag of the repository would be wrong. relgap ignores
 `versioning` and orders versions with the tool's scheme. A module whose
 source is a git repository on github.com with `?ref=` is a tool pin of `github:owner/repo`, and
-its ref counts as a version only when it is `1.2.3` or `v1.2.3`.
+its ref counts as a version only when it is `1.2.3` or `v1.2.3`. The same holds on bitbucket.org
+(`bitbucket:workspace/repo`), on gitlab.com (`gitlab:group/.../repo`) and on a host in
+`gitlab.hosts` (`gitlab:<host>/group/.../repo`). A git source on any other host stays unresolved.
 
 The value decides which versions the pin allows. An exact pin such as `1.15.8` allows one
 version. relgap marks the other three forms with ≈:
@@ -51,7 +53,8 @@ version. relgap marks the other three forms with ≈:
 - a channel (`latest`, `lts`, `ref:main`) names no version at all.
 
 Terraform reads a bare `6.0` as exactly 6.0.0, so in `.tf` files a partial version is an exact
-pin. [Versions, ranges and release lines](/concepts/ranges) says how each form becomes one
+pin. An image tag names one image, so `python:3.14-slim` is an exact pin of the tag `3.14-slim`
+too. [Versions, ranges and release lines](/concepts/ranges) says how each form becomes one
 version when a command needs one.
 
 ## Finding repositories and files
@@ -102,8 +105,11 @@ variable "karpenter" {
 The first line after the comment that is neither blank nor a comment must hold exactly one
 version, which becomes the pin. `//` and `<!-- -->` comments work too. The datasource sets the
 kind: `helm` gives a chart pin, `github-releases` and `github-tags` a `github:` pin,
-`terraform-provider` and `terraform-module` a provider or module pin, `docker` an image pin, and
-`aqua`, `npm` and `pypi` their package. Any other datasource looks the tool up by `packageName`,
+`terraform-provider` and `terraform-module` a provider or module pin, `docker` an image pin,
+`bitbucket-tags` a `bitbucket:` pin, `gitlab-tags` and `gitlab-releases` a `gitlab:` pin (with the
+host of `registryUrl` when it is in `gitlab.hosts`), `git-tags` and `git-refs` the pin of the
+repository their URL names, and `aqua`, `npm` and `pypi` their package. On a `docker` datasource,
+`extractVersion=^<prefix>(?<version>...)<suffix>$` names the tool `image:<name>:<prefix>*<suffix>`. Any other datasource looks the tool up by `packageName`,
 then `depName`. When another detector found a pin on the same line with the same value, the
 comment's pin replaces it. Dockerfiles keep their own detector, which reads these comments above
 `ARG` and `ENV`.

@@ -15,6 +15,7 @@ import (
 
 	"github.com/sassdavid/relgap/internal/github"
 	"github.com/sassdavid/relgap/internal/httpx"
+	"github.com/sassdavid/relgap/internal/oci"
 	"github.com/sassdavid/relgap/internal/registry"
 	"github.com/sassdavid/relgap/internal/registry/remote"
 	"github.com/sassdavid/relgap/internal/testutil/vcr"
@@ -412,4 +413,35 @@ func tagsOfRefs(refs []version.Ref) []string {
 		out[i] = r.Tag
 	}
 	return out
+}
+
+// TestRemoteImage looks images up through the registry: example/api's label names a GitHub
+// repository, the agent's names GitLab and gives no repository, and the tag pattern picks the
+// newest stable tag with the variant for the label.
+func TestRemoteImage(t *testing.T) {
+	t.Parallel()
+	rt := vcr.ForTest(
+		t,
+		filepath.Join("..", "..", "..", "testdata", "cassettes", "non-github", "images"),
+		vcr.Scrubber{},
+	)
+	hc := httpx.New(httpx.Options{Logger: slog.New(slog.DiscardHandler), Transport: rt})
+	r := remote.New(hc, nil, nil).WithImages(oci.New(hc, oci.Options{}))
+
+	found, err := r.Find(t.Context(), registry.KindImage, "example/api")
+	require.NoError(t, err)
+	assert.Equal(t, "example-org/api", found.Repo)
+	assert.Equal(t, "image:example/api", found.Name)
+	assert.Equal(t, "docker.io/example/api", found.Image)
+	assert.Len(t, found.Versions, 7, "every tag; the universe applies the pattern")
+
+	found, err = r.Find(t.Context(), registry.KindImage, "public.ecr.aws/example/agent:*-al2023")
+	require.NoError(t, err)
+	assert.Empty(t, found.Repo, "a GitLab source isn't a GitHub repository")
+	assert.Equal(t, "-al2023", found.TagSuffix)
+
+	_, err = r.Find(t.Context(), registry.KindImage, "registry.internal.test/team/app")
+	require.ErrorIs(t, err, registry.ErrUnsupported)
+	_, err = remote.New(hc, nil, nil).Find(t.Context(), registry.KindImage, "alpine")
+	require.ErrorIs(t, err, registry.ErrUnsupported, "without an image reader")
 }

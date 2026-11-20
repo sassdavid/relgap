@@ -51,9 +51,23 @@ type Pin struct {
 	Match    Match    `json:"match"`
 	Location Location `json:"location"`
 
-	lookup   string // name to resolve when it differs from RawName
-	fallback string // tool name to use when neither lookup nor RawName resolves
-	noLookup bool   // leave the pin unresolved, as for an extractVersion relgap can't read
+	lookup   string     // name to resolve when it differs from RawName
+	fallback string     // tool name to use when neither lookup nor RawName resolves
+	noLookup bool       // leave the pin unresolved, as for an extractVersion relgap can't read
+	git      *gitSource // a repository on a host other than GitHub, named once the hosts are known
+	image    *imageRef  // an image, named from its tag once the value is known
+}
+
+// gitSource is a repository on a git host other than github.com.
+type gitSource struct {
+	host, path, tagPrefix string
+}
+
+// imageRef is an image name and, from a Renovate extractVersion, the tag pattern around its
+// version.
+type imageRef struct {
+	name, prefix, suffix string
+	pattern              bool // prefix and suffix come from extractVersion
 }
 
 // Location is where a pin was found.

@@ -6,6 +6,7 @@ import (
 	"net/url"
 	"path"
 	"regexp"
+	"slices"
 	"strconv"
 	"strings"
 
@@ -13,6 +14,8 @@ import (
 	"github.com/hashicorp/hcl/v2/hclsyntax"
 	hcljson "github.com/hashicorp/hcl/v2/json"
 	"github.com/zclconf/go-cty/cty"
+
+	"github.com/sassdavid/relgap/internal/forge"
 )
 
 func isTerraform(rel string) bool {
@@ -194,7 +197,8 @@ func tfModulePin(raw, name, version string, line int) Pin {
 }
 
 // gitSourcePin reads a git module source with ?ref=. A repository on github.com is a
-// github:owner/repo pin; another host gives an unresolved pin.
+// github:owner/repo pin; one on another host is named in [Scanner.finish], which knows the
+// GitLab hosts of the config, and stays unresolved on any other host.
 func gitSourcePin(src string, line int) (Pin, bool) {
 	addr, query, _ := strings.Cut(strings.TrimPrefix(src, "git::"), "?")
 	q, err := url.ParseQuery(query)
@@ -204,6 +208,8 @@ func gitSourcePin(src string, line int) (Pin, bool) {
 	p := Pin{RawName: withoutParam(src, "ref"), Kind: KindTool, Value: q.Get("ref"), Location: Location{Line: line}}
 	if repo, ok := githubSource(addr); ok {
 		p.lookup = prefixGitHub + repo
+	} else if host, path, isRemote := gitRemote(addr); isRemote && host != forge.GitHub {
+		p.git = &gitSource{host: host, path: path}
 	}
 	return p, true
 }
@@ -212,21 +218,54 @@ func gitSourcePin(src string, line int) (Pin, bool) {
 // github.com/o/r, https://github.com/o/r.git, git@github.com:o/r.git and
 // ssh://git@github.com/o/r.git, each with an optional //subdir.
 func githubSource(addr string) (string, bool) {
-	s := addr
-	for _, scheme := range []string{"https://", "http://", "ssh://"} {
-		s = strings.TrimPrefix(s, scheme)
-	}
-	s = strings.TrimPrefix(s, "git@")
-	rest, ok := strings.CutPrefix(strings.Replace(s, "github.com:", "github.com/", 1), "github.com/")
-	if !ok {
+	host, repo, ok := gitRemote(addr)
+	if !ok || host != forge.GitHub || strings.Count(repo, "/") != 1 || !registryRepo.MatchString(repo) {
 		return "", false
 	}
-	rest, _, _ = strings.Cut(rest, "//")
-	rest = strings.TrimSuffix(strings.TrimSuffix(rest, "/"), ".git")
-	if strings.Count(rest, "/") != 1 || !registryRepo.MatchString(rest) {
-		return "", false
+	return repo, true
+}
+
+var (
+	remotePart = regexp.MustCompile(`^[A-Za-z0-9_.~-]+$`)
+	remoteHost = regexp.MustCompile(`^[A-Za-z0-9-]+(\.[A-Za-z0-9-]+)+$`)
+)
+
+// gitRemote returns the lowercase host and the repository path of a git address in the forms
+// Terraform and Renovate write: https://host/path.git, ssh://git@host[:port]/path, git@host:path
+// and host/path, each with an optional git:: prefix and //subdir. The host must have a dot.
+func gitRemote(addr string) (string, string, bool) {
+	s := strings.TrimPrefix(addr, "git::")
+	scheme := ""
+	for _, sc := range []string{"https://", "http://", "ssh://", "git://"} {
+		if rest, ok := strings.CutPrefix(s, sc); ok {
+			s, scheme = rest, sc
+			break
+		}
 	}
-	return rest, true
+	if at := strings.IndexByte(s, '@'); at >= 0 && (strings.IndexByte(s, '/') < 0 || at < strings.IndexByte(s, '/')) {
+		s = s[at+1:]
+	}
+	var host, repo string
+	if scheme == "" {
+		i := strings.IndexAny(s, ":/")
+		if i <= 0 {
+			return "", "", false
+		}
+		host, repo = s[:i], s[i+1:]
+	} else {
+		host, repo, _ = strings.Cut(s, "/")
+		host, _, _ = strings.Cut(host, ":")
+	}
+	if i := strings.Index(repo, "//"); i >= 0 {
+		repo = repo[:i]
+	}
+	repo = strings.TrimSuffix(strings.TrimSuffix(strings.Trim(repo, "/"), ".git"), "/")
+	parts := strings.Split(repo, "/")
+	if !remoteHost.MatchString(host) || len(parts) < 2 ||
+		slices.ContainsFunc(parts, func(p string) bool { return !remotePart.MatchString(p) }) {
+		return "", "", false
+	}
+	return strings.ToLower(host), repo, true
 }
 
 var registryRepo = regexp.MustCompile(`^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$`)

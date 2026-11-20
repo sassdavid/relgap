@@ -99,7 +99,7 @@
         }
       },
       {
-        "tool": "",
+        "tool": "gitlab:example/modules",
         "raw_name": "git::https://gitlab.com/example/modules.git",
         "kind": "tool",
         "value": "v3.0.0",

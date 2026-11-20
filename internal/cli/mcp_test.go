@@ -131,7 +131,7 @@ func mcpCases() []mcpCase {
 		},
 		{
 			name: "outdated", now: "2026-11-11T12:00:00Z",
-			cassettes: []string{"outdated/project.yaml", "outdated/project-added.yaml"},
+			cassettes: []string{"outdated/project.yaml", "outdated/project-added.yaml", "outdated/project-image.yaml"},
 			setup: func(t *testing.T, f *mcpFixture) {
 				t.Helper()
 				f.extract(t, "spec_output_and_ci_5.txtar")

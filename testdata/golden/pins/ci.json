@@ -44,8 +44,8 @@
         "kind": "image",
         "value": "18",
         "version": "18",
-        "exact": false,
-        "match": "prefix",
+        "exact": true,
+        "match": "exact",
         "location": {
           "repo": ".",
           "file": ".github/workflows/ci.yml",
@@ -119,8 +119,8 @@
         "kind": "image",
         "value": "3.14",
         "version": "3.14",
-        "exact": false,
-        "match": "prefix",
+        "exact": true,
+        "match": "exact",
         "location": {
           "repo": ".",
           "file": "bitbucket-pipelines.yml",

@@ -15,6 +15,7 @@ import (
 
 	"github.com/sassdavid/relgap/internal/classify"
 	"github.com/sassdavid/relgap/internal/enrich"
+	"github.com/sassdavid/relgap/internal/forge"
 	"github.com/sassdavid/relgap/internal/github"
 	"github.com/sassdavid/relgap/internal/registry"
 	"github.com/sassdavid/relgap/internal/scan"
@@ -29,8 +30,8 @@ const (
 	StatusCurrent  Status = "current"  // at the latest version on its line
 	StatusOutdated Status = "outdated" // behind it
 	StatusUnknown  Status = "unknown"  // a channel other than latest, or a value that matches no version
-	StatusSkipped  Status = "skipped"  // the tool has no GitHub repository relgap can read
-	StatusError    Status = "error"    // GitHub failed for this tool
+	StatusSkipped  Status = "skipped"  // the tool has no repository or registry relgap can read
+	StatusError    Status = "error"    // the host failed for this tool
 )
 
 // Ways a non-exact pin becomes its current version, next to [version.PickKnown] and
@@ -50,7 +51,8 @@ type Outdated struct {
 // OutdatedPin compares one pin with the latest version of its tool.
 type OutdatedPin struct {
 	Tool    string                `json:"tool"`
-	Repo    string                `json:"repo,omitempty"` // GitHub owner/name
+	Repo    string                `json:"repo,omitempty"` // GitHub owner/name, or the project path on Host
+	Host    string                `json:"host,omitempty"` // the host of Repo when it isn't github.com
 	Pin     scan.Pin              `json:"pin"`
 	Current string                `json:"current,omitempty"` // the version the pin stands for
 	Via     string                `json:"via,omitempty"`     // how a non-exact pin became Current
@@ -122,7 +124,7 @@ func (o *Outdater) Outdated(ctx context.Context, req OutdatedRequest) (*Outdated
 	tools := groupTools(req)
 	var queries []github.RecentQuery
 	for _, t := range tools {
-		if t.err == nil && t.spec.Version.Universe != registry.UniverseChart {
+		if t.err == nil && fromRecent(t.spec) {
 			queries = append(queries, recentQuery(t.spec))
 		}
 	}
@@ -173,6 +175,12 @@ func (o *Outdater) Outdated(ctx context.Context, req OutdatedRequest) (*Outdated
 		)
 	})
 	return out, nil
+}
+
+// fromRecent reports whether the batched GitHub lookup knows t's newest versions: a tool on
+// GitHub whose versions are its releases or tags.
+func fromRecent(t registry.ToolSpec) bool {
+	return t.Repo != "" && forge.IsGitHub(t.Host) && !t.Listed()
 }
 
 func recentQuery(t registry.ToolSpec) github.RecentQuery {
@@ -276,7 +284,7 @@ func (c *comparer) fail(row OutdatedPin, err error) OutdatedPin {
 
 func (c *comparer) compare(ctx context.Context, i int) OutdatedPin {
 	pin := c.req.Pins[i]
-	row := OutdatedPin{Tool: pin.Tool, Repo: c.tool.spec.Repo, Pin: pin}
+	row := OutdatedPin{Tool: pin.Tool, Repo: c.tool.spec.Repo, Host: c.tool.spec.Host, Pin: pin}
 	if c.tool.err != nil {
 		row.Status, row.Note = skipStatus(c.tool.err), c.tool.err.Error()
 		return row
@@ -288,6 +296,12 @@ func (c *comparer) compare(ctx context.Context, i int) OutdatedPin {
 	rules, err := t.Version.Rules()
 	if err != nil {
 		return c.fail(row, fmt.Errorf("%s: %w", t.Name, err))
+	}
+	if c.window == nil && !fromRecent(t) {
+		// Every other host lists all versions in one go, so the window is the whole list.
+		if c.window, err = c.o.digester.Universe(ctx, t); err != nil {
+			return c.fail(row, err)
+		}
 	}
 	if c.window == nil {
 		c.window = version.NewUniverse(ctx, c.o.digester.logger, recentRefs(c.recent.Releases), rules)
@@ -321,8 +335,11 @@ func (c *comparer) compare(ctx context.Context, i int) OutdatedPin {
 	}
 	row.Latest, row.Digest, row.Hidden = d.To, d, d.Hidden
 	row.Counts = countsOf(d.Counts)
-	if t.Version.Universe == registry.UniverseChart {
+	switch {
+	case t.Version.Universe == registry.UniverseChart:
 		row.Counts, row.Note = nil, ChartVersionsNote(t)
+	case t.Version.Universe == registry.UniverseImage && t.Notes == nil:
+		row.Counts, row.Note = nil, ImageVersionsNote(t)
 	}
 	row.Behind = behind(rules.Scheme, current, d.Versions)
 	row.Status = StatusOutdated

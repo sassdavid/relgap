@@ -1,0 +1,35 @@
+# non-github-sources criterion 1: a Bitbucket Cloud module source with ?ref=2.1.0 gives a
+# bitbucket: pin that outdated compares, and digest reads the Keep a Changelog CHANGELOG.md of the
+# repository. The first tags request answers 429 and the retry succeeds; the tags come on two
+# pages. A private repository answers 404 without a token, which fails only its own pin.
+env TEST_NOW=2026-11-20T12:00:00Z
+env TEST_CASSETTE=$CASSETTES/non-github/bitbucket.yaml
+cd project
+
+exec relgap pins --format plain
+stdout '^bitbucket:example-ws/tf-network\s+2\.1\.0\s+terraform\s+main\.tf:2$'
+stdout '^bitbucket:example-ws/private-mod\s+v1\.0\.0\s+terraform\s+main\.tf:6$'
+
+exec expect-exit 1 relgap outdated --format json
+jsonschema outdated-v1.json stdout
+stdout '"tool": "bitbucket:example-ws/tf-network",\s+"repo": "example-ws/tf-network",\s+"host": "bitbucket.org"'
+stdout '"current": "2.1.0",\s+"latest": "3.0.0",\s+"behind": \{\s+"releases": 2,'
+stdout '"status": "outdated"'
+stdout '"tool": "bitbucket:example-ws/private-mod",[^}]*\}[^}]*\},\s+"status": "error",\s+"note": "[^"]*HTTP 404'
+stderr 'WRN no Bitbucket token found'
+! stderr 'Authorization|Bearer'
+
+exec relgap digest bitbucket:example-ws/tf-network 2.1.0..3.0.0 --format json
+jsonschema digest-v1.json stdout
+golden stdout digest/bitbucket-tf-network.json
+grep '^GET https://api.bitbucket.org/2.0/repositories/example-ws/tf-network/refs/tags\?' $WORK/requests.log
+! grep 'api.github.com' $WORK/requests.log
+
+-- project/main.tf --
+module "network" {
+  source = "git::git@bitbucket.org:example-ws/tf-network.git//.?ref=2.1.0"
+}
+
+module "private" {
+  source = "git::https://bitbucket.org/example-ws/private-mod.git?ref=v1.0.0"
+}

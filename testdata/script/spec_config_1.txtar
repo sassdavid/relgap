@@ -42,7 +42,9 @@ cache.dir                  ""                                                def
 cache.ttl_override         {}                                                default
 github.concurrency         4                                                 project file $WORK/.relgap.yaml
 github.host                github.com                                        default
+gitlab.hosts               []                                                default
 ignore                     [{"tool":"java"}]                                 project file $WORK/.relgap.yaml
+images.registries          []                                                default
 llm.api                    ""                                                default
 llm.api_key_env            ""                                                default
 llm.aws_profile            dev                                               user file $WORK/.config/relgap/config.yaml

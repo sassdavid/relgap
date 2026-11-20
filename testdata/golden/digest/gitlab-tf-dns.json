@@ -1,0 +1,140 @@
+{
+  "schema_version": "1",
+  "tool": "relgap",
+  "version": "dev",
+  "generated_at": "2026-11-20T12:00:00Z",
+  "data": {
+    "tools": [
+      {
+        "tool": "tf-dns",
+        "repo": "example-group/platform/tf-dns",
+        "host": "gitlab.com",
+        "from": "1.2.0",
+        "to": "1.3.0",
+        "versions": [
+          {
+            "version": "1.2.1",
+            "tag": "v1.2.1",
+            "published_at": "2026-09-20T09:00:00Z"
+          },
+          {
+            "version": "1.3.0",
+            "tag": "v1.3.0",
+            "published_at": "2026-11-05T09:00:00Z"
+          }
+        ],
+        "entries": [
+          {
+            "id": "e-fe4a9ae1",
+            "version": "1.2.1",
+            "kind": "fix",
+            "confidence": 0.9,
+            "text": "Alias records keep `evaluate_target_health` when the target changes, instead of falling back to false on the next apply.",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://gitlab.com/example-group/platform/tf-dns/-/releases/v1.2.1",
+              "heading": [
+                "Bug fixes"
+              ]
+            }
+          },
+          {
+            "id": "e-d504b393",
+            "version": "1.2.1",
+            "kind": "fix",
+            "confidence": 0.9,
+            "text": "The `ttl` variable is ignored for alias records, as the Route 53 API requires, and no longer produces a perpetual diff.",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://gitlab.com/example-group/platform/tf-dns/-/releases/v1.2.1",
+              "heading": [
+                "Bug fixes"
+              ]
+            }
+          },
+          {
+            "id": "e-11f919d5",
+            "version": "1.2.1",
+            "kind": "fix",
+            "confidence": 0.9,
+            "text": "Health checks created for failover records carry the module tags.",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://gitlab.com/example-group/platform/tf-dns/-/releases/v1.2.1",
+              "heading": [
+                "Bug fixes"
+              ]
+            }
+          },
+          {
+            "id": "e-996cdf24",
+            "version": "1.3.0",
+            "kind": "breaking",
+            "confidence": 0.95,
+            "text": "The `zone_id` output is renamed to `hosted_zone_id`. Update every reference in the calling modules before you upgrade, because Terraform fails the plan on the old name.",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://gitlab.com/example-group/platform/tf-dns/-/releases/v1.3.0",
+              "heading": [
+                "Breaking changes"
+              ]
+            }
+          },
+          {
+            "id": "e-bfd2a63c",
+            "version": "1.3.0",
+            "kind": "feature",
+            "confidence": 0.9,
+            "text": "Records accept a `set_identifier`, so weighted and latency-based routing policies work without a second module.",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://gitlab.com/example-group/platform/tf-dns/-/releases/v1.3.0",
+              "heading": [
+                "Features"
+              ]
+            }
+          },
+          {
+            "id": "e-29cab107",
+            "version": "1.3.0",
+            "kind": "feature",
+            "confidence": 0.9,
+            "text": "The module creates the DNSSEC signing key when `dnssec_enabled` is true.",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://gitlab.com/example-group/platform/tf-dns/-/releases/v1.3.0",
+              "heading": [
+                "Features"
+              ]
+            }
+          },
+          {
+            "id": "e-c6e4ec17",
+            "version": "1.3.0",
+            "kind": "fix",
+            "confidence": 0.9,
+            "text": "Private zones attach to every VPC in `vpc_ids` instead of the first one only.",
+            "source": {
+              "adapter": "gh-release",
+              "url": "https://gitlab.com/example-group/platform/tf-dns/-/releases/v1.3.0",
+              "heading": [
+                "Bug fixes"
+              ]
+            }
+          }
+        ],
+        "counts": {
+          "breaking": 1,
+          "deprecation": 0,
+          "feature": 2,
+          "fix": 4,
+          "other": 0,
+          "security": 0
+        },
+        "hidden": 0,
+        "warnings": []
+      }
+    ]
+  },
+  "errors": []
+}

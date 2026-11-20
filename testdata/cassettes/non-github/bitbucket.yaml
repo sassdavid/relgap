@@ -1,0 +1,147 @@
+---
+# Written by hand from the Bitbucket Cloud API reference: a 429 that succeeds on retry, two pages of tags, the root listing, a Keep a Changelog file and a private repository without a token. Not a recording.
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.bitbucket.org
+        headers:
+            Accept:
+                - "application/json"
+        url: "https://api.bitbucket.org/2.0/repositories/example-ws/tf-network/refs/tags?fields=values.name%2Cvalues.target.hash%2Cvalues.target.date%2Cnext&pagelen=100"
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 85
+        body: "{\"type\":\"error\",\"error\":{\"message\":\"Rate limit for this resource has been exceeded\"}}"
+        headers:
+            Retry-After:
+                - "0"
+            Content-Type:
+                - "application/json"
+        status: 429 Too Many Requests
+        code: 429
+        duration: 0s
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.bitbucket.org
+        headers:
+            Accept:
+                - "application/json"
+        url: "https://api.bitbucket.org/2.0/repositories/example-ws/tf-network/refs/tags?fields=values.name%2Cvalues.target.hash%2Cvalues.target.date%2Cnext&pagelen=100"
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 522
+        body: "{\"values\":[{\"name\":\"1.0.0\",\"target\":{\"hash\":\"1111111111111111111111111111111111111111\",\"date\":\"2025-11-01T10:00:00+00:00\"}},{\"name\":\"2.0.0\",\"target\":{\"hash\":\"2222222222222222222222222222222222222222\",\"date\":\"2026-03-10T10:00:00+00:00\"}},{\"name\":\"2.1.0\",\"target\":{\"hash\":\"3333333333333333333333333333333333333333\",\"date\":\"2026-07-01T10:00:00+00:00\"}}],\"next\":\"https://api.bitbucket.org/2.0/repositories/example-ws/tf-network/refs/tags?fields=values.name%2Cvalues.target.hash%2Cvalues.target.date%2Cnext&page=2&pagelen=100\"}"
+        headers:
+            Content-Type:
+                - "application/json"
+        status: 200 OK
+        code: 200
+        duration: 0s
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.bitbucket.org
+        headers:
+            Accept:
+                - "application/json"
+        url: "https://api.bitbucket.org/2.0/repositories/example-ws/tf-network/refs/tags?fields=values.name%2Cvalues.target.hash%2Cvalues.target.date%2Cnext&page=2&pagelen=100"
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 356
+        body: "{\"values\":[{\"name\":\"2.2.0\",\"target\":{\"hash\":\"4444444444444444444444444444444444444444\",\"date\":\"2026-09-14T10:00:00+00:00\"}},{\"name\":\"3.0.0\",\"target\":{\"hash\":\"6666666666666666666666666666666666666666\",\"date\":\"2026-11-02T10:00:00+00:00\"}},{\"name\":\"3.0.0-rc.1\",\"target\":{\"hash\":\"5555555555555555555555555555555555555555\",\"date\":\"2026-10-20T10:00:00+00:00\"}}]}"
+        headers:
+            Content-Type:
+                - "application/json"
+        status: 200 OK
+        code: 200
+        duration: 0s
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.bitbucket.org
+        headers:
+            Accept:
+                - "application/json"
+        url: "https://api.bitbucket.org/2.0/repositories/example-ws/tf-network/src/HEAD/?pagelen=100"
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 244
+        body: "{\"pagelen\":100,\"page\":1,\"values\":[{\"path\":\"CHANGELOG.md\",\"type\":\"commit_file\",\"size\":1006},{\"path\":\"README.md\",\"type\":\"commit_file\",\"size\":2210},{\"path\":\"main.tf\",\"type\":\"commit_file\",\"size\":3120},{\"path\":\"examples\",\"type\":\"commit_directory\"}]}"
+        headers:
+            Content-Type:
+                - "application/json"
+        status: 200 OK
+        code: 200
+        duration: 0s
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.bitbucket.org
+        url: "https://api.bitbucket.org/2.0/repositories/example-ws/tf-network/src/HEAD/CHANGELOG.md"
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 1006
+        body: "# Changelog\n\nAll notable changes to this module are documented in this file. The format follows Keep a Changelog,\nand the module follows Semantic Versioning.\n\n## [3.0.0] - 2026-11-02\n\n### Removed\n\n- BREAKING: the `enable_classiclink` variable is gone. Remove it from every module call before you upgrade.\n\n### Added\n\n- The `ipv6_cidr_block` output returns the IPv6 block of the VPC.\n\n## [3.0.0-rc.1] - 2026-10-20\n\n### Removed\n\n- BREAKING: the `enable_classiclink` variable is gone.\n\n## [2.2.0] - 2026-09-14\n\n### Added\n\n- Optional VPC flow logs to CloudWatch Logs, switched on with `flow_logs_enabled`.\n\n### Deprecated\n\n- The `single_nat_gateway` variable is deprecated in favour of `nat_gateway_mode`.\n\n### Fixed\n\n- NAT gateways now carry the `Name` tag from `var.name`.\n\n## [2.1.0] - 2026-07-01\n\n### Added\n\n- Private subnets accept a list of extra route tables.\n\n## [2.0.0] - 2026-03-10\n\n### Changed\n\n- The module needs the AWS provider 6.0 or newer.\n\n## [1.0.0] - 2025-11-01\n\n### Added\n\n- First release.\n"
+        headers:
+            Content-Type:
+                - "text/markdown"
+        status: 200 OK
+        code: 200
+        duration: 0s
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.bitbucket.org
+        headers:
+            Accept:
+                - "application/json"
+        url: "https://api.bitbucket.org/2.0/repositories/example-ws/private-mod/refs/tags?fields=values.name%2Cvalues.target.hash%2Cvalues.target.date%2Cnext&pagelen=100"
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 82
+        body: "{\"type\":\"error\",\"error\":{\"message\":\"Repository example-ws/private-mod not found\"}}"
+        headers:
+            Content-Type:
+                - "application/json"
+        status: 404 Not Found
+        code: 404
+        duration: 0s

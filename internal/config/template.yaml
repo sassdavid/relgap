@@ -24,7 +24,7 @@ schema_version: 1
 #     generic: false              # read NAME_VERSION=x.y.z lines in extra_files
 #   extra_files: []               # globs the renovate-comment and generic detectors read, e.g. ["Makefile"]
 #
-# tools: {}                       # local registry entries, for example {hk: {repo: jdx/hk}}
+# tools: {}                       # local registry entries, for example {hk: {repo: jdx/hk}} or {mod: {repo: ws/mod, host: bitbucket.org}}
 # aliases: {}                     # raw pin name to tool, for example {TG_VERSION: terragrunt}
 # ignore: []                      # pins never reported, for example [{tool: terraform, path: "**/legacy/**"}, {name: "git::*bitbucket.org*"}]
 #
@@ -43,3 +43,9 @@ schema_version: 1
 #   aws_profile: ""               # bedrock and bedrock-mantle; empty means the AWS default chain
 #   max_input_tokens: 30000
 #   timeout: 120s                 # Go duration, at most 2m
+#
+# gitlab:
+#   hosts: []                     # self-managed GitLab hosts, for example [{host: gitlab.example.com, token_env: MY_GITLAB_TOKEN}]
+#
+# images:
+#   registries: []                # image registries besides Docker Hub, ghcr.io, registry.k8s.io, quay.io, public.ecr.aws and mcr.microsoft.com
