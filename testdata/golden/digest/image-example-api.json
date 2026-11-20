@@ -6,6 +6,7 @@
   "data": {
     "tools": [
       {
+        "id": "image:example/api",
         "tool": "image:example/api",
         "repo": "example-org/api",
         "image": "docker.io/example/api",

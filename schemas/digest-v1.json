@@ -49,7 +49,12 @@
       "additionalProperties": false,
       "required": ["tool", "repo", "from", "to", "versions", "entries", "counts", "hidden", "warnings"],
       "properties": {
-        "tool": { "description": "Canonical tool name.", "type": "string", "minLength": 1 },
+        "id": {
+          "description": "The tool's identity: the name outdated prints in tool and relgap digest accepts, such as terraform, chart:aws/aws-for-fluent-bit or github:aws/aws-for-fluent-bit. Tools with the same short name have different ids.",
+          "type": "string",
+          "minLength": 1
+        },
+        "tool": { "description": "Short name of the tool's spec. Two tools can share it; key on id.", "type": "string", "minLength": 1 },
         "repo": {
           "description": "Repository the notes come from: GitHub owner/repo, or the project path on host. Empty for an image whose source label names no GitHub repository.",
           "type": "string"

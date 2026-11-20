@@ -6,6 +6,7 @@
   "data": {
     "tools": [
       {
+        "id": "gitlab:example-group/platform/tf-dns",
         "tool": "tf-dns",
         "repo": "example-group/platform/tf-dns",
         "host": "gitlab.com",

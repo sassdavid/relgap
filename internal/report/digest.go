@@ -50,7 +50,8 @@ type Claim struct {
 
 // ToolDigest is the digest of one tool over (From, To].
 type ToolDigest struct {
-	Tool     string                `json:"tool"`
+	ID       string                `json:"id"`   // the tool's identity: the name outdated prints in tool and digest accepts
+	Tool     string                `json:"tool"` // the short name of the tool's spec
 	Repo     string                `json:"repo"`
 	Host     string                `json:"host,omitempty"`  // the host of Repo when it isn't github.com
 	Image    string                `json:"image,omitempty"` // registry/repository of an image tool
@@ -95,6 +96,7 @@ type GitHub interface {
 
 // DigestRequest says what to digest.
 type DigestRequest struct {
+	ID                 string // the tool's identity; empty means the spec's name
 	Tool               registry.ToolSpec
 	From, To           string // To empty means the latest stable version on the line
 	Line               version.Level
@@ -237,6 +239,7 @@ func (d *Digester) Digest(ctx context.Context, req DigestRequest) (*ToolDigest, 
 		return nil, fmt.Errorf("select %s range: %w", t.Name, err)
 	}
 	out := &ToolDigest{
+		ID:       cmp.Or(req.ID, t.Name),
 		Tool:     t.Name,
 		Repo:     t.Repo,
 		Host:     t.Host,
@@ -524,6 +527,11 @@ func newestStable(u *version.Universe) version.V {
 
 // ChartVersionsNote explains why a [registry.UniverseChart] tool has versions but no notes.
 func ChartVersionsNote(t registry.ToolSpec) string {
+	if t.Repo == "" {
+		return fmt.Sprintf("the %s chart names no GitHub repository in its source annotation, so the versions "+
+			"come from %s without notes; for notes, pin the application's repository too "+
+			"(datasource=github-releases)", t.Name, t.Version.VersionsURL)
+	}
 	return fmt.Sprintf("%s has no tag per %s chart version, so the versions come from %s without notes; "+
 		"for notes, pin the application's repository too (datasource=github-releases)",
 		t.Repo, t.Name, t.Version.VersionsURL)

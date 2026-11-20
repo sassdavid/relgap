@@ -6,6 +6,7 @@
   "data": {
     "tools": [
       {
+        "id": "kubectl",
         "tool": "kubectl",
         "repo": "kubernetes/kubernetes",
         "from": "1.36.0",

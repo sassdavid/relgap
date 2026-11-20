@@ -12,14 +12,14 @@
 | `artifacthub.io` | chart versions and source repositories | `chart:` pins and inputs | no |
 | `registry.npmjs.org` | package repositories | `npm:` inputs | no |
 | `pypi.org` | package repositories | `pypi:` inputs | no |
-| `registry-1.docker.io` | image tags, manifests and image configs, with an anonymous pull token when the registry asks for one | `image:` pins and inputs on Docker Hub | an anonymous pull token |
-| `auth.docker.io` | anonymous pull tokens for Docker Hub | `image:` pins and inputs on Docker Hub | no |
-| `ghcr.io` | image tags, manifests and image configs, with an anonymous pull token when the registry asks for one | `image:` pins and inputs on this registry | an anonymous pull token |
-| `registry.k8s.io` | image tags, manifests and image configs, with an anonymous pull token when the registry asks for one | `image:` pins and inputs on this registry | an anonymous pull token |
-| `quay.io` | image tags, manifests and image configs, with an anonymous pull token when the registry asks for one | `image:` pins and inputs on this registry | an anonymous pull token |
-| `public.ecr.aws` | image tags, manifests and image configs, with an anonymous pull token when the registry asks for one | `image:` pins and inputs on this registry | an anonymous pull token |
-| `mcr.microsoft.com` | image tags, manifests and image configs, with an anonymous pull token when the registry asks for one | `image:` pins and inputs on this registry | an anonymous pull token |
-| a registry in `images.registries` | image tags, manifests and image configs, with an anonymous pull token when the registry asks for one | `image:` pins and inputs on this registry | an anonymous pull token |
+| `registry-1.docker.io` | image tags, manifests and image configs, with an anonymous pull token when the registry asks for one | `image:` pins and inputs, and `oci://` charts, on Docker Hub | an anonymous pull token |
+| `auth.docker.io` | anonymous pull tokens for Docker Hub | `image:` pins and inputs, and `oci://` charts, on Docker Hub | no |
+| `ghcr.io` | image tags, manifests and image configs, with an anonymous pull token when the registry asks for one | `image:` pins and inputs, and `oci://` charts, on this registry | an anonymous pull token |
+| `registry.k8s.io` | image tags, manifests and image configs, with an anonymous pull token when the registry asks for one | `image:` pins and inputs, and `oci://` charts, on this registry | an anonymous pull token |
+| `quay.io` | image tags, manifests and image configs, with an anonymous pull token when the registry asks for one | `image:` pins and inputs, and `oci://` charts, on this registry | an anonymous pull token |
+| `public.ecr.aws` | image tags, manifests and image configs, with an anonymous pull token when the registry asks for one | `image:` pins and inputs, and `oci://` charts, on this registry | an anonymous pull token |
+| `mcr.microsoft.com` | image tags, manifests and image configs, with an anonymous pull token when the registry asks for one | `image:` pins and inputs, and `oci://` charts, on this registry | an anonymous pull token |
+| a registry in `images.registries` | image tags, manifests and image configs, with an anonymous pull token when the registry asks for one | `image:` pins and inputs, and `oci://` charts, on this registry | an anonymous pull token |
 | the host a registry or its token URL redirects to | the same answer, such as a blob from storage | a registry that redirects, as registry.k8s.io does | no; a redirect to another domain gets no token |
 | `api.adoptium.net` | release-note pages | a registry entry with a web-doc, structured-json or upgrade-guide source on this host | no |
 | `docs.python.org` | release-note pages | a registry entry with a web-doc, structured-json or upgrade-guide source on this host | no |

@@ -6,6 +6,7 @@
   "data": {
     "tools": [
       {
+        "id": "bitbucket:example-ws/tf-network",
         "tool": "tf-network",
         "repo": "example-ws/tf-network",
         "host": "bitbucket.org",

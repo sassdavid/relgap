@@ -144,6 +144,21 @@ URL that has the chart, the lookup pin discovery's `registry_url` uses, and neve
 repository, it fails with "registryUrl <url> is not an Artifact Hub repository with a chart named
 <name>".
 
+An `oci://` URL that Artifact Hub doesn't list is read from the registry, as Renovate's helm
+manager reads it through its docker datasource
+([ADR-0019](../adr/0019-digest-id-oci-charts-short-names.md)). The registry must be on the image
+allow list (`oci.DefaultRegistries` and `images.registries`). The chart's versions are the tags of
+`<registry>/<path>/<chart>`, with `_` read as `+` because Helm can't write `+` in a tag. The
+`org.opencontainers.image.source` annotation that `helm push` copies from the chart's first
+`sources` entry names the repository, and the tag prefix rule below applies to it. Without a GitHub
+source the tool has the universe `chart` and no repository: versions without notes.
+
+Tables show a chart named by URL in a short form: `chart:<owner>/<repo>[/<dir>]/<chart>` for a
+GitHub Pages site and `chart:<registry>/<path>/<chart>` for `oci://`. `resolve` and `digest`
+accept both forms. JSON, SARIF and the digest `id` keep the URL form, which is the tool's
+identity. A first part with a dot or a port is a registry, and two parts without one are an
+Artifact Hub repository and chart, whose names have no dots.
+
 A chart's tag prefix must cover the newest stable version the chart lists. When none does, as in
 aws/eks-charts, which tags `v0.0.N` for all its charts, the tool takes the universe `chart`: the
 versions Artifact Hub lists, or those of the Helm repository index, with `version.versions_url`
@@ -208,3 +223,8 @@ each.
   `github:owner/repo@prefix` reads only the tags with that prefix. (`TestSpec_tool_resolution_8`
   with aws-for-fluent-bit and secrets-store-csi-driver-provider-aws, `TestOutdatedChartVersions`,
   `TestResolveTagPrefix`)
+- [x] A chart behind an `oci://` registryUrl that Artifact Hub doesn't list takes its versions from
+  the registry's tags and its repository from the source annotation, or has versions without
+  notes when the annotation names no GitHub repository; a registry off the allow list gets no
+  request. The short chart forms resolve as the URL forms. (`TestSpec_tool_resolution_9`,
+  `TestChartShortName`, `outdated_oci_chart.txtar`, `outdated_skip.txtar`)

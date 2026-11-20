@@ -347,7 +347,9 @@ func (r *Resolver) Resolve(ctx context.Context, input string, opts ResolveOption
 		b.setString(fieldName, &b.spec.Name, cmp.Or(foundName, path.Base(id.repo)), repoLayer)
 	}
 	image := id.found != nil && id.found.Image != ""
-	if b.spec.Repo == "" && !image {
+	// An image, or a chart from an OCI registry, can have versions without a repository for notes.
+	listed := image || id.found != nil && id.found.Versions != nil
+	if b.spec.Repo == "" && !listed {
 		return nil, fmt.Errorf("%w for %q: no registry has a GitHub repo for it%s; set tools.%s.repo in the config",
 			ErrNoRepo, input, r.backendHint(id.name), b.spec.Name)
 	}

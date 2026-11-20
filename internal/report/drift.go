@@ -271,7 +271,7 @@ func (d *Drifter) latest(ctx context.Context, groups []*driftGroup) error {
 		case g.err != nil:
 			t.Note = "not looked up: " + g.err.Error()
 			continue
-		case g.spec.Repo == "" && g.spec.Image == "":
+		case g.spec.Repo == "" && !g.spec.Listed():
 			t.Note = "not looked up: the tool has no GitHub repository"
 			continue
 		case !fromRecent(g.spec):

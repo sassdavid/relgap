@@ -213,3 +213,8 @@ the exit codes.
   ([ADR-0017](../adr/0017-chart-versions-extract-version-and-floors.md);
   `TestSpec_output_and_ci_9` with `hashicorp/random` `>= 3.6.0, < 4.0.0` to `>= 3.7.0, < 4.0.0`,
   `TestFloorRaise`).
+- [x] Each digest in JSON has `id`, the tool's identity that `outdated` prints in `tool` and
+  `digest` accepts, next to the short name in `tool`, so a chart and its application with the
+  same short name stay apart
+  ([ADR-0019](../adr/0019-digest-id-oci-charts-short-names.md);
+  `TestOutdatedSameNameDifferentTools`, the digest goldens).

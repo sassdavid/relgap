@@ -467,6 +467,12 @@ func TestOutdatedSameNameDifferentTools(t *testing.T) {
 		latest[p.Tool] = p.Current + ".." + p.Latest
 	}
 	assert.Equal(t, map[string]string{"chart:o/foo": "0.1.0..0.2.0", "github:o/foo": "3.5.0..3.5.9"}, latest)
+	ids := map[string]string{}
+	for _, d := range got.Digests() {
+		ids[d.ID] = d.Tool
+	}
+	assert.Equal(t, map[string]string{"chart:o/foo": "foo", "github:o/foo": "foo"}, ids,
+		"both digests have the short name foo, and the id tells them apart")
 }
 
 // TestOutdatedChartVersions: a chart whose repository has no tag per chart version compares

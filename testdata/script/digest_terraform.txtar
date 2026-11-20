@@ -49,6 +49,7 @@ stderr 'DBG github client authenticated=false token_source="" concurrency=2'
   "data": {
     "tools": [
       {
+        "id": "terraform",
         "tool": "terraform",
         "repo": "hashicorp/terraform",
         "from": "1.15.8",

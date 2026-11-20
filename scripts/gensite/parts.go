@@ -186,20 +186,27 @@ func networkHosts() ([]host, error) {
 		{remote.ArtifactHubHost, "chart versions and source repositories", "`chart:` pins and inputs", noToken},
 		{remote.NPMHost, "package repositories", "`npm:` inputs", noToken},
 		{remote.PyPIHost, "package repositories", "`pypi:` inputs", noToken},
-		{oci.DockerHubAPI, imagesWhat, "`image:` pins and inputs on Docker Hub", anonToken},
-		{oci.DockerHubAuth, "anonymous pull tokens for Docker Hub", "`image:` pins and inputs on Docker Hub", noToken},
+		{oci.DockerHubAPI, imagesWhat, "`image:` pins and inputs, and `oci://` charts, on Docker Hub", anonToken},
+		{
+			oci.DockerHubAuth,
+			"anonymous pull tokens for Docker Hub",
+			"`image:` pins and inputs, and `oci://` charts, on Docker Hub",
+			noToken,
+		},
 	}
 	for _, r := range oci.DefaultRegistries() {
 		if r != oci.DockerHub {
 			hosts = append(hosts, host{
-				r, imagesWhat, "`image:` pins and inputs on this registry",
+				r, imagesWhat, "`image:` pins and inputs, and `oci://` charts, on this registry",
 				anonToken,
 			})
 		}
 	}
 	hosts = append(hosts,
 		host{
-			"a registry in `images.registries`", imagesWhat, "`image:` pins and inputs on this registry",
+			"a registry in `images.registries`",
+			imagesWhat,
+			"`image:` pins and inputs, and `oci://` charts, on this registry",
 			anonToken,
 		},
 		host{

@@ -3,6 +3,8 @@ package registry
 import (
 	"context"
 	"errors"
+	"net/url"
+	"slices"
 	"strings"
 
 	"github.com/sassdavid/relgap/internal/version"
@@ -35,10 +37,12 @@ func ChartAt(registryURL, chart string) string {
 }
 
 // SplitChartAt splits the part of a chart:<registryURL>/<chart> name after the prefix into the
-// repository URL and the chart, and reports whether rest is such a name.
+// repository URL and the chart, and reports whether rest is such a name. It also reads the short
+// forms that [ChartShortName] writes: <host>/<path>/<chart> for an OCI registry, whose first part
+// has a dot or a port, and <owner>/<repo>/<chart> for a GitHub Pages site.
 func SplitChartAt(rest string) (string, string, bool) {
 	if !strings.Contains(rest, "://") {
-		return "", "", false
+		return splitChartShort(rest)
 	}
 	i := strings.LastIndex(rest, "/")
 	registryURL, chart := rest[:i], rest[i+1:]
@@ -46,6 +50,73 @@ func SplitChartAt(rest string) (string, string, bool) {
 		return "", "", false
 	}
 	return registryURL, chart, true
+}
+
+func splitChartShort(rest string) (string, string, bool) {
+	parts := strings.Split(rest, "/")
+	if slices.Contains(parts, "") || len(parts) < minChartShortParts {
+		return "", "", false
+	}
+	dir, chart := strings.Join(parts[:len(parts)-1], "/"), parts[len(parts)-1]
+	switch {
+	case strings.ContainsAny(parts[0], ".:"):
+		return ociScheme + dir, chart, true
+	case len(parts) > minChartShortParts:
+		owner, site := parts[0], strings.Join(parts[1:len(parts)-1], "/")
+		return "https://" + owner + pagesSuffix + "/" + site, chart, true
+	}
+	// <repo>/<chart> is an Artifact Hub repository and its chart.
+	return "", "", false
+}
+
+const (
+	ociScheme          = "oci://"
+	pagesSuffix        = ".github.io"
+	minChartShortParts = 2
+)
+
+// ChartShortName returns the short form of a chart:<registryURL>/<chart> name for tables:
+// chart:<host>/<path>/<chart> for an oci:// URL and chart:<owner>/<repo>/<chart> for a GitHub
+// Pages site. [SplitChartAt] reads both. Any other name comes back unchanged.
+func ChartShortName(name string) string {
+	rest, ok := strings.CutPrefix(name, KindChart+":")
+	if !ok {
+		return name
+	}
+	registryURL, chart, ok := SplitChartAt(rest)
+	if !ok || !strings.Contains(rest, "://") {
+		return name
+	}
+	if dir, isOCI := strings.CutPrefix(
+		registryURL,
+		ociScheme,
+	); isOCI &&
+		strings.ContainsAny(strings.Split(dir, "/")[0], ".:") {
+		return KindChart + ":" + strings.TrimRight(dir, "/") + "/" + chart
+	}
+	u, err := url.Parse(registryURL)
+	if err != nil || u.Scheme != "https" || u.RawQuery != "" || u.User != nil || u.Port() != "" {
+		return name
+	}
+	owner, isPages := strings.CutSuffix(strings.ToLower(u.Hostname()), pagesSuffix)
+	site := strings.Trim(u.Path, "/")
+	if !isPages || owner == "" || strings.Contains(owner, ".") || site == "" {
+		return name
+	}
+	return KindChart + ":" + owner + "/" + site + "/" + chart
+}
+
+// ChartURLName returns the chart:<registryURL>/<chart> form of a short chart name, the tool's
+// identity. Any other name comes back unchanged.
+func ChartURLName(name string) string {
+	rest, ok := strings.CutPrefix(name, KindChart+":")
+	if !ok || strings.Contains(rest, "://") {
+		return name
+	}
+	if registryURL, chart, isShort := splitChartShort(rest); isShort {
+		return ChartAt(registryURL, chart)
+	}
+	return name
 }
 
 // SplitTagPrefix splits github:owner/repo@prefix, without github:, into the repository and the

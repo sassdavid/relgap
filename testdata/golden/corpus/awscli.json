@@ -6,6 +6,7 @@
   "data": {
     "tools": [
       {
+        "id": "awscli",
         "tool": "awscli",
         "repo": "aws/aws-cli",
         "from": "2.31.0",

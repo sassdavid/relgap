@@ -261,7 +261,7 @@ Each entry has these fields:
 |---|---|---|---|---|
 | `list of string` | `[]` |  | `RELGAP_IMAGES_REGISTRIES` |  |
 
-Registries to read besides Docker Hub, ghcr.io, registry.k8s.io, quay.io, public.ecr.aws and mcr.microsoft.com. relgap asks every registry for anonymous tokens only.
+Registries to read images and oci:// charts from besides Docker Hub, ghcr.io, registry.k8s.io, quay.io, public.ecr.aws and mcr.microsoft.com. relgap asks every registry for anonymous tokens only.
 
 ## Template
 
