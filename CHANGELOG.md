@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.12.0](https://github.com/sassdavid/relgap/compare/v0.11.0...v0.12.0) (2026-11-20)
+
+
+### Features
+
+* add digest ids, read charts from OCI registries and shorten chart names ([#97](https://github.com/sassdavid/relgap/issues/97)) ([5e4c6d6](https://github.com/sassdavid/relgap/commit/5e4c6d6c0234ca08e8e1ade1ae13e53cedd38a75))
+
+
+### Bug Fixes
+
+* read forge SSH hosts, match aliases with colons, show digest errors ([#96](https://github.com/sassdavid/relgap/issues/96)) ([b4a4231](https://github.com/sassdavid/relgap/commit/b4a4231d5378a18bcb2451420d6ee66cd753cc70))
+
 ## [0.11.0](https://github.com/sassdavid/relgap/compare/v0.10.0...v0.11.0) (2026-11-20)
 
 
