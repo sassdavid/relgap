@@ -72,8 +72,10 @@ raw name is the source without `ref`. Other git hosts give an unresolved pin.
 
 A chart pin with a `registry_url` (from the comment or a `Chart.yaml` dependency's `repository`)
 is renamed `chart:<repo>/<name>` by `outdated`, `digest --base` and `--pull-request` when
-Artifact Hub has a repository at that URL with the chart. `drift` makes no request and groups by
-`chart:<name>`.
+Artifact Hub has a repository at that URL with the chart. Otherwise it becomes
+`chart:<url>/<name>`, which never falls back to a search by name
+([ADR-0016](../adr/0016-tool-identity-and-chart-registry-urls.md)). `drift` makes no request and
+groups by `chart:<name>`.
 
 ## Acceptance criteria
 - [x] Every detector above has a testscript fixture under `testdata/script/pins_*.txtar` with golden JSON.

@@ -101,6 +101,7 @@ field's layer names the service:
 |---|---|---|
 | `tfprovider:` | `registry.terraform.io/v1/providers/<ns>/<name>` | `source` |
 | `chart:<repo>/<name>` | `artifacthub.io/api/v1/packages/helm/<repo>/<name>` | the chart's own source (below) |
+| `chart:<url>/<name>` | `artifacthub.io/api/v1/repositories/search?url=<url>`, then the package | as `chart:<repo>/<name>` |
 | `npm:` | `registry.npmjs.org/<package>/latest` | `repository`, then `homepage`, then `bugs` |
 | `pypi:` | `pypi.org/pypi/<package>/json` | `project_urls` Source, Source Code, Repository, Code, GitHub, Homepage, then any GitHub URL, then `home_page` |
 
@@ -135,6 +136,16 @@ searches Artifact Hub. It resolves when one repository has a chart of that name,
 one of them is marked official (the project publishes it: argo-cd is argo's). Otherwise it fails
 with the `chart:<repo>/<name>` candidates. On 2026-11-16, argo-cd was in 11 repositories,
 external-dns in 9 and kube-state-metrics in 18.
+
+`chart:<url>/<name>` names a chart by its Helm repository URL (`https://`, `http://` or `oci://`);
+the chart is the part after the last `/`. It resolves through the Artifact Hub repository at that
+URL that has the chart, the lookup pin discovery's `registry_url` uses, and never searches by name
+([ADR-0016](../adr/0016-tool-identity-and-chart-registry-urls.md)). When Artifact Hub has no such
+repository, it fails with "registryUrl <url> is not an Artifact Hub repository with a chart named
+<name>".
+
+Caches key on a tool's full name, never on the resolved spec's `name`: a chart and its
+application can both resolve to `aws-for-fluent-bit` in different repositories.
 
 Responses stay fresh for 24h (`cache.ttl_override` changes it). `--offline` fails a lookup that
 isn't in the cache. `relgap drift` resolves from the registries alone, since it reads only version
@@ -178,3 +189,7 @@ each.
   `external-dns-helm-chart-`, `metrics-server-helm-chart-`, `helm-chart-` (external-secrets) and
   `v` (cert-manager, keda) on real tag lists (`TestSpec_tool_resolution_6`, fixtures in
   `testdata/charttags/`).
+- [x] `chart:<url>/<name>` resolves through the Artifact Hub repository at the URL and fails with
+  the URL in the message when there is none, never searching by name; a chart pin and a
+  `github:` pin whose specs share a name each compare against their own repository.
+  (`TestSpec_tool_resolution_7`, `TestOutdatedSameNameDifferentTools`)

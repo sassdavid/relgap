@@ -260,3 +260,67 @@ func TestRemoteChartRepo(t *testing.T) {
 		assert.Equal(t, tt.want, got, tt.url)
 	}
 }
+
+// TestSpec_tool_resolution_7: chart:<url>/<name> resolves through the Artifact Hub repository at
+// the URL and never searches by name. Two unrelated repositories have a chart called
+// secrets-store-csi-driver-provider-aws, and neither is the one at the pin's URL.
+func TestSpec_tool_resolution_7(t *testing.T) {
+	t.Parallel()
+	rt := vcr.ForTest(
+		t,
+		filepath.Join("..", "..", "..", "testdata", "cassettes", "resolve", "chart-at"),
+		vcr.Scrubber{},
+	)
+	r := remote.New(httpx.New(httpx.Options{Logger: slog.New(slog.DiscardHandler), Transport: rt}), nil, nil)
+	tests := []struct {
+		name    string
+		want    registry.Found
+		wantErr string
+	}{
+		{
+			name: "https://kubernetes-sigs.github.io/external-dns/external-dns",
+			want: registry.Found{
+				Repo: "kubernetes-sigs/external-dns", Name: "external-dns", TagPrefix: "external-dns-",
+				Layer: registry.LayerArtifactHub,
+			},
+		},
+		{
+			name: "https://aws.github.io/secrets-store-csi-driver-provider-aws/secrets-store-csi-driver-provider-aws",
+			wantErr: "registryUrl https://aws.github.io/secrets-store-csi-driver-provider-aws is not an " +
+				"Artifact Hub repository with a chart named secrets-store-csi-driver-provider-aws",
+		},
+	}
+	for _, tt := range tests {
+		got, err := r.Find(t.Context(), registry.KindChart, tt.name)
+		if tt.wantErr != "" {
+			require.ErrorIs(t, err, registry.ErrUnknownTool, tt.name)
+			require.ErrorContains(t, err, tt.wantErr, tt.name)
+			continue
+		}
+		require.NoError(t, err, tt.name)
+		assert.Equal(t, tt.want, *got, tt.name)
+	}
+}
+
+func TestSplitChartAt(t *testing.T) {
+	t.Parallel()
+	tests := []struct {
+		rest, url, chart string
+		ok               bool
+	}{
+		{"https://charts.jetstack.io/cert-manager", "https://charts.jetstack.io", "cert-manager", true},
+		{"oci://public.ecr.aws/karpenter/karpenter", "oci://public.ecr.aws/karpenter", "karpenter", true},
+		{"jetstack/cert-manager", "", "", false},
+		{"https://charts.jetstack.io/", "", "", false},
+		{"https://cert-manager", "", "", false},
+	}
+	for _, tt := range tests {
+		u, c, ok := registry.SplitChartAt(tt.rest)
+		assert.Equal(t, []any{tt.url, tt.chart, tt.ok}, []any{u, c, ok}, tt.rest)
+	}
+	assert.Equal(
+		t,
+		"chart:https://charts.jetstack.io/cert-manager",
+		registry.ChartAt("https://charts.jetstack.io/", "cert-manager"),
+	)
+}

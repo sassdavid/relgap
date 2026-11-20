@@ -222,6 +222,9 @@ type chartPackage struct {
 }
 
 func (r *Remote) chart(ctx context.Context, name string) (*registry.Found, error) {
+	if registryURL, chart, ok := registry.SplitChartAt(name); ok {
+		return r.chartAt(ctx, registryURL, chart)
+	}
 	repoName, chart, hasRepo := strings.Cut(name, "/")
 	if !hasRepo {
 		var err error
@@ -263,6 +266,21 @@ func (r *Remote) chart(ctx context.Context, name string) (*registry.Found, error
 		f.TagPrefix = prefix
 	}
 	return f, nil
+}
+
+// chartAt resolves the chart in the Helm repository at registryURL through the Artifact Hub
+// repository at that URL. It never searches by the chart's name, because the URL says which
+// chart the pin means and another repository's chart of that name is a different one.
+func (r *Remote) chartAt(ctx context.Context, registryURL, chart string) (*registry.Found, error) {
+	repo, ok, err := r.ChartRepo(ctx, registryURL, chart)
+	if err != nil {
+		return nil, fmt.Errorf("look up registryUrl %s on Artifact Hub: %w", registryURL, err)
+	}
+	if !ok {
+		return nil, fmt.Errorf("%w: registryUrl %s is not an Artifact Hub repository with a chart named %s",
+			registry.ErrUnknownTool, registryURL, chart)
+	}
+	return r.chart(ctx, repo+"/"+chart)
 }
 
 // chartTagPrefix finds the prefix of the tags that name the chart's versions. Each tag that

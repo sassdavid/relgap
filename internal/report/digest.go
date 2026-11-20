@@ -98,8 +98,12 @@ type Digester struct {
 	pages  *source.PageCache
 
 	mu   sync.Mutex
-	refs map[string]*refList // by tool name
+	refs map[refKey]*refList
 }
+
+// refKey is what a version list is fetched by. Two tools can share a name, such as a chart and
+// the application it installs, so the name isn't part of it.
+type refKey struct{ repo, universe string }
 
 // refList is a tool's version universe as listed once per digester.
 type refList struct {
@@ -119,7 +123,7 @@ func NewDigester(logger *slog.Logger, gh GitHub, web source.WebFetcher) *Digeste
 		files:  source.NewFileCache(gh),
 		web:    web,
 		pages:  source.NewPageCache(web),
-		refs:   map[string]*refList{},
+		refs:   map[refKey]*refList{},
 	}
 }
 
@@ -137,11 +141,12 @@ func (d *Digester) Universe(ctx context.Context, t registry.ToolSpec) (*version.
 }
 
 func (d *Digester) list(ctx context.Context, t registry.ToolSpec) ([]version.Ref, map[string]github.Release, error) {
+	k := refKey{repo: strings.ToLower(t.Repo), universe: t.Version.Universe}
 	d.mu.Lock()
-	l, ok := d.refs[t.Name]
+	l, ok := d.refs[k]
 	if !ok {
 		l = &refList{}
-		d.refs[t.Name] = l
+		d.refs[k] = l
 	}
 	d.mu.Unlock()
 	l.once.Do(func() { l.refs, l.releases, l.err = d.fetchRefs(ctx, t) })

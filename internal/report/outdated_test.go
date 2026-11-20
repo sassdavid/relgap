@@ -31,13 +31,13 @@ type multiGitHub struct {
 	recentQs [][]github.RecentQuery
 }
 
-func (f *multiGitHub) Recent(_ context.Context, qs []github.RecentQuery) (map[string]github.Recent, error) {
+func (f *multiGitHub) Recent(_ context.Context, qs []github.RecentQuery) (map[github.RecentQuery]github.Recent, error) {
 	f.mu.Lock()
 	f.recentQs = append(f.recentQs, qs)
 	f.mu.Unlock()
-	out := map[string]github.Recent{}
+	out := map[github.RecentQuery]github.Recent{}
 	for _, q := range qs {
-		out[q.Repo] = github.Recent{Releases: f.releases[q.Repo], Err: f.recentErr[q.Repo]}
+		out[q] = github.Recent{Releases: f.releases[q.Repo], Err: f.recentErr[q.Repo]}
 	}
 	return out, nil
 }
@@ -205,7 +205,10 @@ func (f *listFirstGitHub) Releases(ctx context.Context, repo string) ([]github.R
 	return f.multiGitHub.Releases(ctx, repo)
 }
 
-func (f *listFirstGitHub) Recent(ctx context.Context, qs []github.RecentQuery) (map[string]github.Recent, error) {
+func (f *listFirstGitHub) Recent(
+	ctx context.Context,
+	qs []github.RecentQuery,
+) (map[github.RecentQuery]github.Recent, error) {
 	select {
 	case <-f.listing:
 		return f.multiGitHub.Recent(ctx, qs)
@@ -426,4 +429,42 @@ func TestParseVulnSeverity(t *testing.T) {
 		_, err := report.ParseVulnSeverity(bad)
 		require.Error(t, err, bad)
 	}
+}
+
+// TestOutdatedSameNameDifferentTools covers a chart and the application it installs, whose specs
+// share a name: each must read its own repository.
+func TestOutdatedSameNameDifferentTools(t *testing.T) {
+	t.Parallel()
+	gh := &multiGitHub{
+		releases: map[string][]github.Release{
+			"o/charts": {{Tag: "v0.0.9"}, {Tag: "foo-0.2.0"}, {Tag: "foo-0.1.0"}},
+			"o/foo":    {{Tag: "v3.5.9"}, {Tag: "v3.5.0"}},
+		},
+		listed: map[string]int{},
+		bodies: map[string]int{},
+	}
+	specs := map[string]registry.ToolSpec{
+		"chart:o/foo": {Name: "foo", Repo: "o/charts", Version: registry.VersionSpec{
+			Scheme: version.SchemeSemver, TagPrefix: "foo-", Universe: registry.UniverseReleases,
+		}},
+		"github:o/foo": {Name: "foo", Repo: "o/foo", Version: registry.VersionSpec{
+			Scheme: version.SchemeSemver, TagPrefix: "v", Universe: registry.UniverseReleases,
+		}},
+	}
+	resolve := func(tool string) (registry.ToolSpec, error) { return specs[tool], nil }
+	pins := []scan.Pin{
+		pin("chart:o/foo", ">= 0.1.0", scan.MatchConstraint, ".", "main.tf", 1),
+		pin("github:o/foo", ">= 0.1.0", scan.MatchConstraint, ".", "main.tf", 2),
+	}
+	digester := report.NewDigester(slog.New(slog.DiscardHandler), gh, nil)
+	got, err := report.NewOutdater(digester, gh).Outdated(t.Context(), report.OutdatedRequest{
+		Pins: pins, Resolve: resolve, MinConfidence: 0.5, Concurrency: 2,
+	})
+	require.NoError(t, err)
+
+	latest := map[string]string{}
+	for _, p := range got.Pins {
+		latest[p.Tool] = p.Current + ".." + p.Latest
+	}
+	assert.Equal(t, map[string]string{"chart:o/foo": "0.1.0..0.2.0", "github:o/foo": "3.5.0..3.5.9"}, latest)
 }

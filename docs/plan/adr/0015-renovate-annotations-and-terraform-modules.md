@@ -1,6 +1,7 @@
 # relgap ADR-0015: Renovate annotations, Terraform modules and Hugo links
 
-- Status: accepted (2026-11-19)
+- Status: accepted (2026-11-19). [ADR-0016](0016-tool-identity-and-chart-registry-urls.md)
+  changes the fallback for a chart registry URL that Artifact Hub doesn't list.
 - Settles the open questions of [pin-discovery.md](../specs/pin-discovery.md) for M27 and widens
   the `terraform`, `terragrunt` and `helm` detectors.
 

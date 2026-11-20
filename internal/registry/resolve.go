@@ -318,7 +318,8 @@ type identity struct {
 
 // Resolve identifies input and merges every layer that knows the tool. input is a name, an
 // alias, a NAME_VERSION variable, github:owner/repo, aqua:package, tfprovider:namespace/name,
-// tfmodule:namespace/name/provider, chart:repo/name, chart:name, npm:package or pypi:package.
+// tfmodule:namespace/name/provider, chart:repo/name, chart:name, chart:url/name, npm:package or
+// pypi:package.
 func (r *Resolver) Resolve(ctx context.Context, input string, opts ResolveOptions) (*Resolution, error) {
 	input = strings.TrimSpace(input)
 	if input == "" {

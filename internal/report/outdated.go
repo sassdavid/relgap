@@ -79,7 +79,7 @@ type Behind struct {
 // RecentLister lists the newest releases of many repositories at once; [github.Client]
 // implements it.
 type RecentLister interface {
-	Recent(ctx context.Context, qs []github.RecentQuery) (map[string]github.Recent, error)
+	Recent(ctx context.Context, qs []github.RecentQuery) (map[github.RecentQuery]github.Recent, error)
 }
 
 // ResolveFunc turns a pin's tool name into a tool spec.
@@ -123,9 +123,7 @@ func (o *Outdater) Outdated(ctx context.Context, req OutdatedRequest) (*Outdated
 	var queries []github.RecentQuery
 	for _, t := range tools {
 		if t.err == nil {
-			queries = append(queries, github.RecentQuery{
-				Repo: t.spec.Repo, Tags: t.spec.Version.Universe == registry.UniverseTags,
-			})
+			queries = append(queries, recentQuery(t.spec))
 		}
 	}
 	// Prefix and constraint pins always need the full version list, so it loads while the
@@ -152,7 +150,7 @@ func (o *Outdater) Outdated(ctx context.Context, req OutdatedRequest) (*Outdated
 	g.SetLimit(max(req.Concurrency, 1))
 	for _, t := range tools {
 		g.Go(func() error {
-			c := comparer{o: o, req: req, tool: t, recent: recent[t.spec.Repo], digests: digests, auth: auth}
+			c := comparer{o: o, req: req, tool: t, recent: recent[recentQuery(t.spec)], digests: digests, auth: auth}
 			for _, i := range t.pins {
 				out.Pins[i] = c.compare(gctx, i)
 			}
@@ -175,6 +173,10 @@ func (o *Outdater) Outdated(ctx context.Context, req OutdatedRequest) (*Outdated
 		)
 	})
 	return out, nil
+}
+
+func recentQuery(t registry.ToolSpec) github.RecentQuery {
+	return github.RecentQuery{Repo: t.Repo, Tags: t.Version.Universe == registry.UniverseTags}
 }
 
 // needsFullList reports whether a pin of t is a prefix or a constraint, which [comparer.current]
@@ -227,7 +229,8 @@ func (a *authFailure) get() error {
 	return a.err
 }
 
-// digestSet builds each (tool, from) digest once, however many pins share it.
+// digestSet builds each (tool, from) digest once, however many pins share it. The key is the
+// pins' tool, the full identity: two tools can resolve to specs with the same name.
 type digestSet struct {
 	mu    sync.Mutex
 	byKey map[string]*digestOnce
@@ -239,8 +242,8 @@ type digestOnce struct {
 	err  error
 }
 
-func (s *digestSet) get(ctx context.Context, d *Digester, req DigestRequest) (*ToolDigest, error) {
-	key := req.Tool.Name + "\x00" + req.From
+func (s *digestSet) get(ctx context.Context, d *Digester, tool string, req DigestRequest) (*ToolDigest, error) {
+	key := tool + "\x00" + req.From
 	s.mu.Lock()
 	e, ok := s.byKey[key]
 	if !ok {
@@ -310,7 +313,7 @@ func (c *comparer) compare(ctx context.Context, i int) OutdatedPin {
 		row.Latest, row.Status, row.Behind, row.Counts = latest.V.String(), StatusCurrent, &Behind{}, zeroCounts()
 		return row
 	}
-	d, err := c.digests.get(ctx, c.o.digester, DigestRequest{
+	d, err := c.digests.get(ctx, c.o.digester, c.tool.name, DigestRequest{
 		Tool: t, From: current.String(), Line: line, MinConfidence: c.req.MinConfidence,
 	})
 	if err != nil {

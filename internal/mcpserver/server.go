@@ -250,7 +250,7 @@ func (t *tools) drift(ctx context.Context, req *mcp.CallToolRequest, in driftInp
 }
 
 type resolveInput struct {
-	Tool string `json:"tool" jsonschema:"Tool name or alias (terraform, tf), a NAME_VERSION variable, github:owner/repo, aqua:package, tfprovider:namespace/name, tfmodule:namespace/name/provider, chart:repo/name, npm:package or pypi:package."` //nolint:lll // struct tag
+	Tool string `json:"tool" jsonschema:"Tool name or alias (terraform, tf), a NAME_VERSION variable, github:owner/repo, aqua:package, tfprovider:namespace/name, tfmodule:namespace/name/provider, chart:repo/name, chart:url/name, npm:package or pypi:package."` //nolint:lll // struct tag
 }
 
 func (t *tools) resolve(ctx context.Context, _ *mcp.CallToolRequest, in resolveInput) (*mcpkit.Result, error) {
