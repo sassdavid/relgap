@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.12.1](https://github.com/sassdavid/relgap/compare/v0.12.0...v0.12.1) (2026-11-20)
+
+
+### Bug Fixes
+
+* sort by shown names, list failures in digest markdown, plural ([#99](https://github.com/sassdavid/relgap/issues/99)) ([453f7b6](https://github.com/sassdavid/relgap/commit/453f7b6a4fae419d37dee378fa131be432c20d62))
+
 ## [0.12.0](https://github.com/sassdavid/relgap/compare/v0.11.0...v0.12.0) (2026-11-20)
 
 
