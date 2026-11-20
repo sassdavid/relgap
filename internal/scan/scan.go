@@ -48,6 +48,7 @@ type Runner interface {
 // implements it.
 type Namer interface {
 	Identify(input string) (string, bool)
+	Alias(input string) (string, bool) // the tool a config alias names, which wins over a lookup
 }
 
 // Problem is a file that couldn't be parsed.
@@ -251,8 +252,9 @@ func (s *Scanner) run(ctx context.Context, t task) taskResult {
 	return r
 }
 
-// finish classifies the value and names the tool. A tool pin tries its lookup name first, then
-// its raw name, then takes its fallback. An image pin's name comes from its tag.
+// finish classifies the value and names the tool. A tool pin takes the config alias of its raw
+// name, then tries its lookup name, then its raw name, then takes its fallback. An image pin's
+// name comes from its tag.
 func (s *Scanner) finish(p *Pin, bareExact bool) {
 	if p.image != nil && !p.noLookup {
 		finishImage(p)
@@ -261,7 +263,14 @@ func (s *Scanner) finish(p *Pin, bareExact bool) {
 		p.lookup = s.forgeLookup(*p.git)
 	}
 	p.classify(bareExact)
-	if p.Tool != "" || p.Kind != KindTool || p.noLookup {
+	if p.Tool != "" || p.Kind != KindTool {
+		return
+	}
+	if tool, ok := s.namer.Alias(p.RawName); ok {
+		p.Tool = tool
+		return
+	}
+	if p.noLookup {
 		return
 	}
 	for _, name := range []string{p.lookup, p.RawName} {

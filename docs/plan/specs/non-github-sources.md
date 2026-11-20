@@ -90,7 +90,10 @@ Decisions are in [ADR-0018](../adr/0018-non-github-version-sources.md), accepted
 - The `terraform` and `terragrunt` detectors give these pins for Bitbucket and GitLab git sources
   with `?ref=`, in the https, `git::`, `ssh://` and scp (`git@host:`) forms, with the same ref rules
   as GitHub (`x.y.z` or `vx.y.z`; anything else is a channel pin). A `//subdir` and `.git` are
-  dropped. A `# renovate:` comment with `bitbucket-tags`, `gitlab-tags`, `gitlab-releases` or
+  dropped. The SSH hosts the forges document count as their web host: `ssh.bitbucket.org` and
+  `altssh.bitbucket.org` (Atlassian's KB "Port 22 is blocked on local network"), `ssh.github.com`
+  (GitHub's "Using SSH over the HTTPS port") and `altssh.gitlab.com` (GitLab.com settings). A
+  `# renovate:` comment with `bitbucket-tags`, `gitlab-tags`, `gitlab-releases` or
   `git-tags` on one of these hosts gives the same pin. A git source on any other host stays
   unresolved; relgap runs no `git ls-remote`.
 - `tools.<name>` takes `host` next to `repo` (`bitbucket.org`, `gitlab.com` or a `gitlab.hosts`

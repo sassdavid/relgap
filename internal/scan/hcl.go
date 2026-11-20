@@ -232,7 +232,8 @@ var (
 
 // gitRemote returns the lowercase host and the repository path of a git address in the forms
 // Terraform and Renovate write: https://host/path.git, ssh://git@host[:port]/path, git@host:path
-// and host/path, each with an optional git:: prefix and //subdir. The host must have a dot.
+// and host/path, each with an optional git:: prefix and //subdir. The host must have a dot. A
+// forge's SSH host, such as ssh.bitbucket.org, comes back as its web host.
 func gitRemote(addr string) (string, string, bool) {
 	s := strings.TrimPrefix(addr, "git::")
 	scheme := ""
@@ -265,7 +266,7 @@ func gitRemote(addr string) (string, string, bool) {
 		slices.ContainsFunc(parts, func(p string) bool { return !remotePart.MatchString(p) }) {
 		return "", "", false
 	}
-	return strings.ToLower(host), repo, true
+	return forge.Canonical(host), repo, true
 }
 
 var registryRepo = regexp.MustCompile(`^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$`)

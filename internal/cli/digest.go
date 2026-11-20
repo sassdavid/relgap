@@ -247,15 +247,20 @@ func digestFormats() []render.Format {
 
 func writeDigest(cmd *cobra.Command, d *app.Deps, g *globals, data *report.Digest, errs []render.Error) error {
 	return g.sink(cmd, d).Write(func(w io.Writer, f render.Format) error {
-		switch f {
-		case render.FormatJSON:
+		if f == render.FormatJSON {
 			env := render.NewEnvelope(buildinfo.Get().Version, d.Clock(), data)
 			env.Errors = errs
 			return render.JSON(w, env)
+		}
+		// Only the JSON envelope has a place for errors, so the other formats name them on stderr.
+		for _, e := range errs {
+			_, _ = fmt.Fprintf(d.Stderr, "%s: failed: %s: %s\n", config.AppName, e.Target, e.Message)
+		}
+		switch f {
 		case render.FormatMD:
 			return render.DigestMarkdown(w, data)
 		case render.FormatAuto, render.FormatTTY, render.FormatPlain, render.FormatCSV, render.FormatSARIF,
-			render.FormatGitHub:
+			render.FormatGitHub, render.FormatJSON:
 		}
 		color := f == render.FormatTTY &&
 			render.UseColor(render.ColorMode(g.color), d.Env.Lookup, app.IsTerminal(d.Stdout))

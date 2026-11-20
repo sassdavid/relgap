@@ -1,0 +1,17 @@
+# A config alias whose key is a git source's raw name names the pin, although the raw name has a
+# colon and its host is one relgap doesn't read.
+env TEST_NOW=2026-11-20T00:00:00Z
+exec relgap pins --format json
+stdout '"raw_name": "git::git@example.org:ws/repo.git//."'
+stdout '"tool": "mod"'
+exec relgap pins --unresolved
+! stdout 'example.org'
+
+-- .relgap.yaml --
+schema_version: 1
+tools:
+  mod: {repo: ws/repo, host: bitbucket.org}
+aliases:
+  "git::git@example.org:ws/repo.git//.": mod
+-- main.tf --
+module "m" { source = "git::git@example.org:ws/repo.git//.?ref=1.0.0" }

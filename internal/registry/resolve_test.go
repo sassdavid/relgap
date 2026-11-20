@@ -394,3 +394,30 @@ func TestResolveTagPrefix(t *testing.T) {
 	_, err = r.Resolve(t.Context(), "github:not-a-repo@x-", registry.ResolveOptions{})
 	require.ErrorIs(t, err, registry.ErrUnsupported)
 }
+
+// TestAliasWithColon matches a config alias whose key has a colon, such as a git source's raw
+// name, before any prefix in it.
+func TestAliasWithColon(t *testing.T) {
+	t.Parallel()
+	const raw = "git::git@example.org:ws/repo.git//."
+	r := snapshotResolver(t, registry.ConfigLayer{
+		Tools:   map[string]string{"mod": "ws/repo"},
+		Hosts:   map[string]string{"mod": "bitbucket.org"},
+		Aliases: map[string]string{raw: "mod", "github:o/r": "terraform"},
+	})
+	for in, want := range map[string]string{raw: "mod", "github:o/r": "terraform"} {
+		got, ok := r.Identify(in)
+		assert.True(t, ok, in)
+		assert.Equal(t, want, got, in)
+		got, ok = r.Alias(in)
+		assert.True(t, ok, in)
+		assert.Equal(t, want, got, in)
+	}
+	res, err := r.Resolve(t.Context(), raw, registry.ResolveOptions{})
+	require.NoError(t, err)
+	assert.Equal(t, "mod", res.Tool.Name)
+	assert.Equal(t, "bitbucket.org", res.Tool.Host)
+	assert.Equal(t, registry.Match{By: "config alias", Value: raw, Layer: registry.LayerConfig}, res.Match)
+	_, ok := r.Alias("terraform")
+	assert.False(t, ok, "a tool name isn't an alias")
+}

@@ -29,6 +29,8 @@ func (n names) Identify(input string) (string, bool) {
 	return tool, ok
 }
 
+func (names) Alias(string) (string, bool) { return "", false }
+
 func write(t *testing.T, root string, files map[string]string) {
 	t.Helper()
 	for name, body := range files {

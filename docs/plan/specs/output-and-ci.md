@@ -86,7 +86,8 @@ Agreed before coding (2026-11-13). The item moved from M13 to M14 and ships in v
   range is digested once, with release line `none`, so a range across majors works. Added,
   removed, constraint and unresolved pins, and downgrades, go to stderr as `not digested:` lines.
   A failed digest is an envelope error and exits 1 when no `--fail-on` value matched; an auth
-  error exits 4. `--fail-on` counts each digest.
+  error exits 4. The text and Markdown formats print each error on stderr as
+  `relgap: failed: <target>: <message>`. `--fail-on` counts each digest.
 - Renovate's PR body has one JSON comment, `<!--renovate-debug:BASE64-->`, with `createdInVer`,
   `updatedInVer`, `targetBranch` and `labels` and no versions. Its default branch name
   `renovate/<depNameSanitized>-<major>.x` names the dependency and the new major only. So the
