@@ -98,6 +98,48 @@ func TestEnrichAsksBothSourcesAtOnce(t *testing.T) {
 	assert.Empty(t, res["tf"].Vulns)
 }
 
+// agedTransport answers every OSV request with no records, carrying the Age header of its URL
+// path, and counts endoflife.date requests.
+type agedTransport struct {
+	ages map[string]string
+	eol  int
+}
+
+func (a *agedTransport) RoundTrip(req *http.Request) (*http.Response, error) {
+	if req.URL.Host != "api.osv.dev" {
+		a.eol++
+	}
+	h := http.Header{"Content-Type": {"application/json"}}
+	if age := a.ages[req.URL.Path]; age != "" {
+		h.Set("Age", age)
+	}
+	return &http.Response{
+		StatusCode: http.StatusOK, Header: h, Body: io.NopCloser(strings.NewReader(`{"results":[{}]}`)), Request: req,
+	}, nil
+}
+
+// TestEnrichOldestAgeWithoutEOL: OldestAge is the largest Age of the OSV answers, and an enricher
+// without an EOL client sends no endoflife.date request.
+func TestEnrichOldestAgeWithoutEOL(t *testing.T) {
+	t.Parallel()
+	tr := &agedTransport{ages: map[string]string{"/v1/querybatch": "120"}}
+	osv := enrich.NewOSVClient(&http.Client{Transport: tr}, "")
+	_, ok := osv.OldestAge()
+	assert.False(t, ok, "no answer read yet")
+	terraform := spec("terraform", &registry.EOL{Product: "terraform", Cycle: "{major}.{minor}"},
+		registry.OSVPackage{Ecosystem: "Go", Name: "github.com/hashicorp/terraform"})
+	res, problems, err := enrich.NewEnricher(slog.New(slog.DiscardHandler), nil, osv, 2).
+		Enrich(t.Context(), []enrich.Request{{Key: "tf", Tool: terraform, Current: semver(t, "1.17.2")}})
+	require.NoError(t, err)
+	assert.Empty(t, problems)
+	assert.Nil(t, res["tf"].EOL)
+	assert.NotNil(t, res["tf"].Vulns)
+	assert.Zero(t, tr.eol)
+	age, ok := osv.OldestAge()
+	assert.True(t, ok)
+	assert.Equal(t, 2*time.Minute, age)
+}
+
 // TestSpec_enrichment_1: terraform 1.15.8 is on an EOL cycle and 1.17.2 isn't; a tool without
 // an endoflife.date product gets no eol field and sends no request; an endoflife.date outage is
 // a problem for that tool while the other results stand.

@@ -11,6 +11,8 @@ editLink: false
 
 | Command | Value | Matches |
 |---|---|---|
+| [relgap audit](/cli/audit) | `vuln` | a known vulnerability in a pinned version |
+| [relgap audit](/cli/audit) | `unchecked` | a pinned version OSV wasn't asked about |
 | [relgap digest](/cli/digest) | `breaking` | a breaking change in the range |
 | [relgap digest](/cli/digest) | `deprecation` | a deprecation in the range |
 | [relgap drift](/cli/drift) | `drift` | repositories pin different versions |

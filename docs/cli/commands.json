@@ -5,6 +5,12 @@
   "hidden": false,
   "children": [
     {
+      "name": "audit",
+      "path": "/cli/audit",
+      "short": "List the known vulnerabilities of every pinned tool version, and the pins OSV can't check",
+      "hidden": false
+    },
+    {
       "name": "cache",
       "path": "/cli/cache/",
       "short": "Inspect or clear the HTTP cache",

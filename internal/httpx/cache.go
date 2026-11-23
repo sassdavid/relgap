@@ -12,6 +12,7 @@ import (
 	"log/slog"
 	"net/http"
 	"slices"
+	"strconv"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -279,13 +280,19 @@ func (c *Cache) serve(ctx context.Context, req *http.Request, key string, e *ent
 	if e.meta.Status != 0 {
 		code = e.meta.Status
 	}
+	header := e.meta.Header.Clone()
+	if header == nil {
+		header = http.Header{}
+	}
+	// RFC 9111 section 5.1: how long ago the entry was fetched or revalidated, in seconds.
+	header.Set("Age", strconv.FormatInt(int64(max(now.Sub(e.meta.StoredAt), 0)/time.Second), 10))
 	return &http.Response{
 		Status:        fmt.Sprintf("%d %s", code, http.StatusText(code)),
 		StatusCode:    code,
 		Proto:         "HTTP/1.1",
 		ProtoMajor:    1,
 		ProtoMinor:    1,
-		Header:        e.meta.Header.Clone(),
+		Header:        header,
 		Body:          io.NopCloser(bytes.NewReader(e.body)),
 		ContentLength: int64(len(e.body)),
 		Request:       req,

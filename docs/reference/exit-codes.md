@@ -22,6 +22,7 @@ When more than one applies, the first error decides the code. A `--fail-on` matc
 
 | Command | Exit codes |
 |---|---|
+| [relgap audit](/cli/audit) | 0, 1, 2, 3, 4, 130 |
 | [relgap cache clear](/cli/cache/clear) | 0, 1, 2, 130 |
 | [relgap cache info](/cli/cache/info) | 0, 1, 2, 130 |
 | [relgap cache prune](/cli/cache/prune) | 0, 1, 2, 130 |

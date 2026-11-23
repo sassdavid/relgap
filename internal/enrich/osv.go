@@ -8,7 +8,10 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
+	"sync"
+	"time"
 )
 
 // OSVURL is the OSV API base URL.
@@ -79,6 +82,10 @@ type Event struct {
 type OSVClient struct {
 	hc   *http.Client
 	base string
+
+	mu     sync.Mutex
+	oldest time.Duration // the largest Age of a response read so far
+	aged   bool          // a response had an Age header
 }
 
 // NewOSVClient returns a client that sends requests through hc to base (empty means [OSVURL]).
@@ -187,6 +194,24 @@ func (c *OSVClient) Known(ctx context.Context, pkgs []Package) ([]bool, error) {
 	return out, nil
 }
 
+// OldestAge returns the largest Age header of the responses read so far: how long ago the oldest
+// answer was stored in a cache. The second result is false when no response had one.
+func (c *OSVClient) OldestAge() (time.Duration, bool) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	return c.oldest, c.aged
+}
+
+func (c *OSVClient) recordAge(h http.Header) {
+	secs, err := strconv.ParseInt(h.Get("Age"), 10, 64)
+	if err != nil || secs < 0 {
+		return
+	}
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	c.oldest, c.aged = max(c.oldest, time.Duration(secs)*time.Second), true
+}
+
 // Vuln returns the record of id.
 func (c *OSVClient) Vuln(ctx context.Context, id string) (*Record, error) {
 	var r Record
@@ -221,6 +246,7 @@ func (c *OSVClient) do(ctx context.Context, method, path string, in, out any) er
 	if resp.StatusCode != http.StatusOK {
 		return fmt.Errorf("osv %s: HTTP %d", path, resp.StatusCode)
 	}
+	c.recordAge(resp.Header)
 	if err = json.NewDecoder(io.LimitReader(resp.Body, maxJSONBytes)).Decode(out); err != nil {
 		return fmt.Errorf("osv %s: decode: %w", path, err)
 	}

@@ -294,22 +294,43 @@ func outdatedFormats() []render.Format {
 }
 
 func writeOutdated(w io.Writer, f render.Format, d *app.Deps, g *globals, c *comparison) error {
+	return reportWriter{
+		data:   c.out,
+		errors: append(c.errors(), c.sourceErrors()...),
+		md:     func(w io.Writer) error { return render.OutdatedMarkdown(w, c.out) },
+		sarif: func() *sarif.Log {
+			return render.OutdatedSARIF(c.out, c.scan.Problems, buildinfo.Get().Version)
+		},
+		text: func(w io.Writer, color bool) error { return render.OutdatedText(w, c.out, color) },
+	}.write(w, f, d, g)
+}
+
+// reportWriter writes one report in each format of outdated and audit.
+type reportWriter struct {
+	data   any            // the JSON envelope's data
+	errors []render.Error // the JSON envelope's errors
+	md     func(io.Writer) error
+	sarif  func() *sarif.Log
+	text   func(w io.Writer, color bool) error // tty and plain
+}
+
+func (r reportWriter) write(w io.Writer, f render.Format, d *app.Deps, g *globals) error {
 	switch f {
 	case render.FormatJSON:
-		env := render.NewEnvelope(buildinfo.Get().Version, d.Clock(), c.out)
-		env.Errors = append(c.errors(), c.sourceErrors()...)
+		env := render.NewEnvelope(buildinfo.Get().Version, d.Clock(), r.data)
+		env.Errors = r.errors
 		return render.JSON(w, env)
 	case render.FormatMD:
-		return render.OutdatedMarkdown(w, c.out)
+		return r.md(w)
 	case render.FormatSARIF:
-		return sarif.Write(w, render.OutdatedSARIF(c.out, c.scan.Problems, buildinfo.Get().Version))
+		return sarif.Write(w, r.sarif())
 	case render.FormatGitHub:
-		return sarif.WriteGitHub(w, render.OutdatedSARIF(c.out, c.scan.Problems, buildinfo.Get().Version))
+		return sarif.WriteGitHub(w, r.sarif())
 	case render.FormatAuto, render.FormatTTY, render.FormatPlain, render.FormatCSV:
 	}
 	color := f == render.FormatTTY &&
 		render.UseColor(render.ColorMode(g.color), d.Env.Lookup, app.IsTerminal(d.Stdout))
-	return render.OutdatedText(w, c.out, color)
+	return r.text(w, color)
 }
 
 // errors lists the files that didn't parse and the pins GitHub failed for.

@@ -28,6 +28,9 @@ func (o *Outdated) EnrichRequests(resolve ResolveFunc) []enrich.Request {
 	seen := map[string]bool{}
 	for i := range o.Pins {
 		p := &o.Pins[i]
+		if p.Unchecked != "" {
+			continue
+		}
 		spec, v, reason := vulnTarget(p, resolve)
 		if reason != "" {
 			p.Unchecked = reason

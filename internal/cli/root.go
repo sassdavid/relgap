@@ -88,7 +88,8 @@ Docs: ` + docsurl.Base + `.`,
 		Example: `  relgap digest terraform 1.9.0..1.10.0
   relgap outdated --fail-on breaking
   relgap pins ~/src/infra
-  relgap drift ~/src/infra ~/src/apps`,
+  relgap drift ~/src/infra ~/src/apps
+  relgap audit ~/src/infra`,
 		Version:           buildinfo.Get().Version,
 		SilenceErrors:     true,
 		SilenceUsage:      true,
@@ -146,6 +147,7 @@ Docs: ` + docsurl.Base + `.`,
 		newOutdatedCmd(d, g),
 		newNotifyCmd(d, g),
 		newDriftCmd(d, g),
+		newAuditCmd(d, g),
 		newMCPCmd(d, g),
 	)
 	addCompletionShells(root)

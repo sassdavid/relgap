@@ -217,7 +217,36 @@ func (c cassetteChain) RoundTrip(req *http.Request) (*http.Response, error) {
 	return nil, errors.New("no cassette")
 }
 
-// requestLog appends "METHOD URL" to a file for every request before sending it.
+// osvVersionedQueries counts the queries of an OSV querybatch request that ask about a version.
+// The second result is false for any other request.
+func osvVersionedQueries(req *http.Request) (int, bool) {
+	if req.URL.Host != "api.osv.dev" || req.URL.Path != "/v1/querybatch" || req.GetBody == nil {
+		return 0, false
+	}
+	body, err := req.GetBody()
+	if err != nil {
+		return 0, false
+	}
+	defer body.Close()
+	var batch struct {
+		Queries []struct {
+			Version string `json:"version"`
+		} `json:"queries"`
+	}
+	if json.NewDecoder(body).Decode(&batch) != nil {
+		return 0, false
+	}
+	n := 0
+	for _, q := range batch.Queries {
+		if q.Version != "" {
+			n++
+		}
+	}
+	return n, true
+}
+
+// requestLog appends "METHOD URL" to a file for every request before sending it, with the number
+// of versioned queries for an OSV querybatch.
 type requestLog struct {
 	file string
 	rt   http.RoundTripper
@@ -228,7 +257,11 @@ func (l requestLog) RoundTrip(req *http.Request) (*http.Response, error) {
 	if err != nil {
 		return nil, fmt.Errorf("open request log: %w", err)
 	}
-	_, err = fmt.Fprintf(f, "%s %s\n", req.Method, req.URL.Redacted())
+	line := req.Method + " " + req.URL.Redacted()
+	if n, ok := osvVersionedQueries(req); ok {
+		line += " osv_versioned_queries=" + strconv.Itoa(n)
+	}
+	_, err = fmt.Fprintln(f, line)
 	if closeErr := f.Close(); err == nil {
 		err = closeErr
 	}
@@ -304,14 +337,16 @@ func scriptParams(t *testing.T, files ...string) testscript.Params {
 			return false, fmt.Errorf("unknown condition %q", cond)
 		},
 		Cmds: map[string]func(ts *testscript.TestScript, neg bool, args []string){
-			"golden":      cmdGolden,
-			"jsonschema":  cmdJSONSchema,
-			"sarifschema": cmdSARIFSchema,
-			"slowgithub":  cmdSlowGitHub,
-			"countsmatch": cmdCountsMatch,
-			"gentree":     cmdGenTree,
-			"requests":    cmdRequests,
-			"usegit":      cmdUseGit,
+			"golden":       cmdGolden,
+			"jsonschema":   cmdJSONSchema,
+			"sarifschema":  cmdSARIFSchema,
+			"slowgithub":   cmdSlowGitHub,
+			"countsmatch":  cmdCountsMatch,
+			"gentree":      cmdGenTree,
+			"requests":     cmdRequests,
+			"usegit":       cmdUseGit,
+			"genaudittree": cmdGenAuditTree,
+			"osvqueries":   cmdOSVQueries,
 		},
 	}
 }
@@ -875,8 +910,8 @@ func TestSpec_enrichment_2(t *testing.T) {
 	testscript.Run(t, scriptParams(t, filepath.Join(scriptDir, "spec_enrichment_2.txtar")))
 }
 
-// TestSpec_vulnerability_audit_2: every unchecked reason appears in every format of outdated,
-// and VULNS shows ? for an unchecked pin.
+// TestSpec_vulnerability_audit_2: every unchecked reason appears in every format of outdated and
+// audit, and VULNS shows ? for an unchecked pin.
 func TestSpec_vulnerability_audit_2(t *testing.T) {
 	t.Parallel()
 	testscript.Run(t, scriptParams(t, filepath.Join(scriptDir, "spec_vulnerability_audit_2.txtar")))

@@ -200,10 +200,16 @@ func (t *toolPins) needsFullList(pins []scan.Pin) bool {
 	return false
 }
 
-func groupTools(req OutdatedRequest) []*toolPins {
+func groupTools(req OutdatedRequest) []*toolPins { return groupToolsOf(req, nil) }
+
+// groupToolsOf groups the pins that keep accepts (all when nil) by tool and resolves each tool.
+func groupToolsOf(req OutdatedRequest, keep func(int) bool) []*toolPins {
 	byName := map[string]*toolPins{}
 	var tools []*toolPins
 	for i, p := range req.Pins {
+		if keep != nil && !keep(i) {
+			continue
+		}
 		t, ok := byName[p.Tool]
 		if !ok {
 			t = &toolPins{name: p.Tool}
@@ -354,25 +360,51 @@ func (c *comparer) compare(ctx context.Context, i int) OutdatedPin {
 
 // current returns the version pin stands for and, for a non-exact pin, how it was chosen.
 func (c *comparer) current(ctx context.Context, pin scan.Pin, line version.Level) (version.V, string, error) {
-	switch pin.Match {
-	case scan.MatchExact:
-		v, err := c.window.Parse(pin.Version)
-		if err != nil {
-			return version.V{}, "", fmt.Errorf("%w: %w", errUncomparable, err)
-		}
-		return v, "", nil
-	case scan.MatchChannel:
+	if pin.Match == scan.MatchExact {
+		return exactVersion(c.window, pin)
+	}
+	return approxVersion(ctx, pin, line, approxSource{
+		window: func(context.Context) (*version.Universe, error) { return c.window, nil },
+		full:   func(ctx context.Context) (*version.Universe, error) { return c.o.digester.Universe(ctx, c.tool.spec) },
+		known:  func(u *version.Universe) []version.V { return knownVersions(u, c.req.Pins, c.tool.pins, pin) },
+	})
+}
+
+// exactVersion parses an exact pin's version as u's tag rules allow.
+func exactVersion(u *version.Universe, pin scan.Pin) (version.V, string, error) {
+	v, err := u.Parse(pin.Version)
+	if err != nil {
+		return version.V{}, "", fmt.Errorf("%w: %w", errUncomparable, err)
+	}
+	return v, "", nil
+}
+
+// approxSource supplies the versions a non-exact pin resolves against.
+type approxSource struct {
+	window func(context.Context) (*version.Universe, error) // the newest releases, for the latest channel
+	full   func(context.Context) (*version.Universe, error) // every version, for prefixes and constraints
+	known  func(*version.Universe) []version.V              // the exact pins a constraint is locked to
+}
+
+// approxVersion returns the version a non-exact pin stands for and how it was chosen: the latest
+// channel is the latest stable version, a prefix the highest stable version with it, and a
+// constraint the highest known version that satisfies it, else the lowest version that does.
+func approxVersion(ctx context.Context, pin scan.Pin, line version.Level, src approxSource) (version.V, string, error) {
+	if pin.Match == scan.MatchChannel {
 		if !strings.EqualFold(strings.TrimSpace(pin.Value), "latest") {
 			return version.V{}, "", fmt.Errorf("%w: %q is a channel", errUncomparable, pin.Value)
 		}
-		latest, ok := c.window.Latest(version.V{}, line)
+		window, err := src.window(ctx)
+		if err != nil {
+			return version.V{}, "", err
+		}
+		latest, ok := window.Latest(version.V{}, line)
 		if !ok {
 			return version.V{}, "", fmt.Errorf("%w: no stable version in the newest releases", errUncomparable)
 		}
 		return latest.V, ViaLatest, nil
-	case scan.MatchPrefix, scan.MatchConstraint:
 	}
-	full, err := c.o.digester.Universe(ctx, c.tool.spec)
+	full, err := src.full(ctx)
 	if err != nil {
 		return version.V{}, "", err
 	}
@@ -387,19 +419,19 @@ func (c *comparer) current(ctx context.Context, pin scan.Pin, line version.Level
 	if err != nil {
 		return version.V{}, "", fmt.Errorf("%w: %w", errUncomparable, err)
 	}
-	v, pick, err := full.ResolveConstraint(cons, c.known(full, pin))
+	v, pick, err := full.ResolveConstraint(cons, src.known(full))
 	if err != nil {
 		return version.V{}, "", fmt.Errorf("%w: %w", errUncomparable, err)
 	}
 	return v, string(pick), nil
 }
 
-// known returns the exact pins of the same tool in the same repository, such as a
+// knownVersions returns the exact pins among pins[idx] in the same repository as pin, such as a
 // .terraform-version next to required_version: the versions a constraint pin is locked to.
-func (c *comparer) known(u *version.Universe, pin scan.Pin) []version.V {
+func knownVersions(u *version.Universe, pins []scan.Pin, idx []int, pin scan.Pin) []version.V {
 	var out []version.V
-	for _, i := range c.tool.pins {
-		p := c.req.Pins[i]
+	for _, i := range idx {
+		p := pins[i]
 		if p.Match != scan.MatchExact || p.Location.Repo != pin.Location.Repo {
 			continue
 		}

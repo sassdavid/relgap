@@ -81,10 +81,10 @@ type IgnoreRule struct {
 
 // Policy holds CI defaults for --fail-on and related flags.
 type Policy struct {
-	FailOn        []string `json:"fail_on"        jsonschema:"enum=breaking,enum=deprecation,enum=eol,enum=vuln,enum=drift,enum=outdated" jsonschema_description:"--fail-on values each command uses when the flag is not given; a command ignores the values it doesn't check."`
-	MaxBehind     string   `json:"max_behind"     jsonschema:"pattern=^((major|minor|patch|releases|days):[0-9]+)?$"                      jsonschema_description:"e.g. minor:2, releases:10, days:90."`
-	MinConfidence float64  `json:"min_confidence" jsonschema:"minimum=0,maximum=1"                                                        jsonschema_description:"Entries below this confidence are hidden."`
-	VulnSeverity  string   `json:"vuln_severity"  jsonschema:"enum=,enum=low,enum=medium,enum=high,enum=critical"                         jsonschema_description:"Lowest OSV rating --fail-on vuln counts; empty counts every advisory."`
+	FailOn        []string `json:"fail_on"        jsonschema:"enum=breaking,enum=deprecation,enum=eol,enum=vuln,enum=drift,enum=outdated,enum=unchecked" jsonschema_description:"--fail-on values each command uses when the flag is not given; a command ignores the values it doesn't check. audit always gates vuln, and its values here add to it."`
+	MaxBehind     string   `json:"max_behind"     jsonschema:"pattern=^((major|minor|patch|releases|days):[0-9]+)?$"                                     jsonschema_description:"e.g. minor:2, releases:10, days:90."`
+	MinConfidence float64  `json:"min_confidence" jsonschema:"minimum=0,maximum=1"                                                                       jsonschema_description:"Entries below this confidence are hidden."`
+	VulnSeverity  string   `json:"vuln_severity"  jsonschema:"enum=,enum=low,enum=medium,enum=high,enum=critical"                                        jsonschema_description:"Lowest OSV rating --fail-on vuln counts; empty counts every advisory."`
 }
 
 // LLM configures the optional, off-by-default summarizer.

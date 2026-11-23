@@ -169,11 +169,12 @@
               "eol",
               "vuln",
               "drift",
-              "outdated"
+              "outdated",
+              "unchecked"
             ]
           },
           "type": "array",
-          "description": "--fail-on values each command uses when the flag is not given; a command ignores the values it doesn't check."
+          "description": "--fail-on values each command uses when the flag is not given; a command ignores the values it doesn't check. audit always gates vuln, and its values here add to it."
         },
         "max_behind": {
           "type": "string",

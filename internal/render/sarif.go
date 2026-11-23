@@ -231,30 +231,35 @@ func vulnRules(o *report.Outdated) []sarif.Rule {
 	rules := make([]sarif.Rule, 0, len(ids))
 	for _, id := range ids {
 		v := byID[id]
-		short := v.Summary
-		if short == "" {
-			short = "Known vulnerability " + id
-		}
-		full := short
-		if len(v.Aliases) > 0 {
-			full += " (" + strings.Join(v.Aliases, ", ") + ")"
-		}
-		props := map[string]any{"tags": []string{"security", "vulnerability"}}
-		if v.Severity != nil && v.Severity.Score > 0 {
-			props["security-severity"] = strconv.FormatFloat(v.Severity.Score, 'f', 1, 64)
-		}
-		rules = append(rules, sarif.Rule{
-			ID:               id,
-			ShortDescription: sarif.Message{Text: short},
-			FullDescription:  sarif.Message{Text: full},
-			Help: sarif.Message{
-				Text: "Upgrade past the affected versions. Details: https://osv.dev/vulnerability/" + id,
-			},
-			DefaultConfiguration: sarif.Configuration{Level: vulnLevel(v)},
-			Properties:           props,
-		})
+		rules = append(rules, vulnRule(id, v.Summary, v.Aliases, v.Severity))
 	}
 	return rules
+}
+
+// vulnRule is the rule of one advisory, tagged security with its CVSS score as GitHub reads it.
+func vulnRule(id, summary string, aliases []string, severity *enrich.Score) sarif.Rule {
+	short := summary
+	if short == "" {
+		short = "Known vulnerability " + id
+	}
+	full := short
+	if len(aliases) > 0 {
+		full += " (" + strings.Join(aliases, ", ") + ")"
+	}
+	props := map[string]any{"tags": []string{"security", "vulnerability"}}
+	if severity != nil && severity.Score > 0 {
+		props["security-severity"] = strconv.FormatFloat(severity.Score, 'f', 1, 64)
+	}
+	return sarif.Rule{
+		ID:               id,
+		ShortDescription: sarif.Message{Text: short},
+		FullDescription:  sarif.Message{Text: full},
+		Help: sarif.Message{
+			Text: "Upgrade past the affected versions. Details: " + report.AdvisoryURL + id,
+		},
+		DefaultConfiguration: sarif.Configuration{Level: vulnLevel(&enrich.Vuln{Severity: severity})},
+		Properties:           props,
+	}
 }
 
 // vulnLevel maps an advisory's CVSS rating to a level: error for high and critical, warning for
@@ -273,8 +278,11 @@ func vulnLevel(v *enrich.Vuln) string {
 	}
 }
 
-func vulnMessage(p *report.OutdatedPin, v *enrich.Vuln) string {
-	msg := fmt.Sprintf("%s %s is affected by %s", p.Tool, p.Current, v.ID)
+func vulnMessage(p *report.OutdatedPin, v *enrich.Vuln) string { return vulnText(p.Tool, p.Current, v) }
+
+// vulnText says that version of tool is affected by v, with its rating, summary and fix.
+func vulnText(tool, version string, v *enrich.Vuln) string {
+	msg := fmt.Sprintf("%s %s is affected by %s", tool, version, v.ID)
 	if len(v.Aliases) > 0 {
 		msg += " (" + strings.Join(v.Aliases, ", ") + ")"
 	}

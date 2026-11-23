@@ -43,8 +43,12 @@ func addGateFlags(cmd *cobra.Command, values []string) {
 	fl := cmd.Flags()
 	failOn := failOnChoices(values)
 	setFailOn(cmd, failOn)
-	fl.StringSlice(flagFailOn, def.FailOn,
-		complete.Usage("exit 3 when this matches: {values}; repeatable (config policy.fail_on)", failOn))
+	usage := "exit 3 when this matches: {values}; repeatable (config policy.fail_on)"
+	if slices.Contains(values, report.FailOnUnchecked) {
+		usage = "exit 3 when this matches: {values}; repeatable; replaces the default vuln, " +
+			"which config policy.fail_on adds to"
+	}
+	fl.StringSlice(flagFailOn, def.FailOn, complete.Usage(usage, failOn))
 	fl.Int(flagMinCount, 1, "findings a --fail-on value needs before it exits 3")
 	registerCompletions(cmd, map[string]cobra.CompletionFunc{
 		flagFailOn:   complete.List(failOn),
@@ -75,6 +79,7 @@ func failOnChoices(values []string) []complete.Choice {
 		report.FailOnVuln:        "a known vulnerability in a pinned version",
 		report.FailOnDrift:       "repositories pin different versions",
 		report.FailOnOutdated:    "a pin further behind than --max-behind",
+		report.FailOnUnchecked:   "a pinned version OSV wasn't asked about",
 	}
 	out := make([]complete.Choice, len(values))
 	for i, v := range values {
@@ -175,6 +180,13 @@ func matchText(m report.Match) string {
 	}
 	for _, f := range m.Findings {
 		switch {
+		case f.Advisory != nil:
+			unit = plural(n, "finding", "findings")
+			add(fmt.Sprintf("%s in %s %s (%s)", f.Advisory.ID, f.Advisory.Tool, f.Advisory.Version,
+				render.PinLocation(f.Advisory.Pins[0])))
+		case f.Unchecked != nil:
+			unit = plural(n, "unchecked tool version", "unchecked tool versions")
+			add(fmt.Sprintf("%s %s (%s)", f.Unchecked.Tool, f.Unchecked.Version, f.Unchecked.Reason))
 		case f.Vuln != nil:
 			unit = plural(n, "advisory", "advisories")
 			add(

@@ -56,17 +56,31 @@ func CoverageOf(name string, t registry.ToolSpec, v version.V) Coverage {
 	if c, ok := backendCoverage(t.Backend); ok {
 		return c
 	}
-	kind, _, _ := strings.Cut(name, ":")
-	switch kind {
-	case registry.KindImage:
-		if !publicRegistry(t.Image) {
-			return Coverage{Reason: ReasonPrivate}
-		}
-		return Coverage{Reason: ReasonNoSource}
-	case registry.KindChart, registry.KindTFModule:
+	if reason, ok := NameReason(name); ok {
+		return Coverage{Reason: reason}
+	}
+	if kind, _, _ := strings.Cut(name, ":"); kind == registry.KindTFModule {
 		return Coverage{Reason: ReasonNoSource}
 	}
 	return repoCoverage(t, v)
+}
+
+// NameReason returns the unchecked reason of a pin whose tool name alone says OSV is never asked
+// about it: an image (private-source on a registry relgap never sends to, else
+// no-advisory-source) or a chart. Neither takes a curated entry, so it needs no lookup. The
+// second result is false for every other name.
+func NameReason(name string) (string, bool) {
+	kind, rest, _ := strings.Cut(name, ":")
+	switch kind {
+	case registry.KindImage:
+		if !publicRegistry(rest) {
+			return ReasonPrivate, true
+		}
+		return ReasonNoSource, true
+	case registry.KindChart:
+		return ReasonNoSource, true
+	}
+	return "", false
 }
 
 // SkipReason returns why a pin of the tool name isn't checked when resolving name failed with

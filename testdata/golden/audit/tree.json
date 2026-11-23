@@ -1,0 +1,727 @@
+{
+  "schema_version": "1",
+  "tool": "relgap",
+  "version": "dev",
+  "generated_at": "2026-11-23T12:00:00Z",
+  "data": {
+    "repos": [
+      "tree/team-0/repo-00",
+      "tree/team-0/repo-01",
+      "tree/team-0/repo-02",
+      "tree/team-0/repo-03",
+      "tree/team-0/repo-04",
+      "tree/team-1/repo-05",
+      "tree/team-1/repo-06",
+      "tree/team-1/repo-07",
+      "tree/team-1/repo-08",
+      "tree/team-1/repo-09",
+      "tree/team-2/repo-10",
+      "tree/team-2/repo-11",
+      "tree/team-2/repo-12",
+      "tree/team-2/repo-13",
+      "tree/team-2/repo-14",
+      "tree/team-3/repo-15",
+      "tree/team-3/repo-16",
+      "tree/team-3/repo-17",
+      "tree/team-3/repo-18",
+      "tree/team-3/repo-19"
+    ],
+    "checked": 6,
+    "findings": [
+      {
+        "tool": "terragrunt",
+        "version": "0.93.13",
+        "pins": [
+          {
+            "repo": "tree/team-0/repo-03",
+            "file": "mise.toml",
+            "line": 3,
+            "detector": "mise"
+          }
+        ],
+        "id": "GHSA-8394-6f8r-whxg",
+        "aliases": [
+          "CVE-2026-45099",
+          "GO-2026-6241"
+        ],
+        "summary": "Terragrunt: Arbitrary File Deletion via Malicious Module Manifest",
+        "package": {
+          "ecosystem": "Go",
+          "name": "github.com/gruntwork-io/terragrunt"
+        },
+        "severity": {
+          "score": 6.9,
+          "rating": "medium",
+          "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:N/VI:L/VA:N/SC:N/SI:N/SA:N"
+        },
+        "fixed_in": "1.0.4",
+        "url": "https://osv.dev/vulnerability/GHSA-8394-6f8r-whxg"
+      },
+      {
+        "tool": "terraform",
+        "version": "1.5.0",
+        "pins": [
+          {
+            "repo": "tree/team-0/repo-00",
+            "file": ".terraform-version",
+            "line": 1,
+            "detector": "idiomatic"
+          },
+          {
+            "repo": "tree/team-0/repo-01",
+            "file": ".terraform-version",
+            "line": 1,
+            "detector": "idiomatic"
+          },
+          {
+            "repo": "tree/team-0/repo-02",
+            "file": ".terraform-version",
+            "line": 1,
+            "detector": "idiomatic"
+          },
+          {
+            "repo": "tree/team-0/repo-03",
+            "file": ".terraform-version",
+            "line": 1,
+            "detector": "idiomatic"
+          },
+          {
+            "repo": "tree/team-0/repo-04",
+            "file": ".terraform-version",
+            "line": 1,
+            "detector": "idiomatic"
+          },
+          {
+            "repo": "tree/team-1/repo-05",
+            "file": ".terraform-version",
+            "line": 1,
+            "detector": "idiomatic"
+          },
+          {
+            "repo": "tree/team-1/repo-06",
+            "file": ".terraform-version",
+            "line": 1,
+            "detector": "idiomatic"
+          },
+          {
+            "repo": "tree/team-1/repo-07",
+            "file": ".terraform-version",
+            "line": 1,
+            "detector": "idiomatic"
+          },
+          {
+            "repo": "tree/team-1/repo-08",
+            "file": ".terraform-version",
+            "line": 1,
+            "detector": "idiomatic"
+          },
+          {
+            "repo": "tree/team-1/repo-09",
+            "file": ".terraform-version",
+            "line": 1,
+            "detector": "idiomatic"
+          },
+          {
+            "repo": "tree/team-2/repo-10",
+            "file": ".terraform-version",
+            "line": 1,
+            "detector": "idiomatic"
+          },
+          {
+            "repo": "tree/team-2/repo-11",
+            "file": ".terraform-version",
+            "line": 1,
+            "detector": "idiomatic"
+          },
+          {
+            "repo": "tree/team-2/repo-12",
+            "file": ".terraform-version",
+            "line": 1,
+            "detector": "idiomatic"
+          },
+          {
+            "repo": "tree/team-2/repo-13",
+            "file": ".terraform-version",
+            "line": 1,
+            "detector": "idiomatic"
+          },
+          {
+            "repo": "tree/team-2/repo-14",
+            "file": ".terraform-version",
+            "line": 1,
+            "detector": "idiomatic"
+          },
+          {
+            "repo": "tree/team-3/repo-15",
+            "file": ".terraform-version",
+            "line": 1,
+            "detector": "idiomatic"
+          },
+          {
+            "repo": "tree/team-3/repo-16",
+            "file": ".terraform-version",
+            "line": 1,
+            "detector": "idiomatic"
+          },
+          {
+            "repo": "tree/team-3/repo-17",
+            "file": ".terraform-version",
+            "line": 1,
+            "detector": "idiomatic"
+          },
+          {
+            "repo": "tree/team-3/repo-18",
+            "file": ".terraform-version",
+            "line": 1,
+            "detector": "idiomatic"
+          },
+          {
+            "repo": "tree/team-3/repo-19",
+            "file": ".terraform-version",
+            "line": 1,
+            "detector": "idiomatic"
+          }
+        ],
+        "id": "GHSA-h626-pv66-hhm7",
+        "aliases": [
+          "CVE-2023-4782",
+          "GO-2023-2055"
+        ],
+        "summary": "Terraform allows arbitrary file write during the `init` operation",
+        "package": {
+          "ecosystem": "Go",
+          "name": "github.com/hashicorp/terraform"
+        },
+        "severity": {
+          "score": 6.3,
+          "rating": "medium",
+          "vector": "CVSS:3.1/AV:L/AC:L/PR:H/UI:R/S:C/C:L/I:H/A:N"
+        },
+        "fixed_in": "1.5.7",
+        "url": "https://osv.dev/vulnerability/GHSA-h626-pv66-hhm7"
+      },
+      {
+        "tool": "kubectl",
+        "version": "1.33.5",
+        "pins": [
+          {
+            "repo": "tree/team-0/repo-01",
+            "file": "mise.toml",
+            "line": 2,
+            "detector": "mise"
+          },
+          {
+            "repo": "tree/team-0/repo-03",
+            "file": "mise.toml",
+            "line": 2,
+            "detector": "mise"
+          },
+          {
+            "repo": "tree/team-1/repo-05",
+            "file": "mise.toml",
+            "line": 2,
+            "detector": "mise"
+          },
+          {
+            "repo": "tree/team-1/repo-07",
+            "file": "mise.toml",
+            "line": 2,
+            "detector": "mise"
+          },
+          {
+            "repo": "tree/team-1/repo-09",
+            "file": "mise.toml",
+            "line": 2,
+            "detector": "mise"
+          },
+          {
+            "repo": "tree/team-2/repo-11",
+            "file": "mise.toml",
+            "line": 2,
+            "detector": "mise"
+          },
+          {
+            "repo": "tree/team-2/repo-13",
+            "file": "mise.toml",
+            "line": 2,
+            "detector": "mise"
+          },
+          {
+            "repo": "tree/team-3/repo-15",
+            "file": "mise.toml",
+            "line": 2,
+            "detector": "mise"
+          },
+          {
+            "repo": "tree/team-3/repo-17",
+            "file": "mise.toml",
+            "line": 2,
+            "detector": "mise"
+          },
+          {
+            "repo": "tree/team-3/repo-19",
+            "file": "mise.toml",
+            "line": 2,
+            "detector": "mise"
+          }
+        ],
+        "id": "GHSA-r6j8-c6r2-37rr",
+        "aliases": [
+          "CVE-2025-13281",
+          "GO-2025-4240"
+        ],
+        "summary": "kube-controller-manager is vulnerable to half-blind Server Side Request Forgery through in-tree Portworx StorageClass",
+        "package": {
+          "ecosystem": "Go",
+          "name": "k8s.io/kubernetes"
+        },
+        "severity": {
+          "score": 5.8,
+          "rating": "medium",
+          "vector": "CVSS:3.1/AV:N/AC:H/PR:H/UI:N/S:C/C:H/I:N/A:N"
+        },
+        "fixed_in": "1.33.6",
+        "url": "https://osv.dev/vulnerability/GHSA-r6j8-c6r2-37rr"
+      },
+      {
+        "tool": "helm",
+        "version": "3.19.0",
+        "pins": [
+          {
+            "repo": "tree/team-0/repo-01",
+            "file": "mise.toml",
+            "line": 3,
+            "detector": "mise"
+          },
+          {
+            "repo": "tree/team-1/repo-05",
+            "file": "mise.toml",
+            "line": 4,
+            "detector": "mise"
+          },
+          {
+            "repo": "tree/team-1/repo-09",
+            "file": "mise.toml",
+            "line": 3,
+            "detector": "mise"
+          },
+          {
+            "repo": "tree/team-2/repo-13",
+            "file": "mise.toml",
+            "line": 3,
+            "detector": "mise"
+          },
+          {
+            "repo": "tree/team-3/repo-17",
+            "file": "mise.toml",
+            "line": 3,
+            "detector": "mise"
+          }
+        ],
+        "id": "GHSA-hr2v-4r36-88hr",
+        "aliases": [
+          "BIT-helm-2026-35206",
+          "CVE-2026-35206",
+          "GO-2026-5435"
+        ],
+        "summary": "Helm Chart extraction output directory collapse via `Chart.yaml` name dot-segment",
+        "package": {
+          "ecosystem": "Go",
+          "name": "helm.sh/helm/v3"
+        },
+        "severity": {
+          "score": 4.8,
+          "rating": "medium",
+          "vector": "CVSS:4.0/AV:L/AC:L/AT:N/PR:N/UI:P/VC:N/VI:L/VA:L/SC:N/SI:N/SA:N"
+        },
+        "fixed_in": "3.20.2",
+        "url": "https://osv.dev/vulnerability/GHSA-hr2v-4r36-88hr"
+      },
+      {
+        "tool": "terragrunt",
+        "version": "0.93.13",
+        "pins": [
+          {
+            "repo": "tree/team-0/repo-03",
+            "file": "mise.toml",
+            "line": 3,
+            "detector": "mise"
+          }
+        ],
+        "id": "GHSA-wv6g-x823-wx9m",
+        "aliases": [
+          "CVE-2026-64672",
+          "GO-2026-6768"
+        ],
+        "summary": "Terragrunt catalog predictable temp symlink clobber",
+        "package": {
+          "ecosystem": "Go",
+          "name": "github.com/gruntwork-io/terragrunt"
+        },
+        "severity": {
+          "score": 4.4,
+          "rating": "medium",
+          "vector": "CVSS:4.0/AV:L/AC:L/AT:P/PR:L/UI:P/VC:N/VI:H/VA:H/SC:N/SI:N/SA:N"
+        },
+        "fixed_in": "1.1.1",
+        "url": "https://osv.dev/vulnerability/GHSA-wv6g-x823-wx9m"
+      },
+      {
+        "tool": "kubectl",
+        "version": "1.33.5",
+        "pins": [
+          {
+            "repo": "tree/team-0/repo-01",
+            "file": "mise.toml",
+            "line": 2,
+            "detector": "mise"
+          },
+          {
+            "repo": "tree/team-0/repo-03",
+            "file": "mise.toml",
+            "line": 2,
+            "detector": "mise"
+          },
+          {
+            "repo": "tree/team-1/repo-05",
+            "file": "mise.toml",
+            "line": 2,
+            "detector": "mise"
+          },
+          {
+            "repo": "tree/team-1/repo-07",
+            "file": "mise.toml",
+            "line": 2,
+            "detector": "mise"
+          },
+          {
+            "repo": "tree/team-1/repo-09",
+            "file": "mise.toml",
+            "line": 2,
+            "detector": "mise"
+          },
+          {
+            "repo": "tree/team-2/repo-11",
+            "file": "mise.toml",
+            "line": 2,
+            "detector": "mise"
+          },
+          {
+            "repo": "tree/team-2/repo-13",
+            "file": "mise.toml",
+            "line": 2,
+            "detector": "mise"
+          },
+          {
+            "repo": "tree/team-3/repo-15",
+            "file": "mise.toml",
+            "line": 2,
+            "detector": "mise"
+          },
+          {
+            "repo": "tree/team-3/repo-17",
+            "file": "mise.toml",
+            "line": 2,
+            "detector": "mise"
+          },
+          {
+            "repo": "tree/team-3/repo-19",
+            "file": "mise.toml",
+            "line": 2,
+            "detector": "mise"
+          }
+        ],
+        "id": "GO-2025-3521",
+        "aliases": [
+          "CVE-2025-1767",
+          "GHSA-3wgm-2gw2-vh5m"
+        ],
+        "summary": "Kubernetes GitRepo Volume Inadvertent Local Repository Access in k8s.io/kubernetes",
+        "package": {
+          "ecosystem": "Go",
+          "name": "k8s.io/kubernetes"
+        },
+        "url": "https://osv.dev/vulnerability/GO-2025-3521"
+      },
+      {
+        "tool": "kubectl",
+        "version": "1.34.2",
+        "pins": [
+          {
+            "repo": "tree/team-0/repo-00",
+            "file": "mise.toml",
+            "line": 2,
+            "detector": "mise"
+          },
+          {
+            "repo": "tree/team-0/repo-02",
+            "file": "mise.toml",
+            "line": 2,
+            "detector": "mise"
+          },
+          {
+            "repo": "tree/team-0/repo-04",
+            "file": "mise.toml",
+            "line": 2,
+            "detector": "mise"
+          },
+          {
+            "repo": "tree/team-1/repo-06",
+            "file": "mise.toml",
+            "line": 2,
+            "detector": "mise"
+          },
+          {
+            "repo": "tree/team-1/repo-08",
+            "file": "mise.toml",
+            "line": 2,
+            "detector": "mise"
+          },
+          {
+            "repo": "tree/team-2/repo-10",
+            "file": "mise.toml",
+            "line": 2,
+            "detector": "mise"
+          },
+          {
+            "repo": "tree/team-2/repo-12",
+            "file": "mise.toml",
+            "line": 2,
+            "detector": "mise"
+          },
+          {
+            "repo": "tree/team-2/repo-14",
+            "file": "mise.toml",
+            "line": 2,
+            "detector": "mise"
+          },
+          {
+            "repo": "tree/team-3/repo-16",
+            "file": "mise.toml",
+            "line": 2,
+            "detector": "mise"
+          },
+          {
+            "repo": "tree/team-3/repo-18",
+            "file": "mise.toml",
+            "line": 2,
+            "detector": "mise"
+          }
+        ],
+        "id": "GO-2025-3521",
+        "aliases": [
+          "CVE-2025-1767",
+          "GHSA-3wgm-2gw2-vh5m"
+        ],
+        "summary": "Kubernetes GitRepo Volume Inadvertent Local Repository Access in k8s.io/kubernetes",
+        "package": {
+          "ecosystem": "Go",
+          "name": "k8s.io/kubernetes"
+        },
+        "url": "https://osv.dev/vulnerability/GO-2025-3521"
+      },
+      {
+        "tool": "kubectl",
+        "version": "1.33.5",
+        "pins": [
+          {
+            "repo": "tree/team-0/repo-01",
+            "file": "mise.toml",
+            "line": 2,
+            "detector": "mise"
+          },
+          {
+            "repo": "tree/team-0/repo-03",
+            "file": "mise.toml",
+            "line": 2,
+            "detector": "mise"
+          },
+          {
+            "repo": "tree/team-1/repo-05",
+            "file": "mise.toml",
+            "line": 2,
+            "detector": "mise"
+          },
+          {
+            "repo": "tree/team-1/repo-07",
+            "file": "mise.toml",
+            "line": 2,
+            "detector": "mise"
+          },
+          {
+            "repo": "tree/team-1/repo-09",
+            "file": "mise.toml",
+            "line": 2,
+            "detector": "mise"
+          },
+          {
+            "repo": "tree/team-2/repo-11",
+            "file": "mise.toml",
+            "line": 2,
+            "detector": "mise"
+          },
+          {
+            "repo": "tree/team-2/repo-13",
+            "file": "mise.toml",
+            "line": 2,
+            "detector": "mise"
+          },
+          {
+            "repo": "tree/team-3/repo-15",
+            "file": "mise.toml",
+            "line": 2,
+            "detector": "mise"
+          },
+          {
+            "repo": "tree/team-3/repo-17",
+            "file": "mise.toml",
+            "line": 2,
+            "detector": "mise"
+          },
+          {
+            "repo": "tree/team-3/repo-19",
+            "file": "mise.toml",
+            "line": 2,
+            "detector": "mise"
+          }
+        ],
+        "id": "GO-2025-3547",
+        "aliases": [
+          "CVE-2024-7598",
+          "GHSA-r56h-j38w-hrqq"
+        ],
+        "summary": "Kubernetes kube-apiserver Vulnerable to Race Condition in k8s.io/kubernetes",
+        "package": {
+          "ecosystem": "Go",
+          "name": "k8s.io/kubernetes"
+        },
+        "url": "https://osv.dev/vulnerability/GO-2025-3547"
+      },
+      {
+        "tool": "kubectl",
+        "version": "1.34.2",
+        "pins": [
+          {
+            "repo": "tree/team-0/repo-00",
+            "file": "mise.toml",
+            "line": 2,
+            "detector": "mise"
+          },
+          {
+            "repo": "tree/team-0/repo-02",
+            "file": "mise.toml",
+            "line": 2,
+            "detector": "mise"
+          },
+          {
+            "repo": "tree/team-0/repo-04",
+            "file": "mise.toml",
+            "line": 2,
+            "detector": "mise"
+          },
+          {
+            "repo": "tree/team-1/repo-06",
+            "file": "mise.toml",
+            "line": 2,
+            "detector": "mise"
+          },
+          {
+            "repo": "tree/team-1/repo-08",
+            "file": "mise.toml",
+            "line": 2,
+            "detector": "mise"
+          },
+          {
+            "repo": "tree/team-2/repo-10",
+            "file": "mise.toml",
+            "line": 2,
+            "detector": "mise"
+          },
+          {
+            "repo": "tree/team-2/repo-12",
+            "file": "mise.toml",
+            "line": 2,
+            "detector": "mise"
+          },
+          {
+            "repo": "tree/team-2/repo-14",
+            "file": "mise.toml",
+            "line": 2,
+            "detector": "mise"
+          },
+          {
+            "repo": "tree/team-3/repo-16",
+            "file": "mise.toml",
+            "line": 2,
+            "detector": "mise"
+          },
+          {
+            "repo": "tree/team-3/repo-18",
+            "file": "mise.toml",
+            "line": 2,
+            "detector": "mise"
+          }
+        ],
+        "id": "GO-2025-3547",
+        "aliases": [
+          "CVE-2024-7598",
+          "GHSA-r56h-j38w-hrqq"
+        ],
+        "summary": "Kubernetes kube-apiserver Vulnerable to Race Condition in k8s.io/kubernetes",
+        "package": {
+          "ecosystem": "Go",
+          "name": "k8s.io/kubernetes"
+        },
+        "url": "https://osv.dev/vulnerability/GO-2025-3547"
+      }
+    ],
+    "unchecked": [
+      {
+        "tool": "image:node",
+        "version": "24.11.0",
+        "reason": "no-advisory-source",
+        "pins": [
+          {
+            "repo": "tree/team-0/repo-02",
+            "file": "Dockerfile",
+            "line": 1,
+            "detector": "dockerfile"
+          },
+          {
+            "repo": "tree/team-2/repo-12",
+            "file": "Dockerfile",
+            "line": 1,
+            "detector": "dockerfile"
+          }
+        ]
+      },
+      {
+        "tool": "node",
+        "version": "lts",
+        "reason": "not-exact",
+        "pins": [
+          {
+            "repo": "tree/team-1/repo-07",
+            "file": "mise.toml",
+            "line": 3,
+            "detector": "mise"
+          }
+        ]
+      },
+      {
+        "tool": "no-such-tool-relgap",
+        "version": "1.0.0",
+        "reason": "unresolved",
+        "pins": [
+          {
+            "repo": "tree/team-1/repo-09",
+            "file": "mise.toml",
+            "line": 4,
+            "detector": "mise"
+          }
+        ]
+      }
+    ]
+  },
+  "errors": []
+}

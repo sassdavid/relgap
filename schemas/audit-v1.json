@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://relgap.sasskovacs.dev/schemas/audit-v1.json",
+  "title": "relgap audit --format json",
+  "description": "The report-v1.json envelope with audit data: the OSV advisories that affect the pinned tool versions under the roots, and the tool versions OSV wasn't asked about.",
+  "allOf": [
+    {
+      "$ref": "report-v1.json"
+    }
+  ],
+  "properties": {
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repos", "checked", "findings", "unchecked"],
+      "properties": {
+        "repos": {
+          "description": "Scanned repository directories, slash-separated.",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "checked": {
+          "description": "Distinct tool versions OSV answered for, with or without findings.",
+          "type": "integer",
+          "minimum": 0
+        },
+        "findings": {
+          "description": "One entry per advisory and tool version, sorted by severity (unrated last), then by ID, tool and version.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/finding"
+          }
+        },
+        "unchecked": {
+          "description": "Tool versions OSV wasn't asked about, grouped by tool, version and reason, with the pins that resolve to no tool last. Never reported as clean.",
+          "type": "array",
+          "items": {
+            "$ref": "outdated-v1.json#/$defs/unchecked"
+          }
+        },
+        "oldest_answer": {
+          "description": "With --offline: when the oldest OSV answer the report uses was stored in the cache.",
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "finding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tool", "version", "pins", "id", "package", "url"],
+      "properties": {
+        "tool": {
+          "description": "The pins' tool, as relgap digest accepts it.",
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "description": "The version OSV was asked about: the exact pin, or the version a pin marked ≈ stands for.",
+          "type": "string",
+          "minLength": 1
+        },
+        "pins": {
+          "description": "Every pin of this tool version, sorted by repo, file and line.",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "pins-v1.json#/$defs/pin/properties/location"
+          }
+        },
+        "id": {
+          "description": "The OSV ID of the advisory.",
+          "type": "string",
+          "minLength": 1
+        },
+        "aliases": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "summary": {
+          "type": "string"
+        },
+        "package": {
+          "$ref": "outdated-v1.json#/$defs/osvPackage"
+        },
+        "severity": {
+          "$ref": "outdated-v1.json#/$defs/vuln/properties/severity"
+        },
+        "fixed_in": {
+          "description": "Lowest fixed version above the version.",
+          "type": "string",
+          "minLength": 1
+        },
+        "url": {
+          "description": "The advisory's page on osv.dev.",
+          "type": "string",
+          "format": "uri"
+        }
+      }
+    }
+  }
+}

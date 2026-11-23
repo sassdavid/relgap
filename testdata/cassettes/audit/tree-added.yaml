@@ -1,0 +1,97 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 191
+        host: api.osv.dev
+        body: '{"queries":[{"package":{"ecosystem":"Go","name":"github.com/derailed/k9s"},"version":"0.50.16"},{"package":{"ecosystem":"GIT","name":"https://github.com/derailed/k9s"},"version":"v0.50.16"}]}'
+        headers:
+            Accept:
+                - application/json
+            Content-Type:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.osv.dev/v1/querybatch
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 19
+        body: '{"results":[{},{}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "19"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 10:48:53 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-60288be27d51068a6045d9607cf12a50-3c299d6ae6c67a16-00
+            X-Cloud-Trace-Context:
+                - 60288be27d51068a6045d9607cf12a50/4335169198784674326
+            X-Envoy-Decorator-Operation:
+                - ingress QueryAffectedBatch
+        status: 200 OK
+        code: 200
+        duration: 381.301125ms
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 102
+        host: api.osv.dev
+        body: '{"queries":[{"package":{"ecosystem":"Go","name":"github.com/hashicorp/terraform"},"version":"1.5.0"}]}'
+        headers:
+            Accept:
+                - application/json
+            Content-Type:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.osv.dev/v1/querybatch
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 158
+        body: '{"results":[{"vulns":[{"id":"GHSA-h626-pv66-hhm7","modified":"2024-08-21T14:56:52.851383Z"},{"id":"GO-2023-2055","modified":"2026-03-03T04:54:09.394727Z"}]}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "158"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 10:48:54 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-8d6092b0fade14727b38f349738f7eaa-b4d2ae15f474a6f1-00
+            X-Cloud-Trace-Context:
+                - 8d6092b0fade14727b38f349738f7eaa/13029668081255098097
+            X-Envoy-Decorator-Operation:
+                - ingress QueryAffectedBatch
+        status: 200 OK
+        code: 200
+        duration: 402.061875ms
