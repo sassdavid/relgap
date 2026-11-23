@@ -225,6 +225,44 @@ func TestCacheTTLOverride(t *testing.T) {
 	assert.Equal(t, int32(1), o.notModified.Load())
 }
 
+// TestCacheVariant: a request with a variant reads only the entry of that variant, which stays
+// fresh for the variant's TTL even when the host has a shorter one. A new variant misses.
+func TestCacheVariant(t *testing.T) {
+	t.Parallel()
+	o := newOrigin(t, t0.Add(-400*day))
+	clk := &clock{now: t0}
+	host := strings.TrimPrefix(o.srv.URL, "http://")
+	dir := t.TempDir()
+	c, _ := cachedClient(t, o.srv.Client().Transport, dir, httpx.ModeDefault, clk,
+		map[string]time.Duration{host: day})
+	get := func(c *http.Client, variant string) {
+		t.Helper()
+		ctx := httpx.WithVariant(t.Context(), variant, 7*day)
+		req, err := http.NewRequestWithContext(ctx, http.MethodGet, o.srv.URL, http.NoBody)
+		require.NoError(t, err)
+		resp, err := c.Do(req)
+		require.NoError(t, err)
+		_, _ = io.Copy(io.Discard, resp.Body)
+		require.NoError(t, resp.Body.Close())
+	}
+
+	get(c, "modified 2026-11-01T00:00:00Z")
+	clk.now = t0.Add(7*day - time.Second)
+	get(c, "modified 2026-11-01T00:00:00Z")
+	assert.Equal(t, int32(1), o.requests.Load(), "the variant's TTL replaces the host's 1 day")
+
+	get(c, "modified 2026-11-15T00:00:00Z")
+	assert.Equal(t, int32(2), o.requests.Load(), "a new variant is a new entry")
+	body(t, c, o.srv.URL)
+	assert.Equal(t, int32(3), o.requests.Load(), "a request without the variant has its own entry")
+
+	offline, _ := cachedClient(t, o.srv.Client().Transport, dir, httpx.ModeOffline, clk, nil)
+	get(offline, "modified 2026-11-15T00:00:00Z")
+	clk.now = t0.Add(14 * day)
+	get(c, "modified 2026-11-15T00:00:00Z")
+	assert.Equal(t, int32(4), o.requests.Load(), "past 7 days the entry is revalidated")
+}
+
 func TestCacheSkipsErrorsAndKeysOnToken(t *testing.T) {
 	t.Parallel()
 	o := newOrigin(t, t0.Add(-400*day))

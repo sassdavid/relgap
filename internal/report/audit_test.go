@@ -83,7 +83,7 @@ func TestAuditFindings(t *testing.T) {
 	low := &enrich.Score{Score: 3.1, Rating: "low"}
 	got.ApplyEnrichment(map[string]enrich.Result{
 		reqs[0].Key: {Vulns: []enrich.Vuln{
-			{ID: "GO-2", AffectsCurrent: true},
+			{ID: "GO-2", AffectsCurrent: true, Severity: &enrich.Score{Rating: enrich.RatingUnknown}},
 			{ID: "GHSA-low", Severity: low, AffectsCurrent: true},
 			{ID: "GHSA-gone", Severity: high, AffectsCurrent: false},
 		}},
@@ -111,18 +111,21 @@ func TestAuditFindings(t *testing.T) {
 
 	gate := report.Gate{Values: []string{report.FailOnVuln, report.FailOnUnchecked}, VulnSeverity: "high"}
 	findings := gate.CheckAudit(got)
-	var vulns, unchecked int
+	var (
+		vulns     []string
+		unchecked int
+	)
 	for _, f := range findings {
 		switch f.FailOn {
 		case report.FailOnVuln:
-			vulns++
-			assert.Equal(t, "GHSA-high", f.Advisory.ID)
+			vulns = append(vulns, f.Advisory.ID)
 		case report.FailOnUnchecked:
 			unchecked++
 			assert.Equal(t, "c", f.Unchecked.Tool)
 		}
 	}
-	assert.Equal(t, 1, vulns, "only the high advisory reaches --vuln-severity high")
+	assert.Equal(t, []string{"GHSA-high", "GO-2"}, vulns,
+		"the high advisory and the one without a rating reach --vuln-severity high")
 	assert.Equal(t, 1, unchecked)
 	assert.Equal(t, []string{report.FailOnVuln, report.FailOnUnchecked},
 		[]string{gate.Matches(findings)[0].FailOn, gate.Matches(findings)[1].FailOn})

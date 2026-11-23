@@ -263,10 +263,10 @@ func vulnRule(id, summary string, aliases []string, severity *enrich.Score) sari
 }
 
 // vulnLevel maps an advisory's CVSS rating to a level: error for high and critical, warning for
-// medium, note for low and for advisories without a rating.
+// medium and for advisories without a rating, note for low.
 func vulnLevel(v *enrich.Vuln) string {
-	if v.Severity == nil {
-		return sarif.LevelNote
+	if v.Severity.Unknown() {
+		return sarif.LevelWarning
 	}
 	switch v.Severity.Rating {
 	case "critical", "high":
@@ -286,7 +286,10 @@ func vulnText(tool, version string, v *enrich.Vuln) string {
 	if len(v.Aliases) > 0 {
 		msg += " (" + strings.Join(v.Aliases, ", ") + ")"
 	}
-	if v.Severity != nil && v.Severity.Rating != "" && v.Severity.Rating != "none" {
+	switch {
+	case v.Severity.Unknown():
+		msg += ", severity unknown"
+	case v.Severity.Rating != "" && v.Severity.Rating != "none":
 		msg += ", " + v.Severity.Rating
 	}
 	if v.Summary != "" {

@@ -1,0 +1,314 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 281
+        host: api.osv.dev
+        body: '{"queries":[{"package":{"ecosystem":"Go","name":"github.com/kanisterio/kanister"},"version":"0.120.0"},{"package":{"ecosystem":"GIT","name":"https://github.com/kanisterio/kanister"},"version":"0.120.0"},{"package":{"ecosystem":"Go","name":"k8s.io/kubernetes"},"version":"1.37.2"}]}'
+        headers:
+            Accept:
+                - application/json
+            Content-Type:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.osv.dev/v1/querybatch
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 229
+        body: '{"results":[{"vulns":[{"id":"GO-2024-3080","modified":"2026-03-03T04:55:44.259893Z"}]},{},{"vulns":[{"id":"GO-2025-3521","modified":"2026-02-04T02:44:22.558147Z"},{"id":"GO-2025-3547","modified":"2026-08-07T08:11:51.376790Z"}]}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "229"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 11:56:45 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-ad04ac0e5932b826b0d53795fce0113f-aaa05ec11d0fc244-00
+            X-Cloud-Trace-Context:
+                - ad04ac0e5932b826b0d53795fce0113f/12294931166230725188
+            X-Envoy-Decorator-Operation:
+                - ingress QueryAffectedBatch
+        status: 200 OK
+        code: 200
+        duration: 452.648958ms
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.osv.dev/v1/vulns/GO-2025-3547
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1092
+        body: '{"id":"GO-2025-3547","summary":"Kubernetes kube-apiserver Vulnerable to Race Condition in k8s.io/kubernetes","details":"Kubernetes kube-apiserver Vulnerable to Race Condition in k8s.io/kubernetes","aliases":["CVE-2024-7598","GHSA-r56h-j38w-hrqq"],"modified":"2026-08-07T08:11:51.376790494Z","published":"2025-03-25T19:38:11Z","related":["CGA-6f5p-j9x4-9hfv"],"database_specific":{"review_status":"REVIEWED","url":"https://pkg.go.dev/vuln/GO-2025-3547"},"references":[{"type":"ADVISORY","url":"https://github.com/advisories/GHSA-r56h-j38w-hrqq"},{"type":"WEB","url":"http://www.openwall.com/lists/oss-security/2025/03/20/2"},{"type":"WEB","url":"https://github.com/kubernetes/kubernetes/issues/126587"},{"type":"WEB","url":"https://groups.google.com/g/kubernetes-security-announce/c/67D7UFqiPRc"}],"affected":[{"package":{"name":"k8s.io/kubernetes","ecosystem":"Go","purl":"pkg:golang/k8s.io/kubernetes"},"ranges":[{"type":"SEMVER","events":[{"introduced":"1.3.0"}]}],"ecosystem_specific":{},"database_specific":{"source":"https://vuln.go.dev/ID/GO-2025-3547.json"}}],"schema_version":"1.7.3"}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "1092"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 11:56:45 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-9622c77b7d1a6570b0d53795fce0123b-10f5e29cf388253c-00
+            X-Cloud-Trace-Context:
+                - 9622c77b7d1a6570b0d53795fce0123b/1222132037629519164
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 187.985959ms
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.osv.dev/v1/vulns/GO-2025-3521
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1097
+        body: '{"id":"GO-2025-3521","summary":"Kubernetes GitRepo Volume Inadvertent Local Repository Access in k8s.io/kubernetes","details":"Kubernetes GitRepo Volume Inadvertent Local Repository Access in k8s.io/kubernetes","aliases":["CVE-2025-1767","GHSA-3wgm-2gw2-vh5m"],"modified":"2026-02-04T02:44:22.558147Z","published":"2025-03-25T19:38:11Z","related":["CGA-6r94-fg49-6632"],"database_specific":{"review_status":"REVIEWED","url":"https://pkg.go.dev/vuln/GO-2025-3521"},"references":[{"type":"ADVISORY","url":"https://github.com/advisories/GHSA-3wgm-2gw2-vh5m"},{"type":"WEB","url":"http://www.openwall.com/lists/oss-security/2025/03/13/9"},{"type":"WEB","url":"https://github.com/kubernetes/kubernetes/pull/130786"},{"type":"WEB","url":"https://groups.google.com/g/kubernetes-security-announce/c/19irihsKg7s"}],"affected":[{"package":{"name":"k8s.io/kubernetes","ecosystem":"Go","purl":"pkg:golang/k8s.io/kubernetes"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"}]}],"ecosystem_specific":{},"database_specific":{"source":"https://vuln.go.dev/ID/GO-2025-3521.json"}}],"schema_version":"1.7.3"}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "1097"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 11:56:45 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-c6d2ab910ae9479eb0d53795fce017fe-6e35526a09297b3b-00
+            X-Cloud-Trace-Context:
+                - c6d2ab910ae9479eb0d53795fce017fe/7941344133311462203
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 207.608333ms
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.osv.dev/v1/vulns/GO-2024-3080
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1119
+        body: '{"id":"GO-2024-3080","summary":"Kanister vulnerable to cluster-level privilege escalation in github.com/kanisterio/kanister","details":"Kanister vulnerable to cluster-level privilege escalation in github.com/kanisterio/kanister","aliases":["CVE-2024-43403","GHSA-h27c-6xm3-mcqp"],"modified":"2026-03-03T04:55:44.259893Z","published":"2024-08-22T20:03:04Z","database_specific":{"review_status":"UNREVIEWED","url":"https://pkg.go.dev/vuln/GO-2024-3080"},"references":[{"type":"ADVISORY","url":"https://github.com/kanisterio/kanister/security/advisories/GHSA-h27c-6xm3-mcqp"},{"type":"WEB","url":"https://github.com/kanisterio/kanister/blob/master/helm/kanister-operator/templates/rbac.yaml#L49"},{"type":"WEB","url":"https://github.com/kanisterio/kanister/wiki/2023%E2%80%9024-Community-Meeting-Notes"}],"affected":[{"package":{"name":"github.com/kanisterio/kanister","ecosystem":"Go","purl":"pkg:golang/github.com/kanisterio/kanister"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"}]}],"ecosystem_specific":{},"database_specific":{"source":"https://vuln.go.dev/ID/GO-2024-3080.json"}}],"schema_version":"1.7.3"}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "1119"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 11:56:46 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-d69f6a763e704c26b0d53795fce01384-5e261d8215c747ee-00
+            X-Cloud-Trace-Context:
+                - d69f6a763e704c26b0d53795fce01384/6784142333228566510
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 222.986292ms
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.osv.dev/v1/vulns/GHSA-r56h-j38w-hrqq
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1826
+        body: '{"id":"GHSA-r56h-j38w-hrqq","summary":"Kubernetes kube-apiserver Vulnerable to Race Condition","details":"A security issue was discovered in Kubernetes where a malicious or compromised pod could bypass network restrictions enforced by network policies during namespace deletion. The order in which objects are deleted during namespace termination is not defined, and it is possible for network policies to be deleted before the pods that they protect. This can lead to a brief period in which the pods are running, but network policies that should apply to connections to and from the pods are not enforced.","aliases":["CVE-2024-7598","GO-2025-3547"],"modified":"2026-09-10T03:50:23.231450916Z","published":"2025-03-20T18:30:30Z","database_specific":{"github_reviewed_at":"2025-03-21T17:44:11Z","nvd_published_at":"2025-03-20T17:15:37Z","cwe_ids":["CWE-362"],"severity":"LOW","github_reviewed":true},"references":[{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2024-7598"},{"type":"WEB","url":"https://github.com/kubernetes/kubernetes/issues/126587"},{"type":"PACKAGE","url":"https://github.com/kubernetes/kubernetes"},{"type":"WEB","url":"https://groups.google.com/g/kubernetes-security-announce/c/67D7UFqiPRc"},{"type":"WEB","url":"http://www.openwall.com/lists/oss-security/2025/03/20/2"}],"affected":[{"package":{"name":"k8s.io/kubernetes/cmd/kube-apiserver","ecosystem":"Go","purl":"pkg:golang/k8s.io/kubernetes/cmd/kube-apiserver"},"ranges":[{"type":"SEMVER","events":[{"introduced":"1.3.0"},{"last_affected":"1.32.3"}]}],"database_specific":{"source":"https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2025/03/GHSA-r56h-j38w-hrqq/GHSA-r56h-j38w-hrqq.json"}}],"schema_version":"1.9.0","severity":[{"type":"CVSS_V3","score":"CVSS:3.1/AV:A/AC:H/PR:N/UI:N/S:U/C:L/I:N/A:N"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "1826"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 11:56:46 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-e46156853985bcc3b0d53795fce0148b-f39923edb0528d8c-00
+            X-Cloud-Trace-Context:
+                - e46156853985bcc3b0d53795fce0148b/17553100526425640332
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 187.602792ms
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.osv.dev/v1/vulns/GHSA-3wgm-2gw2-vh5m
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1810
+        body: '{"id":"GHSA-3wgm-2gw2-vh5m","summary":"Kubernetes GitRepo Volume Inadvertent Local Repository Access","details":"A security vulnerability was discovered in Kubernetes that could allow a user with create pod permission to exploit gitRepo volumes to access local git repositories belonging to other pods on the same node. This CVE only affects Kubernetes clusters that utilize the in-tree gitRepo volume to clone git repositories from other pods within the same node. Since the in-tree gitRepo volume feature has been deprecated and will not receive security updates upstream, any cluster still using this feature remains vulnerable.","aliases":["CVE-2025-1767","GO-2025-3521"],"modified":"2026-09-10T03:50:56.736211169Z","published":"2025-03-13T18:32:22Z","database_specific":{"severity":"MODERATE","github_reviewed":true,"github_reviewed_at":"2025-03-14T17:30:06Z","nvd_published_at":"2025-03-13T17:15:36Z","cwe_ids":["CWE-20"]},"references":[{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2025-1767"},{"type":"WEB","url":"https://github.com/kubernetes/kubernetes/pull/130786"},{"type":"PACKAGE","url":"https://github.com/kubernetes/kubernetes"},{"type":"WEB","url":"https://groups.google.com/g/kubernetes-security-announce/c/19irihsKg7s"},{"type":"WEB","url":"http://www.openwall.com/lists/oss-security/2025/03/13/9"}],"affected":[{"package":{"name":"k8s.io/kubernetes","ecosystem":"Go","purl":"pkg:golang/k8s.io/kubernetes"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"last_affected":"1.32.3"}]}],"database_specific":{"source":"https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2025/03/GHSA-3wgm-2gw2-vh5m/GHSA-3wgm-2gw2-vh5m.json"}}],"schema_version":"1.9.0","severity":[{"type":"CVSS_V3","score":"CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:N"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "1810"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 11:56:45 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-104ac6c2bef44faeb0d53795fce01a4e-b5745504276cf9cb-00
+            X-Cloud-Trace-Context:
+                - 104ac6c2bef44faeb0d53795fce01a4e/13075169094493075915
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 191.944625ms
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.osv.dev/v1/vulns/GHSA-h27c-6xm3-mcqp
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 4092
+        body: '{"id":"GHSA-h27c-6xm3-mcqp","summary":"Withdrawn Advisory: Kanister vulnerable to cluster-level privilege escalation","details":"# Withdrawn Advisory\n\nThis advisory has been withdrawn because the vulnerability does not affect a released Go package. For more information, see github/advisory-database/issues/5029.\n\n# Original Advisory\n\n### Summary\nThis advisory affects the Kanister helm charts and not the go package\n\n### Details\nThe kanister has a deployment called default-kanister-operator, which is bound with a ClusterRole called edit via ClusterRoleBinding(https://github.com/kanisterio/kanister/blob/master/helm/kanister-operator/templates/rbac.yaml#L49). The \"edit\" ClusterRole is one of Kubernetes default-created ClusterRole, and it have create/patch/udpate verbs of daemonset resources, create verb of serviceaccount/token resources, and impersonate verb of serviceaccounts resources. If a malicious user can access the worker node which has this component, he/she can:\n\nFor the create/patch/update verbs of daemonset resources, the malicious user can abuse it to create or modify a set of Pods to mount a high-privilege service account (e.g., the cluster-admin service account). After that, he/she can abuse the high-privilege SA token of created Pod to take over the whole cluster.\n\nFor the create verb of serviceaccount/token resources, a malicious user can abuse this permission to generate new Service Account tokens and use them to operate with high-privilege roles, such as cluster administrators. These tokens can be used to access and manipulate any resources within the cluster.\n\nFor the impersonate verb of serviceaccounts resources, a malicious user can impersonate high-privilege Service Accounts, thereby gaining access to roles such as cluster administrators. This enables the attacker to perform all actions that the high-privilege account can, including creating, modifying, and deleting critical resources within the cluster.\n\n\n### PoC\nWe have discussed in the \"Details\" section\n\n### Impact\nPrivilege escalation\n\n### Mitigation\n\nCurrently kanister helm chart provides rbac.create flag (true by default), which controls whether the rbac rules for kanister service account will be created https://github.com/kanisterio/kanister/blob/master/helm/kanister-operator/values.yaml#L17\nIf this value set to false, the user needs to create rbac rules themselves and they can limit the role bindings for kanister service account, for example scope it to specific namespace.\nService account can also be configured via helm https://github.com/kanisterio/kanister/blob/master/helm/kanister-operator/values.yaml#L19\n","aliases":["CVE-2024-43403","GO-2024-3080"],"modified":"2024-11-25T20:50:10Z","published":"2024-08-20T22:13:02Z","withdrawn":"2024-11-25T20:50:10Z","database_specific":{"cwe_ids":["CWE-269"],"severity":"MODERATE","github_reviewed":true,"github_reviewed_at":"2024-08-20T22:13:02Z","nvd_published_at":"2024-08-20T22:15:04Z"},"references":[{"type":"WEB","url":"https://github.com/kanisterio/kanister/security/advisories/GHSA-h27c-6xm3-mcqp"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2024-43403"},{"type":"PACKAGE","url":"https://github.com/kanisterio/kanister"},{"type":"WEB","url":"https://github.com/kanisterio/kanister/blob/master/helm/kanister-operator/templates/rbac.yaml#L49"},{"type":"WEB","url":"https://github.com/kanisterio/kanister/wiki/2023%E2%80%9024-Community-Meeting-Notes"}],"affected":[{"package":{"name":"github.com/kanisterio/kanister","ecosystem":"Go","purl":"pkg:golang/github.com/kanisterio/kanister"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"0.0.0-20240926084453-1f40f03d8432"}]}],"database_specific":{"source":"https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2024/08/GHSA-h27c-6xm3-mcqp/GHSA-h27c-6xm3-mcqp.json"}}],"schema_version":"1.9.0","severity":[{"type":"CVSS_V3","score":"CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H"},{"type":"CVSS_V4","score":"CVSS:4.0/AV:N/AC:L/AT:N/PR:L/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N/E:U"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "4092"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 11:56:45 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-6d6164a22448ca13b0d53795fce015d4-74801e3e868fdf7c-00
+            X-Cloud-Trace-Context:
+                - 6d6164a22448ca13b0d53795fce015d4/8394742959312985980
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 238.24825ms

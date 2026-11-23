@@ -340,7 +340,7 @@ func TestGateCheck(t *testing.T) {
 			Vulns: []enrich.Vuln{
 				{ID: "V-1", AffectsCurrent: true, Severity: &enrich.Score{Score: 9.8, Rating: "critical"}},
 				{ID: "V-2", AffectsCurrent: true, Severity: &enrich.Score{Score: 5, Rating: "medium"}},
-				{ID: "V-3", AffectsCurrent: true},
+				{ID: "V-3", AffectsCurrent: true, Severity: &enrich.Score{Rating: enrich.RatingUnknown}},
 				{ID: "V-4", AffectsCurrent: false, Severity: &enrich.Score{Score: 9.8, Rating: "critical"}},
 			},
 		},
@@ -367,7 +367,7 @@ func TestGateCheck(t *testing.T) {
 	findings, _ = gate.Check(o)
 	assert.Contains(t, ids(findings), "vuln:d:V-1")
 	assert.NotContains(t, ids(findings), "vuln:d:V-2")
-	assert.NotContains(t, ids(findings), "vuln:d:V-3", "an unrated advisory counts only without a threshold")
+	assert.Contains(t, ids(findings), "vuln:d:V-3", "an advisory without a rating counts at every threshold")
 
 	findings, unmeasured = report.Gate{
 		Values: []string{report.FailOnOutdated}, MaxBehind: report.MaxBehind{Unit: "days", N: 1},

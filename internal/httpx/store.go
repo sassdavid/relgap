@@ -37,15 +37,16 @@ func keptHeaders() []string {
 
 // meta is the first line of an entry file, as plain JSON. The zstd body follows it.
 type meta struct {
-	Method       string      `json:"method"`
-	URL          string      `json:"url"`
-	Host         string      `json:"host"`
-	Header       http.Header `json:"header"`
-	ETag         string      `json:"etag,omitempty"`
-	LastModified string      `json:"last_modified,omitempty"`
-	StoredAt     time.Time   `json:"stored_at"`        // last fetched or revalidated
-	Newest       time.Time   `json:"newest,omitzero"`  // newest date the body describes; dates the TTL
-	Status       int         `json:"status,omitempty"` // 404 for a remembered miss; 0 means 200
+	Method       string        `json:"method"`
+	URL          string        `json:"url"`
+	Host         string        `json:"host"`
+	Header       http.Header   `json:"header"`
+	ETag         string        `json:"etag,omitempty"`
+	LastModified string        `json:"last_modified,omitempty"`
+	StoredAt     time.Time     `json:"stored_at"`        // last fetched or revalidated
+	Newest       time.Time     `json:"newest,omitzero"`  // newest date the body describes; dates the TTL
+	Status       int           `json:"status,omitempty"` // 404 for a remembered miss; 0 means 200
+	TTL          time.Duration `json:"ttl,omitempty"`    // from [WithVariant]; replaces the host's TTL
 }
 
 type entry struct {

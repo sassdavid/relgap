@@ -174,25 +174,33 @@ func (e *Enricher) BinaryVulns(ctx context.Context, bins []*Binary) error {
 	if len(queries) == 0 {
 		return nil
 	}
-	ids, err := e.osv.QueryBatch(ctx, queries)
+	hits, err := e.osv.QueryBatch(ctx, queries)
 	if err != nil {
 		return err
 	}
-	records, err := e.records(ctx, ids)
+	records, err := e.records(ctx, slices.Concat(hits...))
 	if err != nil {
 		return err
 	}
 	for qi, q := range queries {
 		b := bins[owner[qi]]
 		p := registry.OSVPackage{Ecosystem: q.Package.Ecosystem, Name: q.Package.Name}
-		for _, id := range ids[qi] {
-			if rec := records[id]; rec != nil {
+		for _, h := range hits[qi] {
+			if rec := records[h.ID]; rec != nil {
 				b.Vulns = append(b.Vulns, vulnOf(rec, p, q, Request{}))
 			}
 		}
 	}
-	for _, b := range bins {
+	lists := make([][]Vuln, len(bins))
+	for i, b := range bins {
 		b.Vulns = mergeAliases(b.Vulns)
+		lists[i] = b.Vulns
+	}
+	if err = e.rateFromAliases(ctx, lists, records); err != nil {
+		return err
+	}
+	for _, b := range bins {
+		sortVulns(b.Vulns)
 	}
 	return nil
 }

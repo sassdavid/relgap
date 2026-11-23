@@ -68,8 +68,8 @@ the pin passes.
 ## Count only serious vulnerabilities
 
 `--vuln-severity` sets the lowest CVSS rating `--fail-on vuln` counts: `low`, `medium`, `high` or
-`critical`. An advisory without a rating doesn't count once the flag is set. Without it, every
-advisory counts:
+`critical`. An advisory whose severity is unknown counts at every threshold, since nothing says
+it is below one. Without the flag, every advisory counts:
 
 ```sh
 relgap outdated --fail-on eol --fail-on vuln --vuln-severity high

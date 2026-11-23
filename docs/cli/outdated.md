@@ -57,10 +57,10 @@ checked for vulnerabilities (unchecked, a note). The results don't depend on --f
 outdated counts the pins further behind than --max-behind (major:N, minor:N, patch:N,
 releases:N or days:N; empty means any pin behind latest), breaking and deprecation count
 the pins whose digest has such an entry, eol counts the pins on an EOL cycle, and vuln
-counts the advisories that affect a pin at or above --vuln-severity. A value whose count
-reaches --min-count (default 1) exits 3. Otherwise a tool or file that failed exits 1, and
-so does an endoflife.date outage under --fail-on eol or an OSV outage under --fail-on vuln,
-since a pass on partial data proves nothing.
+counts the advisories that affect a pin at or above --vuln-severity or of unknown severity.
+A value whose count reaches --min-count (default 1) exits 3. Otherwise a tool or file that
+failed exits 1, and so does an endoflife.date outage under --fail-on eol or an OSV outage
+under --fail-on vuln, since a pass on partial data proves nothing.
 
 ## Usage
 
@@ -84,7 +84,7 @@ relgap outdated [path] [flags]
 | `--md-max-chars` | cut Markdown output to this many characters at a row or section boundary; 0 means no limit | int | `60000` |  |  |  |
 | `--min-count` | findings a --fail-on value needs before it exits 3 | int | `1` |  |  |  |
 | `--out` | also write the report to a file as format=path (repeatable); format is one of plain, md, json, sarif or github | string, repeatable |  | `plain`: table without color<br>`md`: Markdown<br>`json`: JSON envelope for scripts<br>`sarif`: SARIF 2.1.0 for code scanning<br>`github`: GitHub Actions annotations |  |  |
-| `--vuln-severity` | lowest rating --fail-on vuln counts: low, medium, high or critical; empty counts all (config policy.vuln\_severity) | string |  | `low`: CVSS 0.1 to 3.9<br>`medium`: CVSS 4.0 to 6.9<br>`high`: CVSS 7.0 to 8.9<br>`critical`: CVSS 9.0 to 10.0 | [`policy.vuln_severity`](/reference/config#policy-vuln-severity) |  |
+| `--vuln-severity` | lowest rating --fail-on vuln counts: low, medium, high or critical; an unknown rating always counts, and empty counts all (config policy.vuln\_severity) | string |  | `low`: CVSS 0.1 to 3.9<br>`medium`: CVSS 4.0 to 6.9<br>`high`: CVSS 7.0 to 8.9<br>`critical`: CVSS 9.0 to 10.0 | [`policy.vuln_severity`](/reference/config#policy-vuln-severity) |  |
 
 The [global flags](/cli/global-flags) work with every command.
 

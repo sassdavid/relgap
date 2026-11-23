@@ -264,10 +264,10 @@ func compareFindings(x, y AuditFinding) int {
 	)
 }
 
-// severityKey orders scores: unrated below every rating, then by score, then by rating for an
+// severityKey orders scores: unknown below every rating, then by score, then by rating for an
 // advisory that has a rating without a score.
 func severityKey(s *enrich.Score) float64 {
-	if s == nil {
+	if s.Unknown() {
 		return -1
 	}
 	const ratingWeight = 0.01

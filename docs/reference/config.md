@@ -168,7 +168,7 @@ Entries below this confidence are hidden.
 |---|---|---|---|---|
 | `string` | `""` | ``, `low`, `medium`, `high`, `critical` | `RELGAP_POLICY_VULN_SEVERITY` | `--vuln-severity` |
 
-Lowest OSV rating --fail-on vuln counts; empty counts every advisory.
+Lowest OSV rating --fail-on vuln counts; an advisory without a rating always counts, and empty counts every advisory.
 
 ## llm
 

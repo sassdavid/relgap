@@ -111,7 +111,7 @@
                 "text": "Upgrade past the affected versions. Details: https://osv.dev/vulnerability/GO-2026-6599"
               },
               "defaultConfiguration": {
-                "level": "note"
+                "level": "warning"
               },
               "properties": {
                 "tags": [
@@ -132,7 +132,7 @@
                 "text": "Upgrade past the affected versions. Details: https://osv.dev/vulnerability/GO-2026-6600"
               },
               "defaultConfiguration": {
-                "level": "note"
+                "level": "warning"
               },
               "properties": {
                 "tags": [
@@ -153,7 +153,7 @@
                 "text": "Upgrade past the affected versions. Details: https://osv.dev/vulnerability/GO-2026-6601"
               },
               "defaultConfiguration": {
-                "level": "note"
+                "level": "warning"
               },
               "properties": {
                 "tags": [
@@ -174,7 +174,7 @@
                 "text": "Upgrade past the affected versions. Details: https://osv.dev/vulnerability/GO-2026-6602"
               },
               "defaultConfiguration": {
-                "level": "note"
+                "level": "warning"
               },
               "properties": {
                 "tags": [
@@ -195,7 +195,7 @@
                 "text": "Upgrade past the affected versions. Details: https://osv.dev/vulnerability/GO-2026-6603"
               },
               "defaultConfiguration": {
-                "level": "note"
+                "level": "warning"
               },
               "properties": {
                 "tags": [
@@ -216,7 +216,7 @@
                 "text": "Upgrade past the affected versions. Details: https://osv.dev/vulnerability/GO-2026-6604"
               },
               "defaultConfiguration": {
-                "level": "note"
+                "level": "warning"
               },
               "properties": {
                 "tags": [
@@ -237,7 +237,7 @@
                 "text": "Upgrade past the affected versions. Details: https://osv.dev/vulnerability/GO-2026-6605"
               },
               "defaultConfiguration": {
-                "level": "note"
+                "level": "warning"
               },
               "properties": {
                 "tags": [
@@ -258,7 +258,7 @@
                 "text": "Upgrade past the affected versions. Details: https://osv.dev/vulnerability/GO-2026-6607"
               },
               "defaultConfiguration": {
-                "level": "note"
+                "level": "warning"
               },
               "properties": {
                 "tags": [
@@ -279,7 +279,7 @@
                 "text": "Upgrade past the affected versions. Details: https://osv.dev/vulnerability/GO-2026-6608"
               },
               "defaultConfiguration": {
-                "level": "note"
+                "level": "warning"
               },
               "properties": {
                 "tags": [
@@ -300,7 +300,7 @@
                 "text": "Upgrade past the affected versions. Details: https://osv.dev/vulnerability/GO-2026-6609"
               },
               "defaultConfiguration": {
-                "level": "note"
+                "level": "warning"
               },
               "properties": {
                 "tags": [
@@ -321,7 +321,7 @@
                 "text": "Upgrade past the affected versions. Details: https://osv.dev/vulnerability/GO-2026-6610"
               },
               "defaultConfiguration": {
-                "level": "note"
+                "level": "warning"
               },
               "properties": {
                 "tags": [
@@ -342,7 +342,7 @@
                 "text": "Upgrade past the affected versions. Details: https://osv.dev/vulnerability/GO-2026-6611"
               },
               "defaultConfiguration": {
-                "level": "note"
+                "level": "warning"
               },
               "properties": {
                 "tags": [
@@ -363,7 +363,7 @@
                 "text": "Upgrade past the affected versions. Details: https://osv.dev/vulnerability/GO-2026-6612"
               },
               "defaultConfiguration": {
-                "level": "note"
+                "level": "warning"
               },
               "properties": {
                 "tags": [
@@ -384,7 +384,7 @@
                 "text": "Upgrade past the affected versions. Details: https://osv.dev/vulnerability/GO-2026-6613"
               },
               "defaultConfiguration": {
-                "level": "note"
+                "level": "warning"
               },
               "properties": {
                 "tags": [
@@ -405,7 +405,7 @@
                 "text": "Upgrade past the affected versions. Details: https://osv.dev/vulnerability/GO-2026-6617"
               },
               "defaultConfiguration": {
-                "level": "note"
+                "level": "warning"
               },
               "properties": {
                 "tags": [
@@ -426,7 +426,7 @@
                 "text": "Upgrade past the affected versions. Details: https://osv.dev/vulnerability/GO-2026-6809"
               },
               "defaultConfiguration": {
-                "level": "note"
+                "level": "warning"
               },
               "properties": {
                 "tags": [
@@ -447,7 +447,7 @@
                 "text": "Upgrade past the affected versions. Details: https://osv.dev/vulnerability/GO-2026-6848"
               },
               "defaultConfiguration": {
-                "level": "note"
+                "level": "warning"
               },
               "properties": {
                 "tags": [
@@ -468,7 +468,7 @@
                 "text": "Upgrade past the affected versions. Details: https://osv.dev/vulnerability/GO-2026-6849"
               },
               "defaultConfiguration": {
-                "level": "note"
+                "level": "warning"
               },
               "properties": {
                 "tags": [
@@ -489,7 +489,7 @@
                 "text": "Upgrade past the affected versions. Details: https://osv.dev/vulnerability/GO-2026-6850"
               },
               "defaultConfiguration": {
-                "level": "note"
+                "level": "warning"
               },
               "properties": {
                 "tags": [
@@ -510,7 +510,7 @@
                 "text": "Upgrade past the affected versions. Details: https://osv.dev/vulnerability/GO-2026-6851"
               },
               "defaultConfiguration": {
-                "level": "note"
+                "level": "warning"
               },
               "properties": {
                 "tags": [
@@ -531,7 +531,7 @@
                 "text": "Upgrade past the affected versions. Details: https://osv.dev/vulnerability/GO-2026-6852"
               },
               "defaultConfiguration": {
-                "level": "note"
+                "level": "warning"
               },
               "properties": {
                 "tags": [
@@ -552,7 +552,7 @@
                 "text": "Upgrade past the affected versions. Details: https://osv.dev/vulnerability/GO-2026-6853"
               },
               "defaultConfiguration": {
-                "level": "note"
+                "level": "warning"
               },
               "properties": {
                 "tags": [
@@ -573,7 +573,7 @@
                 "text": "Upgrade past the affected versions. Details: https://osv.dev/vulnerability/GO-2026-6854"
               },
               "defaultConfiguration": {
-                "level": "note"
+                "level": "warning"
               },
               "properties": {
                 "tags": [
@@ -594,7 +594,7 @@
                 "text": "Upgrade past the affected versions. Details: https://osv.dev/vulnerability/GO-2026-6855"
               },
               "defaultConfiguration": {
-                "level": "note"
+                "level": "warning"
               },
               "properties": {
                 "tags": [
@@ -615,7 +615,7 @@
                 "text": "Upgrade past the affected versions. Details: https://osv.dev/vulnerability/GO-2026-6856"
               },
               "defaultConfiguration": {
-                "level": "note"
+                "level": "warning"
               },
               "properties": {
                 "tags": [
@@ -636,7 +636,7 @@
                 "text": "Upgrade past the affected versions. Details: https://osv.dev/vulnerability/GO-2026-6857"
               },
               "defaultConfiguration": {
-                "level": "note"
+                "level": "warning"
               },
               "properties": {
                 "tags": [
@@ -657,7 +657,7 @@
                 "text": "Upgrade past the affected versions. Details: https://osv.dev/vulnerability/GO-2026-6858"
               },
               "defaultConfiguration": {
-                "level": "note"
+                "level": "warning"
               },
               "properties": {
                 "tags": [
@@ -678,7 +678,7 @@
                 "text": "Upgrade past the affected versions. Details: https://osv.dev/vulnerability/GO-2026-6859"
               },
               "defaultConfiguration": {
-                "level": "note"
+                "level": "warning"
               },
               "properties": {
                 "tags": [
@@ -717,9 +717,9 @@
         {
           "ruleId": "GO-2026-6599",
           "ruleIndex": 6,
-          "level": "note",
+          "level": "warning",
           "message": {
-            "text": "go 1.25.14 is affected by GO-2026-6599 (BIT-golang-2026-94448, CVE-2026-94448): Reset context tracking on consecutive template expressions in html/template; fixed in 1.26.9"
+            "text": "go 1.25.14 is affected by GO-2026-6599 (BIT-golang-2026-94448, CVE-2026-94448), severity unknown: Reset context tracking on consecutive template expressions in html/template; fixed in 1.26.9"
           },
           "locations": [
             {
@@ -740,9 +740,9 @@
         {
           "ruleId": "GO-2026-6600",
           "ruleIndex": 7,
-          "level": "note",
+          "level": "warning",
           "message": {
-            "text": "go 1.25.14 is affected by GO-2026-6600 (BIT-golang-2026-97030, CVE-2026-97030): Recognize yield as regexp preceder keyword in html/template; fixed in 1.26.9"
+            "text": "go 1.25.14 is affected by GO-2026-6600 (BIT-golang-2026-97030, CVE-2026-97030), severity unknown: Recognize yield as regexp preceder keyword in html/template; fixed in 1.26.9"
           },
           "locations": [
             {
@@ -763,9 +763,9 @@
         {
           "ruleId": "GO-2026-6601",
           "ruleIndex": 8,
-          "level": "note",
+          "level": "warning",
           "message": {
-            "text": "go 1.25.14 is affected by GO-2026-6601 (BIT-golang-2026-94444, CVE-2026-94444): Checksum bypass for golang.org/fips140 in cmd/go; fixed in 1.26.9"
+            "text": "go 1.25.14 is affected by GO-2026-6601 (BIT-golang-2026-94444, CVE-2026-94444), severity unknown: Checksum bypass for golang.org/fips140 in cmd/go; fixed in 1.26.9"
           },
           "locations": [
             {
@@ -786,9 +786,9 @@
         {
           "ruleId": "GO-2026-6602",
           "ruleIndex": 9,
-          "level": "note",
+          "level": "warning",
           "message": {
-            "text": "go 1.25.14 is affected by GO-2026-6602 (BIT-golang-2026-94447, CVE-2026-94447): Checksum database bypass for golang.org/toolchain in cmd/go; fixed in 1.26.9"
+            "text": "go 1.25.14 is affected by GO-2026-6602 (BIT-golang-2026-94447, CVE-2026-94447), severity unknown: Checksum database bypass for golang.org/toolchain in cmd/go; fixed in 1.26.9"
           },
           "locations": [
             {
@@ -809,9 +809,9 @@
         {
           "ruleId": "GO-2026-6603",
           "ruleIndex": 10,
-          "level": "note",
+          "level": "warning",
           "message": {
-            "text": "go 1.25.14 is affected by GO-2026-6603 (BIT-golang-2026-78659, CVE-2026-78659): HTTP/2 server memory exhaustion due to Trailer headers in net/http; fixed in 1.26.9"
+            "text": "go 1.25.14 is affected by GO-2026-6603 (BIT-golang-2026-78659, CVE-2026-78659), severity unknown: HTTP/2 server memory exhaustion due to Trailer headers in net/http; fixed in 1.26.9"
           },
           "locations": [
             {
@@ -832,9 +832,9 @@
         {
           "ruleId": "GO-2026-6604",
           "ruleIndex": 11,
-          "level": "note",
+          "level": "warning",
           "message": {
-            "text": "go 1.25.14 is affected by GO-2026-6604 (BIT-golang-2026-56857, CVE-2026-56857): Root.Mkdir(All) can follow junctions out of the root on Windows in os; fixed in 1.26.9"
+            "text": "go 1.25.14 is affected by GO-2026-6604 (BIT-golang-2026-56857, CVE-2026-56857), severity unknown: Root.Mkdir(All) can follow junctions out of the root on Windows in os; fixed in 1.26.9"
           },
           "locations": [
             {
@@ -855,9 +855,9 @@
         {
           "ruleId": "GO-2026-6605",
           "ruleIndex": 12,
-          "level": "note",
+          "level": "warning",
           "message": {
-            "text": "go 1.25.14 is affected by GO-2026-6605 (BIT-golang-2026-56866, CVE-2026-56866): HTTP/1 client connection desynchronization after CONNECT rejection in net/http; fixed in 1.26.9"
+            "text": "go 1.25.14 is affected by GO-2026-6605 (BIT-golang-2026-56866, CVE-2026-56866), severity unknown: HTTP/1 client connection desynchronization after CONNECT rejection in net/http; fixed in 1.26.9"
           },
           "locations": [
             {
@@ -878,9 +878,9 @@
         {
           "ruleId": "GO-2026-6607",
           "ruleIndex": 13,
-          "level": "note",
+          "level": "warning",
           "message": {
-            "text": "go 1.25.14 is affected by GO-2026-6607 (BIT-golang-2026-97031, CVE-2026-97031): Reject malformed ECH outer extension references in crypto/tls; fixed in 1.26.9"
+            "text": "go 1.25.14 is affected by GO-2026-6607 (BIT-golang-2026-97031, CVE-2026-97031), severity unknown: Reject malformed ECH outer extension references in crypto/tls; fixed in 1.26.9"
           },
           "locations": [
             {
@@ -901,9 +901,9 @@
         {
           "ruleId": "GO-2026-6608",
           "ruleIndex": 14,
-          "level": "note",
+          "level": "warning",
           "message": {
-            "text": "go 1.25.14 is affected by GO-2026-6608 (BIT-golang-2026-94440, CVE-2026-94440): Memory limit bypass when parsing MIME headers in net/textproto, mime/multipart; fixed in 1.26.9"
+            "text": "go 1.25.14 is affected by GO-2026-6608 (BIT-golang-2026-94440, CVE-2026-94440), severity unknown: Memory limit bypass when parsing MIME headers in net/textproto, mime/multipart; fixed in 1.26.9"
           },
           "locations": [
             {
@@ -924,9 +924,9 @@
         {
           "ruleId": "GO-2026-6609",
           "ruleIndex": 15,
-          "level": "note",
+          "level": "warning",
           "message": {
-            "text": "go 1.25.14 is affected by GO-2026-6609 (BIT-golang-2026-78667, CVE-2026-78667): Lack of limit on size of parsed Range headers in net/http; fixed in 1.26.9"
+            "text": "go 1.25.14 is affected by GO-2026-6609 (BIT-golang-2026-78667, CVE-2026-78667), severity unknown: Lack of limit on size of parsed Range headers in net/http; fixed in 1.26.9"
           },
           "locations": [
             {
@@ -947,9 +947,9 @@
         {
           "ruleId": "GO-2026-6610",
           "ruleIndex": 16,
-          "level": "note",
+          "level": "warning",
           "message": {
-            "text": "go 1.25.14 is affected by GO-2026-6610 (BIT-golang-2026-78660, CVE-2026-78660): HTTP/2 transport accepts malformed framing-related headers in net/http; fixed in 1.26.9"
+            "text": "go 1.25.14 is affected by GO-2026-6610 (BIT-golang-2026-78660, CVE-2026-78660), severity unknown: HTTP/2 transport accepts malformed framing-related headers in net/http; fixed in 1.26.9"
           },
           "locations": [
             {
@@ -970,9 +970,9 @@
         {
           "ruleId": "GO-2026-6611",
           "ruleIndex": 17,
-          "level": "note",
+          "level": "warning",
           "message": {
-            "text": "go 1.25.14 is affected by GO-2026-6611 (BIT-golang-2026-78669, CVE-2026-78669): Excessive CPU consumption from repeated initial window changes in net/http; fixed in 1.26.9"
+            "text": "go 1.25.14 is affected by GO-2026-6611 (BIT-golang-2026-78669, CVE-2026-78669), severity unknown: Excessive CPU consumption from repeated initial window changes in net/http; fixed in 1.26.9"
           },
           "locations": [
             {
@@ -993,9 +993,9 @@
         {
           "ruleId": "GO-2026-6612",
           "ruleIndex": 18,
-          "level": "note",
+          "level": "warning",
           "message": {
-            "text": "go 1.25.14 is affected by GO-2026-6612 (BIT-golang-2026-78663, CVE-2026-78663): Double flow control refund on HTTP/2 server streams in net/http; fixed in 1.26.9"
+            "text": "go 1.25.14 is affected by GO-2026-6612 (BIT-golang-2026-78663, CVE-2026-78663), severity unknown: Double flow control refund on HTTP/2 server streams in net/http; fixed in 1.26.9"
           },
           "locations": [
             {
@@ -1016,9 +1016,9 @@
         {
           "ruleId": "GO-2026-6613",
           "ruleIndex": 19,
-          "level": "note",
+          "level": "warning",
           "message": {
-            "text": "go 1.25.14 is affected by GO-2026-6613 (BIT-golang-2026-94439, CVE-2026-94439): HTTP/1 server connection desynchronization after 2xx CONNECT response in net/http; fixed in 1.26.9"
+            "text": "go 1.25.14 is affected by GO-2026-6613 (BIT-golang-2026-94439, CVE-2026-94439), severity unknown: HTTP/1 server connection desynchronization after 2xx CONNECT response in net/http; fixed in 1.26.9"
           },
           "locations": [
             {
@@ -1039,9 +1039,9 @@
         {
           "ruleId": "GO-2026-6617",
           "ruleIndex": 20,
-          "level": "note",
+          "level": "warning",
           "message": {
-            "text": "go 1.25.14 is affected by GO-2026-6617 (BIT-golang-2026-97032, CVE-2026-97032): HTTP/2 server crash due to HPACK encoder race in net/http; fixed in 1.26.9"
+            "text": "go 1.25.14 is affected by GO-2026-6617 (BIT-golang-2026-97032, CVE-2026-97032), severity unknown: HTTP/2 server crash due to HPACK encoder race in net/http; fixed in 1.26.9"
           },
           "locations": [
             {
@@ -1062,9 +1062,9 @@
         {
           "ruleId": "GO-2026-6809",
           "ruleIndex": 21,
-          "level": "note",
+          "level": "warning",
           "message": {
-            "text": "go 1.25.14 is affected by GO-2026-6809 (BIT-golang-2026-111943, CVE-2026-111943, RUSTSEC-2026-0381, RUSTSEC-2026-0382, RUSTSEC-2026-0383): Distrust compromised intermediate certificates in crypto/x509; fixed in 1.26.10"
+            "text": "go 1.25.14 is affected by GO-2026-6809 (BIT-golang-2026-111943, CVE-2026-111943, RUSTSEC-2026-0381, RUSTSEC-2026-0382, RUSTSEC-2026-0383), severity unknown: Distrust compromised intermediate certificates in crypto/x509; fixed in 1.26.10"
           },
           "locations": [
             {
@@ -1085,9 +1085,9 @@
         {
           "ruleId": "GO-2026-6848",
           "ruleIndex": 22,
-          "level": "note",
+          "level": "warning",
           "message": {
-            "text": "go 1.25.14 is affected by GO-2026-6848 (CVE-2026-97043): Unexpected code execution via escaped quotes in //go:cgo_ldflag in cmd/go and cmd/compile; fixed in 1.26.11"
+            "text": "go 1.25.14 is affected by GO-2026-6848 (CVE-2026-97043), severity unknown: Unexpected code execution via escaped quotes in //go:cgo_ldflag in cmd/go and cmd/compile; fixed in 1.26.11"
           },
           "locations": [
             {
@@ -1108,9 +1108,9 @@
         {
           "ruleId": "GO-2026-6849",
           "ruleIndex": 23,
-          "level": "note",
+          "level": "warning",
           "message": {
-            "text": "go 1.25.14 is affected by GO-2026-6849 (CVE-2026-97042): Linker flag injection via cgo_import_dynamic and PE DLL names in cmd/cgo, cmd/compile, and cmd/link; fixed in 1.26.11"
+            "text": "go 1.25.14 is affected by GO-2026-6849 (CVE-2026-97042), severity unknown: Linker flag injection via cgo_import_dynamic and PE DLL names in cmd/cgo, cmd/compile, and cmd/link; fixed in 1.26.11"
           },
           "locations": [
             {
@@ -1131,9 +1131,9 @@
         {
           "ruleId": "GO-2026-6850",
           "ruleIndex": 24,
-          "level": "note",
+          "level": "warning",
           "message": {
-            "text": "go 1.25.14 is affected by GO-2026-6850 (CVE-2026-97041): Host linker flag injection via //go:cgo_* directives in cmd/compile and cmd/link; fixed in 1.26.11"
+            "text": "go 1.25.14 is affected by GO-2026-6850 (CVE-2026-97041), severity unknown: Host linker flag injection via //go:cgo_* directives in cmd/compile and cmd/link; fixed in 1.26.11"
           },
           "locations": [
             {
@@ -1154,9 +1154,9 @@
         {
           "ruleId": "GO-2026-6851",
           "ruleIndex": 25,
-          "level": "note",
+          "level": "warning",
           "message": {
-            "text": "go 1.25.14 is affected by GO-2026-6851 (CVE-2026-97040): Cgo directive injection via .syso files disguised as Go object files in cmd/go and cmd/link; fixed in 1.26.11"
+            "text": "go 1.25.14 is affected by GO-2026-6851 (CVE-2026-97040), severity unknown: Cgo directive injection via .syso files disguised as Go object files in cmd/go and cmd/link; fixed in 1.26.11"
           },
           "locations": [
             {
@@ -1177,9 +1177,9 @@
         {
           "ruleId": "GO-2026-6852",
           "ruleIndex": 26,
-          "level": "note",
+          "level": "warning",
           "message": {
-            "text": "go 1.25.14 is affected by GO-2026-6852 (CVE-2026-97039): Flag sanitization bypass via \"#cgo pkg-config:\" directives in cmd/go; fixed in 1.26.11"
+            "text": "go 1.25.14 is affected by GO-2026-6852 (CVE-2026-97039), severity unknown: Flag sanitization bypass via \"#cgo pkg-config:\" directives in cmd/go; fixed in 1.26.11"
           },
           "locations": [
             {
@@ -1200,9 +1200,9 @@
         {
           "ruleId": "GO-2026-6853",
           "ruleIndex": 27,
-          "level": "note",
+          "level": "warning",
           "message": {
-            "text": "go 1.25.14 is affected by GO-2026-6853 (CVE-2026-97038): Arbitrary code execution via crafted .syso files and cgo linker input files in cmd/go; fixed in 1.26.11"
+            "text": "go 1.25.14 is affected by GO-2026-6853 (CVE-2026-97038), severity unknown: Arbitrary code execution via crafted .syso files and cgo linker input files in cmd/go; fixed in 1.26.11"
           },
           "locations": [
             {
@@ -1223,9 +1223,9 @@
         {
           "ruleId": "GO-2026-6854",
           "ruleIndex": 28,
-          "level": "note",
+          "level": "warning",
           "message": {
-            "text": "go 1.25.14 is affected by GO-2026-6854 (CVE-2026-97037): Linker script injection via split -Wl, flags and Darwin or symbol linker flags in cgo in cmd/go; fixed in 1.26.11"
+            "text": "go 1.25.14 is affected by GO-2026-6854 (CVE-2026-97037), severity unknown: Linker script injection via split -Wl, flags and Darwin or symbol linker flags in cgo in cmd/go; fixed in 1.26.11"
           },
           "locations": [
             {
@@ -1246,9 +1246,9 @@
         {
           "ruleId": "GO-2026-6855",
           "ruleIndex": 29,
-          "level": "note",
+          "level": "warning",
           "message": {
-            "text": "go 1.25.14 is affected by GO-2026-6855 (CVE-2026-97036): Arbitrary code execution during build on darwin via \"-l to_library\" in cgo in cmd/go; fixed in 1.26.11"
+            "text": "go 1.25.14 is affected by GO-2026-6855 (CVE-2026-97036), severity unknown: Arbitrary code execution during build on darwin via \"-l to_library\" in cgo in cmd/go; fixed in 1.26.11"
           },
           "locations": [
             {
@@ -1269,9 +1269,9 @@
         {
           "ruleId": "GO-2026-6856",
           "ruleIndex": 30,
-          "level": "note",
+          "level": "warning",
           "message": {
-            "text": "go 1.25.14 is affected by GO-2026-6856 (CVE-2026-97035): Unexpected code execution and arbitrary file write via Clang -gen-* and GCC -gnat* flags in cgo in cmd/go; fixed in 1.26.11"
+            "text": "go 1.25.14 is affected by GO-2026-6856 (CVE-2026-97035), severity unknown: Unexpected code execution and arbitrary file write via Clang -gen-* and GCC -gnat* flags in cgo in cmd/go; fixed in 1.26.11"
           },
           "locations": [
             {
@@ -1292,9 +1292,9 @@
         {
           "ruleId": "GO-2026-6857",
           "ruleIndex": 31,
-          "level": "note",
+          "level": "warning",
           "message": {
-            "text": "go 1.25.14 is affected by GO-2026-6857 (CVE-2026-97034): Arbitrary command execution via GCC spec files in cgo linker search directories in cmd/go; fixed in 1.26.11"
+            "text": "go 1.25.14 is affected by GO-2026-6857 (CVE-2026-97034), severity unknown: Arbitrary command execution via GCC spec files in cgo linker search directories in cmd/go; fixed in 1.26.11"
           },
           "locations": [
             {
@@ -1315,9 +1315,9 @@
         {
           "ruleId": "GO-2026-6858",
           "ruleIndex": 32,
-          "level": "note",
+          "level": "warning",
           "message": {
-            "text": "go 1.25.14 is affected by GO-2026-6858 (CVE-2026-97033): Unexpected code execution via --sysroot, -target, -isysroot, -Wl,-syslibroot, and -x cgo flags in cmd/go; fixed in 1.26.11"
+            "text": "go 1.25.14 is affected by GO-2026-6858 (CVE-2026-97033), severity unknown: Unexpected code execution via --sysroot, -target, -isysroot, -Wl,-syslibroot, and -x cgo flags in cmd/go; fixed in 1.26.11"
           },
           "locations": [
             {
@@ -1338,9 +1338,9 @@
         {
           "ruleId": "GO-2026-6859",
           "ruleIndex": 33,
-          "level": "note",
+          "level": "warning",
           "message": {
-            "text": "go 1.25.14 is affected by GO-2026-6859 (CVE-2026-97054): HTTP/1 server crash due to MaxBytesReader header race in net/http; fixed in 1.26.11"
+            "text": "go 1.25.14 is affected by GO-2026-6859 (CVE-2026-97054), severity unknown: HTTP/1 server crash due to MaxBytesReader header race in net/http; fixed in 1.26.11"
           },
           "locations": [
             {

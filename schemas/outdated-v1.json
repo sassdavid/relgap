@@ -161,14 +161,15 @@
         "summary": { "type": "string" },
         "package": { "$ref": "#/$defs/osvPackage" },
         "severity": {
-          "description": "The highest CVSS base score among the record's vectors, or only the advisory's own rating.",
+          "description": "The highest CVSS base score among the record's vectors, or only the advisory's own rating. A record with neither takes the highest score of its GHSA aliases, named in from. Without any, the rating is unknown, which every --vuln-severity counts.",
           "type": "object",
           "additionalProperties": false,
           "required": ["rating"],
           "properties": {
             "score": { "type": "number", "minimum": 0, "maximum": 10 },
-            "rating": { "enum": ["none", "low", "medium", "high", "critical"] },
-            "vector": { "type": "string", "minLength": 1 }
+            "rating": { "enum": ["none", "low", "medium", "high", "critical", "unknown"] },
+            "vector": { "type": "string", "minLength": 1 },
+            "from": { "description": "The GHSA alias the score comes from.", "type": "string", "pattern": "^GHSA-" }
           }
         },
         "fixed_in": { "description": "Lowest fixed version above the current one.", "type": "string", "minLength": 1 },
