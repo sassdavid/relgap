@@ -107,6 +107,7 @@ type Gate struct {
 	Values       []string // the --fail-on values to check, in [Values] order
 	MaxBehind    MaxBehind
 	VulnSeverity string // the lowest rating --fail-on vuln counts; empty counts every advisory
+	VulnFixable  bool   // --fail-on vuln counts only advisories with a fixed version above the current one
 	MinCount     int    // findings a value needs before it matches; below 1 counts as 1
 	Now          time.Time
 }
@@ -134,8 +135,9 @@ type Match struct {
 
 // Check returns the findings of the gate's values among the pins, and the outdated pins whose lag
 // it couldn't measure. A pin counts for eol when its current version's cycle has reached its end,
-// and for vuln once per advisory that affects its current version at or above VulnSeverity. It
-// counts for outdated, breaking and deprecation only when it is behind latest.
+// and for vuln once per advisory that affects its current version at or above VulnSeverity, with
+// a fixed version under VulnFixable. It counts for outdated, breaking and deprecation only when it
+// is behind latest.
 func (g Gate) Check(o *Outdated) ([]Finding, []*OutdatedPin) {
 	var (
 		findings   []Finding
@@ -191,8 +193,13 @@ func IsEOL(p *OutdatedPin) bool {
 }
 
 func (g Gate) countsVuln(v *enrich.Vuln) bool {
-	return v.AffectsCurrent && g.atSeverity(v.Severity)
+	return v.AffectsCurrent && g.atSeverity(v.Severity) && g.fixable(v.FixedIn)
 }
+
+// fixable reports whether an advisory whose lowest fixed version above the current one is
+// fixedIn passes VulnFixable. Like Grype --only-fixed and Trivy --ignore-unfixed, it judges each
+// advisory on its own fixed versions.
+func (g Gate) fixable(fixedIn string) bool { return !g.VulnFixable || fixedIn != "" }
 
 // atSeverity reports whether an advisory rated s reaches VulnSeverity. An advisory without a
 // rating reaches every threshold, since nothing says it is below one (ADR-0020).
@@ -203,13 +210,13 @@ func (g Gate) atSeverity(s *enrich.Score) bool {
 	return severityRank(s.Rating) >= severityRank(g.VulnSeverity)
 }
 
-// CheckAudit returns a finding per audit finding at or above VulnSeverity for vuln, and per
-// unchecked tool version for unchecked.
+// CheckAudit returns a finding per audit finding at or above VulnSeverity, and with a fixed
+// version under VulnFixable, for vuln, and per unchecked tool version for unchecked.
 func (g Gate) CheckAudit(a *Audit) []Finding {
 	var findings []Finding
 	if g.Has(FailOnVuln) {
 		for i := range a.Findings {
-			if f := &a.Findings[i]; g.atSeverity(f.Severity) {
+			if f := &a.Findings[i]; g.atSeverity(f.Severity) && g.fixable(f.FixedIn) {
 				findings = append(findings, Finding{FailOn: FailOnVuln, Advisory: f})
 			}
 		}

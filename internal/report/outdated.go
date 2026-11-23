@@ -68,6 +68,9 @@ type OutdatedPin struct {
 	// wasn't asked (see Unchecked) or enrichment didn't run.
 	Vulns     []enrich.Vuln `json:"vulns,omitzero"`
 	Unchecked string        `json:"unchecked,omitempty"` // an enrich.Reason* constant saying why OSV wasn't asked
+	// Fix is the release Current can move to. Absent without a vulnerability of Current, or when
+	// the version list or OSV failed.
+	Fix *enrich.Fix `json:"fix,omitempty"`
 
 	// Digest is the digest Counts come from; pins with the same tool and Current share it.
 	Digest *ToolDigest `json:"-"`

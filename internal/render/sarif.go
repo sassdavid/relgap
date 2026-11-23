@@ -278,10 +278,13 @@ func vulnLevel(v *enrich.Vuln) string {
 	}
 }
 
-func vulnMessage(p *report.OutdatedPin, v *enrich.Vuln) string { return vulnText(p.Tool, p.Current, v) }
+func vulnMessage(p *report.OutdatedPin, v *enrich.Vuln) string {
+	return vulnText(p.Tool, p.Current, v, p.Fix)
+}
 
-// vulnText says that version of tool is affected by v, with its rating, summary and fix.
-func vulnText(tool, version string, v *enrich.Vuln) string {
+// vulnText says that version of tool is affected by v, with its rating, summary, fixed version
+// and what the fix target f says about it.
+func vulnText(tool, version string, v *enrich.Vuln, f *enrich.Fix) string {
 	msg := fmt.Sprintf("%s %s is affected by %s", tool, version, v.ID)
 	if len(v.Aliases) > 0 {
 		msg += " (" + strings.Join(v.Aliases, ", ") + ")"
@@ -298,7 +301,7 @@ func vulnText(tool, version string, v *enrich.Vuln) string {
 	if v.FixedIn != "" {
 		msg += "; fixed in " + v.FixedIn
 	}
-	return msg
+	return msg + fixText(f, v.ID)
 }
 
 func eolMessage(p *report.OutdatedPin) string {

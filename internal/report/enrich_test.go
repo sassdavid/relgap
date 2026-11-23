@@ -68,7 +68,7 @@ func TestEnrichRequestsUnchecked(t *testing.T) {
 		return registry.ToolSpec{}, fmt.Errorf("%w: %s", registry.ErrUnknownTool, tool)
 	}
 
-	reqs := o.EnrichRequests(resolve)
+	reqs := o.EnrichRequests(resolve, nil)
 	require.Len(t, reqs, 2, "k9s pins share one request; alpine has its own")
 	assert.Equal(t, "k9s", reqs[0].Name)
 	assert.Equal(t, "0.50.16", reqs[0].Current.String())

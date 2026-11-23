@@ -170,6 +170,14 @@ Entries below this confidence are hidden.
 
 Lowest OSV rating --fail-on vuln counts; an advisory without a rating always counts, and empty counts every advisory.
 
+### policy.vuln_fixable
+
+| Type | Default | Allowed | Environment | Flag |
+|---|---|---|---|---|
+| `boolean` | `false` |  | `RELGAP_POLICY_VULN_FIXABLE` | `--vuln-fixable` |
+
+--fail-on vuln counts only advisories with a fixed version above the pinned one. Advisories without one still show in the report.
+
 ## llm
 
 ### llm.provider
@@ -303,6 +311,7 @@ schema_version: 1
 #   max_behind: ""                # for example minor:2, releases:10 or days:90; empty allows any lag
 #   min_confidence: 0.5           # hide entries below this confidence, 0 to 1
 #   vuln_severity: ""             # low, medium, high or critical; empty counts every advisory
+#   vuln_fixable: false           # count only advisories with a fixed version above the pin
 #
 # llm:                            # only for 'relgap digest --summarize'
 #   provider: ""                  # empty is off; openai-compatible, anthropic, bedrock or bedrock-mantle

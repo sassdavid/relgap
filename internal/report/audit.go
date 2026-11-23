@@ -3,6 +3,7 @@ package report
 import (
 	"cmp"
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"slices"
@@ -30,8 +31,20 @@ type Audit struct {
 	// OldestAnswer is when the oldest OSV answer of an --offline run was stored in the cache.
 	OldestAnswer *time.Time `json:"oldest_answer,omitempty"`
 
-	rows *Outdated // each pin with the version it stands for; Latest is never looked up
+	rows  *Outdated // each pin with the version it stands for; Latest is never looked up
+	fixes []ToolFix
 }
+
+// ToolFix is the fix target of one tool version with findings.
+type ToolFix struct {
+	Tool    string
+	Version string
+	Fix     *enrich.Fix
+}
+
+// Fixes returns the fix target of each tool version with findings, in the order of their first
+// finding. A tool version whose target relgap couldn't work out is left out.
+func (a *Audit) Fixes() []ToolFix { return a.fixes }
 
 // AuditFinding is one advisory that affects one tool version, with every pin of that version.
 type AuditFinding struct {
@@ -44,7 +57,23 @@ type AuditFinding struct {
 	Package  enrich.Package  `json:"package"`
 	Severity *enrich.Score   `json:"severity,omitempty"`
 	FixedIn  string          `json:"fixed_in,omitempty"` // lowest fixed version above Version
+	Fix      FindingFix      `json:"fix,omitzero"`
 	URL      string          `json:"url"`
+}
+
+// FindingFix is a finding's fix target: the tool version's [enrich.Fix], null when no release
+// fixes the advisory, and absent when relgap couldn't work it out.
+type FindingFix struct {
+	Target *enrich.Fix // nil when no release fixes the advisory
+	Known  bool
+}
+
+// IsZero reports whether relgap couldn't work the fix target out, which leaves it out of JSON.
+func (f FindingFix) IsZero() bool { return !f.Known }
+
+// MarshalJSON writes the target, or null.
+func (f FindingFix) MarshalJSON() ([]byte, error) {
+	return json.Marshal(f.Target) //nolint:wrapcheck // a plain struct always marshals
 }
 
 // Failed returns the pins whose version lookup failed, which leaves them unchecked.
@@ -215,8 +244,8 @@ func (a *Auditor) version(
 
 // EnrichRequests returns one request per tool and version among the pins; see
 // [Outdated.EnrichRequests].
-func (a *Audit) EnrichRequests(resolve ResolveFunc) []enrich.Request {
-	return a.rows.EnrichRequests(resolve)
+func (a *Audit) EnrichRequests(resolve ResolveFunc, versions VersionsFunc) []enrich.Request {
+	return a.rows.EnrichRequests(resolve, versions)
 }
 
 // ApplyEnrichment lists the unchecked pins, adding unresolved, the pins that resolve to no tool,
@@ -226,6 +255,7 @@ func (a *Audit) ApplyEnrichment(results map[string]enrich.Result, unresolved []s
 	a.rows.ApplyEnrichment(results, unresolved)
 	a.Unchecked = a.rows.Unchecked
 	checked := map[string]bool{}
+	fixes := map[string]*enrich.Fix{}
 	index := map[string]int{}
 	findings := []AuditFinding{}
 	for i := range a.rows.Pins {
@@ -234,6 +264,7 @@ func (a *Audit) ApplyEnrichment(results map[string]enrich.Result, unresolved []s
 			continue
 		}
 		checked[enrichKey(p)] = true
+		fixes[enrichKey(p)] = p.Fix
 		for _, v := range p.Vulns {
 			if !v.AffectsCurrent {
 				continue
@@ -245,7 +276,8 @@ func (a *Audit) ApplyEnrichment(results map[string]enrich.Result, unresolved []s
 				index[key] = at
 				findings = append(findings, AuditFinding{
 					Tool: p.Tool, Version: p.vulnVersion, ID: v.ID, Aliases: v.Aliases, Summary: v.Summary,
-					Package: v.Package, Severity: v.Severity, FixedIn: v.FixedIn, URL: AdvisoryURL + v.ID,
+					Package: v.Package, Severity: v.Severity, FixedIn: v.FixedIn, Fix: findingFix(p.Fix, v.ID),
+					URL: AdvisoryURL + v.ID,
 				})
 			}
 			findings[at].Pins = append(findings[at].Pins, p.Pin.Location)
@@ -253,6 +285,29 @@ func (a *Audit) ApplyEnrichment(results map[string]enrich.Result, unresolved []s
 	}
 	slices.SortStableFunc(findings, compareFindings)
 	a.Findings, a.Checked = findings, len(checked)
+	a.fixes = nil
+	seen := map[string]bool{}
+	for _, f := range findings {
+		key := f.Tool + "\x00" + f.Version
+		if seen[key] {
+			continue
+		}
+		seen[key] = true
+		if fix := fixes[key]; fix != nil {
+			a.fixes = append(a.fixes, ToolFix{Tool: f.Tool, Version: f.Version, Fix: fix})
+		}
+	}
+}
+
+// findingFix is the fix target of advisory id: f, or null when f says no release fixes id.
+func findingFix(f *enrich.Fix, id string) FindingFix {
+	if f == nil {
+		return FindingFix{}
+	}
+	if slices.Contains(f.Unfixed, id) {
+		return FindingFix{Known: true}
+	}
+	return FindingFix{Target: f, Known: true}
 }
 
 func compareFindings(x, y AuditFinding) int {

@@ -75,8 +75,15 @@ it is below one. Without the flag, every advisory counts:
 relgap outdated --fail-on eol --fail-on vuln --vuln-severity high
 ```
 
-[EOL and vulnerabilities](/concepts/enrichment) says where the data comes from and how the rating
-is read.
+`--vuln-fixable` counts only the advisories with a fixed version above the pinned one, so the
+gate fails on what an upgrade can fix:
+
+```sh
+relgap audit --vuln-fixable --vuln-severity high
+```
+
+[EOL and vulnerabilities](/concepts/enrichment) says where the data comes from, how the rating is
+read and how the fix target is chosen.
 
 ## Set the policy once
 
@@ -93,8 +100,8 @@ policy:
 
 `policy.fail_on` lists values for every command, and each command uses the values it checks, so
 `relgap drift` ignores `eol` there. A `--fail-on` flag replaces the list. `policy.max_behind`,
-`policy.vuln_severity` and `policy.min_confidence` are the defaults of `--max-behind`,
-`--vuln-severity` and `--min-confidence`. Each key also has a `RELGAP_POLICY_*` environment
+`policy.vuln_severity`, `policy.vuln_fixable` and `policy.min_confidence` are the defaults of
+`--max-behind`, `--vuln-severity`, `--vuln-fixable` and `--min-confidence`. Each key also has a `RELGAP_POLICY_*` environment
 variable ([Configuration](/reference/config#policy)).
 
 ## Exit codes in CI

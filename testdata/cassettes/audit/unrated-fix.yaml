@@ -1,0 +1,963 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 302
+        host: api.github.com
+        body: |
+            {"query":"query($cursor:String$first:Int!$name:String!$owner:String!){repository(owner: $owner, name: $name){refs(refPrefix: \"refs/tags/\", first: $first, after: $cursor){nodes{name},pageInfo{hasNextPage,endCursor}}}}","variables":{"cursor":null,"first":100,"name":"kubernetes","owner":"kubernetes"}}
+        headers:
+            Content-Type:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.github.com/graphql
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"data":{"repository":{"refs":{"nodes":[{"name":"v0.2"},{"name":"v0.3"},{"name":"v0.4"},{"name":"v0.4.1"},{"name":"v0.4.2"},{"name":"v0.4.3"},{"name":"v0.4.4"},{"name":"v0.5"},{"name":"v0.5.1"},{"name":"v0.5.2"},{"name":"v0.5.3"},{"name":"v0.5.4"},{"name":"v0.5.5"},{"name":"v0.5.6"},{"name":"v0.6.0"},{"name":"v0.6.1"},{"name":"v0.6.2"},{"name":"v0.7.0"},{"name":"v0.7.1"},{"name":"v0.7.2"},{"name":"v0.7.3"},{"name":"v0.7.4"},{"name":"v0.8.0"},{"name":"v0.8.1"},{"name":"v0.8.2"},{"name":"v0.8.4"},{"name":"v0.9.0"},{"name":"v0.9.1"},{"name":"v0.9.2"},{"name":"v0.9.3"},{"name":"v0.10.0"},{"name":"v0.10.1"},{"name":"v0.11.0"},{"name":"v0.12.0"},{"name":"v0.12.1"},{"name":"v0.12.2"},{"name":"v0.13.0"},{"name":"v0.13.1-dev"},{"name":"v0.13.1"},{"name":"v0.13.2"},{"name":"v0.14.0"},{"name":"v0.14.1"},{"name":"v0.14.2"},{"name":"v0.15.0"},{"name":"v0.16.0"},{"name":"v0.16.1"},{"name":"v0.16.2"},{"name":"v0.17.0"},{"name":"v0.17.1"},{"name":"v0.18.0"},{"name":"v0.18.1"},{"name":"v0.18.2"},{"name":"v0.19.0"},{"name":"v0.19.1"},{"name":"v0.19.2"},{"name":"v0.19.3"},{"name":"v0.20.0"},{"name":"v0.20.1"},{"name":"v0.20.2"},{"name":"v0.21.0"},{"name":"v0.21.1"},{"name":"v0.21.2"},{"name":"v0.21.3"},{"name":"v0.21.4"},{"name":"v1.0.0"},{"name":"v1.0.1"},{"name":"v1.0.2"},{"name":"v1.0.3"},{"name":"v1.0.4"},{"name":"v1.0.5"},{"name":"v1.0.6"},{"name":"v1.0.7"},{"name":"v1.0.8-beta"},{"name":"v1.1.0-alpha.0"},{"name":"v1.1.0-alpha.1"},{"name":"v1.1.0-beta"},{"name":"v1.1.0"},{"name":"v1.1.1-beta"},{"name":"v1.1.1-beta.0"},{"name":"v1.1.1-beta.1"},{"name":"v1.1.1"},{"name":"v1.1.2-beta.0"},{"name":"v1.1.2"},{"name":"v1.1.3-beta.0"},{"name":"v1.1.3"},{"name":"v1.1.4-beta.0"},{"name":"v1.1.4"},{"name":"v1.1.5-beta.0"},{"name":"v1.1.5"},{"name":"v1.1.6-beta.0"},{"name":"v1.1.6"},{"name":"v1.1.7-beta.0"},{"name":"v1.1.7"},{"name":"v1.1.8-beta.0"},{"name":"v1.1.8"},{"name":"v1.1.9-beta.0"},{"name":"v1.2.0-alpha.0"},{"name":"v1.2.0-alpha.1"},{"name":"v1.2.0-alpha.2"},{"name":"v1.2.0-alpha.3"}],"pageInfo":{"hasNextPage":true,"endCursor":"MTAw"}}}}}'
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/json; charset=utf-8
+            Date:
+                - Mon, 23 Nov 2026 13:25:40 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept-Encoding, Accept, X-Requested-With
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.v4; format=json
+            X-Ratelimit-Limit:
+                - "5000"
+            X-Ratelimit-Remaining:
+                - "4999"
+            X-Ratelimit-Reset:
+                - "1795443940"
+            X-Ratelimit-Resource:
+                - graphql
+            X-Ratelimit-Used:
+                - "1"
+            X-Xss-Protection:
+                - "0"
+        status: 200 OK
+        code: 200
+        duration: 571.000417ms
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 364
+        host: api.github.com
+        body: |
+            {"query":"query($cursor:String$first:Int!$name:String!$owner:String!){repository(owner: $owner, name: $name){releases(first: $first, after: $cursor, orderBy: {field: CREATED_AT, direction: DESC}){nodes{tagName,isDraft,isPrerelease,publishedAt,url},pageInfo{hasNextPage,endCursor}}}}","variables":{"cursor":null,"first":100,"name":"kanister","owner":"kanisterio"}}
+        headers:
+            Content-Type:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.github.com/graphql
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"data":{"repository":{"releases":{"nodes":[{"tagName":"0.120.0","isDraft":false,"isPrerelease":false,"publishedAt":"2026-10-23T19:22:28Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.120.0"},{"tagName":"0.119.0","isDraft":false,"isPrerelease":false,"publishedAt":"2026-05-13T07:55:34Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.119.0"},{"tagName":"0.118.0","isDraft":false,"isPrerelease":false,"publishedAt":"2026-02-03T18:37:47Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.118.0"},{"tagName":"0.117.0","isDraft":false,"isPrerelease":false,"publishedAt":"2025-12-09T05:18:38Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.117.0"},{"tagName":"0.116.0","isDraft":false,"isPrerelease":false,"publishedAt":"2025-09-12T04:44:49Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.116.0"},{"tagName":"0.115.0","isDraft":false,"isPrerelease":false,"publishedAt":"2025-08-25T18:29:26Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.115.0"},{"tagName":"0.114.0","isDraft":false,"isPrerelease":false,"publishedAt":"2025-07-03T20:58:26Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.114.0"},{"tagName":"0.113.0","isDraft":false,"isPrerelease":false,"publishedAt":"2025-02-07T20:34:38Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.113.0"},{"tagName":"0.112.0","isDraft":false,"isPrerelease":false,"publishedAt":"2024-10-19T06:43:57Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.112.0"},{"tagName":"0.111.0","isDraft":false,"isPrerelease":false,"publishedAt":"2024-09-20T02:28:28Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.111.0"},{"tagName":"0.110.0","isDraft":false,"isPrerelease":false,"publishedAt":"2024-08-02T16:58:35Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.110.0"},{"tagName":"0.109.0","isDraft":false,"isPrerelease":false,"publishedAt":"2024-05-23T02:49:55Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.109.0"},{"tagName":"0.108.0","isDraft":false,"isPrerelease":false,"publishedAt":"2024-05-16T18:56:29Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.108.0"},{"tagName":"0.107.0","isDraft":false,"isPrerelease":false,"publishedAt":"2024-04-05T01:45:13Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.107.0"},{"tagName":"0.106.0","isDraft":false,"isPrerelease":false,"publishedAt":"2024-03-07T04:05:11Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.106.0"},{"tagName":"0.105.0","isDraft":false,"isPrerelease":false,"publishedAt":"2024-01-26T06:44:42Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.105.0"},{"tagName":"0.104.0","isDraft":false,"isPrerelease":false,"publishedAt":"2024-01-11T01:23:31Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.104.0"},{"tagName":"0.103.0","isDraft":false,"isPrerelease":false,"publishedAt":"2023-12-15T22:05:33Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.103.0"},{"tagName":"0.102.0","isDraft":false,"isPrerelease":false,"publishedAt":"2023-12-15T17:18:40Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.102.0"},{"tagName":"0.101.0","isDraft":false,"isPrerelease":false,"publishedAt":"2023-12-13T19:57:13Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.101.0"},{"tagName":"0.100.0","isDraft":false,"isPrerelease":false,"publishedAt":"2023-11-24T16:05:18Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.100.0"},{"tagName":"0.99.0","isDraft":false,"isPrerelease":false,"publishedAt":"2023-11-02T15:43:45Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.99.0"},{"tagName":"0.98.0","isDraft":false,"isPrerelease":false,"publishedAt":"2023-10-20T19:17:52Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.98.0"},{"tagName":"0.97.0","isDraft":false,"isPrerelease":false,"publishedAt":"2023-10-06T11:07:57Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.97.0"},{"tagName":"0.96.0","isDraft":false,"isPrerelease":false,"publishedAt":"2023-09-21T09:13:05Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.96.0"},{"tagName":"0.95.0","isDraft":false,"isPrerelease":false,"publishedAt":"2023-09-08T13:02:55Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.95.0"},{"tagName":"0.94.0","isDraft":false,"isPrerelease":false,"publishedAt":"2023-08-11T10:08:09Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.94.0"},{"tagName":"0.93.0","isDraft":false,"isPrerelease":false,"publishedAt":"2023-06-30T00:15:27Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.93.0"},{"tagName":"0.92.0","isDraft":false,"isPrerelease":false,"publishedAt":"2023-06-02T00:46:45Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.92.0"},{"tagName":"0.91.0","isDraft":false,"isPrerelease":false,"publishedAt":"2023-04-20T21:19:16Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.91.0"},{"tagName":"0.90.0","isDraft":false,"isPrerelease":false,"publishedAt":"2023-03-23T07:21:54Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.90.0"},{"tagName":"0.89.0","isDraft":false,"isPrerelease":false,"publishedAt":"2023-02-10T19:38:49Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.89.0"},{"tagName":"0.88.0","isDraft":false,"isPrerelease":false,"publishedAt":"2023-01-25T18:01:28Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.88.0"},{"tagName":"0.87.0","isDraft":false,"isPrerelease":false,"publishedAt":"2023-01-13T21:08:30Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.87.0"},{"tagName":"0.86.0","isDraft":false,"isPrerelease":false,"publishedAt":"2023-01-12T20:53:26Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.86.0"},{"tagName":"0.85.0","isDraft":false,"isPrerelease":false,"publishedAt":"2022-12-14T02:46:26Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.85.0"},{"tagName":"0.84.0","isDraft":false,"isPrerelease":false,"publishedAt":"2022-11-02T01:23:13Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.84.0"},{"tagName":"0.83.0","isDraft":false,"isPrerelease":false,"publishedAt":"2022-10-18T10:40:47Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.83.0"},{"tagName":"0.82.0","isDraft":false,"isPrerelease":false,"publishedAt":"2022-09-08T01:14:51Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.82.0"},{"tagName":"0.81.0","isDraft":false,"isPrerelease":false,"publishedAt":"2022-07-30T00:18:22Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.81.0"},{"tagName":"0.80.0","isDraft":false,"isPrerelease":false,"publishedAt":"2022-06-17T00:25:05Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.80.0"},{"tagName":"0.79.0","isDraft":false,"isPrerelease":false,"publishedAt":"2022-05-11T21:55:19Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.79.0"},{"tagName":"0.78.0","isDraft":false,"isPrerelease":false,"publishedAt":"2022-04-22T07:42:13Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.78.0"},{"tagName":"0.77.0","isDraft":false,"isPrerelease":false,"publishedAt":"2022-04-21T19:54:08Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.77.0"},{"tagName":"0.76.0","isDraft":false,"isPrerelease":false,"publishedAt":"2022-04-06T01:46:30Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.76.0"},{"tagName":"0.75.0","isDraft":false,"isPrerelease":false,"publishedAt":"2022-03-24T19:34:29Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.75.0"},{"tagName":"0.74.0","isDraft":false,"isPrerelease":false,"publishedAt":"2022-02-26T01:58:15Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.74.0"},{"tagName":"0.73.0","isDraft":false,"isPrerelease":false,"publishedAt":"2022-02-10T05:01:29Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.73.0"},{"tagName":"0.72.0","isDraft":false,"isPrerelease":false,"publishedAt":"2022-01-14T22:11:05Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.72.0"},{"tagName":"0.71.0","isDraft":false,"isPrerelease":false,"publishedAt":"2021-12-16T21:30:01Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.71.0"},{"tagName":"0.70.0","isDraft":false,"isPrerelease":false,"publishedAt":"2021-12-02T08:00:06Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.70.0"},{"tagName":"0.69.0","isDraft":false,"isPrerelease":false,"publishedAt":"2021-10-19T09:52:15Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.69.0"},{"tagName":"0.68.0","isDraft":false,"isPrerelease":false,"publishedAt":"2021-09-24T18:40:25Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.68.0"},{"tagName":"0.67.0","isDraft":false,"isPrerelease":false,"publishedAt":"2021-09-10T21:22:37Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.67.0"},{"tagName":"0.66.0","isDraft":false,"isPrerelease":false,"publishedAt":"2021-08-26T12:34:56Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.66.0"},{"tagName":"0.65.0","isDraft":false,"isPrerelease":false,"publishedAt":"2021-07-30T19:16:00Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.65.0"},{"tagName":"0.64.0","isDraft":false,"isPrerelease":false,"publishedAt":"2021-07-29T00:41:32Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.64.0"},{"tagName":"0.63.0","isDraft":false,"isPrerelease":false,"publishedAt":"2021-07-01T17:45:16Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.63.0"},{"tagName":"0.61.0","isDraft":false,"isPrerelease":false,"publishedAt":"2021-06-19T20:16:36Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.61.0"},{"tagName":"0.60.0","isDraft":false,"isPrerelease":false,"publishedAt":"2021-06-17T12:55:37Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.60.0"},{"tagName":"0.59.0","isDraft":false,"isPrerelease":false,"publishedAt":"2021-06-04T20:16:26Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.59.0"},{"tagName":"0.58.0","isDraft":false,"isPrerelease":false,"publishedAt":"2021-05-21T16:22:36Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.58.0"},{"tagName":"0.57.0","isDraft":false,"isPrerelease":false,"publishedAt":"2021-05-12T10:43:11Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.57.0"},{"tagName":"0.53.0","isDraft":false,"isPrerelease":false,"publishedAt":"2021-05-07T14:33:20Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.53.0"},{"tagName":"0.51.0","isDraft":false,"isPrerelease":false,"publishedAt":"2021-04-23T18:01:27Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.51.0"},{"tagName":"0.50.0","isDraft":false,"isPrerelease":false,"publishedAt":"2021-02-26T01:22:26Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.50.0"},{"tagName":"0.49.0","isDraft":false,"isPrerelease":false,"publishedAt":"2021-01-15T22:13:32Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.49.0"},{"tagName":"0.48.0","isDraft":false,"isPrerelease":false,"publishedAt":"2020-12-17T14:51:17Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.48.0"},{"tagName":"0.45.0","isDraft":false,"isPrerelease":false,"publishedAt":"2020-12-16T09:33:12Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.45.0"},{"tagName":"0.44.0","isDraft":false,"isPrerelease":false,"publishedAt":"2020-11-30T09:43:58Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.44.0"},{"tagName":"0.43.0","isDraft":false,"isPrerelease":false,"publishedAt":"2020-11-13T02:46:43Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.43.0"},{"tagName":"0.42.0","isDraft":false,"isPrerelease":false,"publishedAt":"2020-11-12T07:56:42Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.42.0"},{"tagName":"0.41.0","isDraft":false,"isPrerelease":false,"publishedAt":"2020-10-31T09:16:32Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.41.0"},{"tagName":"0.40.0","isDraft":false,"isPrerelease":false,"publishedAt":"2020-10-14T06:41:08Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.40.0"},{"tagName":"0.39.0","isDraft":false,"isPrerelease":false,"publishedAt":"2020-10-10T06:10:53Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.39.0"},{"tagName":"0.38.0","isDraft":false,"isPrerelease":false,"publishedAt":"2020-10-03T06:45:31Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.38.0"},{"tagName":"0.37.0","isDraft":false,"isPrerelease":false,"publishedAt":"2020-09-26T06:25:37Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.37.0"},{"tagName":"0.36.0","isDraft":false,"isPrerelease":false,"publishedAt":"2020-09-21T07:57:15Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.36.0"},{"tagName":"0.35.0","isDraft":false,"isPrerelease":false,"publishedAt":"2020-09-15T06:05:25Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.35.0"},{"tagName":"0.34.0","isDraft":false,"isPrerelease":false,"publishedAt":"2020-09-04T23:53:22Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.34.0"},{"tagName":"0.33.0","isDraft":false,"isPrerelease":false,"publishedAt":"2020-08-19T02:59:37Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.33.0"},{"tagName":"0.32.0","isDraft":false,"isPrerelease":false,"publishedAt":"2020-07-22T05:15:41Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.32.0"},{"tagName":"0.31.0","isDraft":false,"isPrerelease":false,"publishedAt":"2020-06-26T15:42:42Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.31.0"},{"tagName":"0.30.0","isDraft":false,"isPrerelease":false,"publishedAt":"2020-06-18T06:39:23Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.30.0"},{"tagName":"0.29.0","isDraft":false,"isPrerelease":false,"publishedAt":"2020-04-13T07:43:59Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.29.0"},{"tagName":"0.28.0","isDraft":false,"isPrerelease":false,"publishedAt":"2020-03-20T20:18:14Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.28.0"},{"tagName":"0.27.0","isDraft":false,"isPrerelease":false,"publishedAt":"2020-03-12T20:21:32Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.27.0"},{"tagName":"0.26.0","isDraft":false,"isPrerelease":false,"publishedAt":"2020-02-01T21:48:06Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.26.0"},{"tagName":"0.25.0","isDraft":false,"isPrerelease":false,"publishedAt":"2020-01-31T03:39:17Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.25.0"},{"tagName":"0.24.0","isDraft":false,"isPrerelease":false,"publishedAt":"2020-01-17T23:40:55Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.24.0"},{"tagName":"0.23.0","isDraft":false,"isPrerelease":false,"publishedAt":"2019-12-18T01:10:02Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.23.0"},{"tagName":"0.22.0","isDraft":false,"isPrerelease":false,"publishedAt":"2019-11-12T01:56:13Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.22.0"},{"tagName":"0.21.0","isDraft":false,"isPrerelease":false,"publishedAt":"2019-08-28T13:22:39Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.21.0"},{"tagName":"0.20.0","isDraft":false,"isPrerelease":false,"publishedAt":"2019-06-10T21:13:17Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.20.0"},{"tagName":"0.19.0","isDraft":false,"isPrerelease":false,"publishedAt":"2019-05-08T00:49:48Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.19.0"},{"tagName":"0.18.0","isDraft":false,"isPrerelease":false,"publishedAt":"2019-03-12T21:36:30Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.18.0"},{"tagName":"0.17.0","isDraft":false,"isPrerelease":false,"publishedAt":"2019-03-10T02:14:21Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.17.0"},{"tagName":"0.16.0","isDraft":false,"isPrerelease":false,"publishedAt":"2019-01-04T00:24:18Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.16.0"},{"tagName":"0.15.0","isDraft":false,"isPrerelease":false,"publishedAt":"2018-12-08T23:34:09Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.15.0"},{"tagName":"0.14.0","isDraft":false,"isPrerelease":false,"publishedAt":"2018-11-28T23:49:27Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.14.0"}],"pageInfo":{"hasNextPage":true,"endCursor":"Y3Vyc29yOnYyOpK0MjAxOC0xMS0yOFQyMzo0Nzo0MlrOANlbhQ=="}}}}}'
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/json; charset=utf-8
+            Date:
+                - Mon, 23 Nov 2026 13:25:40 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept-Encoding, Accept, X-Requested-With
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.v4; format=json
+            X-Ratelimit-Limit:
+                - "5000"
+            X-Ratelimit-Remaining:
+                - "4998"
+            X-Ratelimit-Reset:
+                - "1795443940"
+            X-Ratelimit-Resource:
+                - graphql
+            X-Ratelimit-Used:
+                - "2"
+            X-Xss-Protection:
+                - "0"
+        status: 200 OK
+        code: 200
+        duration: 831.104875ms
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 304
+        host: api.github.com
+        body: |
+            {"query":"query($cursor:String$first:Int!$name:String!$owner:String!){repository(owner: $owner, name: $name){refs(refPrefix: \"refs/tags/\", first: $first, after: $cursor){nodes{name},pageInfo{hasNextPage,endCursor}}}}","variables":{"cursor":"MTAw","first":100,"name":"kubernetes","owner":"kubernetes"}}
+        headers:
+            Content-Type:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.github.com/graphql
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"data":{"repository":{"refs":{"nodes":[{"name":"v1.2.0-alpha.4"},{"name":"v1.2.0-alpha.5"},{"name":"v1.2.0-alpha.6"},{"name":"v1.2.0-alpha.7"},{"name":"v1.2.0-alpha.8"},{"name":"v1.2.0-beta.0"},{"name":"v1.2.0-beta.1"},{"name":"v1.2.0"},{"name":"v1.2.1-beta.0"},{"name":"v1.2.1"},{"name":"v1.2.2-beta.0"},{"name":"v1.2.2"},{"name":"v1.2.3-beta.0"},{"name":"v1.2.3"},{"name":"v1.2.4-beta.0"},{"name":"v1.2.4"},{"name":"v1.2.5-beta.0"},{"name":"v1.2.5"},{"name":"v1.2.6-beta.0"},{"name":"v1.2.6"},{"name":"v1.2.7-beta.0"},{"name":"v1.2.7"},{"name":"v1.2.8-beta.0"},{"name":"v1.3.0-alpha.0"},{"name":"v1.3.0-alpha.1"},{"name":"v1.3.0-alpha.2"},{"name":"v1.3.0-alpha.3"},{"name":"v1.3.0-alpha.4"},{"name":"v1.3.0-alpha.5"},{"name":"v1.3.0-beta.0"},{"name":"v1.3.0-beta.1"},{"name":"v1.3.0-beta.2"},{"name":"v1.3.0-beta.3"},{"name":"v1.3.0"},{"name":"v1.3.1-beta.0"},{"name":"v1.3.1-beta.1"},{"name":"v1.3.1"},{"name":"v1.3.2-beta.0"},{"name":"v1.3.2"},{"name":"v1.3.3-beta.0"},{"name":"v1.3.3"},{"name":"v1.3.4-beta.0"},{"name":"v1.3.4"},{"name":"v1.3.5-beta.0"},{"name":"v1.3.5"},{"name":"v1.3.6-beta.0"},{"name":"v1.3.6"},{"name":"v1.3.7-beta.0"},{"name":"v1.3.7"},{"name":"v1.3.8-beta.0"},{"name":"v1.3.8"},{"name":"v1.3.9-beta.0"},{"name":"v1.3.9"},{"name":"v1.3.10-beta.0"},{"name":"v1.3.10"},{"name":"v1.3.11-beta.0"},{"name":"v1.4.0-alpha.0"},{"name":"v1.4.0-alpha.1"},{"name":"v1.4.0-alpha.2"},{"name":"v1.4.0-alpha.3"},{"name":"v1.4.0-beta.0"},{"name":"v1.4.0-beta.1"},{"name":"v1.4.0-beta.2"},{"name":"v1.4.0-beta.3"},{"name":"v1.4.0-beta.4"},{"name":"v1.4.0-beta.5"},{"name":"v1.4.0-beta.6"},{"name":"v1.4.0-beta.7"},{"name":"v1.4.0-beta.8"},{"name":"v1.4.0-beta.9"},{"name":"v1.4.0-beta.10"},{"name":"v1.4.0-beta.11"},{"name":"v1.4.0"},{"name":"v1.4.1-beta.0"},{"name":"v1.4.1-beta.1"},{"name":"v1.4.1-beta.2"},{"name":"v1.4.1"},{"name":"v1.4.2-beta.0"},{"name":"v1.4.2-beta.1"},{"name":"v1.4.2"},{"name":"v1.4.3-beta.0"},{"name":"v1.4.3"},{"name":"v1.4.4-beta.0"},{"name":"v1.4.4"},{"name":"v1.4.5-beta.0"},{"name":"v1.4.5"},{"name":"v1.4.6-beta.0"},{"name":"v1.4.6"},{"name":"v1.4.7-beta.0"},{"name":"v1.4.7"},{"name":"v1.4.8-beta.0"},{"name":"v1.4.8"},{"name":"v1.4.9-beta.0"},{"name":"v1.4.9"},{"name":"v1.4.11-beta.0"},{"name":"v1.4.12-beta.0"},{"name":"v1.4.12"},{"name":"v1.5.0-alpha.0"},{"name":"v1.5.0-alpha.1"},{"name":"v1.5.0-alpha.2"}],"pageInfo":{"hasNextPage":true,"endCursor":"MjAw"}}}}}'
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/json; charset=utf-8
+            Date:
+                - Mon, 23 Nov 2026 13:25:41 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept-Encoding, Accept, X-Requested-With
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.v4; format=json
+            X-Ratelimit-Limit:
+                - "5000"
+            X-Ratelimit-Remaining:
+                - "4997"
+            X-Ratelimit-Reset:
+                - "1795443940"
+            X-Ratelimit-Resource:
+                - graphql
+            X-Ratelimit-Used:
+                - "3"
+            X-Xss-Protection:
+                - "0"
+        status: 200 OK
+        code: 200
+        duration: 589.742708ms
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 414
+        host: api.github.com
+        body: |
+            {"query":"query($cursor:String$first:Int!$name:String!$owner:String!){repository(owner: $owner, name: $name){releases(first: $first, after: $cursor, orderBy: {field: CREATED_AT, direction: DESC}){nodes{tagName,isDraft,isPrerelease,publishedAt,url},pageInfo{hasNextPage,endCursor}}}}","variables":{"cursor":"Y3Vyc29yOnYyOpK0MjAxOC0xMS0yOFQyMzo0Nzo0MlrOANlbhQ==","first":100,"name":"kanister","owner":"kanisterio"}}
+        headers:
+            Content-Type:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.github.com/graphql
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"data":{"repository":{"releases":{"nodes":[{"tagName":"0.13.0","isDraft":false,"isPrerelease":false,"publishedAt":"2018-10-23T19:49:16Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.13.0"},{"tagName":"0.12.0","isDraft":false,"isPrerelease":false,"publishedAt":"2018-10-01T18:47:45Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.12.0"},{"tagName":"0.11.0","isDraft":false,"isPrerelease":false,"publishedAt":"2018-08-17T22:34:37Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.11.0"},{"tagName":"0.10.0","isDraft":false,"isPrerelease":false,"publishedAt":"2018-06-29T23:48:30Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.10.0"},{"tagName":"0.9.0","isDraft":false,"isPrerelease":false,"publishedAt":"2018-06-21T06:15:24Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.9.0"},{"tagName":"0.8.0","isDraft":false,"isPrerelease":false,"publishedAt":"2018-06-18T05:29:04Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.8.0"},{"tagName":"0.7.0","isDraft":false,"isPrerelease":false,"publishedAt":"2018-06-02T17:47:16Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.7.0"},{"tagName":"0.6.0","isDraft":false,"isPrerelease":false,"publishedAt":"2018-05-11T19:02:43Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.6.0"},{"tagName":"0.5.0","isDraft":false,"isPrerelease":false,"publishedAt":"2018-04-15T05:29:45Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.5.0"}],"pageInfo":{"hasNextPage":false,"endCursor":"Y3Vyc29yOnYyOpK0MjAxOC0wNC0xNVQwNDo1NTowOFrOAKD8dg=="}}}}}'
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/json; charset=utf-8
+            Date:
+                - Mon, 23 Nov 2026 13:25:41 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept-Encoding, Accept, X-Requested-With
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.v4; format=json
+            X-Ratelimit-Limit:
+                - "5000"
+            X-Ratelimit-Remaining:
+                - "4999"
+            X-Ratelimit-Reset:
+                - "1795443941"
+            X-Ratelimit-Resource:
+                - graphql
+            X-Ratelimit-Used:
+                - "1"
+            X-Xss-Protection:
+                - "0"
+        status: 200 OK
+        code: 200
+        duration: 568.182292ms
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 304
+        host: api.github.com
+        body: |
+            {"query":"query($cursor:String$first:Int!$name:String!$owner:String!){repository(owner: $owner, name: $name){refs(refPrefix: \"refs/tags/\", first: $first, after: $cursor){nodes{name},pageInfo{hasNextPage,endCursor}}}}","variables":{"cursor":"MjAw","first":100,"name":"kubernetes","owner":"kubernetes"}}
+        headers:
+            Content-Type:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.github.com/graphql
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"data":{"repository":{"refs":{"nodes":[{"name":"v1.5.0-beta.0"},{"name":"v1.5.0-beta.1"},{"name":"v1.5.0-beta.2"},{"name":"v1.5.0-beta.3"},{"name":"v1.5.0"},{"name":"v1.5.1-beta.0"},{"name":"v1.5.1"},{"name":"v1.5.2-beta.0"},{"name":"v1.5.2"},{"name":"v1.5.3-beta.0"},{"name":"v1.5.3"},{"name":"v1.5.4-beta.0"},{"name":"v1.5.4"},{"name":"v1.5.5-beta.0"},{"name":"v1.5.5"},{"name":"v1.5.6-beta.0"},{"name":"v1.5.6"},{"name":"v1.5.7-beta.0"},{"name":"v1.5.7"},{"name":"v1.5.8-beta.0"},{"name":"v1.5.8"},{"name":"v1.5.9-beta.0"},{"name":"v1.6.0-alpha.0"},{"name":"v1.6.0-alpha.1"},{"name":"v1.6.0-alpha.2"},{"name":"v1.6.0-alpha.3"},{"name":"v1.6.0-beta.0"},{"name":"v1.6.0-beta.1"},{"name":"v1.6.0-beta.2"},{"name":"v1.6.0-beta.3"},{"name":"v1.6.0-beta.4"},{"name":"v1.6.0-rc.1"},{"name":"v1.6.0"},{"name":"v1.6.1-beta.0"},{"name":"v1.6.1"},{"name":"v1.6.2-beta.0"},{"name":"v1.6.2"},{"name":"v1.6.3-beta.0"},{"name":"v1.6.3-beta.1"},{"name":"v1.6.3"},{"name":"v1.6.4-beta.0"},{"name":"v1.6.4-beta.1"},{"name":"v1.6.4"},{"name":"v1.6.5-beta.0"},{"name":"v1.6.5"},{"name":"v1.6.6-beta.0"},{"name":"v1.6.6"},{"name":"v1.6.7-beta.0"},{"name":"v1.6.7"},{"name":"v1.6.8-beta.0"},{"name":"v1.6.8"},{"name":"v1.6.9-beta.0"},{"name":"v1.6.9"},{"name":"v1.6.10-beta.0"},{"name":"v1.6.10"},{"name":"v1.6.11-beta.0"},{"name":"v1.6.11"},{"name":"v1.6.12-beta.0"},{"name":"v1.6.12"},{"name":"v1.6.13-beta.0"},{"name":"v1.6.13"},{"name":"v1.6.14-beta.0"},{"name":"v1.7.0-alpha.0"},{"name":"v1.7.0-alpha.1"},{"name":"v1.7.0-alpha.2"},{"name":"v1.7.0-alpha.3"},{"name":"v1.7.0-alpha.4"},{"name":"v1.7.0-beta.0"},{"name":"v1.7.0-beta.1"},{"name":"v1.7.0-beta.2"},{"name":"v1.7.0-beta.3"},{"name":"v1.7.0-rc.1"},{"name":"v1.7.0"},{"name":"v1.7.1-beta.0"},{"name":"v1.7.1"},{"name":"v1.7.2-beta.0"},{"name":"v1.7.2"},{"name":"v1.7.3-beta.0"},{"name":"v1.7.3"},{"name":"v1.7.4-beta.0"},{"name":"v1.7.4"},{"name":"v1.7.5-beta.0"},{"name":"v1.7.5"},{"name":"v1.7.6-beta.0"},{"name":"v1.7.6"},{"name":"v1.7.7-beta.0"},{"name":"v1.7.7"},{"name":"v1.7.8-beta.0"},{"name":"v1.7.8"},{"name":"v1.7.9-beta.0"},{"name":"v1.7.9"},{"name":"v1.7.10-beta.0"},{"name":"v1.7.10"},{"name":"v1.7.11-beta.0"},{"name":"v1.7.11"},{"name":"v1.7.12-beta.0"},{"name":"v1.7.12"},{"name":"v1.7.13-beta.0"},{"name":"v1.7.13"},{"name":"v1.7.14-beta.0"}],"pageInfo":{"hasNextPage":true,"endCursor":"MzAw"}}}}}'
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/json; charset=utf-8
+            Date:
+                - Mon, 23 Nov 2026 13:25:41 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept-Encoding, Accept, X-Requested-With
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.v4; format=json
+            X-Ratelimit-Limit:
+                - "5000"
+            X-Ratelimit-Remaining:
+                - "4996"
+            X-Ratelimit-Reset:
+                - "1795443940"
+            X-Ratelimit-Resource:
+                - graphql
+            X-Ratelimit-Used:
+                - "4"
+            X-Xss-Protection:
+                - "0"
+        status: 200 OK
+        code: 200
+        duration: 452.197166ms
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 304
+        host: api.github.com
+        body: |
+            {"query":"query($cursor:String$first:Int!$name:String!$owner:String!){repository(owner: $owner, name: $name){refs(refPrefix: \"refs/tags/\", first: $first, after: $cursor){nodes{name},pageInfo{hasNextPage,endCursor}}}}","variables":{"cursor":"MzAw","first":100,"name":"kubernetes","owner":"kubernetes"}}
+        headers:
+            Content-Type:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.github.com/graphql
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"data":{"repository":{"refs":{"nodes":[{"name":"v1.7.14"},{"name":"v1.7.15-beta.0"},{"name":"v1.7.15"},{"name":"v1.7.16-beta.0"},{"name":"v1.7.16"},{"name":"v1.7.17-beta.0"},{"name":"v1.8.0-alpha.0"},{"name":"v1.8.0-alpha.1"},{"name":"v1.8.0-alpha.2"},{"name":"v1.8.0-alpha.3"},{"name":"v1.8.0-beta.0"},{"name":"v1.8.0-beta.1"},{"name":"v1.8.0-rc.1"},{"name":"v1.8.0"},{"name":"v1.8.1-beta.0"},{"name":"v1.8.1"},{"name":"v1.8.2-beta.0"},{"name":"v1.8.2"},{"name":"v1.8.3-beta.0"},{"name":"v1.8.3"},{"name":"v1.8.4-beta.0"},{"name":"v1.8.4"},{"name":"v1.8.5-beta.0"},{"name":"v1.8.5"},{"name":"v1.8.6-beta.0"},{"name":"v1.8.6"},{"name":"v1.8.7-beta.0"},{"name":"v1.8.7"},{"name":"v1.8.8-beta.0"},{"name":"v1.8.8"},{"name":"v1.8.9-beta.0"},{"name":"v1.8.9"},{"name":"v1.8.10-beta.0"},{"name":"v1.8.10"},{"name":"v1.8.11-beta.0"},{"name":"v1.8.11"},{"name":"v1.8.12-beta.0"},{"name":"v1.8.12"},{"name":"v1.8.13-beta.0"},{"name":"v1.8.13"},{"name":"v1.8.14-beta.0"},{"name":"v1.8.14"},{"name":"v1.8.15-beta.0"},{"name":"v1.8.15"},{"name":"v1.8.16-beta.0"},{"name":"v1.9.0-alpha.0"},{"name":"v1.9.0-alpha.1"},{"name":"v1.9.0-alpha.2"},{"name":"v1.9.0-alpha.3"},{"name":"v1.9.0-beta.0"},{"name":"v1.9.0-beta.1"},{"name":"v1.9.0-beta.2"},{"name":"v1.9.0"},{"name":"v1.9.1-beta.0"},{"name":"v1.9.1"},{"name":"v1.9.2-beta.0"},{"name":"v1.9.2"},{"name":"v1.9.3-beta.0"},{"name":"v1.9.3"},{"name":"v1.9.4-beta.0"},{"name":"v1.9.4"},{"name":"v1.9.5-beta.0"},{"name":"v1.9.5"},{"name":"v1.9.6-beta.0"},{"name":"v1.9.6"},{"name":"v1.9.7-beta.0"},{"name":"v1.9.7"},{"name":"v1.9.8-beta.0"},{"name":"v1.9.8"},{"name":"v1.9.9-beta.0"},{"name":"v1.9.9"},{"name":"v1.9.10-beta.0"},{"name":"v1.9.10"},{"name":"v1.9.11-beta.0"},{"name":"v1.9.11"},{"name":"v1.9.12-beta.0"},{"name":"v1.10.0-alpha.0"},{"name":"v1.10.0-alpha.1"},{"name":"v1.10.0-alpha.2"},{"name":"v1.10.0-alpha.3"},{"name":"v1.10.0-beta.0"},{"name":"v1.10.0-beta.1"},{"name":"v1.10.0-beta.2"},{"name":"v1.10.0-beta.3"},{"name":"v1.10.0-beta.4"},{"name":"v1.10.0-rc.1"},{"name":"v1.10.0"},{"name":"v1.10.1-beta.0"},{"name":"v1.10.1"},{"name":"v1.10.2-beta.0"},{"name":"v1.10.2"},{"name":"v1.10.3-beta.0"},{"name":"v1.10.3"},{"name":"v1.10.4-beta.0"},{"name":"v1.10.4"},{"name":"v1.10.5-beta.0"},{"name":"v1.10.5"},{"name":"v1.10.6-beta.0"},{"name":"v1.10.6"},{"name":"v1.10.7-beta.0"}],"pageInfo":{"hasNextPage":true,"endCursor":"NDAw"}}}}}'
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/json; charset=utf-8
+            Date:
+                - Mon, 23 Nov 2026 13:25:42 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept-Encoding, Accept, X-Requested-With
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.v4; format=json
+            X-Ratelimit-Limit:
+                - "5000"
+            X-Ratelimit-Remaining:
+                - "4995"
+            X-Ratelimit-Reset:
+                - "1795443940"
+            X-Ratelimit-Resource:
+                - graphql
+            X-Ratelimit-Used:
+                - "5"
+            X-Xss-Protection:
+                - "0"
+        status: 200 OK
+        code: 200
+        duration: 454.2785ms
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 304
+        host: api.github.com
+        body: |
+            {"query":"query($cursor:String$first:Int!$name:String!$owner:String!){repository(owner: $owner, name: $name){refs(refPrefix: \"refs/tags/\", first: $first, after: $cursor){nodes{name},pageInfo{hasNextPage,endCursor}}}}","variables":{"cursor":"NDAw","first":100,"name":"kubernetes","owner":"kubernetes"}}
+        headers:
+            Content-Type:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.github.com/graphql
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"data":{"repository":{"refs":{"nodes":[{"name":"v1.10.7"},{"name":"v1.10.8-beta.0"},{"name":"v1.10.8"},{"name":"v1.10.9-beta.0"},{"name":"v1.10.9"},{"name":"v1.10.10-beta.0"},{"name":"v1.10.10"},{"name":"v1.10.11-beta.0"},{"name":"v1.10.11"},{"name":"v1.10.12-beta.0"},{"name":"v1.10.12"},{"name":"v1.10.13-beta.0"},{"name":"v1.10.13"},{"name":"v1.10.14-beta.0"},{"name":"v1.11.0-alpha.0"},{"name":"v1.11.0-alpha.1"},{"name":"v1.11.0-alpha.2"},{"name":"v1.11.0-beta.0"},{"name":"v1.11.0-beta.1"},{"name":"v1.11.0-beta.2"},{"name":"v1.11.0-rc.1"},{"name":"v1.11.0-rc.2"},{"name":"v1.11.0-rc.3"},{"name":"v1.11.0"},{"name":"v1.11.1-beta.0"},{"name":"v1.11.1"},{"name":"v1.11.2-beta.0"},{"name":"v1.11.2"},{"name":"v1.11.3-beta.0"},{"name":"v1.11.3"},{"name":"v1.11.4-beta.0"},{"name":"v1.11.4"},{"name":"v1.11.5-beta.0"},{"name":"v1.11.5"},{"name":"v1.11.6-beta.0"},{"name":"v1.11.6"},{"name":"v1.11.7-beta.0"},{"name":"v1.11.7"},{"name":"v1.11.8-beta.0"},{"name":"v1.11.8"},{"name":"v1.11.9-beta.0"},{"name":"v1.11.9"},{"name":"v1.11.10-beta.0"},{"name":"v1.11.10"},{"name":"v1.11.11-beta.0"},{"name":"v1.12.0-alpha.0"},{"name":"v1.12.0-alpha.1"},{"name":"v1.12.0-beta.0"},{"name":"v1.12.0-beta.1"},{"name":"v1.12.0-beta.2"},{"name":"v1.12.0-rc.1"},{"name":"v1.12.0-rc.2"},{"name":"v1.12.0"},{"name":"v1.12.1-beta.0"},{"name":"v1.12.1"},{"name":"v1.12.2-beta.0"},{"name":"v1.12.2"},{"name":"v1.12.3-beta.0"},{"name":"v1.12.3"},{"name":"v1.12.4-beta.0"},{"name":"v1.12.4"},{"name":"v1.12.5-beta.0"},{"name":"v1.12.5"},{"name":"v1.12.6-beta.0"},{"name":"v1.12.6"},{"name":"v1.12.7-beta.0"},{"name":"v1.12.7"},{"name":"v1.12.8-beta.0"},{"name":"v1.12.8"},{"name":"v1.12.9-beta.0"},{"name":"v1.12.9"},{"name":"v1.12.10-beta.0"},{"name":"v1.12.10"},{"name":"v1.12.11-beta.0"},{"name":"v1.13.0-alpha.0"},{"name":"v1.13.0-alpha.1"},{"name":"v1.13.0-alpha.2"},{"name":"v1.13.0-alpha.3"},{"name":"v1.13.0-beta.0"},{"name":"v1.13.0-beta.1"},{"name":"v1.13.0-beta.2"},{"name":"v1.13.0-rc.1"},{"name":"v1.13.0-rc.2"},{"name":"v1.13.0"},{"name":"v1.13.1-beta.0"},{"name":"v1.13.1"},{"name":"v1.13.2-beta.0"},{"name":"v1.13.2"},{"name":"v1.13.3-beta.0"},{"name":"v1.13.3"},{"name":"v1.13.4-beta.0"},{"name":"v1.13.4"},{"name":"v1.13.5-beta.0"},{"name":"v1.13.5"},{"name":"v1.13.6-beta.0"},{"name":"v1.13.6"},{"name":"v1.13.7-beta.0"},{"name":"v1.13.7"},{"name":"v1.13.8-beta.0"},{"name":"v1.13.8"}],"pageInfo":{"hasNextPage":true,"endCursor":"NTAw"}}}}}'
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/json; charset=utf-8
+            Date:
+                - Mon, 23 Nov 2026 13:25:42 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept-Encoding, Accept, X-Requested-With
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.v4; format=json
+            X-Ratelimit-Limit:
+                - "5000"
+            X-Ratelimit-Remaining:
+                - "4994"
+            X-Ratelimit-Reset:
+                - "1795443940"
+            X-Ratelimit-Resource:
+                - graphql
+            X-Ratelimit-Used:
+                - "6"
+            X-Xss-Protection:
+                - "0"
+        status: 200 OK
+        code: 200
+        duration: 628.264833ms
+    - id: 7
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 304
+        host: api.github.com
+        body: |
+            {"query":"query($cursor:String$first:Int!$name:String!$owner:String!){repository(owner: $owner, name: $name){refs(refPrefix: \"refs/tags/\", first: $first, after: $cursor){nodes{name},pageInfo{hasNextPage,endCursor}}}}","variables":{"cursor":"NTAw","first":100,"name":"kubernetes","owner":"kubernetes"}}
+        headers:
+            Content-Type:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.github.com/graphql
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"data":{"repository":{"refs":{"nodes":[{"name":"v1.13.9-beta.0"},{"name":"v1.13.9"},{"name":"v1.13.10-beta.0"},{"name":"v1.13.10"},{"name":"v1.13.11-beta.0"},{"name":"v1.13.11"},{"name":"v1.13.12-beta.0"},{"name":"v1.13.12"},{"name":"v1.13.13-beta.0"},{"name":"v1.14.0-alpha.0"},{"name":"v1.14.0-alpha.1"},{"name":"v1.14.0-alpha.2"},{"name":"v1.14.0-alpha.3"},{"name":"v1.14.0-beta.0"},{"name":"v1.14.0-beta.1"},{"name":"v1.14.0-beta.2"},{"name":"v1.14.0-rc.1"},{"name":"v1.14.0"},{"name":"v1.14.1-beta.0"},{"name":"v1.14.1"},{"name":"v1.14.2-beta.0"},{"name":"v1.14.2"},{"name":"v1.14.3-beta.0"},{"name":"v1.14.3"},{"name":"v1.14.4-beta.0"},{"name":"v1.14.4"},{"name":"v1.14.5-beta.0"},{"name":"v1.14.5"},{"name":"v1.14.6-beta.0"},{"name":"v1.14.6"},{"name":"v1.14.7-beta.0"},{"name":"v1.14.7"},{"name":"v1.14.8-beta.0"},{"name":"v1.14.8"},{"name":"v1.14.9-beta.0"},{"name":"v1.14.9"},{"name":"v1.14.10-beta.0"},{"name":"v1.14.10"},{"name":"v1.14.11-beta.0"},{"name":"v1.14.11-beta.1"},{"name":"v1.15.0-alpha.0"},{"name":"v1.15.0-alpha.1"},{"name":"v1.15.0-alpha.2"},{"name":"v1.15.0-alpha.3"},{"name":"v1.15.0-beta.0"},{"name":"v1.15.0-beta.1"},{"name":"v1.15.0-beta.2"},{"name":"v1.15.0-rc.1"},{"name":"v1.15.0"},{"name":"v1.15.1-beta.0"},{"name":"v1.15.1"},{"name":"v1.15.2-beta.0"},{"name":"v1.15.2"},{"name":"v1.15.3-beta.0"},{"name":"v1.15.3"},{"name":"v1.15.4-beta.0"},{"name":"v1.15.4"},{"name":"v1.15.5-beta.0"},{"name":"v1.15.5"},{"name":"v1.15.6-beta.0"},{"name":"v1.15.6"},{"name":"v1.15.7-beta.0"},{"name":"v1.15.7"},{"name":"v1.15.8-beta.0"},{"name":"v1.15.8-beta.1"},{"name":"v1.15.8"},{"name":"v1.15.9-beta.0"},{"name":"v1.15.9"},{"name":"v1.15.10-beta.0"},{"name":"v1.15.10"},{"name":"v1.15.11-beta.0"},{"name":"v1.15.11"},{"name":"v1.15.12-beta.0"},{"name":"v1.15.12"},{"name":"v1.15.13-beta.0"},{"name":"v1.16.0-alpha.0"},{"name":"v1.16.0-alpha.1"},{"name":"v1.16.0-alpha.2"},{"name":"v1.16.0-alpha.3"},{"name":"v1.16.0-beta.0"},{"name":"v1.16.0-beta.1"},{"name":"v1.16.0-beta.2"},{"name":"v1.16.0-rc.1"},{"name":"v1.16.0-rc.2"},{"name":"v1.16.0"},{"name":"v1.16.1-beta.0"},{"name":"v1.16.1"},{"name":"v1.16.2-beta.0"},{"name":"v1.16.2"},{"name":"v1.16.3-beta.0"},{"name":"v1.16.3"},{"name":"v1.16.4-beta.0"},{"name":"v1.16.4"},{"name":"v1.16.5-beta.0"},{"name":"v1.16.5-beta.1"},{"name":"v1.16.5"},{"name":"v1.16.6-beta.0"},{"name":"v1.16.6"},{"name":"v1.16.7-beta.0"},{"name":"v1.16.7"}],"pageInfo":{"hasNextPage":true,"endCursor":"NjAw"}}}}}'
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/json; charset=utf-8
+            Date:
+                - Mon, 23 Nov 2026 13:25:43 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept-Encoding, Accept, X-Requested-With
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.v4; format=json
+            X-Ratelimit-Limit:
+                - "5000"
+            X-Ratelimit-Remaining:
+                - "4993"
+            X-Ratelimit-Reset:
+                - "1795443940"
+            X-Ratelimit-Resource:
+                - graphql
+            X-Ratelimit-Used:
+                - "7"
+            X-Xss-Protection:
+                - "0"
+        status: 200 OK
+        code: 200
+        duration: 494.612208ms
+    - id: 8
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 304
+        host: api.github.com
+        body: |
+            {"query":"query($cursor:String$first:Int!$name:String!$owner:String!){repository(owner: $owner, name: $name){refs(refPrefix: \"refs/tags/\", first: $first, after: $cursor){nodes{name},pageInfo{hasNextPage,endCursor}}}}","variables":{"cursor":"NjAw","first":100,"name":"kubernetes","owner":"kubernetes"}}
+        headers:
+            Content-Type:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.github.com/graphql
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"data":{"repository":{"refs":{"nodes":[{"name":"v1.16.8-beta.0"},{"name":"v1.16.8"},{"name":"v1.16.9-beta.0"},{"name":"v1.16.9"},{"name":"v1.16.10-beta.0"},{"name":"v1.16.10"},{"name":"v1.16.11-rc.0"},{"name":"v1.16.11"},{"name":"v1.16.12-rc.0"},{"name":"v1.16.12-rc.1"},{"name":"v1.16.12"},{"name":"v1.16.13-rc.0"},{"name":"v1.16.13"},{"name":"v1.16.14-rc.0"},{"name":"v1.16.14"},{"name":"v1.16.15-rc.0"},{"name":"v1.16.15"},{"name":"v1.16.16-rc.0"},{"name":"v1.17.0-alpha.0"},{"name":"v1.17.0-alpha.1"},{"name":"v1.17.0-alpha.2"},{"name":"v1.17.0-alpha.3"},{"name":"v1.17.0-beta.0"},{"name":"v1.17.0-beta.1"},{"name":"v1.17.0-beta.2"},{"name":"v1.17.0-rc.1"},{"name":"v1.17.0-rc.2"},{"name":"v1.17.0"},{"name":"v1.17.1-beta.0"},{"name":"v1.17.1"},{"name":"v1.17.2-beta.0"},{"name":"v1.17.2"},{"name":"v1.17.3-beta.0"},{"name":"v1.17.3"},{"name":"v1.17.4-beta.0"},{"name":"v1.17.4"},{"name":"v1.17.5-beta.0"},{"name":"v1.17.5"},{"name":"v1.17.6-beta.0"},{"name":"v1.17.6"},{"name":"v1.17.7-rc.0"},{"name":"v1.17.7"},{"name":"v1.17.8-rc.0"},{"name":"v1.17.8-rc.1"},{"name":"v1.17.8"},{"name":"v1.17.9-rc.0"},{"name":"v1.17.9"},{"name":"v1.17.10-rc.0"},{"name":"v1.17.10"},{"name":"v1.17.11-rc.0"},{"name":"v1.17.11-rc.1"},{"name":"v1.17.11"},{"name":"v1.17.12-rc.0"},{"name":"v1.17.12"},{"name":"v1.17.13-rc.0"},{"name":"v1.17.13"},{"name":"v1.17.14-rc.0"},{"name":"v1.17.14"},{"name":"v1.17.15-rc.0"},{"name":"v1.17.15"},{"name":"v1.17.16-rc.0"},{"name":"v1.17.16-rc.1"},{"name":"v1.17.16"},{"name":"v1.17.17-rc.0"},{"name":"v1.17.17"},{"name":"v1.17.18-rc.0"},{"name":"v1.18.0-alpha.0"},{"name":"v1.18.0-alpha.1"},{"name":"v1.18.0-alpha.2"},{"name":"v1.18.0-alpha.3"},{"name":"v1.18.0-alpha.4"},{"name":"v1.18.0-alpha.5"},{"name":"v1.18.0-beta.0"},{"name":"v1.18.0-beta.1"},{"name":"v1.18.0-beta.2"},{"name":"v1.18.0-rc.1"},{"name":"v1.18.0"},{"name":"v1.18.1-beta.0"},{"name":"v1.18.1"},{"name":"v1.18.2-beta.0"},{"name":"v1.18.2"},{"name":"v1.18.3-beta.0"},{"name":"v1.18.3"},{"name":"v1.18.4-rc.0"},{"name":"v1.18.4"},{"name":"v1.18.5-rc.0"},{"name":"v1.18.5-rc.1"},{"name":"v1.18.5"},{"name":"v1.18.6-rc.0"},{"name":"v1.18.6"},{"name":"v1.18.7-rc.0"},{"name":"v1.18.7"},{"name":"v1.18.8-rc.0"},{"name":"v1.18.8-rc.1"},{"name":"v1.18.8"},{"name":"v1.18.9-rc.0"},{"name":"v1.18.9"},{"name":"v1.18.10-rc.0"},{"name":"v1.18.10"},{"name":"v1.18.11-rc.0"}],"pageInfo":{"hasNextPage":true,"endCursor":"NzAw"}}}}}'
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/json; charset=utf-8
+            Date:
+                - Mon, 23 Nov 2026 13:25:43 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept-Encoding, Accept, X-Requested-With
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.v4; format=json
+            X-Ratelimit-Limit:
+                - "5000"
+            X-Ratelimit-Remaining:
+                - "4992"
+            X-Ratelimit-Reset:
+                - "1795443940"
+            X-Ratelimit-Resource:
+                - graphql
+            X-Ratelimit-Used:
+                - "8"
+            X-Xss-Protection:
+                - "0"
+        status: 200 OK
+        code: 200
+        duration: 427.272875ms
+    - id: 9
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 304
+        host: api.github.com
+        body: |
+            {"query":"query($cursor:String$first:Int!$name:String!$owner:String!){repository(owner: $owner, name: $name){refs(refPrefix: \"refs/tags/\", first: $first, after: $cursor){nodes{name},pageInfo{hasNextPage,endCursor}}}}","variables":{"cursor":"NzAw","first":100,"name":"kubernetes","owner":"kubernetes"}}
+        headers:
+            Content-Type:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.github.com/graphql
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"data":{"repository":{"refs":{"nodes":[{"name":"v1.18.11"},{"name":"v1.18.12-rc.1"},{"name":"v1.18.12"},{"name":"v1.18.13-rc.0"},{"name":"v1.18.13"},{"name":"v1.18.14-rc.0"},{"name":"v1.18.14-rc.1"},{"name":"v1.18.14"},{"name":"v1.18.15-rc.0"},{"name":"v1.18.15"},{"name":"v1.18.16-rc.0"},{"name":"v1.18.16"},{"name":"v1.18.17-rc.0"},{"name":"v1.18.17"},{"name":"v1.18.18-rc.0"},{"name":"v1.18.18"},{"name":"v1.18.19-rc.0"},{"name":"v1.18.19"},{"name":"v1.18.20-rc.0"},{"name":"v1.18.20"},{"name":"v1.18.21-rc.0"},{"name":"v1.19.0-alpha.0"},{"name":"v1.19.0-alpha.1"},{"name":"v1.19.0-alpha.2"},{"name":"v1.19.0-alpha.3"},{"name":"v1.19.0-beta.0"},{"name":"v1.19.0-beta.1"},{"name":"v1.19.0-beta.2"},{"name":"v1.19.0-rc.0"},{"name":"v1.19.0-rc.1"},{"name":"v1.19.0-rc.2"},{"name":"v1.19.0-rc.3"},{"name":"v1.19.0-rc.4"},{"name":"v1.19.0"},{"name":"v1.19.1-rc.0"},{"name":"v1.19.1"},{"name":"v1.19.2-rc.0"},{"name":"v1.19.2"},{"name":"v1.19.3-rc.0"},{"name":"v1.19.3"},{"name":"v1.19.4-rc.0"},{"name":"v1.19.4"},{"name":"v1.19.5-rc.0"},{"name":"v1.19.5"},{"name":"v1.19.6-rc.0"},{"name":"v1.19.6-rc.1"},{"name":"v1.19.6"},{"name":"v1.19.7-rc.0"},{"name":"v1.19.7"},{"name":"v1.19.8-rc.0"},{"name":"v1.19.8"},{"name":"v1.19.9-rc.0"},{"name":"v1.19.9"},{"name":"v1.19.10-rc.0"},{"name":"v1.19.10"},{"name":"v1.19.11-rc.0"},{"name":"v1.19.11"},{"name":"v1.19.12-rc.0"},{"name":"v1.19.12"},{"name":"v1.19.13-rc.0"},{"name":"v1.19.13"},{"name":"v1.19.14-rc.0"},{"name":"v1.19.14"},{"name":"v1.19.15-rc.0"},{"name":"v1.19.15"},{"name":"v1.19.16-rc.0"},{"name":"v1.19.16"},{"name":"v1.19.17-rc.0"},{"name":"v1.20.0-alpha.0"},{"name":"v1.20.0-alpha.1"},{"name":"v1.20.0-alpha.2"},{"name":"v1.20.0-alpha.3"},{"name":"v1.20.0-beta.0"},{"name":"v1.20.0-beta.1"},{"name":"v1.20.0-beta.2"},{"name":"v1.20.0-rc.0"},{"name":"v1.20.0"},{"name":"v1.20.1-rc.0"},{"name":"v1.20.1-rc.1"},{"name":"v1.20.1"},{"name":"v1.20.2-rc.0"},{"name":"v1.20.2"},{"name":"v1.20.3-rc.0"},{"name":"v1.20.3"},{"name":"v1.20.4-rc.0"},{"name":"v1.20.4"},{"name":"v1.20.5-rc.0"},{"name":"v1.20.5"},{"name":"v1.20.6-rc.0"},{"name":"v1.20.6"},{"name":"v1.20.7-rc.0"},{"name":"v1.20.7"},{"name":"v1.20.8-rc.0"},{"name":"v1.20.8"},{"name":"v1.20.9-rc.0"},{"name":"v1.20.9"},{"name":"v1.20.10-rc.0"},{"name":"v1.20.10"},{"name":"v1.20.11-rc.0"},{"name":"v1.20.11"}],"pageInfo":{"hasNextPage":true,"endCursor":"ODAw"}}}}}'
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/json; charset=utf-8
+            Date:
+                - Mon, 23 Nov 2026 13:25:44 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept-Encoding, Accept, X-Requested-With
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.v4; format=json
+            X-Ratelimit-Limit:
+                - "5000"
+            X-Ratelimit-Remaining:
+                - "4991"
+            X-Ratelimit-Reset:
+                - "1795443940"
+            X-Ratelimit-Resource:
+                - graphql
+            X-Ratelimit-Used:
+                - "9"
+            X-Xss-Protection:
+                - "0"
+        status: 200 OK
+        code: 200
+        duration: 519.172584ms
+    - id: 10
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 304
+        host: api.github.com
+        body: |
+            {"query":"query($cursor:String$first:Int!$name:String!$owner:String!){repository(owner: $owner, name: $name){refs(refPrefix: \"refs/tags/\", first: $first, after: $cursor){nodes{name},pageInfo{hasNextPage,endCursor}}}}","variables":{"cursor":"ODAw","first":100,"name":"kubernetes","owner":"kubernetes"}}
+        headers:
+            Content-Type:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.github.com/graphql
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"data":{"repository":{"refs":{"nodes":[{"name":"v1.20.12-rc.0"},{"name":"v1.20.12"},{"name":"v1.20.13-rc.0"},{"name":"v1.20.13"},{"name":"v1.20.14-rc.0"},{"name":"v1.20.14"},{"name":"v1.20.15-rc.0"},{"name":"v1.20.15"},{"name":"v1.20.16-rc.0"},{"name":"v1.21.0-alpha.0"},{"name":"v1.21.0-alpha.1"},{"name":"v1.21.0-alpha.2"},{"name":"v1.21.0-alpha.3"},{"name":"v1.21.0-beta.0"},{"name":"v1.21.0-beta.1"},{"name":"v1.21.0-rc.0"},{"name":"v1.21.0"},{"name":"v1.21.1-rc.0"},{"name":"v1.21.1"},{"name":"v1.21.2-rc.0"},{"name":"v1.21.2"},{"name":"v1.21.3-rc.0"},{"name":"v1.21.3"},{"name":"v1.21.4-rc.0"},{"name":"v1.21.4"},{"name":"v1.21.5-rc.0"},{"name":"v1.21.5"},{"name":"v1.21.6-rc.0"},{"name":"v1.21.6"},{"name":"v1.21.7-rc.0"},{"name":"v1.21.7"},{"name":"v1.21.8-rc.0"},{"name":"v1.21.8"},{"name":"v1.21.9-rc.0"},{"name":"v1.21.9"},{"name":"v1.21.10-rc.0"},{"name":"v1.21.10"},{"name":"v1.21.11-rc.0"},{"name":"v1.21.11"},{"name":"v1.21.12-rc.0"},{"name":"v1.21.12"},{"name":"v1.21.13-rc.0"},{"name":"v1.21.13"},{"name":"v1.21.14-rc.0"},{"name":"v1.21.14"},{"name":"v1.21.15-rc.0"},{"name":"v1.22.0-alpha.0"},{"name":"v1.22.0-alpha.1"},{"name":"v1.22.0-alpha.2"},{"name":"v1.22.0-alpha.3"},{"name":"v1.22.0-beta.0"},{"name":"v1.22.0-beta.1"},{"name":"v1.22.0-beta.2"},{"name":"v1.22.0-rc.0"},{"name":"v1.22.0"},{"name":"v1.22.1-rc.0"},{"name":"v1.22.1"},{"name":"v1.22.2-rc.0"},{"name":"v1.22.2"},{"name":"v1.22.3-rc.0"},{"name":"v1.22.3"},{"name":"v1.22.4-rc.0"},{"name":"v1.22.4"},{"name":"v1.22.5-rc.0"},{"name":"v1.22.5"},{"name":"v1.22.6-rc.0"},{"name":"v1.22.6"},{"name":"v1.22.7-rc.0"},{"name":"v1.22.7"},{"name":"v1.22.8-rc.0"},{"name":"v1.22.8"},{"name":"v1.22.9-rc.0"},{"name":"v1.22.9"},{"name":"v1.22.10-rc.0"},{"name":"v1.22.10"},{"name":"v1.22.11-rc.0"},{"name":"v1.22.11"},{"name":"v1.22.12-rc.0"},{"name":"v1.22.12"},{"name":"v1.22.13-rc.0"},{"name":"v1.22.13"},{"name":"v1.22.14-rc.0"},{"name":"v1.22.14"},{"name":"v1.22.15-rc.0"},{"name":"v1.22.15"},{"name":"v1.22.16-rc.0"},{"name":"v1.22.16"},{"name":"v1.22.17-rc.0"},{"name":"v1.22.17"},{"name":"v1.22.18-rc.0"},{"name":"v1.23.0-alpha.0"},{"name":"v1.23.0-alpha.1"},{"name":"v1.23.0-alpha.2"},{"name":"v1.23.0-alpha.3"},{"name":"v1.23.0-alpha.4"},{"name":"v1.23.0-beta.0"},{"name":"v1.23.0-rc.0"},{"name":"v1.23.0-rc.1"},{"name":"v1.23.0"},{"name":"v1.23.1-rc.0"}],"pageInfo":{"hasNextPage":true,"endCursor":"OTAw"}}}}}'
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/json; charset=utf-8
+            Date:
+                - Mon, 23 Nov 2026 13:25:44 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept-Encoding, Accept, X-Requested-With
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.v4; format=json
+            X-Ratelimit-Limit:
+                - "5000"
+            X-Ratelimit-Remaining:
+                - "4990"
+            X-Ratelimit-Reset:
+                - "1795443940"
+            X-Ratelimit-Resource:
+                - graphql
+            X-Ratelimit-Used:
+                - "10"
+            X-Xss-Protection:
+                - "0"
+        status: 200 OK
+        code: 200
+        duration: 543.62375ms
+    - id: 11
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 304
+        host: api.github.com
+        body: |
+            {"query":"query($cursor:String$first:Int!$name:String!$owner:String!){repository(owner: $owner, name: $name){refs(refPrefix: \"refs/tags/\", first: $first, after: $cursor){nodes{name},pageInfo{hasNextPage,endCursor}}}}","variables":{"cursor":"OTAw","first":100,"name":"kubernetes","owner":"kubernetes"}}
+        headers:
+            Content-Type:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.github.com/graphql
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"data":{"repository":{"refs":{"nodes":[{"name":"v1.23.1"},{"name":"v1.23.2-rc.0"},{"name":"v1.23.2"},{"name":"v1.23.3-rc.0"},{"name":"v1.23.3"},{"name":"v1.23.4-rc.0"},{"name":"v1.23.4"},{"name":"v1.23.5-rc.0"},{"name":"v1.23.5"},{"name":"v1.23.6-rc.0"},{"name":"v1.23.6"},{"name":"v1.23.7-rc.0"},{"name":"v1.23.7"},{"name":"v1.23.8-rc.0"},{"name":"v1.23.8"},{"name":"v1.23.9-rc.0"},{"name":"v1.23.9"},{"name":"v1.23.10-rc.0"},{"name":"v1.23.10"},{"name":"v1.23.11-rc.0"},{"name":"v1.23.11"},{"name":"v1.23.12-rc.0"},{"name":"v1.23.12"},{"name":"v1.23.13-rc.0"},{"name":"v1.23.13"},{"name":"v1.23.14-rc.0"},{"name":"v1.23.14"},{"name":"v1.23.15-rc.0"},{"name":"v1.23.15"},{"name":"v1.23.16-rc.0"},{"name":"v1.23.16"},{"name":"v1.23.17-rc.0"},{"name":"v1.23.17"},{"name":"v1.23.18-rc.0"},{"name":"v1.24.0-alpha.0"},{"name":"v1.24.0-alpha.1"},{"name":"v1.24.0-alpha.2"},{"name":"v1.24.0-alpha.3"},{"name":"v1.24.0-alpha.4"},{"name":"v1.24.0-beta.0"},{"name":"v1.24.0-rc.0"},{"name":"v1.24.0-rc.1"},{"name":"v1.24.0"},{"name":"v1.24.1-rc.0"},{"name":"v1.24.1"},{"name":"v1.24.2-rc.0"},{"name":"v1.24.2"},{"name":"v1.24.3-rc.0"},{"name":"v1.24.3"},{"name":"v1.24.4-rc.0"},{"name":"v1.24.4"},{"name":"v1.24.5-rc.0"},{"name":"v1.24.5"},{"name":"v1.24.6-rc.0"},{"name":"v1.24.6"},{"name":"v1.24.7-rc.0"},{"name":"v1.24.7"},{"name":"v1.24.8-rc.0"},{"name":"v1.24.8"},{"name":"v1.24.9-rc.0"},{"name":"v1.24.9"},{"name":"v1.24.10-rc.0"},{"name":"v1.24.10"},{"name":"v1.24.11-rc.0"},{"name":"v1.24.11"},{"name":"v1.24.12-rc.0"},{"name":"v1.24.12"},{"name":"v1.24.13"},{"name":"v1.24.14"},{"name":"v1.24.15"},{"name":"v1.24.16"},{"name":"v1.24.17"},{"name":"v1.25.0-alpha.0"},{"name":"v1.25.0-alpha.1"},{"name":"v1.25.0-alpha.2"},{"name":"v1.25.0-alpha.3"},{"name":"v1.25.0-beta.0"},{"name":"v1.25.0-rc.0"},{"name":"v1.25.0-rc.1"},{"name":"v1.25.0"},{"name":"v1.25.1-rc.0"},{"name":"v1.25.1"},{"name":"v1.25.2-rc.0"},{"name":"v1.25.2"},{"name":"v1.25.3-rc.0"},{"name":"v1.25.3"},{"name":"v1.25.4-rc.0"},{"name":"v1.25.4"},{"name":"v1.25.5-rc.0"},{"name":"v1.25.5"},{"name":"v1.25.6-rc.0"},{"name":"v1.25.6"},{"name":"v1.25.7-rc.0"},{"name":"v1.25.7"},{"name":"v1.25.8-rc.0"},{"name":"v1.25.8"},{"name":"v1.25.9"},{"name":"v1.25.10"},{"name":"v1.25.11"},{"name":"v1.25.12"}],"pageInfo":{"hasNextPage":true,"endCursor":"MTAwMA"}}}}}'
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/json; charset=utf-8
+            Date:
+                - Mon, 23 Nov 2026 13:25:45 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept-Encoding, Accept, X-Requested-With
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.v4; format=json
+            X-Ratelimit-Limit:
+                - "5000"
+            X-Ratelimit-Remaining:
+                - "4989"
+            X-Ratelimit-Reset:
+                - "1795443940"
+            X-Ratelimit-Resource:
+                - graphql
+            X-Ratelimit-Used:
+                - "11"
+            X-Xss-Protection:
+                - "0"
+        status: 200 OK
+        code: 200
+        duration: 455.011958ms
+    - id: 12
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 306
+        host: api.github.com
+        body: |
+            {"query":"query($cursor:String$first:Int!$name:String!$owner:String!){repository(owner: $owner, name: $name){refs(refPrefix: \"refs/tags/\", first: $first, after: $cursor){nodes{name},pageInfo{hasNextPage,endCursor}}}}","variables":{"cursor":"MTAwMA","first":100,"name":"kubernetes","owner":"kubernetes"}}
+        headers:
+            Content-Type:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.github.com/graphql
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"data":{"repository":{"refs":{"nodes":[{"name":"v1.25.13"},{"name":"v1.25.14"},{"name":"v1.25.15"},{"name":"v1.25.16"},{"name":"v1.26.0-alpha.0"},{"name":"v1.26.0-alpha.1"},{"name":"v1.26.0-alpha.2"},{"name":"v1.26.0-alpha.3"},{"name":"v1.26.0-beta.0"},{"name":"v1.26.0-rc.0"},{"name":"v1.26.0-rc.1"},{"name":"v1.26.0"},{"name":"v1.26.1-rc.0"},{"name":"v1.26.1"},{"name":"v1.26.2-rc.0"},{"name":"v1.26.2"},{"name":"v1.26.3-rc.0"},{"name":"v1.26.3"},{"name":"v1.26.4"},{"name":"v1.26.5"},{"name":"v1.26.6"},{"name":"v1.26.7"},{"name":"v1.26.8"},{"name":"v1.26.9"},{"name":"v1.26.10"},{"name":"v1.26.11"},{"name":"v1.26.12"},{"name":"v1.26.13"},{"name":"v1.26.14"},{"name":"v1.26.15"},{"name":"v1.27.0-alpha.0"},{"name":"v1.27.0-alpha.1"},{"name":"v1.27.0-alpha.2"},{"name":"v1.27.0-alpha.3"},{"name":"v1.27.0-beta.0"},{"name":"v1.27.0-rc.0"},{"name":"v1.27.0-rc.1"},{"name":"v1.27.0"},{"name":"v1.27.1"},{"name":"v1.27.2"},{"name":"v1.27.3"},{"name":"v1.27.4"},{"name":"v1.27.5"},{"name":"v1.27.6"},{"name":"v1.27.7"},{"name":"v1.27.8"},{"name":"v1.27.9"},{"name":"v1.27.10"},{"name":"v1.27.11"},{"name":"v1.27.12"},{"name":"v1.27.13"},{"name":"v1.27.14"},{"name":"v1.27.15"},{"name":"v1.27.16"},{"name":"v1.28.0-alpha.0"},{"name":"v1.28.0-alpha.1"},{"name":"v1.28.0-alpha.2"},{"name":"v1.28.0-alpha.3"},{"name":"v1.28.0-alpha.4"},{"name":"v1.28.0-beta.0"},{"name":"v1.28.0-rc.0"},{"name":"v1.28.0-rc.1"},{"name":"v1.28.0"},{"name":"v1.28.1"},{"name":"v1.28.2"},{"name":"v1.28.3"},{"name":"v1.28.4"},{"name":"v1.28.5"},{"name":"v1.28.6"},{"name":"v1.28.7"},{"name":"v1.28.8"},{"name":"v1.28.9"},{"name":"v1.28.10"},{"name":"v1.28.11"},{"name":"v1.28.12"},{"name":"v1.28.13"},{"name":"v1.28.14"},{"name":"v1.28.15"},{"name":"v1.29.0-alpha.0"},{"name":"v1.29.0-alpha.1"},{"name":"v1.29.0-alpha.2"},{"name":"v1.29.0-alpha.3"},{"name":"v1.29.0-rc.0"},{"name":"v1.29.0-rc.1"},{"name":"v1.29.0-rc.2"},{"name":"v1.29.0"},{"name":"v1.29.1"},{"name":"v1.29.2"},{"name":"v1.29.3"},{"name":"v1.29.4"},{"name":"v1.29.5"},{"name":"v1.29.6"},{"name":"v1.29.7"},{"name":"v1.29.8"},{"name":"v1.29.9"},{"name":"v1.29.10"},{"name":"v1.29.11"},{"name":"v1.29.12"},{"name":"v1.29.13"},{"name":"v1.29.14"}],"pageInfo":{"hasNextPage":true,"endCursor":"MTEwMA"}}}}}'
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/json; charset=utf-8
+            Date:
+                - Mon, 23 Nov 2026 13:25:45 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept-Encoding, Accept, X-Requested-With
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.v4; format=json
+            X-Ratelimit-Limit:
+                - "5000"
+            X-Ratelimit-Remaining:
+                - "4988"
+            X-Ratelimit-Reset:
+                - "1795443940"
+            X-Ratelimit-Resource:
+                - graphql
+            X-Ratelimit-Used:
+                - "12"
+            X-Xss-Protection:
+                - "0"
+        status: 200 OK
+        code: 200
+        duration: 484.37225ms
+    - id: 13
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 306
+        host: api.github.com
+        body: |
+            {"query":"query($cursor:String$first:Int!$name:String!$owner:String!){repository(owner: $owner, name: $name){refs(refPrefix: \"refs/tags/\", first: $first, after: $cursor){nodes{name},pageInfo{hasNextPage,endCursor}}}}","variables":{"cursor":"MTEwMA","first":100,"name":"kubernetes","owner":"kubernetes"}}
+        headers:
+            Content-Type:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.github.com/graphql
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"data":{"repository":{"refs":{"nodes":[{"name":"v1.29.15"},{"name":"v1.30.0-alpha.0"},{"name":"v1.30.0-alpha.1"},{"name":"v1.30.0-alpha.2"},{"name":"v1.30.0-alpha.3"},{"name":"v1.30.0-beta.0"},{"name":"v1.30.0-rc.0"},{"name":"v1.30.0-rc.1"},{"name":"v1.30.0-rc.2"},{"name":"v1.30.0"},{"name":"v1.30.1"},{"name":"v1.30.2"},{"name":"v1.30.3"},{"name":"v1.30.4"},{"name":"v1.30.5"},{"name":"v1.30.6"},{"name":"v1.30.7"},{"name":"v1.30.8"},{"name":"v1.30.9"},{"name":"v1.30.10"},{"name":"v1.30.11"},{"name":"v1.30.12"},{"name":"v1.30.13"},{"name":"v1.30.14"},{"name":"v1.31.0-alpha.0"},{"name":"v1.31.0-alpha.1"},{"name":"v1.31.0-alpha.2"},{"name":"v1.31.0-alpha.3"},{"name":"v1.31.0-beta.0"},{"name":"v1.31.0-rc.0"},{"name":"v1.31.0-rc.1"},{"name":"v1.31.0"},{"name":"v1.31.1"},{"name":"v1.31.2"},{"name":"v1.31.3"},{"name":"v1.31.4"},{"name":"v1.31.5"},{"name":"v1.31.6"},{"name":"v1.31.7"},{"name":"v1.31.8"},{"name":"v1.31.9"},{"name":"v1.31.10"},{"name":"v1.31.11"},{"name":"v1.31.12"},{"name":"v1.31.13"},{"name":"v1.31.14"},{"name":"v1.32.0-alpha.0"},{"name":"v1.32.0-alpha.1"},{"name":"v1.32.0-alpha.2"},{"name":"v1.32.0-alpha.3"},{"name":"v1.32.0-beta.0"},{"name":"v1.32.0-rc.0"},{"name":"v1.32.0-rc.1"},{"name":"v1.32.0-rc.2"},{"name":"v1.32.0"},{"name":"v1.32.1"},{"name":"v1.32.2"},{"name":"v1.32.3"},{"name":"v1.32.4"},{"name":"v1.32.5"},{"name":"v1.32.6"},{"name":"v1.32.7"},{"name":"v1.32.8"},{"name":"v1.32.9"},{"name":"v1.32.10"},{"name":"v1.32.11"},{"name":"v1.32.12"},{"name":"v1.32.13"},{"name":"v1.33.0-alpha.0"},{"name":"v1.33.0-alpha.1"},{"name":"v1.33.0-alpha.2"},{"name":"v1.33.0-alpha.3"},{"name":"v1.33.0-beta.0"},{"name":"v1.33.0-rc.0"},{"name":"v1.33.0-rc.1"},{"name":"v1.33.0"},{"name":"v1.33.1"},{"name":"v1.33.2"},{"name":"v1.33.3"},{"name":"v1.33.4"},{"name":"v1.33.5"},{"name":"v1.33.6"},{"name":"v1.33.7"},{"name":"v1.33.8"},{"name":"v1.33.9"},{"name":"v1.33.10"},{"name":"v1.33.11"},{"name":"v1.33.12"},{"name":"v1.33.13"},{"name":"v1.34.0-alpha.0"},{"name":"v1.34.0-alpha.1"},{"name":"v1.34.0-alpha.2"},{"name":"v1.34.0-alpha.3"},{"name":"v1.34.0-beta.0"},{"name":"v1.34.0-rc.0"},{"name":"v1.34.0-rc.1"},{"name":"v1.34.0-rc.2"},{"name":"v1.34.0"},{"name":"v1.34.1"},{"name":"v1.34.2"}],"pageInfo":{"hasNextPage":true,"endCursor":"MTIwMA"}}}}}'
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/json; charset=utf-8
+            Date:
+                - Mon, 23 Nov 2026 13:25:46 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept-Encoding, Accept, X-Requested-With
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.v4; format=json
+            X-Ratelimit-Limit:
+                - "5000"
+            X-Ratelimit-Remaining:
+                - "4987"
+            X-Ratelimit-Reset:
+                - "1795443940"
+            X-Ratelimit-Resource:
+                - graphql
+            X-Ratelimit-Used:
+                - "13"
+            X-Xss-Protection:
+                - "0"
+        status: 200 OK
+        code: 200
+        duration: 608.469958ms
+    - id: 14
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 306
+        host: api.github.com
+        body: |
+            {"query":"query($cursor:String$first:Int!$name:String!$owner:String!){repository(owner: $owner, name: $name){refs(refPrefix: \"refs/tags/\", first: $first, after: $cursor){nodes{name},pageInfo{hasNextPage,endCursor}}}}","variables":{"cursor":"MTIwMA","first":100,"name":"kubernetes","owner":"kubernetes"}}
+        headers:
+            Content-Type:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.github.com/graphql
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"data":{"repository":{"refs":{"nodes":[{"name":"v1.34.3"},{"name":"v1.34.4"},{"name":"v1.34.5"},{"name":"v1.34.6"},{"name":"v1.34.7"},{"name":"v1.34.8"},{"name":"v1.34.9"},{"name":"v1.34.10"},{"name":"v1.34.11"},{"name":"v1.34.12"},{"name":"v1.34.13"},{"name":"v1.35.0-alpha.0"},{"name":"v1.35.0-alpha.1"},{"name":"v1.35.0-alpha.2"},{"name":"v1.35.0-alpha.3"},{"name":"v1.35.0-beta.0"},{"name":"v1.35.0-rc.0"},{"name":"v1.35.0-rc.1"},{"name":"v1.35.0"},{"name":"v1.35.1"},{"name":"v1.35.2"},{"name":"v1.35.3"},{"name":"v1.35.4"},{"name":"v1.35.5"},{"name":"v1.35.6"},{"name":"v1.35.7"},{"name":"v1.35.8"},{"name":"v1.35.9"},{"name":"v1.35.10"},{"name":"v1.36.0-alpha.0"},{"name":"v1.36.0-alpha.1"},{"name":"v1.36.0-alpha.2"},{"name":"v1.36.0-beta.0"},{"name":"v1.36.0-rc.0"},{"name":"v1.36.0-rc.1"},{"name":"v1.36.0"},{"name":"v1.36.1"},{"name":"v1.36.2"},{"name":"v1.36.3"},{"name":"v1.36.4"},{"name":"v1.36.5"},{"name":"v1.36.6"},{"name":"v1.37.0-alpha.0"},{"name":"v1.37.0-alpha.1"},{"name":"v1.37.0-alpha.2"},{"name":"v1.37.0-alpha.3"},{"name":"v1.37.0-beta.0"},{"name":"v1.37.0-rc.0"},{"name":"v1.37.0-rc.1"},{"name":"v1.37.0"},{"name":"v1.37.1"},{"name":"v1.37.2"},{"name":"v1.38.0-alpha.0"},{"name":"v1.38.0-alpha.1"},{"name":"v1.38.0-alpha.2"},{"name":"v1.38.0-alpha.3"},{"name":"v1.38.0-beta.0"}],"pageInfo":{"hasNextPage":false,"endCursor":"MTI1Nw"}}}}}'
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/json; charset=utf-8
+            Date:
+                - Mon, 23 Nov 2026 13:25:46 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept-Encoding, Accept, X-Requested-With
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.v4; format=json
+            X-Ratelimit-Limit:
+                - "5000"
+            X-Ratelimit-Remaining:
+                - "4986"
+            X-Ratelimit-Reset:
+                - "1795443940"
+            X-Ratelimit-Resource:
+                - graphql
+            X-Ratelimit-Used:
+                - "14"
+            X-Xss-Protection:
+                - "0"
+        status: 200 OK
+        code: 200
+        duration: 416.021333ms

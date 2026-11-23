@@ -29,6 +29,7 @@ func flagKeys() map[string]string {
 		flagFailOn:        "policy.fail_on",
 		flagMaxBehind:     "policy.max_behind",
 		flagVulnSeverity:  "policy.vuln_severity",
+		flagVulnFixable:   "policy.vuln_fixable",
 	}
 }
 

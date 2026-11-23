@@ -32,6 +32,9 @@ type Request struct {
 	Tool    registry.ToolSpec
 	Current version.V
 	Target  version.V // zero when there is no target
+	// Versions lists the tool's releases for the fix target; nil skips it. It runs only when OSV
+	// lists an advisory for Current.
+	Versions VersionLister
 }
 
 // tag is the tag of v, which GIT queries use: the tool's tag prefix and the version.
@@ -39,16 +42,21 @@ func (r Request) tag(v version.V) string { return r.Tool.Version.TagPrefix + v.S
 
 // Result is what enrichment found for one request. A nil EOL means the tool has no
 // endoflife.date product or the source failed (see [Problem]). Vulns is nil when OSV wasn't
-// asked or failed, and Unchecked says which.
+// asked or failed, and Unchecked says which. Fix is nil without an advisory of the current
+// version, or when its version list or OSV failed.
 type Result struct {
 	EOL       *EOL
 	Vulns     []Vuln
 	Unchecked string // a Reason* constant; empty when OSV answered
+	Fix       *Fix
 }
 
 // coverage returns what OSV is asked about the request.
-func (r Request) coverage() Coverage {
-	return CoverageOf(cmp.Or(r.Name, r.Tool.Name), r.Tool, r.Current)
+func (r Request) coverage() Coverage { return r.coverageAt(r.Current) }
+
+// coverageAt returns what OSV is asked about version v of the request's tool.
+func (r Request) coverageAt(v version.V) Coverage {
+	return CoverageOf(cmp.Or(r.Name, r.Tool.Name), r.Tool, v)
 }
 
 // Problem is a source that failed for a tool. The rest of the report stands.
@@ -89,18 +97,19 @@ func (e *Enricher) Enrich(ctx context.Context, reqs []Request) (map[string]Resul
 	for i, r := range reqs {
 		covs[i] = r.coverage()
 	}
-	vulns, failed, osvProblems := e.osvResults(ctx, reqs, covs)
+	ans := e.osvResults(ctx, reqs, covs)
+	fixes := e.fixTargets(ctx, reqs, ans.vulns, ans.sources, ans.modules)
 	wg.Wait()
-	problems := slices.Concat(eolProblems, osvProblems)
+	problems := slices.Concat(eolProblems, ans.problems)
 	if err := ctx.Err(); err != nil {
 		return nil, nil, err //nolint:wrapcheck // the caller matches context errors
 	}
 	for i, r := range reqs {
 		reason := covs[i].Reason
-		if err := failed[i]; err != nil && reason == "" {
+		if err := ans.failed[i]; err != nil && reason == "" {
 			reason = failureReason(err)
 		}
-		out[r.Key] = Result{EOL: eols[r.Key], Vulns: vulns[r.Key], Unchecked: reason}
+		out[r.Key] = Result{EOL: eols[r.Key], Vulns: ans.vulns[r.Key], Unchecked: reason, Fix: fixes[r.Key]}
 	}
 	return out, problems, nil
 }
@@ -165,15 +174,23 @@ type queryRef struct {
 	pkg registry.OSVPackage
 }
 
-// osvResults returns the vulnerabilities of each checked request by key, and the error of each
-// request, by index, whose queries failed.
-func (e *Enricher) osvResults(
-	ctx context.Context,
-	reqs []Request,
-	covs []Coverage,
-) (map[string][]Vuln, map[int]error, []Problem) {
+// osvAnswer is what OSV said about the requests.
+type osvAnswer struct {
+	vulns    map[string][]Vuln  // by request key, for each checked request
+	failed   map[int]error      // by request index, for each request whose queries failed
+	problems []Problem          // the failed sources
+	sources  map[int][]evidence // by request index, the records of advisories of Current
+	modules  map[string]string  // the module each go: path resolved to
+}
+
+// osvResults asks OSV about every checked request.
+func (e *Enricher) osvResults(ctx context.Context, reqs []Request, covs []Coverage) osvAnswer {
 	modules, failed, problems := e.resolveModules(ctx, reqs, covs)
-	out := map[string][]Vuln{}
+	ans := osvAnswer{
+		vulns: map[string][]Vuln{}, failed: failed, problems: problems,
+		sources: map[int][]evidence{}, modules: modules,
+	}
+	out := ans.vulns
 	for i := range reqs {
 		if covs[i].Checked() && failed[i] == nil {
 			out[reqs[i].Key] = []Vuln{}
@@ -181,13 +198,17 @@ func (e *Enricher) osvResults(
 	}
 	queries, refs := osvQueries(reqs, covs, modules, func(i int) bool { return failed[i] != nil })
 	if len(queries) == 0 {
-		return out, failed, problems
+		return ans
 	}
-	fail := func(err error) (map[string][]Vuln, map[int]error, []Problem) {
+	fail := func(err error) osvAnswer {
 		for _, ref := range refs {
 			failed[ref.req] = err
 		}
-		return map[string][]Vuln{}, failed, append(problems, problemsFor(reqs, refs, err)...)
+		return osvAnswer{
+			vulns:    map[string][]Vuln{},
+			failed:   failed,
+			problems: append(problems, problemsFor(reqs, refs, err)...),
+		}
 	}
 	hits, err := e.osv.QueryBatch(ctx, queries)
 	if err != nil {
@@ -197,14 +218,7 @@ func (e *Enricher) osvResults(
 	if err != nil {
 		return fail(err)
 	}
-	for qi, ref := range refs {
-		r := reqs[ref.req]
-		for _, h := range hits[qi] {
-			if rec := records[h.ID]; rec != nil {
-				out[r.Key] = append(out[r.Key], vulnOf(rec, ref.pkg, queries[qi], r))
-			}
-		}
-	}
+	ans.collect(reqs, queries, refs, hits, records)
 	lists := make([][]Vuln, 0, len(out))
 	for k, vs := range out {
 		out[k] = mergeAliases(vs)
@@ -216,7 +230,32 @@ func (e *Enricher) osvResults(
 	for _, vs := range out {
 		sortVulns(vs)
 	}
-	return out, failed, problems
+	return ans
+}
+
+// collect adds the vulnerability each record describes to its request, and keeps the records of
+// the advisories of Current as their evidence.
+func (ans osvAnswer) collect(
+	reqs []Request,
+	queries []Query,
+	refs []queryRef,
+	hits [][]Hit,
+	records map[string]*Record,
+) {
+	for qi, ref := range refs {
+		r := reqs[ref.req]
+		for _, h := range hits[qi] {
+			rec := records[h.ID]
+			if rec == nil {
+				continue
+			}
+			v := vulnOf(rec, ref.pkg, queries[qi], r)
+			ans.vulns[r.Key] = append(ans.vulns[r.Key], v)
+			if v.AffectsCurrent {
+				ans.sources[ref.req] = append(ans.sources[ref.req], evidence{rec: rec, pkg: ref.pkg})
+			}
+		}
+	}
 }
 
 // resolveModules finds the module of each go: path. When that fails, every request with a go:

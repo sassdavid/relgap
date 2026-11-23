@@ -21,6 +21,7 @@ const (
 	flagMinCount     = "min-count"
 	flagMaxBehind    = "max-behind"
 	flagVulnSeverity = "vuln-severity"
+	flagVulnFixable  = "vuln-fixable"
 )
 
 // outdatedValues lists the --fail-on values outdated checks, in [report.Values] order.
@@ -36,8 +37,8 @@ func digestValues() []string { return []string{report.FailOnBreaking, report.Fai
 // driftValues lists the --fail-on values drift checks.
 func driftValues() []string { return []string{report.FailOnDrift} }
 
-// addGateFlags adds --fail-on and --min-count, plus --max-behind and --vuln-severity when the
-// command checks outdated and vuln.
+// addGateFlags adds --fail-on and --min-count, plus --max-behind, and --vuln-severity and
+// --vuln-fixable, when the command checks outdated and vuln.
 func addGateFlags(cmd *cobra.Command, values []string) {
 	def := config.Default().Policy
 	fl := cmd.Flags()
@@ -68,6 +69,11 @@ func addGateFlags(cmd *cobra.Command, values []string) {
 				"(config policy.vuln_severity)",
 			vulnSeverityChoices()))
 		_ = cmd.RegisterFlagCompletionFunc(flagVulnSeverity, complete.Enum(vulnSeverityChoices()))
+		fl.Bool(
+			flagVulnFixable,
+			def.VulnFixable,
+			"--fail-on vuln counts only advisories with a fixed version above the pinned one (config policy.vuln_fixable)",
+		)
 	}
 }
 
@@ -129,6 +135,7 @@ func newGate(cmd *cobra.Command, d *app.Deps, values []string) (report.Gate, err
 	if gate.VulnSeverity, err = report.ParseVulnSeverity(p.VulnSeverity); err != nil {
 		return gate, usageError(err)
 	}
+	gate.VulnFixable = p.VulnFixable
 	explicit := cmd.Flags().Changed(flagFailOn)
 	for _, v := range p.FailOn {
 		v = strings.TrimSpace(v)

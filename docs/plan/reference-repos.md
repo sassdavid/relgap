@@ -21,7 +21,9 @@ They're never a dependency or a copy source:
 | golang/vuln | BSD-3 | govulncheck binary mode (buildinfo → stdlib/module queries) | M12, nice |
 | google/osv-scanner | Apache-2.0 | alias grouping, severity display, ignore config, SARIF output | M29, nice |
 | anchore/grype | Apache-2.0 | severity order, `--fail-on`, withdrawn filtering | M29, nice |
-| aquasecurity/trivy | Apache-2.0 | vendor severity fallback, `--severity`, `.trivyignore.yaml` | M29, nice |
+| aquasecurity/trivy | Apache-2.0 | vendor severity fallback, `--severity`, `.trivyignore.yaml`, `--ignore-unfixed` | M29, nice |
+| google/osv-scalibr | Apache-2.0 | `guidedremediation`: how `osv-scanner fix` picks and checks an upgrade (in-place, relax, override), unfixable vulns | M29, nice |
+| npm/cli | Artistic-2.0 | `workspaces/arborist`: how `npm audit fix` picks a version that avoids every advisory range, `fixAvailable` | M29, nice |
 
 ## Go CLI patterns and template
 
@@ -44,8 +46,8 @@ clone() { d="$REF/$1"; if [ -d "$d/.git" ]; then git -C "$d" pull --ff-only -q; 
 
 # relgap
 for r in jdx/mise aquaproj/aqua-registry renovatebot/renovate dependabot/dependabot-core \
-         endoflife-date/endoflife.date golang/vuln google/osv-scanner anchore/grype \
-         aquasecurity/trivy; do clone "$r"; done
+         endoflife-date/endoflife.date golang/vuln google/osv-scanner google/osv-scalibr \
+         anchore/grype aquasecurity/trivy npm/cli; do clone "$r"; done
 # Go CLI patterns
 for r in cli/cli goreleaser/goreleaser maratori/golangci-lint-config twpayne/chezmoi \
          modelcontextprotocol/go-sdk aquaproj/aqua; do clone "$r"; done

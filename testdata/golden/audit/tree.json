@@ -55,6 +55,11 @@
           "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:N/VI:L/VA:N/SC:N/SI:N/SA:N"
         },
         "fixed_in": "1.0.4",
+        "fix": {
+          "lowest": "1.1.1",
+          "latest": "1.2.2",
+          "latest_affected": false
+        },
         "url": "https://osv.dev/vulnerability/GHSA-8394-6f8r-whxg"
       },
       {
@@ -138,6 +143,7 @@
           "vector": "CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:N",
           "from": "GHSA-3wgm-2gw2-vh5m"
         },
+        "fix": null,
         "url": "https://osv.dev/vulnerability/GO-2025-3521"
       },
       {
@@ -221,6 +227,7 @@
           "vector": "CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:N",
           "from": "GHSA-3wgm-2gw2-vh5m"
         },
+        "fix": null,
         "url": "https://osv.dev/vulnerability/GO-2025-3521"
       },
       {
@@ -364,6 +371,12 @@
           "vector": "CVSS:3.1/AV:L/AC:L/PR:H/UI:R/S:C/C:L/I:H/A:N"
         },
         "fixed_in": "1.5.7",
+        "fix": {
+          "lowest": "1.5.7",
+          "lowest_in_line": "1.5.7",
+          "latest": "1.17.2",
+          "latest_affected": false
+        },
         "url": "https://osv.dev/vulnerability/GHSA-h626-pv66-hhm7"
       },
       {
@@ -447,6 +460,20 @@
           "vector": "CVSS:3.1/AV:N/AC:H/PR:H/UI:N/S:C/C:H/I:N/A:N"
         },
         "fixed_in": "1.33.6",
+        "fix": {
+          "lowest": "1.33.6",
+          "lowest_in_line": "1.33.6",
+          "latest": "1.37.2",
+          "latest_affected": true,
+          "latest_affected_by": [
+            "GO-2025-3521",
+            "GO-2025-3547"
+          ],
+          "unfixed": [
+            "GO-2025-3521",
+            "GO-2025-3547"
+          ]
+        },
         "url": "https://osv.dev/vulnerability/GHSA-r6j8-c6r2-37rr"
       },
       {
@@ -501,6 +528,12 @@
           "vector": "CVSS:4.0/AV:L/AC:L/AT:N/PR:N/UI:P/VC:N/VI:L/VA:L/SC:N/SI:N/SA:N"
         },
         "fixed_in": "3.20.2",
+        "fix": {
+          "lowest": "3.20.2",
+          "lowest_in_line": "3.20.2",
+          "latest": "4.3.2",
+          "latest_affected": false
+        },
         "url": "https://osv.dev/vulnerability/GHSA-hr2v-4r36-88hr"
       },
       {
@@ -530,6 +563,11 @@
           "vector": "CVSS:4.0/AV:L/AC:L/AT:P/PR:L/UI:P/VC:N/VI:H/VA:H/SC:N/SI:N/SA:N"
         },
         "fixed_in": "1.1.1",
+        "fix": {
+          "lowest": "1.1.1",
+          "latest": "1.2.2",
+          "latest_affected": false
+        },
         "url": "https://osv.dev/vulnerability/GHSA-wv6g-x823-wx9m"
       },
       {
@@ -613,6 +651,7 @@
           "vector": "CVSS:3.1/AV:A/AC:H/PR:N/UI:N/S:U/C:L/I:N/A:N",
           "from": "GHSA-r56h-j38w-hrqq"
         },
+        "fix": null,
         "url": "https://osv.dev/vulnerability/GO-2025-3547"
       },
       {
@@ -696,6 +735,7 @@
           "vector": "CVSS:3.1/AV:A/AC:H/PR:N/UI:N/S:U/C:L/I:N/A:N",
           "from": "GHSA-r56h-j38w-hrqq"
         },
+        "fix": null,
         "url": "https://osv.dev/vulnerability/GO-2025-3547"
       }
     ],

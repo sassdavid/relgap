@@ -118,6 +118,40 @@ each record's `modified` time, and relgap caches the record under that time: a r
 `modified` didn't change stays cached for 7 days, and a changed one is fetched again. A `GHSA-`
 alias, fetched without a batch answer, is cached for a day like the other OSV answers.
 
+## Fix targets
+
+relgap never edits a pin, so it names the release to move to, the way `mise upgrade --vulnerable`
+picks one. A tool version with a vulnerability lists its tool's versions, and the candidates are
+the stable releases above it. `lowest` is the first candidate that no advisory with a fix
+affects, checked against the advisories' ranges. `lowest_in_line` is the same within the
+version's line: its major, or major.minor for tools with `version.line: minor`. relgap then asks
+OSV about `lowest`, `lowest_in_line` and the latest release, for every package of the tool (core
+`go` needs both `stdlib` and `toolchain` clean). A candidate with an advisory of its own moves the
+target to the next release, for at most three batch queries.
+
+An advisory the latest release still has is one no release fixes. It is listed in `unfixed`, and
+in `audit` its finding has `fix: null`. When the latest release has any advisory, relgap warns
+on stderr and sets `latest_affected`. A version list or OSV that fails leaves `fix` out and
+warns. A clean exact pin never lists versions.
+
+```sh
+relgap audit --format json | jq '.data.findings[] | {tool, version, id, fix}'
+```
+
+The table and Markdown list one line per tool version under "Fix targets":
+
+```text
+kubectl 1.33.5: upgrade to 1.33.6; no release fixes GO-2025-3521, GO-2025-3547; latest 1.37.2 still has GO-2025-3521, GO-2025-3547
+```
+
+SARIF and `--format github` messages add "upgrade to 1.33.6", "latest 1.37.2 still affected" or
+"no release fixes it". `relgap outdated` puts the same object in each pin's `fix`.
+
+`--vuln-fixable` (config `policy.vuln_fixable`) makes `--fail-on vuln` count only advisories with
+a fixed version above the pinned one, judged per advisory like Grype's `--only-fixed` and Trivy's
+`--ignore-unfixed`. An advisory without one, including one with only git commit ranges, doesn't
+count and still shows in the report.
+
 ## When a source is down
 
 Both sources are cached for a day, so repeated runs ask once. When endoflife.date or OSV fails,

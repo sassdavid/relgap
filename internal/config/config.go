@@ -85,6 +85,7 @@ type Policy struct {
 	MaxBehind     string   `json:"max_behind"     jsonschema:"pattern=^((major|minor|patch|releases|days):[0-9]+)?$"                                     jsonschema_description:"e.g. minor:2, releases:10, days:90."`
 	MinConfidence float64  `json:"min_confidence" jsonschema:"minimum=0,maximum=1"                                                                       jsonschema_description:"Entries below this confidence are hidden."`
 	VulnSeverity  string   `json:"vuln_severity"  jsonschema:"enum=,enum=low,enum=medium,enum=high,enum=critical"                                        jsonschema_description:"Lowest OSV rating --fail-on vuln counts; an advisory without a rating always counts, and empty counts every advisory."`
+	VulnFixable   bool     `json:"vuln_fixable"                                                                                                          jsonschema_description:"--fail-on vuln counts only advisories with a fixed version above the pinned one. Advisories without one still show in the report."`
 }
 
 // LLM configures the optional, off-by-default summarizer.
@@ -129,6 +130,7 @@ func Default() Config {
 			MaxBehind:     "",
 			MinConfidence: defaultMinConfidence,
 			VulnSeverity:  "",
+			VulnFixable:   false,
 		},
 		LLM: LLM{MaxInputTokens: defaultMaxInputTokens, Timeout: defaultLLMTimeout},
 	}

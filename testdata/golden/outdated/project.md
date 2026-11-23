@@ -18,6 +18,10 @@
 - terraform ~> 1.15.0 (main.tf:2): highest installed or locked version
 - uv 0.13 (mise.toml:5): highest stable version with this prefix
 
+Fix targets:
+
+- go 1.25.14: upgrade to 1.26.11
+
 Not checked for vulnerabilities (VULNS ?):
 
 - image:alpine 3.22 (Dockerfile:1): no-advisory-source
