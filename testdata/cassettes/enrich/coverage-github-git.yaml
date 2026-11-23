@@ -1,0 +1,930 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 181
+        host: api.osv.dev
+        body: '{"queries":[{"package":{"ecosystem":"Go","name":"github.com/jqlang/jq"},"version":"1.7.0"},{"package":{"ecosystem":"GIT","name":"https://github.com/jqlang/jq"},"version":"jq-1.7"}]}'
+        headers:
+            Accept:
+                - application/json
+            Content-Type:
+                - application/json
+        url: https://api.osv.dev/v1/querybatch
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1393
+        body: '{"results":[{},{"vulns":[{"id":"CVE-2023-50246","modified":"2026-10-28T10:40:30.499699Z"},{"id":"CVE-2023-50268","modified":"2026-10-28T10:40:31.260524Z"},{"id":"CVE-2024-23337","modified":"2026-10-28T10:40:06.820880Z"},{"id":"CVE-2024-53427","modified":"2026-10-28T02:30:31.960174Z"},{"id":"CVE-2025-48060","modified":"2026-10-28T02:31:11.254152Z"},{"id":"CVE-2026-32316","modified":"2026-10-28T11:10:14.869554Z"},{"id":"CVE-2026-33947","modified":"2026-10-28T10:49:32.755659Z"},{"id":"CVE-2026-33948","modified":"2026-10-28T11:12:03.812812Z"},{"id":"CVE-2026-39956","modified":"2026-10-28T10:49:41.007963Z"},{"id":"CVE-2026-39979","modified":"2026-11-16T18:12:21.512930Z"},{"id":"CVE-2026-40164","modified":"2026-11-16T18:12:19.961299Z"},{"id":"CVE-2026-40612","modified":"2026-10-28T02:30:22.930111Z"},{"id":"CVE-2026-41256","modified":"2026-10-28T02:30:23.776087Z"},{"id":"CVE-2026-41257","modified":"2026-10-28T02:30:49.299789Z"},{"id":"CVE-2026-43894","modified":"2026-10-28T02:30:24.333368Z"},{"id":"CVE-2026-43895","modified":"2026-10-28T02:30:46.388572Z"},{"id":"CVE-2026-43896","modified":"2026-10-28T02:30:46.680317Z"},{"id":"CVE-2026-44777","modified":"2026-10-28T02:30:55.215389Z"},{"id":"CVE-2026-47770","modified":"2026-10-28T02:30:37.513578Z"},{"id":"CVE-2026-49839","modified":"2026-10-28T02:30:42.672190Z"},{"id":"CVE-2026-54679","modified":"2026-10-28T02:30:40.055515Z"}]}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "1393"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:43:12 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-a1fd0fa299ff39c5d2bfb21027425628-4bb5152d04be619d-00
+            X-Cloud-Trace-Context:
+                - a1fd0fa299ff39c5d2bfb21027425628/5455289806726521245
+            X-Envoy-Decorator-Operation:
+                - ingress QueryAffectedBatch
+        status: 200 OK
+        code: 200
+        duration: 479.073875ms
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/CVE-2023-50246
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 2819
+        body: '{"id":"CVE-2023-50246","summary":"jq has heap-buffer-overflow vulnerability in the function decToString in decNumber.c","details":"jq is a command-line JSON processor. Version 1.7 is vulnerable to heap-based buffer overflow. Version 1.7.1 contains a patch for this issue.","aliases":["GHSA-686w-5m7m-54vc"],"modified":"2026-10-28T10:40:30.499699336Z","published":"2023-12-13T20:43:50.862Z","related":["SUSE-SU-2026:23873-1","SUSE-SU-2026:4275-1","openSUSE-SU-2024:13521-1"],"database_specific":{"cna_assigner":"GitHub_M","cwe_ids":["CWE-120","CWE-122"],"osv_generated_from":"https://github.com/CVEProject/cvelistV5/tree/main/cves/2023/50xxx/CVE-2023-50246.json"},"references":[{"type":"WEB","url":"http://www.openwall.com/lists/oss-security/2023/12/15/10"},{"type":"WEB","url":"https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=64574"},{"type":"ADVISORY","url":"https://github.com/CVEProject/cvelistV5/tree/main/cves/2023/50xxx/CVE-2023-50246.json"},{"type":"ADVISORY","url":"https://github.com/jqlang/jq/security/advisories/GHSA-686w-5m7m-54vc"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2023-50246"},{"type":"FIX","url":"https://github.com/jqlang/jq/commit/71c2ab509a8628dbbad4bc7b3f98a64aa90d3297"}],"affected":[{"ranges":[{"type":"GIT","repo":"https://github.com/jqlang/jq","events":[{"introduced":"11c528d04d76c9b9553781aa76b073e4f40da008"},{"fixed":"71c2ab509a8628dbbad4bc7b3f98a64aa90d3297"}],"database_specific":{"extracted_events":[{"source":"AFFECTED_FIELD","strategy":"StandaloneSingleVersion","range":[{"introduced":"= 1.7"},{"last_affected":"= 1.7"}]},{"source":"REFERENCES_COMMIT","range":[{"fixed":"71c2ab509a8628dbbad4bc7b3f98a64aa90d3297"}]}]}}],"versions":["1.7-NA","1.7-rc1","1.7-rc2","= 1.7","jq-1.7"],"database_specific":{"source":"https://storage.googleapis.com/cve-osv-conversion/osv-output/CVE-2023-50246.json","vanir_signatures":[{"signature_type":"Line","signature_version":"v1","source":"https://github.com/jqlang/jq/commit/71c2ab509a8628dbbad4bc7b3f98a64aa90d3297","target":{"file":"src/jv.c"},"deprecated":false,"digest":{"threshold":0.9,"line_hashes":["290417494101508184750408009799882806556","260357342676783968016454112326919417947","226374140861562014448004111780551132909","38258572163093176609235064461151454765"]},"id":"CVE-2023-50246-3a1c0ce4"},{"source":"https://github.com/jqlang/jq/commit/71c2ab509a8628dbbad4bc7b3f98a64aa90d3297","target":{"function":"jvp_literal_number_literal","file":"src/jv.c"},"deprecated":false,"digest":{"function_hash":"313161530875538920114687879794730925876","length":464},"id":"CVE-2023-50246-fe6c4298","signature_type":"Function","signature_version":"v1"}],"vanir_signatures_modified":"2026-10-28T10:40:30Z"}}],"schema_version":"1.9.2","severity":[{"type":"CVSS_V3","score":"CVSS:3.1/AV:L/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "2819"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:43:12 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-0d0fb8e848ef63ebd2bfb21027425b13-1b1552abf15e2820-00
+            X-Cloud-Trace-Context:
+                - 0d0fb8e848ef63ebd2bfb21027425b13/1951556911977343008
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 221.297167ms
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/CVE-2023-50268
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 3165
+        body: '{"id":"CVE-2023-50268","summary":"jq has stack-based buffer overflow in decNaNs","details":"jq is a command-line JSON processor. Version 1.7 is vulnerable to stack-based buffer overflow in builds using decNumber. Version 1.7.1 contains a patch for this issue.","aliases":["GHSA-7hmr-442f-qc8j"],"modified":"2026-10-28T10:40:31.260524264Z","published":"2023-12-13T20:49:54.982Z","related":["SUSE-SU-2026:23873-1","SUSE-SU-2026:4275-1","openSUSE-SU-2024:13521-1"],"database_specific":{"osv_generated_from":"https://github.com/CVEProject/cvelistV5/tree/main/cves/2023/50xxx/CVE-2023-50268.json","cna_assigner":"GitHub_M","cwe_ids":["CWE-120","CWE-121"]},"references":[{"type":"WEB","url":"http://www.openwall.com/lists/oss-security/2023/12/15/10"},{"type":"WEB","url":"https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=64771"},{"type":"ADVISORY","url":"https://github.com/CVEProject/cvelistV5/tree/main/cves/2023/50xxx/CVE-2023-50268.json"},{"type":"ADVISORY","url":"https://github.com/jqlang/jq/security/advisories/GHSA-7hmr-442f-qc8j"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2023-50268"},{"type":"FIX","url":"https://github.com/jqlang/jq/commit/c9a51565214eece8f1053089739aea73145bfd6b"},{"type":"FIX","url":"https://github.com/jqlang/jq/pull/2804"}],"affected":[{"ranges":[{"type":"GIT","repo":"https://github.com/jqlang/jq","events":[{"introduced":"11c528d04d76c9b9553781aa76b073e4f40da008"},{"fixed":"c9a51565214eece8f1053089739aea73145bfd6b"}],"database_specific":{"extracted_events":[{"range":[{"introduced":"= 1.7"},{"last_affected":"= 1.7"}],"source":"AFFECTED_FIELD","strategy":"StandaloneSingleVersion"},{"source":"REFERENCES_COMMIT","range":[{"fixed":"c9a51565214eece8f1053089739aea73145bfd6b"}]}]}}],"versions":["1.7","= 1.7","jq-1.7"],"database_specific":{"source":"https://storage.googleapis.com/cve-osv-conversion/osv-output/CVE-2023-50268.json","vanir_signatures":[{"source":"https://github.com/jqlang/jq/commit/c9a51565214eece8f1053089739aea73145bfd6b","target":{"file":"src/jv.c","function":"jvp_number_cmp"},"deprecated":false,"digest":{"function_hash":"22550875515713324128520625183215086364","length":634},"id":"CVE-2023-50268-a2d2ea46","signature_type":"Function","signature_version":"v1"},{"signature_version":"v1","source":"https://github.com/jqlang/jq/commit/c9a51565214eece8f1053089739aea73145bfd6b","target":{"file":"src/jv.c"},"deprecated":false,"digest":{"line_hashes":["1371753125883065672057533830705252943","216860606710970311303215741001243012159","165464292948581339852936572259524919584","255758938615600683693124477605172127745","245329855745470253622444550787235282293","154994877992986023031708220241328935675","93166843768021528035323026897990025527","132979471927433437070415656838934883298","277305042641553834268379700979743214986","5391192241338951654753776646990161703","165392846152929313379498705231826085965","166852718090386609754714604848746705693"],"threshold":0.9},"id":"CVE-2023-50268-d89c5938","signature_type":"Line"}],"vanir_signatures_modified":"2026-10-28T10:40:31Z"}}],"schema_version":"1.9.2","severity":[{"type":"CVSS_V3","score":"CVSS:3.1/AV:L/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "3165"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:43:13 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-e3a461a2b3298e1cd2bfb210274259d0-17f8702f1b286df7-00
+            X-Cloud-Trace-Context:
+                - e3a461a2b3298e1cd2bfb210274259d0/1727253804717993463
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 232.725166ms
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/CVE-2024-23337
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 10043
+        body: '{"id":"CVE-2024-23337","summary":"jq has signed integer overflow in jv.c:jvp_array_write","details":"jq is a command-line JSON processor. In versions up to and including 1.7.1, an integer overflow arises when assigning value using an index of 2147483647, the signed integer limit. This causes a denial of service. Commit de21386681c0df0104a99d9d09db23a9b2a78b1e contains a patch for the issue.","aliases":["GHSA-2q6r-344g-cx46"],"modified":"2026-10-28T10:40:06.820880684Z","published":"2025-05-21T14:34:51.007Z","related":["ALSA-2025:10585","ALSA-2025:10618","SUSE-SU-2025:02384-1","SUSE-SU-2025:20506-1","SUSE-SU-2025:20591-1","openSUSE-SU-2025:15233-1"],"database_specific":{"cwe_ids":["CWE-190"],"osv_generated_from":"https://github.com/CVEProject/cvelistV5/tree/main/cves/2024/23xxx/CVE-2024-23337.json","cna_assigner":"GitHub_M"},"references":[{"type":"ADVISORY","url":"https://github.com/CVEProject/cvelistV5/tree/main/cves/2024/23xxx/CVE-2024-23337.json"},{"type":"ADVISORY","url":"https://github.com/jqlang/jq/security/advisories/GHSA-2q6r-344g-cx46"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2024-23337"},{"type":"REPORT","url":"https://github.com/jqlang/jq/issues/3262"},{"type":"FIX","url":"https://github.com/jqlang/jq/commit/de21386681c0df0104a99d9d09db23a9b2a78b1e"}],"affected":[{"ranges":[{"type":"GIT","repo":"https://github.com/jqlang/jq","events":[{"introduced":"0"},{"fixed":"de21386681c0df0104a99d9d09db23a9b2a78b1e"}],"database_specific":{"extracted_events":[{"cpe":"cpe:2.3:a:jqlang:jq:*:*:*:*:*:*:*:*","range":[{"introduced":"0"},{"last_affected":"1.7.1"}],"source":"CPE_RANGE"},{"source":"REFERENCES_COMMIT","range":[{"fixed":"de21386681c0df0104a99d9d09db23a9b2a78b1e"}]}]}}],"versions":["jq-1.7.1","jq-1.7","jq-1.7rc2","jq-1.7rc1","jq-1.6","1.6rc2","jq-1.6rc1","jq-1.5rc2","jq-1.5rc1","jq-1.4","jq-1.3","jq-1.2","jq-1.1","jq-1.0"],"database_specific":{"source":"https://storage.googleapis.com/cve-osv-conversion/osv-output/CVE-2024-23337.json","vanir_signatures":[{"id":"CVE-2024-23337-04565637","signature_type":"Function","signature_version":"v1","source":"https://github.com/jqlang/jq/commit/de21386681c0df0104a99d9d09db23a9b2a78b1e","target":{"function":"jv_array_concat","file":"src/jv.c"},"deprecated":false,"digest":{"function_hash":"111137988609399857151046150794485037805","length":262}},{"target":{"file":"src/jv.c","function":"jv_object_merge_recursive"},"deprecated":false,"digest":{"function_hash":"237748935759897293101131115643374254823","length":510},"id":"CVE-2024-23337-286cf1dd","signature_type":"Function","signature_version":"v1","source":"https://github.com/jqlang/jq/commit/de21386681c0df0104a99d9d09db23a9b2a78b1e"},{"source":"https://github.com/jqlang/jq/commit/de21386681c0df0104a99d9d09db23a9b2a78b1e","target":{"file":"src/jv.c","function":"jv_string_explode"},"deprecated":false,"digest":{"function_hash":"163445554510748770352223293969963023000","length":376},"id":"CVE-2024-23337-32865e5f","signature_type":"Function","signature_version":"v1"},{"id":"CVE-2024-23337-369ac283","signature_type":"Function","signature_version":"v1","source":"https://github.com/jqlang/jq/commit/de21386681c0df0104a99d9d09db23a9b2a78b1e","target":{"file":"src/jv.c","function":"jv_string_indexes"},"deprecated":false,"digest":{"function_hash":"103305768167939608993029809850816110497","length":685}},{"target":{"file":"src/jv.c","function":"jv_object_merge"},"deprecated":false,"digest":{"function_hash":"262463111219578099524581004154513052700","length":212},"id":"CVE-2024-23337-3771edc2","signature_type":"Function","signature_version":"v1","source":"https://github.com/jqlang/jq/commit/de21386681c0df0104a99d9d09db23a9b2a78b1e"},{"deprecated":false,"digest":{"function_hash":"6706008070668189485097578795644585746","length":398},"id":"CVE-2024-23337-42ee90c2","signature_type":"Function","signature_version":"v1","source":"https://github.com/jqlang/jq/commit/de21386681c0df0104a99d9d09db23a9b2a78b1e","target":{"file":"src/jv.c","function":"jv_array_set"}},{"deprecated":false,"digest":{"function_hash":"217152002507721013265383776974827853736","length":261},"id":"CVE-2024-23337-65984b07","signature_type":"Function","signature_version":"v1","source":"https://github.com/jqlang/jq/commit/de21386681c0df0104a99d9d09db23a9b2a78b1e","target":{"file":"src/jv.c","function":"jv_object_set"}},{"digest":{"function_hash":"126652276985080967571016257588026388027","length":2571},"id":"CVE-2024-23337-7044072c","signature_type":"Function","signature_version":"v1","source":"https://github.com/jqlang/jq/commit/de21386681c0df0104a99d9d09db23a9b2a78b1e","target":{"file":"src/jv_aux.c","function":"jv_set"},"deprecated":false},{"signature_type":"Function","signature_version":"v1","source":"https://github.com/jqlang/jq/commit/de21386681c0df0104a99d9d09db23a9b2a78b1e","target":{"file":"src/jv.c","function":"jv_string_split"},"deprecated":false,"digest":{"length":906,"function_hash":"196333530245603264201958299203480877545"},"id":"CVE-2024-23337-9647e1d6"},{"target":{"file":"src/jv.c"},"deprecated":false,"digest":{"line_hashes":["339014577188072507842688966493826679685","47022262820450162858937789375857704071","205780847297627229920827206980073036552","19153967694127281167714231754555334607","197736427002001478992732011065477572623","93161985359930611867717428547266678231","87468492980105111988078291989706226867","45289825194693337507435919170981760810","325844181656562266142464634897092782909","187709757395640284082794708025919103397","29862789084955351249824442219750045703","248841500202386045632931347802796219685","1815676247066957357343232946044466575","19552604032784703978496123128652340063","247548776530019746431897897424079760272","200750708131574333793396796330886324597","210238571164148412686177848076654706556","37543147854337209609683659174012688870","298772841277752792620408816477068069549","123181089485221688599852233834182458797","219750648040533630487898225587547003873","325887877661329870460505398887975064376","254012863064925480478039440014238798992","92690990334225840926913375398984399341","116682823186550376885007959598856992893","150630945996458235078215637137682493838","256871402155242183209778735769931689296","204416844694758957454983286073658825308","145219654637327608425633806858396420606","228290491799347054410946222118619210191","66659719239686185902814563225747056269","238872387272264149859042365778823508309","201584424087545105664339775449270047200","203340813751552507326479578217727842929","42456318665036588373651415133168046813","139084388521946995172568102038023437257","189030097817095956623774086948689108951","23375893006081176333384720943088259922","200563789312070260861222477260526813657","4354235676125506733841028530248763120","29079140071836263003351536040015942481","206965960754310182132903783766429872139","262912017746059526032614516113294840632","243298337042102622940382324872785007358","319016343311680977058485022449034188250","280218317216768007820969737374656459964","182625746718217674515175334711586846291","12308144987198618922981626989540562110","142434669384707587291012476049765025449","297381109610102847456651640043539856930","24919452270854829023413262840423730114","175494915411365812151356003500597680749","259016460323451878738877937935969686672","24662167699572299123399865576740170808","268833719976489242236045544971856680871","216109802456649461377552831783804819899","238792030916433053617837113553285043285","36325326249684072078057568438511488507","337296518720522157650094912631827220157","26184548141014247333708249531822361099","114326377041021996384063066888024303727","234108080180124966321227044060535970915","311541335489681149770467745322184233024","283912674945246823076161460269919750363","288765157807741797084954824982164523258","100453092615584081042280133613816180796","136910363091581504075968776508238666443","213755548660740247498157215474076019614","108188149734493114060360546382581990078","322918399021168533979986077792626375927","140785735858158121037101139967368508952","284376592890192898584784431858872335080","208651150119917951091971937018545669728","130378013810340699714931390771326845192"],"threshold":0.9},"id":"CVE-2024-23337-96e418bb","signature_type":"Line","signature_version":"v1","source":"https://github.com/jqlang/jq/commit/de21386681c0df0104a99d9d09db23a9b2a78b1e"},{"signature_type":"Function","signature_version":"v1","source":"https://github.com/jqlang/jq/commit/de21386681c0df0104a99d9d09db23a9b2a78b1e","target":{"file":"src/jv.c","function":"jvp_object_write"},"deprecated":false,"digest":{"length":583,"function_hash":"220821467909858034924023723150673823611"},"id":"CVE-2024-23337-c029bfc6"},{"signature_version":"v1","source":"https://github.com/jqlang/jq/commit/de21386681c0df0104a99d9d09db23a9b2a78b1e","target":{"file":"src/jv_aux.c"},"deprecated":false,"digest":{"line_hashes":["49314117860552427637289761811114704982","133168085019627836917855826111674485473","214808392088399544560201786853405852340","218456411945579710329900585944612874646","229310651614279876591567949992389710328","37186851718729348926252391537519762510","194702215318362978800119278416265201999","277375067983529847024372692174510778272","83996309895668853422199083816234437088","305716381699829394196253539820160860883","261546646928046742131095930914371569989","7443652024731225196583678104486279469","327114700914653030451603173629132522892","132045950232904207076750020726663519684"],"threshold":0.9},"id":"CVE-2024-23337-d06ffd82","signature_type":"Line"},{"id":"CVE-2024-23337-f87e7430","signature_type":"Function","signature_version":"v1","source":"https://github.com/jqlang/jq/commit/de21386681c0df0104a99d9d09db23a9b2a78b1e","target":{"function":"jvp_object_rehash","file":"src/jv.c"},"deprecated":false,"digest":{"function_hash":"300047713942875338587980580464189780826","length":609}}],"vanir_signatures_modified":"2026-10-28T10:40:06Z"}}],"schema_version":"1.9.2","severity":[{"type":"CVSS_V3","score":"CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:L"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "10043"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:43:13 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-09bb5ded6553bb2dd2bfb21027425057-b09ecdcaed1e976e-00
+            X-Cloud-Trace-Context:
+                - 09bb5ded6553bb2dd2bfb21027425057/12726835868440893294
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 217.635583ms
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/CVE-2024-53427
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 2297
+        body: '{"id":"CVE-2024-53427","details":"decNumberCopy in decNumber.c in jq through 1.7.1 does not properly consider that NaN is interpreted as numeric, which has a resultant stack-based buffer overflow and out-of-bounds write, as demonstrated by use of --slurp with subtraction, such as a filter of .-. when the input has a certain form of digit string with NaN (e.g., \"1 NaN123\" immediately followed by many more digits).","aliases":["GHSA-x6c3-qv5r-7q22"],"modified":"2026-10-28T02:30:31.960174721Z","published":"2025-02-26T00:00:00Z","related":["SUSE-SU-2025:20591-1","SUSE-SU-2026:23873-1","SUSE-SU-2026:4275-1","openSUSE-SU-2025:15161-1"],"database_specific":{"cwe_ids":["CWE-843"],"osv_generated_from":"https://github.com/CVEProject/cvelistV5/tree/main/cves/2024/53xxx/CVE-2024-53427.json","cna_assigner":"mitre"},"references":[{"type":"WEB","url":"https://gist.github.com/Ekkosun/a83870ce7f3b7813b9b462a395e8ad92"},{"type":"WEB","url":"https://github.com/jqlang/jq/blob/71c2ab509a8628dbbad4bc7b3f98a64aa90d3297/src/decNumber/decNumber.c#L3375"},{"type":"ADVISORY","url":"https://github.com/CVEProject/cvelistV5/tree/main/cves/2024/53xxx/CVE-2024-53427.json"},{"type":"ADVISORY","url":"https://github.com/jqlang/jq/security/advisories/GHSA-x6c3-qv5r-7q22"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2024-53427"},{"type":"REPORT","url":"https://github.com/jqlang/jq/issues/3196"},{"type":"REPORT","url":"https://github.com/jqlang/jq/issues/3296"}],"affected":[{"ranges":[{"type":"GIT","repo":"https://github.com/jqlang/jq","events":[{"introduced":"0"},{"last_affected":"71c2ab509a8628dbbad4bc7b3f98a64aa90d3297"}],"database_specific":{"extracted_events":[{"source":"AFFECTED_FIELD","strategy":"StandardRange","range":[{"introduced":"0"},{"last_affected":"1.7.1"}]},{"cpe":"cpe:2.3:a:jqlang:jq:*:*:*:*:*:*:*:*","range":[{"introduced":"0"},{"last_affected":"1.7.1"}],"source":"CPE_RANGE"}]}}],"versions":["jq-1.7.1","jq-1.7","jq-1.7rc2","jq-1.7rc1","jq-1.6","1.6rc2","jq-1.6rc1","jq-1.5rc2","jq-1.5rc1","jq-1.4","jq-1.3","jq-1.2","jq-1.1","jq-1.0"],"database_specific":{"source":"https://storage.googleapis.com/cve-osv-conversion/osv-output/CVE-2024-53427.json"}}],"schema_version":"1.9.2","severity":[{"type":"CVSS_V3","score":"CVSS:3.1/AV:L/AC:H/PR:N/UI:N/S:C/C:H/I:H/A:H"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "2297"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:43:12 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-f4cb8757c6f2ff35d2bfb2102742563f-a36c57a73a642621-00
+            X-Cloud-Trace-Context:
+                - f4cb8757c6f2ff35d2bfb2102742563f/11775883501417801249
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 226.913ms
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/CVE-2025-48060
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 2201
+        body: '{"id":"CVE-2025-48060","summary":"AddressSanitizer: stack-buffer-overflow in jq_fuzz_execute (jv_string_vfmt)","details":"jq is a command-line JSON processor. In versions up to and including 1.7.1, a heap-buffer-overflow is present in function `jv_string_vfmt` in the jq_fuzz_execute harness from oss-fuzz. This crash happens on file jv.c, line 1456 `void* p = malloc(sz);`. As of time of publication, no patched versions are available.","aliases":["GHSA-p7rr-28xf-3m5w"],"modified":"2026-10-28T02:31:11.254152502Z","published":"2025-05-21T17:32:43.602Z","related":["ALSA-2025:10585","ALSA-2025:10618","SUSE-SU-2025:02915-1","SUSE-SU-2025:20591-1","SUSE-SU-2025:20655-1","SUSE-SU-2026:22545-1","SUSE-SU-2026:22566-1","openSUSE-SU-2025:15233-1","openSUSE-SU-2026:21248-1"],"database_specific":{"cwe_ids":["CWE-121"],"osv_generated_from":"https://github.com/CVEProject/cvelistV5/tree/main/cves/2025/48xxx/CVE-2025-48060.json","cna_assigner":"GitHub_M"},"references":[{"type":"WEB","url":"https://lists.debian.org/debian-lts-announce/2025/09/msg00022.html"},{"type":"ADVISORY","url":"https://github.com/CVEProject/cvelistV5/tree/main/cves/2025/48xxx/CVE-2025-48060.json"},{"type":"ADVISORY","url":"https://github.com/jqlang/jq/security/advisories/GHSA-p7rr-28xf-3m5w"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2025-48060"}],"affected":[{"ranges":[{"type":"GIT","repo":"https://github.com/jqlang/jq","events":[{"introduced":"0"},{"last_affected":"71c2ab509a8628dbbad4bc7b3f98a64aa90d3297"}],"database_specific":{"extracted_events":[{"range":[{"introduced":"0"},{"last_affected":"1.7.1"}],"source":"AFFECTED_FIELD","strategy":"StringRangeExpression"},{"source":"CPE_RANGE","cpe":"cpe:2.3:a:jqlang:jq:*:*:*:*:*:*:*:*","range":[{"introduced":"0"},{"last_affected":"1.7.1"}]}]}}],"versions":["jq-1.7.1","jq-1.7","jq-1.7rc2","jq-1.7rc1","jq-1.6","1.6rc2","jq-1.6rc1","jq-1.5rc2","jq-1.5rc1","jq-1.4","jq-1.3","jq-1.2","jq-1.1","jq-1.0"],"database_specific":{"source":"https://storage.googleapis.com/cve-osv-conversion/osv-output/CVE-2025-48060.json"}}],"schema_version":"1.9.2","severity":[{"type":"CVSS_V4","score":"CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:N/VI:N/VA:H/SC:N/SI:N/SA:N/E:P"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "2201"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:43:13 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-0250f5dac0e634c6d2bfb210274257ba-022fbbc1d4d41904-00
+            X-Cloud-Trace-Context:
+                - 0250f5dac0e634c6d2bfb210274257ba/157550953155008772
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 184.341ms
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/CVE-2026-32316
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 4314
+        body: '{"id":"CVE-2026-32316","summary":"jq: Integer overflow in jvp_string_append() allows Heap-based Buffer Overflow","details":"jq is a command-line JSON processor. An integer overflow vulnerability exists through version 1.8.1 within the jvp_string_append() and jvp_string_copy_replace_bad functions, where concatenating strings with a combined length exceeding 2^31 bytes causes a 32-bit unsigned integer overflow in the buffer allocation size calculation, resulting in a drastically undersized heap buffer. Subsequent memory copy operations then write the full string data into this undersized buffer, causing a heap buffer overflow classified as CWE-190 (Integer Overflow) leading to CWE-122 (Heap-based Buffer Overflow). Any system evaluating untrusted jq queries is affected, as an attacker can crash the process or potentially achieve further exploitation through heap corruption by crafting queries that produce extremely large strings. The root cause is the absence of string size bounds checking, unlike arrays and objects which already have size limits. The issue has been addressed in commit e47e56d226519635768e6aab2f38f0ab037c09e5.","aliases":["GHSA-q3h9-m34w-h76f"],"modified":"2026-10-28T11:10:14.869554518Z","published":"2026-04-13T17:49:34.095Z","related":["SUSE-SU-2026:22545-1","SUSE-SU-2026:22566-1","SUSE-SU-2026:22664-1","SUSE-SU-2026:22705-1","SUSE-SU-2026:23873-1","SUSE-SU-2026:2983-1","openSUSE-SU-2026:10850-1","openSUSE-SU-2026:21248-1"],"database_specific":{"cna_assigner":"GitHub_M","cwe_ids":["CWE-122","CWE-190"],"osv_generated_from":"https://github.com/CVEProject/cvelistV5/tree/main/cves/2026/32xxx/CVE-2026-32316.json"},"references":[{"type":"WEB","url":"https://lists.debian.org/debian-lts-announce/2026/10/msg00034.html"},{"type":"ADVISORY","url":"https://github.com/CVEProject/cvelistV5/tree/main/cves/2026/32xxx/CVE-2026-32316.json"},{"type":"ADVISORY","url":"https://github.com/jqlang/jq/security/advisories/GHSA-q3h9-m34w-h76f"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2026-32316"},{"type":"FIX","url":"https://github.com/jqlang/jq/commit/e47e56d226519635768e6aab2f38f0ab037c09e5"}],"affected":[{"ranges":[{"type":"GIT","repo":"https://github.com/jqlang/jq","events":[{"introduced":"0"},{"fixed":"e47e56d226519635768e6aab2f38f0ab037c09e5"}],"database_specific":{"extracted_events":[{"source":"CPE_RANGE","cpe":"cpe:2.3:a:jqlang:jq:*:*:*:*:*:*:*:*","range":[{"introduced":"0"},{"last_affected":"1.8.1"}]},{"range":[{"fixed":"e47e56d226519635768e6aab2f38f0ab037c09e5"}],"source":"REFERENCES_COMMIT"}]}}],"versions":["jq-1.8.1","jq-1.8.0","jq-1.7.1","jq-1.7","jq-1.7rc2","jq-1.7rc1","jq-1.6","1.6rc2","jq-1.6rc1","jq-1.5rc2","jq-1.5rc1","jq-1.4","jq-1.3","jq-1.2","jq-1.1","jq-1.0"],"database_specific":{"source":"https://storage.googleapis.com/cve-osv-conversion/osv-output/CVE-2026-32316.json","vanir_signatures":[{"signature_version":"v1","source":"https://github.com/jqlang/jq/commit/e47e56d226519635768e6aab2f38f0ab037c09e5","target":{"file":"src/jv.c","function":"jvp_string_copy_replace_bad"},"deprecated":false,"digest":{"function_hash":"291047491911693871464475348870813016016","length":573},"id":"CVE-2026-32316-4de646b6","signature_type":"Function"},{"source":"https://github.com/jqlang/jq/commit/e47e56d226519635768e6aab2f38f0ab037c09e5","target":{"file":"src/jv.c","function":"jvp_string_append"},"deprecated":false,"digest":{"function_hash":"4826364330526413301143843754343564082","length":744},"id":"CVE-2026-32316-680384e7","signature_type":"Function","signature_version":"v1"},{"id":"CVE-2026-32316-f4a606ad","signature_type":"Line","signature_version":"v1","source":"https://github.com/jqlang/jq/commit/e47e56d226519635768e6aab2f38f0ab037c09e5","target":{"file":"src/jv.c"},"deprecated":false,"digest":{"line_hashes":["243390441832702768017907864712859412954","278479036771092086533613858039284279903","271348662100828007313394771795335601719","34288127156864518075496883504707040485","223486503060488310285817744326848815531","174577658238279330303990767954671797234","225423995345197109949178140121857427006","34820543407964272347781784485513470589"],"threshold":0.9}}],"vanir_signatures_modified":"2026-10-28T11:10:14Z"}}],"schema_version":"1.9.2","severity":[{"type":"CVSS_V3","score":"CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:H"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "4314"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:43:13 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-a210e1796df87847d2bfb21027425896-753255f411e57146-00
+            X-Cloud-Trace-Context:
+                - a210e1796df87847d2bfb21027425896/8444906758033731910
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 202.874542ms
+    - id: 7
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/CVE-2026-33947
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 4844
+        body: '{"id":"CVE-2026-33947","summary":"jq: Unbounded Recursion in jv_setpath(), jv_getpath() and delpaths_sorted()","details":"jq is a command-line JSON processor. In versions 1.8.1 and below, functions jv_setpath(), jv_getpath(), and delpaths_sorted() in jq''s src/jv_aux.c use unbounded recursion whose depth is controlled by the length of a caller-supplied path array, with no depth limit enforced. An attacker can supply a JSON document containing a flat array of ~65,000 integers (~200 KB) that, when used as a path argument by a trusted jq filter, exhausts the C call stack and crashes the process with a segmentation fault (SIGSEGV). This bypass works because the existing MAX_PARSING_DEPTH (10,000) limit only protects the JSON parser, not runtime path operations where arrays can be programmatically constructed to arbitrary lengths. The impact is denial of service (unrecoverable crash) affecting any application or service that processes untrusted JSON input through jq''s setpath, getpath, or delpaths builtins. This issue has been addressed in commit fb59f1491058d58bdc3e8dd28f1773d1ac690a1f.","aliases":["GHSA-xwrw-4f8h-rjvg"],"modified":"2026-10-28T10:49:32.755659306Z","published":"2026-04-13T21:50:18.814Z","related":["SUSE-SU-2026:22545-1","SUSE-SU-2026:22566-1","SUSE-SU-2026:22664-1","SUSE-SU-2026:22705-1","SUSE-SU-2026:2983-1","openSUSE-SU-2026:10850-1","openSUSE-SU-2026:21248-1"],"database_specific":{"cna_assigner":"GitHub_M","cwe_ids":["CWE-674"],"osv_generated_from":"https://github.com/CVEProject/cvelistV5/tree/main/cves/2026/33xxx/CVE-2026-33947.json"},"references":[{"type":"WEB","url":"http://www.openwall.com/lists/oss-security/2026/04/16/1"},{"type":"ADVISORY","url":"https://github.com/CVEProject/cvelistV5/tree/main/cves/2026/33xxx/CVE-2026-33947.json"},{"type":"ADVISORY","url":"https://github.com/jqlang/jq/security/advisories/GHSA-xwrw-4f8h-rjvg"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2026-33947"},{"type":"FIX","url":"https://github.com/jqlang/jq/commit/fb59f1491058d58bdc3e8dd28f1773d1ac690a1f"}],"affected":[{"ranges":[{"type":"GIT","repo":"https://github.com/jqlang/jq","events":[{"introduced":"0"},{"fixed":"fb59f1491058d58bdc3e8dd28f1773d1ac690a1f"}],"database_specific":{"extracted_events":[{"cpe":"cpe:2.3:a:jqlang:jq:*:*:*:*:*:*:*:*","range":[{"introduced":"0"},{"last_affected":"1.8.1"}],"source":"CPE_RANGE"},{"source":"REFERENCES_COMMIT","range":[{"fixed":"fb59f1491058d58bdc3e8dd28f1773d1ac690a1f"}]}]}}],"versions":["jq-1.8.1","jq-1.8.0","jq-1.7.1","jq-1.7","jq-1.7rc2","jq-1.7rc1","jq-1.6","1.6rc2","jq-1.6rc1","jq-1.5rc2","jq-1.5rc1","jq-1.4","jq-1.3","jq-1.2","jq-1.1","jq-1.0"],"database_specific":{"source":"https://storage.googleapis.com/cve-osv-conversion/osv-output/CVE-2026-33947.json","vanir_signatures":[{"digest":{"function_hash":"256962286644375695557181493091462459053","length":811},"id":"CVE-2026-33947-0000c566","signature_type":"Function","signature_version":"v1","source":"https://github.com/jqlang/jq/commit/fb59f1491058d58bdc3e8dd28f1773d1ac690a1f","target":{"file":"src/jv_aux.c","function":"jv_delpaths"},"deprecated":false},{"deprecated":false,"digest":{"function_hash":"274388946297026050806174682417509082641","length":1162},"id":"CVE-2026-33947-3105e8bb","signature_type":"Function","signature_version":"v1","source":"https://github.com/jqlang/jq/commit/fb59f1491058d58bdc3e8dd28f1773d1ac690a1f","target":{"file":"src/jv_aux.c","function":"jv_setpath"}},{"deprecated":false,"digest":{"threshold":0.9,"line_hashes":["107825228566263861542878593139418863166","77820575688361366010202282847355370164","256056391070793344473797736186039880629","133730219050546569141781494729220675363","125892355999708069697354584923963628000","205197769483820281915695647481853989728","213469723460322729724759528386884530182","133730219050546569141781494729220675363","125892355999708069697354584923963628000","70640838424082156480007928742392008088","291740850346199150318887257695739895107","286522289432306489588527015318999764797","216709424932685656555815326004908133252","28068875415016847067224141086577147142","231422598269412510318578654693852082645"]},"id":"CVE-2026-33947-5086a48f","signature_type":"Line","signature_version":"v1","source":"https://github.com/jqlang/jq/commit/fb59f1491058d58bdc3e8dd28f1773d1ac690a1f","target":{"file":"src/jv_aux.c"}},{"deprecated":false,"digest":{"function_hash":"298899073671646244052590252734640485812","length":535},"id":"CVE-2026-33947-8a62022f","signature_type":"Function","signature_version":"v1","source":"https://github.com/jqlang/jq/commit/fb59f1491058d58bdc3e8dd28f1773d1ac690a1f","target":{"file":"src/jv_aux.c","function":"jv_getpath"}}],"vanir_signatures_modified":"2026-10-28T10:49:32Z"}}],"schema_version":"1.9.2","severity":[{"type":"CVSS_V3","score":"CVSS:3.1/AV:L/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "4844"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:43:13 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-f26f3089e1317a8ed2bfb21027425dcc-58a58dd65bffc14c-00
+            X-Cloud-Trace-Context:
+                - f26f3089e1317a8ed2bfb21027425dcc/6387667598300922188
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 180.452542ms
+    - id: 8
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/CVE-2026-33948
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 3826
+        body: '{"id":"CVE-2026-33948","summary":"jq: Embedded-NUL Truncation in CLI JSON Input Path Causes Prefix-Only Validation of Malformed Input","details":"jq is a command-line JSON processor. Commits before 6374ae0bcdfe33a18eb0ae6db28493b1f34a0a5b contain a vulnerability where CLI input parsing allows validation bypass via embedded NUL bytes. When reading JSON from files or stdin, jq uses strlen() to determine buffer length instead of the actual byte count from fgets(), causing it to truncate input at the first NUL byte and parse only the preceding prefix. This enables an attacker to craft input with a benign JSON prefix before a NUL byte followed by malicious trailing data, where jq validates only the prefix as valid JSON while silently discarding the suffix. Workflows relying on jq to validate untrusted JSON before forwarding it to downstream consumers are susceptible to parser differential attacks, as those consumers may process the full input including the malicious trailing bytes. This issue has been patched by commit 6374ae0bcdfe33a18eb0ae6db28493b1f34a0a5b.","aliases":["GHSA-32cx-cvvh-2wj9"],"modified":"2026-10-28T11:12:03.812812625Z","published":"2026-04-13T23:51:04.144Z","related":["SUSE-SU-2026:22545-1","SUSE-SU-2026:22566-1","SUSE-SU-2026:22664-1","SUSE-SU-2026:22705-1","SUSE-SU-2026:2283-1","SUSE-SU-2026:23873-1","SUSE-SU-2026:4275-1","openSUSE-SU-2026:10850-1","openSUSE-SU-2026:21248-1"],"database_specific":{"cwe_ids":["CWE-170","CWE-20"],"osv_generated_from":"https://github.com/CVEProject/cvelistV5/tree/main/cves/2026/33xxx/CVE-2026-33948.json","cna_assigner":"GitHub_M"},"references":[{"type":"ADVISORY","url":"https://github.com/CVEProject/cvelistV5/tree/main/cves/2026/33xxx/CVE-2026-33948.json"},{"type":"ADVISORY","url":"https://github.com/jqlang/jq/security/advisories/GHSA-32cx-cvvh-2wj9"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2026-33948"},{"type":"FIX","url":"https://github.com/jqlang/jq/commit/6374ae0bcdfe33a18eb0ae6db28493b1f34a0a5b"}],"affected":[{"ranges":[{"type":"GIT","repo":"https://github.com/jqlang/jq","events":[{"introduced":"0"},{"fixed":"34f7186b86743a083a589741b6cea95293524108"},{"fixed":"6374ae0bcdfe33a18eb0ae6db28493b1f34a0a5b"}],"database_specific":{"extracted_events":[{"source":"CPE_RANGE","cpe":"cpe:2.3:a:jqlang:jq:*:*:*:*:*:*:*:*","range":[{"introduced":"0"},{"fixed":"1.8.2"}]},{"range":[{"fixed":"6374ae0bcdfe33a18eb0ae6db28493b1f34a0a5b"}],"source":"REFERENCES_COMMIT"}]}}],"versions":["jq-1.8.1","jq-1.8.0","jq-1.7.1","jq-1.7","jq-1.7rc2","jq-1.7rc1","jq-1.6","1.6rc2","jq-1.6rc1","jq-1.5rc2","jq-1.5rc1","jq-1.4","jq-1.3","jq-1.2","jq-1.1","jq-1.0"],"database_specific":{"source":"https://storage.googleapis.com/cve-osv-conversion/osv-output/CVE-2026-33948.json","vanir_signatures":[{"target":{"file":"src/util.c"},"deprecated":false,"digest":{"line_hashes":["227145448384275707928162626798322563595","168137201195185070065659744438049294246","37647177300210237460420218039646698249","27298047889161963374200492142491053926","106680849867641375337021270301868462537","43623088531989070830772295146735728174"],"threshold":0.9},"id":"CVE-2026-33948-560d853c","signature_type":"Line","signature_version":"v1","source":"https://github.com/jqlang/jq/commit/6374ae0bcdfe33a18eb0ae6db28493b1f34a0a5b"},{"source":"https://github.com/jqlang/jq/commit/6374ae0bcdfe33a18eb0ae6db28493b1f34a0a5b","target":{"file":"src/util.c","function":"jq_util_input_read_more"},"deprecated":false,"digest":{"function_hash":"261317623121236431612788270719858935258","length":2297},"id":"CVE-2026-33948-6003e453","signature_type":"Function","signature_version":"v1"}],"vanir_signatures_modified":"2026-10-28T11:12:03Z"}}],"schema_version":"1.9.2","severity":[{"type":"CVSS_V4","score":"CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:N/VC:N/VI:L/VA:N/SC:N/SI:N/SA:N/E:P"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "3826"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:43:13 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-15bf59f96fdb519bd2bfb210274250c7-a95d229fc978afd9-00
+            X-Cloud-Trace-Context:
+                - 15bf59f96fdb519bd2bfb210274250c7/12203948634919186393
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 204.296333ms
+    - id: 9
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/CVE-2026-39956
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 3181
+        body: '{"id":"CVE-2026-39956","summary":"jq: Missing runtime type checks for _strindices lead to crash and limited memory disclosure","details":"jq is a command-line JSON processor. Prior to version 1.8.2, the _strindices builtin in jq''s src/builtin.c passes its arguments directly to jv_string_indexes() without verifying they are strings, and jv_string_indexes() in src/jv.c relies solely on assert() checks that are stripped in release builds compiled with -DNDEBUG. This allows an attacker to crash jq trivially with input like _strindices(0), and by crafting a numeric value whose IEEE-754 bit pattern maps to a chosen pointer, achieve a controlled pointer dereference and limited memory read/probe primitive. Any deployment that evaluates untrusted jq filters against a release build is vulnerable. This issue has been patched in commit fdf8ef0f0810e3d365cdd5160de43db46f57ed03, which is part of version 1.8.2.","aliases":["GHSA-6gc3-3g9p-xx28"],"modified":"2026-10-28T10:49:41.007963151Z","published":"2026-04-13T22:10:18.817Z","related":["SUSE-SU-2026:22545-1","SUSE-SU-2026:22566-1","SUSE-SU-2026:22664-1","SUSE-SU-2026:22705-1","SUSE-SU-2026:2983-1","openSUSE-SU-2026:10850-1","openSUSE-SU-2026:21248-1"],"database_specific":{"cna_assigner":"GitHub_M","cwe_ids":["CWE-125","CWE-476","CWE-843"],"osv_generated_from":"https://github.com/CVEProject/cvelistV5/tree/main/cves/2026/39xxx/CVE-2026-39956.json"},"references":[{"type":"ADVISORY","url":"https://github.com/CVEProject/cvelistV5/tree/main/cves/2026/39xxx/CVE-2026-39956.json"},{"type":"ADVISORY","url":"https://github.com/jqlang/jq/security/advisories/GHSA-6gc3-3g9p-xx28"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2026-39956"},{"type":"FIX","url":"https://github.com/jqlang/jq/commit/fdf8ef0f0810e3d365cdd5160de43db46f57ed03"}],"affected":[{"ranges":[{"type":"GIT","repo":"https://github.com/jqlang/jq","events":[{"introduced":"0"},{"fixed":"34f7186b86743a083a589741b6cea95293524108"},{"fixed":"fdf8ef0f0810e3d365cdd5160de43db46f57ed03"}],"database_specific":{"extracted_events":[{"strategy":"StringRangeExpression","range":[{"introduced":"0"},{"fixed":"1.8.2"}],"source":"AFFECTED_FIELD"},{"range":[{"fixed":"fdf8ef0f0810e3d365cdd5160de43db46f57ed03"}],"source":"REFERENCES_COMMIT"}]}}],"versions":["jq-1.8.1","jq-1.8.0","jq-1.7.1","jq-1.7","jq-1.7rc2","jq-1.7rc1","jq-1.6","1.6rc2","jq-1.6rc1","jq-1.5rc2","jq-1.5rc1","jq-1.4","jq-1.3","jq-1.2","jq-1.1","jq-1.0"],"database_specific":{"vanir_signatures_modified":"2026-10-28T10:49:41Z","source":"https://storage.googleapis.com/cve-osv-conversion/osv-output/CVE-2026-39956.json","vanir_signatures":[{"source":"https://github.com/jqlang/jq/commit/fdf8ef0f0810e3d365cdd5160de43db46f57ed03","target":{"file":"src/builtin.c"},"deprecated":false,"digest":{"threshold":0.9,"line_hashes":["211916491984239188589681460148175833042","340154602296692499074523450035595928275","240720352413467518066581454148247975032","214807881025797077317835442942205548411"]},"id":"CVE-2026-39956-3157e7ab","signature_type":"Line","signature_version":"v1"}]}}],"schema_version":"1.9.2","severity":[{"type":"CVSS_V3","score":"CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:L/I:N/A:H"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "3181"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:43:13 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-045f4bdabc1f57b3d2bfb21027425a2d-34a9e7faffb88ab6-00
+            X-Cloud-Trace-Context:
+                - 045f4bdabc1f57b3d2bfb21027425a2d/3794819226254478006
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 213.825833ms
+    - id: 10
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/CVE-2026-39979
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 6078
+        body: '{"id":"CVE-2026-39979","summary":"jq: Out-of-Bounds Read in jv_parse_sized() Error Formatting for Non-NUL-Terminated Counted Buffers","details":"jq is a command-line JSON processor. In commits before 2f09060afab23fe9390cce7cb860b10416e1bf5f, the jv_parse_sized() API in libjq accepts a counted buffer with an explicit length parameter, but its error-handling path formats the input buffer using %s in jv_string_fmt(), which reads until a NUL terminator is found rather than respecting the caller-supplied length. This means that when malformed JSON is passed in a non-NUL-terminated buffer, the error construction logic performs an out-of-bounds read past the end of the buffer. The vulnerability is reachable by any libjq consumer calling jv_parse_sized() with untrusted input, and depending on memory layout, can result in memory disclosure or process termination. The issue has been patched in commit 2f09060afab23fe9390cce7cb860b10416e1bf5f.","aliases":["GHSA-2hhh-px8h-355p"],"modified":"2026-11-16T18:12:21.512930433Z","published":"2026-04-13T22:18:56.252Z","related":["ALSA-2026:16252","ALSA-2026:16692","ALSA-2026:16693","ALSA-2026:19151","ALSA-2026:19365","ALSA-2026:98496","ALSA-2026:98603","SUSE-SU-2026:22545-1","SUSE-SU-2026:22566-1","SUSE-SU-2026:22664-1","SUSE-SU-2026:22705-1","SUSE-SU-2026:2983-1","openSUSE-SU-2026:10850-1","openSUSE-SU-2026:21248-1"],"database_specific":{"osv_generated_from":"https://github.com/CVEProject/cvelistV5/tree/main/cves/2026/39xxx/CVE-2026-39979.json","cna_assigner":"GitHub_M","cwe_ids":["CWE-125"]},"references":[{"type":"WEB","url":"https://security.access.redhat.com/data/csaf/v2/vex/2026/cve-2026-39979.json"},{"type":"ADVISORY","url":"https://access.redhat.com/errata/RHSA-2026:16252"},{"type":"ADVISORY","url":"https://access.redhat.com/errata/RHSA-2026:16692"},{"type":"ADVISORY","url":"https://access.redhat.com/errata/RHSA-2026:16693"},{"type":"ADVISORY","url":"https://access.redhat.com/errata/RHSA-2026:18040"},{"type":"ADVISORY","url":"https://access.redhat.com/errata/RHSA-2026:18042"},{"type":"ADVISORY","url":"https://access.redhat.com/errata/RHSA-2026:18043"},{"type":"ADVISORY","url":"https://access.redhat.com/errata/RHSA-2026:18044"},{"type":"ADVISORY","url":"https://access.redhat.com/errata/RHSA-2026:18045"},{"type":"ADVISORY","url":"https://access.redhat.com/errata/RHSA-2026:18046"},{"type":"ADVISORY","url":"https://access.redhat.com/errata/RHSA-2026:18047"},{"type":"ADVISORY","url":"https://access.redhat.com/errata/RHSA-2026:18048"},{"type":"ADVISORY","url":"https://access.redhat.com/errata/RHSA-2026:19151"},{"type":"ADVISORY","url":"https://access.redhat.com/errata/RHSA-2026:19365"},{"type":"ADVISORY","url":"https://access.redhat.com/errata/RHSA-2026:23233"},{"type":"ADVISORY","url":"https://access.redhat.com/errata/RHSA-2026:23245"},{"type":"ADVISORY","url":"https://access.redhat.com/errata/RHSA-2026:25044"},{"type":"ADVISORY","url":"https://access.redhat.com/errata/RHSA-2026:25096"},{"type":"ADVISORY","url":"https://access.redhat.com/errata/RHSA-2026:25181"},{"type":"ADVISORY","url":"https://access.redhat.com/errata/RHSA-2026:26528"},{"type":"ADVISORY","url":"https://access.redhat.com/errata/RHSA-2026:26542"},{"type":"ADVISORY","url":"https://access.redhat.com/errata/RHSA-2026:28887"},{"type":"ADVISORY","url":"https://access.redhat.com/errata/RHSA-2026:30078"},{"type":"ADVISORY","url":"https://access.redhat.com/errata/RHSA-2026:30087"},{"type":"ADVISORY","url":"https://access.redhat.com/errata/RHSA-2026:30088"},{"type":"ADVISORY","url":"https://access.redhat.com/errata/RHSA-2026:30089"},{"type":"ADVISORY","url":"https://access.redhat.com/errata/RHSA-2026:34098"},{"type":"ADVISORY","url":"https://access.redhat.com/errata/RHSA-2026:8579"},{"type":"ADVISORY","url":"https://access.redhat.com/security/cve/CVE-2026-39979"},{"type":"ADVISORY","url":"https://github.com/CVEProject/cvelistV5/tree/main/cves/2026/39xxx/CVE-2026-39979.json"},{"type":"ADVISORY","url":"https://github.com/jqlang/jq/security/advisories/GHSA-2hhh-px8h-355p"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2026-39979"},{"type":"REPORT","url":"https://bugzilla.redhat.com/show_bug.cgi?id=2458077"},{"type":"FIX","url":"https://github.com/jqlang/jq/commit/2f09060afab23fe9390cce7cb860b10416e1bf5f"}],"affected":[{"ranges":[{"type":"GIT","repo":"https://github.com/jqlang/jq","events":[{"introduced":"0"},{"fixed":"34f7186b86743a083a589741b6cea95293524108"},{"fixed":"2f09060afab23fe9390cce7cb860b10416e1bf5f"}],"database_specific":{"extracted_events":[{"source":"CPE_RANGE","cpe":"cpe:2.3:a:jqlang:jq:*:*:*:*:*:*:*:*","range":[{"introduced":"0"},{"fixed":"1.8.2"}]},{"range":[{"fixed":"2f09060afab23fe9390cce7cb860b10416e1bf5f"}],"source":"REFERENCES_COMMIT"}]}}],"versions":["jq-1.8.1","jq-1.8.0","jq-1.7.1","jq-1.7","jq-1.7rc2","jq-1.7rc1","jq-1.6","1.6rc2","jq-1.6rc1","jq-1.5rc2","jq-1.5rc1","jq-1.4","jq-1.3","jq-1.2","jq-1.1","jq-1.0"],"database_specific":{"vanir_signatures":[{"deprecated":false,"digest":{"length":846,"function_hash":"199510934960573295006688652191971625366"},"id":"CVE-2026-39979-05ddb4a8","signature_type":"Function","signature_version":"v1","source":"https://github.com/jqlang/jq/commit/2f09060afab23fe9390cce7cb860b10416e1bf5f","target":{"file":"src/jv_parse.c","function":"jv_parse_sized_custom_flags"}},{"deprecated":false,"digest":{"threshold":0.9,"line_hashes":["159327352766948974014880466537272337191","206613873127793645204435291849754007209","187473737466624667232140801196719577201","168730623363307008103535459005129738467","220339632937479546282868978076064728579"]},"id":"CVE-2026-39979-be1b7201","signature_type":"Line","signature_version":"v1","source":"https://github.com/jqlang/jq/commit/2f09060afab23fe9390cce7cb860b10416e1bf5f","target":{"file":"src/jv_parse.c"}}],"vanir_signatures_modified":"2026-10-28T11:09:49Z","source":"https://storage.googleapis.com/cve-osv-conversion/osv-output/CVE-2026-39979.json"}}],"schema_version":"1.9.2","severity":[{"type":"CVSS_V4","score":"CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:L/VI:N/VA:L/SC:N/SI:N/SA:N"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "6078"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:43:13 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-36fa8bd2a216b29ad2bfb21027425a3b-9e0f6643b7575517-00
+            X-Cloud-Trace-Context:
+                - 36fa8bd2a216b29ad2bfb21027425a3b/11389434423668069655
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 188.020166ms
+    - id: 11
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/CVE-2026-40164
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 6312
+        body: '{"id":"CVE-2026-40164","summary":"jq: Algorithmic complexity DoS via hardcoded MurmurHash3 seed","details":"jq is a command-line JSON processor. Before commit 0c7d133c3c7e37c00b6d46b658a02244fdd3c784, jq used MurmurHash3 with a hardcoded, publicly visible seed (0x432A9843) for all JSON object hash table operations, which allowed an attacker to precompute key collisions offline. By supplying a crafted JSON object (~100 KB) where all keys hashed to the same bucket, hash table lookups degraded from O(1) to O(n), turning any jq expression into an O(n²) operation and causing significant CPU exhaustion. This affected common jq use cases such as CI/CD pipelines, web services, and data processing scripts, and was far more practical to exploit than existing heap overflow issues since it required only a small payload. This issue has been patched in commit 0c7d133c3c7e37c00b6d46b658a02244fdd3c784.","aliases":["GHSA-wwj8-gxm6-jc29"],"modified":"2026-11-16T18:12:19.961299540Z","published":"2026-04-13T23:40:12.693Z","related":["ALSA-2026:16252","ALSA-2026:16692","ALSA-2026:16693","ALSA-2026:19151","ALSA-2026:19365","ALSA-2026:98496","ALSA-2026:98603","SUSE-SU-2026:22545-1","SUSE-SU-2026:22566-1","SUSE-SU-2026:22664-1","SUSE-SU-2026:22705-1","SUSE-SU-2026:23873-1","SUSE-SU-2026:2983-1","SUSE-SU-2026:4275-1","openSUSE-SU-2026:10850-1","openSUSE-SU-2026:21248-1"],"database_specific":{"osv_generated_from":"https://github.com/CVEProject/cvelistV5/tree/main/cves/2026/40xxx/CVE-2026-40164.json","cna_assigner":"GitHub_M","cwe_ids":["CWE-328","CWE-407"]},"references":[{"type":"WEB","url":"https://security.access.redhat.com/data/csaf/v2/vex/2026/cve-2026-40164.json"},{"type":"ADVISORY","url":"https://access.redhat.com/errata/RHSA-2026:16252"},{"type":"ADVISORY","url":"https://access.redhat.com/errata/RHSA-2026:16692"},{"type":"ADVISORY","url":"https://access.redhat.com/errata/RHSA-2026:16693"},{"type":"ADVISORY","url":"https://access.redhat.com/errata/RHSA-2026:18040"},{"type":"ADVISORY","url":"https://access.redhat.com/errata/RHSA-2026:18042"},{"type":"ADVISORY","url":"https://access.redhat.com/errata/RHSA-2026:18043"},{"type":"ADVISORY","url":"https://access.redhat.com/errata/RHSA-2026:18044"},{"type":"ADVISORY","url":"https://access.redhat.com/errata/RHSA-2026:18045"},{"type":"ADVISORY","url":"https://access.redhat.com/errata/RHSA-2026:18046"},{"type":"ADVISORY","url":"https://access.redhat.com/errata/RHSA-2026:18047"},{"type":"ADVISORY","url":"https://access.redhat.com/errata/RHSA-2026:18048"},{"type":"ADVISORY","url":"https://access.redhat.com/errata/RHSA-2026:19151"},{"type":"ADVISORY","url":"https://access.redhat.com/errata/RHSA-2026:19365"},{"type":"ADVISORY","url":"https://access.redhat.com/errata/RHSA-2026:23233"},{"type":"ADVISORY","url":"https://access.redhat.com/errata/RHSA-2026:23245"},{"type":"ADVISORY","url":"https://access.redhat.com/errata/RHSA-2026:25044"},{"type":"ADVISORY","url":"https://access.redhat.com/errata/RHSA-2026:25096"},{"type":"ADVISORY","url":"https://access.redhat.com/errata/RHSA-2026:25181"},{"type":"ADVISORY","url":"https://access.redhat.com/errata/RHSA-2026:26528"},{"type":"ADVISORY","url":"https://access.redhat.com/errata/RHSA-2026:26542"},{"type":"ADVISORY","url":"https://access.redhat.com/errata/RHSA-2026:28887"},{"type":"ADVISORY","url":"https://access.redhat.com/errata/RHSA-2026:30078"},{"type":"ADVISORY","url":"https://access.redhat.com/errata/RHSA-2026:30087"},{"type":"ADVISORY","url":"https://access.redhat.com/errata/RHSA-2026:30088"},{"type":"ADVISORY","url":"https://access.redhat.com/errata/RHSA-2026:30089"},{"type":"ADVISORY","url":"https://access.redhat.com/errata/RHSA-2026:34098"},{"type":"ADVISORY","url":"https://access.redhat.com/errata/RHSA-2026:8579"},{"type":"ADVISORY","url":"https://access.redhat.com/security/cve/CVE-2026-40164"},{"type":"ADVISORY","url":"https://github.com/CVEProject/cvelistV5/tree/main/cves/2026/40xxx/CVE-2026-40164.json"},{"type":"ADVISORY","url":"https://github.com/jqlang/jq/security/advisories/GHSA-wwj8-gxm6-jc29"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2026-40164"},{"type":"REPORT","url":"https://bugzilla.redhat.com/show_bug.cgi?id=2458084"},{"type":"FIX","url":"https://github.com/jqlang/jq/commit/0c7d133c3c7e37c00b6d46b658a02244fdd3c784"}],"affected":[{"ranges":[{"type":"GIT","repo":"https://github.com/jqlang/jq","events":[{"introduced":"0"},{"fixed":"0c7d133c3c7e37c00b6d46b658a02244fdd3c784"}],"database_specific":{"extracted_events":[{"range":[{"introduced":"0"},{"fixed":"0c7d133c3c7e37c00b6d46b658a02244fdd3c784"}],"source":"AFFECTED_FIELD","strategy":"StringRangeExpression"},{"range":[{"fixed":"0c7d133c3c7e37c00b6d46b658a02244fdd3c784"}],"source":"REFERENCES_COMMIT"}]}}],"versions":["jq-1.8.1","jq-1.8.0","jq-1.7.1","jq-1.7","jq-1.7rc2","jq-1.7rc1","jq-1.6","1.6rc2","jq-1.6rc1","jq-1.5rc2","jq-1.5rc1","jq-1.4","jq-1.3","jq-1.2","jq-1.1","jq-1.0"],"database_specific":{"source":"https://storage.googleapis.com/cve-osv-conversion/osv-output/CVE-2026-40164.json","vanir_signatures":[{"target":{"file":"src/jv.c"},"deprecated":false,"digest":{"threshold":0.9,"line_hashes":["40767225329927328445769865555316188476","58113614829326776963612530023344680668","149125579468807480806765829321659268047","255056121678116637219209663431357356880","259745096664922749560488579717127570089","82739521328169738112075331161488465078","335442583615051330670187537955032670700","11424449149007967193341622669435805816","157070531992953830517115695855359128872","25667657606560363609447882023862575225","192940216498668013421906925231866311531","42862664772594035153289470484226969372"]},"id":"CVE-2026-40164-8aa3ee2f","signature_type":"Line","signature_version":"v1","source":"https://github.com/jqlang/jq/commit/0c7d133c3c7e37c00b6d46b658a02244fdd3c784"},{"digest":{"function_hash":"123968419695391302376873502349968234100","length":1058},"id":"CVE-2026-40164-ef6ca8a1","signature_type":"Function","signature_version":"v1","source":"https://github.com/jqlang/jq/commit/0c7d133c3c7e37c00b6d46b658a02244fdd3c784","target":{"function":"jvp_string_hash","file":"src/jv.c"},"deprecated":false}],"vanir_signatures_modified":"2026-10-28T11:13:03Z"}}],"schema_version":"1.9.2","severity":[{"type":"CVSS_V3","score":"CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "6312"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:43:13 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-dc43351ecc30225ed2bfb210274257df-83776fd34d582708-00
+            X-Cloud-Trace-Context:
+                - dc43351ecc30225ed2bfb210274257df/9473163294523533064
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 191.606458ms
+    - id: 12
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/CVE-2026-40612
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 2041
+        body: '{"id":"CVE-2026-40612","summary":"jq: Stack overflow via unbounded recursion in jv_contains","details":"jq is a command-line JSON processor. In 1.8.1 and earlier, jv_contains recurses into nested arrays/objects with no depth limit. With a sufficiently nested input structure (built programmatically with reduce, since the JSON parser caps at depth 10000), the C stack is exhausted.","aliases":["GHSA-r7m6-x9c7-h69j"],"modified":"2026-10-28T02:30:22.930111564Z","published":"2026-05-11T17:16:25.453Z","related":["SUSE-SU-2026:22545-1","SUSE-SU-2026:22566-1","SUSE-SU-2026:22664-1","SUSE-SU-2026:23873-1","SUSE-SU-2026:4275-1","openSUSE-SU-2026:10850-1","openSUSE-SU-2026:21248-1"],"database_specific":{"cna_assigner":"GitHub_M","cwe_ids":["CWE-674"],"osv_generated_from":"https://github.com/CVEProject/cvelistV5/tree/main/cves/2026/40xxx/CVE-2026-40612.json"},"references":[{"type":"ADVISORY","url":"https://github.com/CVEProject/cvelistV5/tree/main/cves/2026/40xxx/CVE-2026-40612.json"},{"type":"ADVISORY","url":"https://github.com/jqlang/jq/security/advisories/GHSA-r7m6-x9c7-h69j"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2026-40612"}],"affected":[{"ranges":[{"type":"GIT","repo":"https://github.com/jqlang/jq","events":[{"introduced":"0"},{"last_affected":"4467af7068b1bcd7f882defff6e7ea674c5357f4"}],"database_specific":{"extracted_events":[{"strategy":"StringRangeExpression","range":[{"introduced":"0"},{"last_affected":"1.8.1"}],"source":"AFFECTED_FIELD"},{"cpe":"cpe:2.3:a:jqlang:jq:*:*:*:*:*:*:*:*","range":[{"introduced":"0"},{"last_affected":"1.8.1"}],"source":"CPE_RANGE"}]}}],"versions":["jq-1.8.1","jq-1.8.0","jq-1.7.1","jq-1.7","jq-1.7rc2","jq-1.7rc1","jq-1.6","1.6rc2","jq-1.6rc1","jq-1.5rc2","jq-1.5rc1","jq-1.4","jq-1.3","jq-1.2","jq-1.1","jq-1.0"],"database_specific":{"source":"https://storage.googleapis.com/cve-osv-conversion/osv-output/CVE-2026-40612.json"}}],"schema_version":"1.9.2","severity":[{"type":"CVSS_V4","score":"CVSS:4.0/AV:L/AC:L/AT:N/PR:N/UI:P/VC:N/VI:N/VA:H/SC:N/SI:N/SA:N/E:P"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "2041"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:43:13 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-f245b1b4245c784fd2bfb21027425854-8f821c09d8a4d83e-00
+            X-Cloud-Trace-Context:
+                - f245b1b4245c784fd2bfb21027425854/10340858523011045438
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 191.209375ms
+    - id: 13
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/CVE-2026-41256
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 2204
+        body: '{"id":"CVE-2026-41256","summary":"jq: Embedded NUL truncates top-level jq programs loaded with -f","details":"jq is a command-line JSON processor. In 1.8.1 and earlier, Top-level jq programs loaded from a file with -f are truncated at the first embedded NUL byte on current upstream HEAD. A crafted filter file such as . followed by \\x00 and arbitrary suffix compiles and executes as only the prefix before the NUL. This leaves jq with a post-CVE-2026-33948 prefix/full-buffer mismatch on the compilation path even though the JSON parser path has already been fixed.","aliases":["GHSA-vf2h-chrj-q3fg"],"modified":"2026-10-28T02:30:23.776087188Z","published":"2026-05-11T17:18:30.975Z","related":["SUSE-SU-2026:22545-1","SUSE-SU-2026:22566-1","SUSE-SU-2026:22664-1","SUSE-SU-2026:23873-1","SUSE-SU-2026:4275-1","openSUSE-SU-2026:10850-1","openSUSE-SU-2026:21248-1"],"database_specific":{"cwe_ids":["CWE-158"],"osv_generated_from":"https://github.com/CVEProject/cvelistV5/tree/main/cves/2026/41xxx/CVE-2026-41256.json","cna_assigner":"GitHub_M"},"references":[{"type":"ADVISORY","url":"https://github.com/CVEProject/cvelistV5/tree/main/cves/2026/41xxx/CVE-2026-41256.json"},{"type":"ADVISORY","url":"https://github.com/jqlang/jq/security/advisories/GHSA-vf2h-chrj-q3fg"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2026-41256"}],"affected":[{"ranges":[{"type":"GIT","repo":"https://github.com/jqlang/jq","events":[{"introduced":"0"},{"last_affected":"4467af7068b1bcd7f882defff6e7ea674c5357f4"}],"database_specific":{"extracted_events":[{"source":"AFFECTED_FIELD","strategy":"StringRangeExpression","range":[{"introduced":"0"},{"last_affected":"1.8.1"}]},{"cpe":"cpe:2.3:a:jqlang:jq:*:*:*:*:*:*:*:*","range":[{"introduced":"0"},{"last_affected":"1.8.1"}],"source":"CPE_RANGE"}]}}],"versions":["jq-1.8.1","jq-1.8.0","jq-1.7.1","jq-1.7","jq-1.7rc2","jq-1.7rc1","jq-1.6","1.6rc2","jq-1.6rc1","jq-1.5rc2","jq-1.5rc1","jq-1.4","jq-1.3","jq-1.2","jq-1.1","jq-1.0"],"database_specific":{"source":"https://storage.googleapis.com/cve-osv-conversion/osv-output/CVE-2026-41256.json"}}],"schema_version":"1.9.2","severity":[{"type":"CVSS_V3","score":"CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:N/I:H/A:N"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "2204"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:43:14 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-17a54905c6ad03e3d2bfb210274256c6-4ce953135d3677e5-00
+            X-Cloud-Trace-Context:
+                - 17a54905c6ad03e3d2bfb210274256c6/5542052159089440741
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 176.083167ms
+    - id: 14
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/CVE-2026-41257
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 2120
+        body: '{"id":"CVE-2026-41257","summary":"jq: Signed-int overflow in `stack_reallocate` (jq VM stack)","details":"jq is a command-line JSON processor. In 1.8.1 and earlier, the jq bytecode VM''s data stack tracks its allocation size in a signed int. When the stack grows beyond ≈1 GiB (via deeply nested generator forks), the doubling arithmetic overflows. The wrapped value is passed to realloc and then used for a memmove with attacker-influenced offsets.","aliases":["GHSA-4jm8-m363-4539"],"modified":"2026-10-28T02:30:49.299789631Z","published":"2026-05-11T17:14:32.579Z","related":["SUSE-SU-2026:22545-1","SUSE-SU-2026:22566-1","SUSE-SU-2026:22664-1","SUSE-SU-2026:23873-1","SUSE-SU-2026:4275-1","openSUSE-SU-2026:10850-1","openSUSE-SU-2026:21248-1"],"database_specific":{"cna_assigner":"GitHub_M","cwe_ids":["CWE-190","CWE-787"],"osv_generated_from":"https://github.com/CVEProject/cvelistV5/tree/main/cves/2026/41xxx/CVE-2026-41257.json"},"references":[{"type":"ADVISORY","url":"https://github.com/CVEProject/cvelistV5/tree/main/cves/2026/41xxx/CVE-2026-41257.json"},{"type":"ADVISORY","url":"https://github.com/jqlang/jq/security/advisories/GHSA-4jm8-m363-4539"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2026-41257"}],"affected":[{"ranges":[{"type":"GIT","repo":"https://github.com/jqlang/jq","events":[{"introduced":"0"},{"last_affected":"4467af7068b1bcd7f882defff6e7ea674c5357f4"}],"database_specific":{"extracted_events":[{"strategy":"StringRangeExpression","range":[{"introduced":"0"},{"last_affected":"1.8.1"}],"source":"AFFECTED_FIELD"},{"cpe":"cpe:2.3:a:jqlang:jq:*:*:*:*:*:*:*:*","range":[{"introduced":"0"},{"last_affected":"1.8.1"}],"source":"CPE_RANGE"}]}}],"versions":["jq-1.8.1","jq-1.8.0","jq-1.7.1","jq-1.7","jq-1.7rc2","jq-1.7rc1","jq-1.6","1.6rc2","jq-1.6rc1","jq-1.5rc2","jq-1.5rc1","jq-1.4","jq-1.3","jq-1.2","jq-1.1","jq-1.0"],"database_specific":{"source":"https://storage.googleapis.com/cve-osv-conversion/osv-output/CVE-2026-41257.json"}}],"schema_version":"1.9.2","severity":[{"type":"CVSS_V4","score":"CVSS:4.0/AV:L/AC:H/AT:N/PR:N/UI:P/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N/E:P"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "2120"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:43:14 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-6b5c5dc1e000ed74d2bfb21027425d8a-bc5020f80b840f7f-00
+            X-Cloud-Trace-Context:
+                - 6b5c5dc1e000ed74d2bfb21027425d8a/13569381926984486783
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 198.352291ms
+    - id: 15
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/CVE-2026-43894
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 2274
+        body: '{"id":"CVE-2026-43894","summary":"jq: Wild stack write via signed-integer overflow in decNumber D2U() macro","details":"jq is a command-line JSON processor. In 1.8.1 and earlier, when decNumberFromString is given a number literal of INT_MAX-1 (2147483646) digits, the D2U() macro overflows during signed-int arithmetic. The wrapped negative value bypasses the heap-allocation size check, causes the function to use a 30-byte stack buffer, and then writes ≈715 million 16-bit units (≈1.4 GiB) at an offset 1.43 GiB below the stack frame. The written content is fully attacker-controlled (the parsed decimal digits, packed 3-per-unit).","aliases":["GHSA-5v7p-2r57-2g4g"],"modified":"2026-10-28T02:30:24.333368796Z","published":"2026-05-11T17:20:06.055Z","related":["SUSE-SU-2026:22545-1","SUSE-SU-2026:22566-1","SUSE-SU-2026:22664-1","SUSE-SU-2026:23873-1","SUSE-SU-2026:4275-1","openSUSE-SU-2026:10850-1","openSUSE-SU-2026:21248-1"],"database_specific":{"osv_generated_from":"https://github.com/CVEProject/cvelistV5/tree/main/cves/2026/43xxx/CVE-2026-43894.json","cna_assigner":"GitHub_M","cwe_ids":["CWE-190"]},"references":[{"type":"ADVISORY","url":"https://github.com/CVEProject/cvelistV5/tree/main/cves/2026/43xxx/CVE-2026-43894.json"},{"type":"ADVISORY","url":"https://github.com/jqlang/jq/security/advisories/GHSA-5v7p-2r57-2g4g"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2026-43894"}],"affected":[{"ranges":[{"type":"GIT","repo":"https://github.com/jqlang/jq","events":[{"introduced":"0"},{"last_affected":"4467af7068b1bcd7f882defff6e7ea674c5357f4"}],"database_specific":{"extracted_events":[{"strategy":"StringRangeExpression","range":[{"introduced":"0"},{"last_affected":"1.8.1"}],"source":"AFFECTED_FIELD"},{"source":"CPE_RANGE","cpe":"cpe:2.3:a:jqlang:jq:*:*:*:*:*:*:*:*","range":[{"introduced":"0"},{"last_affected":"1.8.1"}]}]}}],"versions":["jq-1.8.1","jq-1.8.0","jq-1.7.1","jq-1.7","jq-1.7rc2","jq-1.7rc1","jq-1.6","1.6rc2","jq-1.6rc1","jq-1.5rc2","jq-1.5rc1","jq-1.4","jq-1.3","jq-1.2","jq-1.1","jq-1.0"],"database_specific":{"source":"https://storage.googleapis.com/cve-osv-conversion/osv-output/CVE-2026-43894.json"}}],"schema_version":"1.9.2","severity":[{"type":"CVSS_V3","score":"CVSS:3.1/AV:L/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "2274"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:43:14 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-83081c4d7bdbb2c7d2bfb2102742567b-7a1e6ceb0bb6e2f0-00
+            X-Cloud-Trace-Context:
+                - 83081c4d7bdbb2c7d2bfb2102742567b/8799590478698177264
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 221.421959ms
+    - id: 16
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/CVE-2026-43895
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 2209
+        body: '{"id":"CVE-2026-43895","summary":"jq: Embedded NUL in jq import paths causes local redaction-policy bypass and preserves sensitive fields in published artifacts","details":"jq is a command-line JSON processor. In 1.8.1 and earlier, jq accepts embedded NUL bytes in import paths at the jq-language level, but later resolves those paths through C string operations during module and data-file lookup. This creates a mismatch between the logical import string that policy or audit code may validate and the on-disk path that jq actually opens.","aliases":["GHSA-7q7g-mrq3-phxr"],"modified":"2026-10-28T02:30:46.388572724Z","published":"2026-05-11T17:24:02.880Z","related":["SUSE-SU-2026:23671-1","SUSE-SU-2026:23707-1","SUSE-SU-2026:23728-1","SUSE-SU-2026:23735-1","SUSE-SU-2026:23873-1","SUSE-SU-2026:4275-1","openSUSE-SU-2026:10850-1","openSUSE-SU-2026:21833-1"],"database_specific":{"osv_generated_from":"https://github.com/CVEProject/cvelistV5/tree/main/cves/2026/43xxx/CVE-2026-43895.json","cna_assigner":"GitHub_M","cwe_ids":["CWE-158","CWE-20"]},"references":[{"type":"ADVISORY","url":"https://github.com/CVEProject/cvelistV5/tree/main/cves/2026/43xxx/CVE-2026-43895.json"},{"type":"ADVISORY","url":"https://github.com/jqlang/jq/security/advisories/GHSA-7q7g-mrq3-phxr"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2026-43895"}],"affected":[{"ranges":[{"type":"GIT","repo":"https://github.com/jqlang/jq","events":[{"introduced":"0"},{"last_affected":"4467af7068b1bcd7f882defff6e7ea674c5357f4"}],"database_specific":{"extracted_events":[{"source":"AFFECTED_FIELD","strategy":"StringRangeExpression","range":[{"introduced":"0"},{"last_affected":"1.8.1"}]},{"source":"CPE_RANGE","cpe":"cpe:2.3:a:jqlang:jq:*:*:*:*:*:*:*:*","range":[{"introduced":"0"},{"last_affected":"1.8.1"}]}]}}],"versions":["jq-1.8.1","jq-1.8.0","jq-1.7.1","jq-1.7","jq-1.7rc2","jq-1.7rc1","jq-1.6","1.6rc2","jq-1.6rc1","jq-1.5rc2","jq-1.5rc1","jq-1.4","jq-1.3","jq-1.2","jq-1.1","jq-1.0"],"database_specific":{"source":"https://storage.googleapis.com/cve-osv-conversion/osv-output/CVE-2026-43895.json"}}],"schema_version":"1.9.2","severity":[{"type":"CVSS_V3","score":"CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:N"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "2209"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:43:14 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-069c014fa3a7c4edd2bfb21027425b95-6707d5a8f233f38a-00
+            X-Cloud-Trace-Context:
+                - 069c014fa3a7c4edd2bfb21027425b95/7424137432338264970
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 191.804708ms
+    - id: 17
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/CVE-2026-43896
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1984
+        body: '{"id":"CVE-2026-43896","summary":"jq: Stack Overflow in Recursive Object Merge","details":"jq is a command-line JSON processor. In 1.8.1 and earlier, unbounded recursion in jv_object_merge_recursive() allows a crafted jq program to crash the process with a segfault. The function is reachable through the * operator when both operands are objects.","aliases":["GHSA-mg96-6h3q-g846"],"modified":"2026-10-28T02:30:46.680317244Z","published":"2026-05-11T17:24:48.149Z","related":["SUSE-SU-2026:22597-1","SUSE-SU-2026:22637-1","SUSE-SU-2026:22900-1","SUSE-SU-2026:23873-1","SUSE-SU-2026:4275-1","openSUSE-SU-2026:10850-1","openSUSE-SU-2026:21318-1"],"database_specific":{"cwe_ids":["CWE-674"],"osv_generated_from":"https://github.com/CVEProject/cvelistV5/tree/main/cves/2026/43xxx/CVE-2026-43896.json","cna_assigner":"GitHub_M"},"references":[{"type":"ADVISORY","url":"https://github.com/CVEProject/cvelistV5/tree/main/cves/2026/43xxx/CVE-2026-43896.json"},{"type":"ADVISORY","url":"https://github.com/jqlang/jq/security/advisories/GHSA-mg96-6h3q-g846"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2026-43896"}],"affected":[{"ranges":[{"type":"GIT","repo":"https://github.com/jqlang/jq","events":[{"introduced":"0"},{"last_affected":"4467af7068b1bcd7f882defff6e7ea674c5357f4"}],"database_specific":{"extracted_events":[{"source":"AFFECTED_FIELD","strategy":"StringRangeExpression","range":[{"introduced":"0"},{"last_affected":"1.8.1"}]},{"source":"CPE_RANGE","cpe":"cpe:2.3:a:jqlang:jq:*:*:*:*:*:*:*:*","range":[{"introduced":"0"},{"last_affected":"1.8.1"}]}]}}],"versions":["jq-1.8.1","jq-1.8.0","jq-1.7.1","jq-1.7","jq-1.7rc2","jq-1.7rc1","jq-1.6","1.6rc2","jq-1.6rc1","jq-1.5rc2","jq-1.5rc1","jq-1.4","jq-1.3","jq-1.2","jq-1.1","jq-1.0"],"database_specific":{"source":"https://storage.googleapis.com/cve-osv-conversion/osv-output/CVE-2026-43896.json"}}],"schema_version":"1.9.2","severity":[{"type":"CVSS_V3","score":"CVSS:3.1/AV:L/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "1984"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:43:14 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-79c8094989d1572cd2bfb210274258c4-95b864f99d38620f-00
+            X-Cloud-Trace-Context:
+                - 79c8094989d1572cd2bfb210274258c4/10788483930613375503
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 190.737042ms
+    - id: 18
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/CVE-2026-44777
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1955
+        body: '{"id":"CVE-2026-44777","summary":"jq: stack overflow in module loading on mutual `include`","details":"jq is a command-line JSON processor. In 1.8.2rc1 and earlier, the ordinary module loader recurses without cycle detection when two\notherwise valid modules include each other.","aliases":["GHSA-rmpv-jgvr-wpr9"],"modified":"2026-10-28T02:30:55.215389526Z","published":"2026-05-11T17:23:20.228Z","related":["SUSE-SU-2026:22597-1","SUSE-SU-2026:22637-1","SUSE-SU-2026:22900-1","SUSE-SU-2026:23873-1","SUSE-SU-2026:4275-1","openSUSE-SU-2026:10850-1","openSUSE-SU-2026:21318-1"],"database_specific":{"cna_assigner":"GitHub_M","cwe_ids":["CWE-674"],"osv_generated_from":"https://github.com/CVEProject/cvelistV5/tree/main/cves/2026/44xxx/CVE-2026-44777.json"},"references":[{"type":"ADVISORY","url":"https://github.com/CVEProject/cvelistV5/tree/main/cves/2026/44xxx/CVE-2026-44777.json"},{"type":"ADVISORY","url":"https://github.com/jqlang/jq/security/advisories/GHSA-rmpv-jgvr-wpr9"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2026-44777"}],"affected":[{"ranges":[{"type":"GIT","repo":"https://github.com/jqlang/jq","events":[{"introduced":"0"},{"last_affected":"5f2a14dd1b03a8b43015058ed006dd4ab24fb58f"}],"database_specific":{"extracted_events":[{"strategy":"StringRangeExpression","range":[{"introduced":"0"},{"last_affected":"1.8.2rc1"}],"source":"AFFECTED_FIELD"},{"range":[{"introduced":"0"},{"last_affected":"1.8.2"}],"source":"CPE_RANGE","cpe":"cpe:2.3:a:jqlang:jq:*:*:*:*:*:*:*:*"}]}}],"versions":["jq-1.8.2rc1","jq-1.8.1","jq-1.8.0","jq-1.7.1","jq-1.7","jq-1.7rc2","jq-1.7rc1","jq-1.6","1.6rc2","jq-1.6rc1","jq-1.5rc2","jq-1.5rc1","jq-1.4","jq-1.3","jq-1.2","jq-1.1","jq-1.0"],"database_specific":{"source":"https://storage.googleapis.com/cve-osv-conversion/osv-output/CVE-2026-44777.json"}}],"schema_version":"1.9.2","severity":[{"type":"CVSS_V4","score":"CVSS:4.0/AV:L/AC:L/AT:N/PR:N/UI:P/VC:N/VI:N/VA:H/SC:N/SI:N/SA:N/E:P"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "1955"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:43:14 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-d14d97744c703f53d2bfb21027425d02-0b275dd5ac748338-00
+            X-Cloud-Trace-Context:
+                - d14d97744c703f53d2bfb21027425d02/803714230811657016
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 192.262167ms
+    - id: 19
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/CVE-2026-49839
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 2536
+        body: '{"id":"CVE-2026-49839","summary":"jq --rawfile invalid-state reuse after String too long causes heap-buffer-overflow","details":"jq is a command-line JSON processor. Prior to 1.8.2,` jq --rawfile` can turn a handled oversized-string error into invalid-state reuse and a real heap out-of-bounds write in assertion-disabled builds. When jv_load_file(raw=1) reads an attacker-controlled file, it repeatedly appends file chunks to the same jv string accumulator. Once jv_string_append_buf() returns jv_invalid_with_msg(\"String too long\"), the raw-file loop does not stop. If the file contains at least one more byte, the next loop iteration appends a new chunk to an object that is already invalid. With assertions enabled this aborts in jvp_string_ptr(). With assertions disabled, the invalid object is interpreted as a string object and ASan reports heap-buffer-overflow. This vulnerability is fixed in 1.8.2.","aliases":["GHSA-cfh2-vwfq-qfmm"],"modified":"2026-10-28T02:30:42.672190572Z","published":"2026-06-25T17:17:46.181Z","related":["SUSE-SU-2026:22597-1","SUSE-SU-2026:22637-1","SUSE-SU-2026:22900-1","SUSE-SU-2026:23873-1","SUSE-SU-2026:4275-1","openSUSE-SU-2026:11133-1","openSUSE-SU-2026:21318-1"],"database_specific":{"osv_generated_from":"https://github.com/CVEProject/cvelistV5/tree/main/cves/2026/49xxx/CVE-2026-49839.json","cna_assigner":"GitHub_M","cwe_ids":["CWE-787"]},"references":[{"type":"ADVISORY","url":"https://github.com/CVEProject/cvelistV5/tree/main/cves/2026/49xxx/CVE-2026-49839.json"},{"type":"ADVISORY","url":"https://github.com/jqlang/jq/security/advisories/GHSA-cfh2-vwfq-qfmm"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2026-49839"}],"affected":[{"ranges":[{"type":"GIT","repo":"https://github.com/jqlang/jq","events":[{"introduced":"0"},{"fixed":"34f7186b86743a083a589741b6cea95293524108"}],"database_specific":{"extracted_events":[{"range":[{"introduced":"0"},{"fixed":"1.8.2"}],"source":"AFFECTED_FIELD","strategy":"StringRangeExpression"},{"source":"CPE_RANGE","cpe":"cpe:2.3:a:jqlang:jq:*:*:*:*:*:*:*:*","range":[{"introduced":"0"},{"fixed":"1.8.2"}]}]}}],"versions":["jq-1.8.2rc1","jq-1.8.1","jq-1.8.0","jq-1.7.1","jq-1.7","jq-1.7rc2","jq-1.7rc1","jq-1.6","1.6rc2","jq-1.6rc1","jq-1.5rc2","jq-1.5rc1","jq-1.4","jq-1.3","jq-1.2","jq-1.1","jq-1.0"],"database_specific":{"source":"https://storage.googleapis.com/cve-osv-conversion/osv-output/CVE-2026-49839.json"}}],"schema_version":"1.9.2","severity":[{"type":"CVSS_V3","score":"CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:N/I:H/A:H"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "2536"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:43:14 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-830f52e8645e2821d2bfb210274256dd-b9818c2c47d19199-00
+            X-Cloud-Trace-Context:
+                - 830f52e8645e2821d2bfb210274256dd/13367119290823709081
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 172.419459ms
+    - id: 20
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/CVE-2026-47770
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 2568
+        body: '{"id":"CVE-2026-47770","summary":"jq: stack overflow in deep structural equality","details":"jq is a command-line JSON processor. Prior to 1.8.2, comparing two sufficiently deeply nested arrays with the == operator exhausts the C stack on jq''s ordinary command-line surface, resulting in denial of service via stack exhaustion (uncontrolled recursion). The crash occurs in jq''s recursive structural comparison code, with the recursion repeating through jvp_array_equal() and jv_equal() in src/jv.c when comparing deeply nested arrays; a nearby sort comparator path through jv_cmp() in src/jv_aux.c overflows the stack at a larger nesting depth from  the same missing recursion guard. Anyone running jq comparisons on attacker-controlled deeply nested JSON values, or embedding jq in a context  where untrusted data can reach the == comparison path, is affected. This vulnerability is fixed in 1.8.2.","aliases":["GHSA-3pgx-frr7-3jxp"],"modified":"2026-10-28T02:30:37.513578787Z","published":"2026-06-25T17:22:21.531Z","related":["SUSE-SU-2026:23671-1","SUSE-SU-2026:23707-1","SUSE-SU-2026:23728-1","SUSE-SU-2026:23735-1","SUSE-SU-2026:23873-1","SUSE-SU-2026:4275-1","openSUSE-SU-2026:11133-1","openSUSE-SU-2026:21833-1"],"database_specific":{"osv_generated_from":"https://github.com/CVEProject/cvelistV5/tree/main/cves/2026/47xxx/CVE-2026-47770.json","cna_assigner":"GitHub_M","cwe_ids":["CWE-674"]},"references":[{"type":"ADVISORY","url":"https://github.com/CVEProject/cvelistV5/tree/main/cves/2026/47xxx/CVE-2026-47770.json"},{"type":"ADVISORY","url":"https://github.com/jqlang/jq/security/advisories/GHSA-3pgx-frr7-3jxp"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2026-47770"}],"affected":[{"ranges":[{"type":"GIT","repo":"https://github.com/jqlang/jq","events":[{"introduced":"0"},{"fixed":"34f7186b86743a083a589741b6cea95293524108"}],"database_specific":{"extracted_events":[{"strategy":"StringRangeExpression","range":[{"introduced":"0"},{"fixed":"1.8.2"}],"source":"AFFECTED_FIELD"},{"source":"CPE_RANGE","cpe":"cpe:2.3:a:jqlang:jq:*:*:*:*:*:*:*:*","range":[{"introduced":"0"},{"fixed":"1.8.2"}]}]}}],"versions":["jq-1.8.2rc1","jq-1.8.1","jq-1.8.0","jq-1.7.1","jq-1.7","jq-1.7rc2","jq-1.7rc1","jq-1.6","1.6rc2","jq-1.6rc1","jq-1.5rc2","jq-1.5rc1","jq-1.4","jq-1.3","jq-1.2","jq-1.1","jq-1.0"],"database_specific":{"source":"https://storage.googleapis.com/cve-osv-conversion/osv-output/CVE-2026-47770.json"}}],"schema_version":"1.9.2","severity":[{"type":"CVSS_V4","score":"CVSS:4.0/AV:L/AC:L/AT:N/PR:N/UI:P/VC:N/VI:N/VA:H/SC:N/SI:N/SA:N"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "2568"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:43:14 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-91a709e0c4e7acafd2bfb21027425525-6ddd41647c36a15c-00
+            X-Cloud-Trace-Context:
+                - 91a709e0c4e7acafd2bfb21027425525/7916555619823690076
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 207.103958ms
+    - id: 21
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/CVE-2026-54679
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1958
+        body: '{"id":"CVE-2026-54679","summary":"jq: potential integer overflow in jvp_string_append","details":"jq is a command-line JSON processor. Prior to 1.8.2, on 32bit system, jvp_string_append has a chance of integer/multiple overflowing and then causing a massive buffer overrun.  This vulnerability is fixed in 1.8.2.","aliases":["GHSA-29gj-222p-j7vx"],"modified":"2026-10-28T02:30:40.055515652Z","published":"2026-06-25T17:16:18.072Z","related":["SUSE-SU-2026:22597-1","SUSE-SU-2026:22637-1","SUSE-SU-2026:22900-1","SUSE-SU-2026:23873-1","SUSE-SU-2026:4275-1","openSUSE-SU-2026:11133-1","openSUSE-SU-2026:21318-1"],"database_specific":{"cna_assigner":"GitHub_M","cwe_ids":["CWE-190"],"osv_generated_from":"https://github.com/CVEProject/cvelistV5/tree/main/cves/2026/54xxx/CVE-2026-54679.json"},"references":[{"type":"ADVISORY","url":"https://github.com/CVEProject/cvelistV5/tree/main/cves/2026/54xxx/CVE-2026-54679.json"},{"type":"ADVISORY","url":"https://github.com/jqlang/jq/security/advisories/GHSA-29gj-222p-j7vx"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2026-54679"}],"affected":[{"ranges":[{"type":"GIT","repo":"https://github.com/jqlang/jq","events":[{"introduced":"0"},{"fixed":"34f7186b86743a083a589741b6cea95293524108"}],"database_specific":{"extracted_events":[{"range":[{"introduced":"0"},{"fixed":"1.8.2"}],"source":"AFFECTED_FIELD","strategy":"StringRangeExpression"},{"source":"CPE_RANGE","cpe":"cpe:2.3:a:jqlang:jq:*:*:*:*:*:*:*:*","range":[{"introduced":"0"},{"fixed":"1.8.2"}]}]}}],"versions":["jq-1.8.2rc1","jq-1.8.1","jq-1.8.0","jq-1.7.1","jq-1.7","jq-1.7rc2","jq-1.7rc1","jq-1.6","1.6rc2","jq-1.6rc1","jq-1.5rc2","jq-1.5rc1","jq-1.4","jq-1.3","jq-1.2","jq-1.1","jq-1.0"],"database_specific":{"source":"https://storage.googleapis.com/cve-osv-conversion/osv-output/CVE-2026-54679.json"}}],"schema_version":"1.9.2","severity":[{"type":"CVSS_V4","score":"CVSS:4.0/AV:L/AC:L/AT:N/PR:N/UI:N/VC:N/VI:N/VA:H/SC:N/SI:N/SA:N"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "1958"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:43:14 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-6481915ecd0fd640d2bfb2102742533e-8419307b9cee1762-00
+            X-Cloud-Trace-Context:
+                - 6481915ecd0fd640d2bfb2102742533e/9518692594896213858
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 195.616459ms

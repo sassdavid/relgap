@@ -73,8 +73,10 @@ func runNonGitHub(t *testing.T, env app.Env) (string, map[string][]string, strin
 	chain, err := openCassettes([]string{
 		filepath.Join(cassetteDir, "non-github", "bitbucket.yaml"),
 		filepath.Join(cassetteDir, "non-github", "gitlab.yaml"),
+		filepath.Join(cassetteDir, "non-github", "osv.yaml"),
 	})
 	require.NoError(t, err)
+	t.Cleanup(chain.stop)
 	sent := &sentHeaders{seen: map[string][]string{}, next: chain}
 	cache := filepath.Join(dir, "cache")
 	var stdout, stderr bytes.Buffer
@@ -112,7 +114,8 @@ func TestSpec_non_github_sources_3(t *testing.T) {
 			"api.bitbucket.org":    repeat("Authorization: Bearer "+bbToken, len(seen["api.bitbucket.org"])),
 			"gitlab.com":           repeat("Private-Token: "+glToken, len(seen["gitlab.com"])),
 			"gitlab.internal.test": repeat("Private-Token: "+vpcToken, len(seen["gitlab.internal.test"])),
-		}, seen, "the token_env of gitlab.hosts wins over CI_JOB_TOKEN, and GH_TOKEN goes nowhere")
+			"api.osv.dev":          nil,
+		}, seen, "the token_env of gitlab.hosts wins over CI_JOB_TOKEN, GH_TOKEN goes nowhere and OSV gets no token")
 		assert.NotEmpty(t, seen["api.bitbucket.org"])
 		assert.NotEmpty(t, seen["gitlab.com"])
 		assert.NotEmpty(t, seen["gitlab.internal.test"])

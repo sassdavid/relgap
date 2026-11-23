@@ -15,7 +15,7 @@ func (o *Outdated) EnrichRequests(resolve ResolveFunc) []enrich.Request {
 			continue
 		}
 		spec, err := resolve(p.Tool)
-		if err != nil || (spec.EOL == nil && len(spec.OSV) == 0) {
+		if err != nil {
 			continue
 		}
 		rules, err := spec.Version.Rules()
@@ -26,7 +26,7 @@ func (o *Outdated) EnrichRequests(resolve ResolveFunc) []enrich.Request {
 		if err != nil {
 			continue
 		}
-		req := enrich.Request{Key: key, Tool: spec, Current: current}
+		req := enrich.Request{Key: key, Name: p.Tool, Tool: spec, Current: current}
 		if p.Latest != "" && p.Latest != p.Current {
 			if latest, latestErr := rules.Scheme.Parse(p.Latest); latestErr == nil {
 				req.Target = latest

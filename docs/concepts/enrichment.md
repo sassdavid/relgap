@@ -7,8 +7,9 @@ description: How relgap adds end-of-life dates from endoflife.date and known vul
 Release notes say what changes when you upgrade. They don't say whether the version you run still
 gets fixes, or whether it has a known vulnerability. [`relgap outdated`](/cli/outdated) adds both
 from two public sources: release cycles from [endoflife.date](https://endoflife.date) and
-advisories from [OSV](https://osv.dev). Only tools whose curated registry entry names a product or
-OSV packages get them; [Supported tools](/reference/tools) lists which.
+advisories from [OSV](https://osv.dev). EOL needs a curated registry entry that names an
+endoflife.date product; [Supported tools](/reference/tools) lists which. Every pin's tool can get
+advisories, from its curated entry or from its backend.
 
 ## End of life
 
@@ -32,7 +33,25 @@ cycle, so you can see whether the upgrade lands on a supported line.
 An entry's `osv` list names the packages that carry the tool's advisories, each with an OSV
 ecosystem: `Go` and `k8s.io/kubernetes` for kubectl, `npm` or `PyPI` for others. The `GIT`
 ecosystem takes the repository URL as the name and queries the version's tag, for projects whose
-advisories name commits instead of package versions.
+advisories name commits instead of package versions. The `go` entry queries `stdlib` and
+`toolchain`, the `go` command.
+
+A tool without an `osv` list gets its packages from its backend, the way `mise audit` maps them:
+
+| Backend | OSV queries |
+|---|---|
+| `npm:<name>` | `npm` / name |
+| `pypi:`, `pipx:` | `PyPI` / the PEP 503 name, extras dropped |
+| `cargo:<name>` | `crates.io` / name |
+| `gem:<name>` | `RubyGems` / name |
+| `dotnet:`, `nuget:` | `NuGet` / name |
+| `go:<path>` | `Go` / the longest prefix of the path that OSV has records of |
+| a github.com repository (`github:`, `aqua:`, `tfprovider:`) | `Go` / `github.com/<owner>/<repo>`, with `/vN` from major 2 on, and `GIT` / the repository URL at the tag |
+| `gitlab:<path>` on gitlab.com | `GIT` / the repository URL at the tag |
+
+A tool known by name takes the first backend of its mise registry entry. Tools on Bitbucket or a
+self-managed GitLab host, images on a private registry, and package names with `:` or `@` after
+the scope are never sent to OSV. Charts, `tfmodule:` pins and images have no OSV source.
 
 relgap sends one batch of queries for CURRENT of every pin, fetches each advisory once, and then
 checks the advisory's affected ranges itself:

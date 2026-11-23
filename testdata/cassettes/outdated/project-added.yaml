@@ -9611,3 +9611,622 @@ interactions:
         status: 200 OK
         code: 200
         duration: 192.078667ms
+    - id: 24
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 818
+        host: api.osv.dev
+        body: '{"queries":[{"package":{"ecosystem":"Go","name":"github.com/cli/cli/v2"},"version":"2.103.3"},{"package":{"ecosystem":"Go","name":"stdlib"},"version":"1.25.14"},{"package":{"ecosystem":"Go","name":"toolchain"},"version":"1.25.14"},{"package":{"ecosystem":"Go","name":"helm.sh/helm/v3"},"version":"3.21.0"},{"package":{"ecosystem":"Go","name":"github.com/derailed/k9s"},"version":"0.50.16"},{"package":{"ecosystem":"GIT","name":"https://github.com/derailed/k9s"},"version":"v0.50.16"},{"package":{"ecosystem":"Go","name":"github.com/astral-sh/ruff"},"version":"0.17.4"},{"package":{"ecosystem":"GIT","name":"https://github.com/astral-sh/ruff"},"version":"0.17.4"},{"package":{"ecosystem":"Go","name":"github.com/hashicorp/terraform"},"version":"1.15.8"},{"package":{"ecosystem":"PyPI","name":"uv"},"version":"0.13.7"}]}'
+        headers:
+            Accept:
+                - application/json
+            Content-Type:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.osv.dev/v1/querybatch
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1825
+        body: '{"results":[{},{"vulns":[{"id":"GO-2026-6599","modified":"2026-11-14T13:12:14.032615Z"},{"id":"GO-2026-6600","modified":"2026-11-14T13:12:14.590615Z"},{"id":"GO-2026-6603","modified":"2026-11-14T13:12:13.462737Z"},{"id":"GO-2026-6604","modified":"2026-10-16T09:55:42.275912Z"},{"id":"GO-2026-6605","modified":"2026-11-14T13:12:14.302038Z"},{"id":"GO-2026-6607","modified":"2026-11-14T13:12:13.844440Z"},{"id":"GO-2026-6608","modified":"2026-11-14T13:12:14.556410Z"},{"id":"GO-2026-6609","modified":"2026-11-14T13:12:14.205172Z"},{"id":"GO-2026-6610","modified":"2026-11-14T13:12:14.502576Z"},{"id":"GO-2026-6611","modified":"2026-11-14T13:12:14.349122Z"},{"id":"GO-2026-6612","modified":"2026-11-14T13:12:14.440833Z"},{"id":"GO-2026-6613","modified":"2026-11-14T13:12:14.185186Z"},{"id":"GO-2026-6617","modified":"2026-11-14T13:12:14.222191Z"},{"id":"GO-2026-6809","modified":"2026-11-14T13:12:13.569550Z"},{"id":"GO-2026-6859","modified":"2026-11-11T03:15:14.805898Z"}]},{"vulns":[{"id":"GO-2026-6601","modified":"2026-11-14T13:12:13.661275Z"},{"id":"GO-2026-6602","modified":"2026-11-14T13:12:14.141810Z"},{"id":"GO-2026-6848","modified":"2026-11-11T03:15:14.770362Z"},{"id":"GO-2026-6849","modified":"2026-11-11T03:15:14.799110Z"},{"id":"GO-2026-6850","modified":"2026-11-11T03:15:14.803931Z"},{"id":"GO-2026-6851","modified":"2026-11-11T03:15:14.815322Z"},{"id":"GO-2026-6852","modified":"2026-11-11T03:15:14.802903Z"},{"id":"GO-2026-6853","modified":"2026-11-11T03:15:14.801899Z"},{"id":"GO-2026-6854","modified":"2026-11-11T03:15:14.799312Z"},{"id":"GO-2026-6855","modified":"2026-11-11T03:15:15.677114Z"},{"id":"GO-2026-6856","modified":"2026-11-11T03:15:15.719402Z"},{"id":"GO-2026-6857","modified":"2026-11-11T03:15:14.793749Z"},{"id":"GO-2026-6858","modified":"2026-11-11T03:15:14.803158Z"}]},{},{},{},{},{},{},{}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "1825"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:45:57 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-f569f1e9ef29d5e004d79f41c0396ef3-c7974dff80657e70-00
+            X-Cloud-Trace-Context:
+                - f569f1e9ef29d5e004d79f41c0396ef3/14382049694797102704
+            X-Envoy-Decorator-Operation:
+                - ingress QueryAffectedBatch
+        status: 200 OK
+        code: 200
+        duration: 491.146167ms
+    - id: 25
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.osv.dev/v1/vulns/GO-2026-6602
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1379
+        body: '{"id":"GO-2026-6602","summary":"Checksum database bypass for golang.org/toolchain in cmd/go","details":"Previously, a user operating inside of a malicious Go project that defines a bogus golang.org/toolchain go.sum entry and operates a malicious GOMODPROXY the user chooses to use can bypass the intended checksum.\n\nWe now ensure that golang.org/toolchain always goes to the network for the canonical checksum.","aliases":["BIT-golang-2026-94447","CVE-2026-94447"],"modified":"2026-11-14T13:12:14.141810781Z","published":"2026-10-08T22:31:09Z","related":["RHSA-2026:79715","RHSA-2026:79720","RHSA-2026:86093","RHSA-2026:86196","RHSA-2026:86203","RHSA-2026:87040","RHSA-2026:87041","RHSA-2026:87042","RHSA-2026:87043"],"database_specific":{"review_status":"REVIEWED","url":"https://pkg.go.dev/vuln/GO-2026-6602"},"references":[{"type":"FIX","url":"https://go.dev/cl/840785"},{"type":"REPORT","url":"https://go.dev/issue/81834"},{"type":"WEB","url":"https://groups.google.com/g/golang-announce/c/U2fTuyDJznI"}],"affected":[{"package":{"name":"toolchain","ecosystem":"Go","purl":"pkg:golang/toolchain"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"1.26.9"},{"introduced":"1.27.0-0"},{"fixed":"1.27.2"}]}],"ecosystem_specific":{"imports":[{"path":"cmd/go"}]},"database_specific":{"source":"https://vuln.go.dev/ID/GO-2026-6602.json"}}],"schema_version":"1.9.0"}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "1379"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:45:57 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-1664b87a9ca2489204d79f41c0396c01-a4efe8230c81fbd4-00
+            X-Cloud-Trace-Context:
+                - 1664b87a9ca2489204d79f41c0396c01/11884973178885372884
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 184.909417ms
+    - id: 26
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.osv.dev/v1/vulns/GO-2026-6601
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1440
+        body: '{"id":"GO-2026-6601","summary":"Checksum bypass for golang.org/fips140 in cmd/go","details":"Previously, a user operating inside of a malicious Go project that defines a bogus golang.org/fips140 and operates a malicious GOMODPROXY the user chooses to connect to can serve an arbitrary module in its place.\n\nWe now unpack the trusted ziphash for the bundled golang.org/fips140 module and construct its entry in the GOMODCACHE such that it can be verified by the toolchain.","aliases":["BIT-golang-2026-94444","CVE-2026-94444"],"modified":"2026-11-14T13:12:13.661275021Z","published":"2026-10-08T22:31:09Z","related":["RHSA-2026:79715","RHSA-2026:79720","RHSA-2026:86093","RHSA-2026:86196","RHSA-2026:86203","RHSA-2026:87040","RHSA-2026:87041","RHSA-2026:87042","RHSA-2026:87043"],"database_specific":{"url":"https://pkg.go.dev/vuln/GO-2026-6601","review_status":"REVIEWED"},"references":[{"type":"FIX","url":"https://go.dev/cl/840685"},{"type":"REPORT","url":"https://go.dev/issue/81833"},{"type":"WEB","url":"https://groups.google.com/g/golang-announce/c/U2fTuyDJznI"}],"affected":[{"package":{"name":"toolchain","ecosystem":"Go","purl":"pkg:golang/toolchain"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"1.26.9"},{"introduced":"1.27.0-0"},{"fixed":"1.27.2"}]}],"ecosystem_specific":{"imports":[{"path":"cmd/go"}]},"database_specific":{"source":"https://vuln.go.dev/ID/GO-2026-6601.json"}}],"schema_version":"1.9.0"}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "1440"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:45:57 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-2621f9d2cefac98504d79f41c0396209-14fc4601f8751c3f-00
+            X-Cloud-Trace-Context:
+                - 2621f9d2cefac98504d79f41c0396209/1512160549166980159
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 185.009291ms
+    - id: 27
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.osv.dev/v1/vulns/GO-2026-6848
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1990
+        body: '{"id":"GO-2026-6848","summary":"Unexpected code execution via escaped quotes in //go:cgo_ldflag in cmd/go and cmd/compile","details":"Building a malicious package that uses cgo could bypass \"#cgo LDFLAGS\" validation and cause unexpected code execution at build time, or cause the go command to panic, via crafted quoting in \"//go:cgo_ldflag\" directives.\n\nWhen \"cmd/cgo\" generates \"_cgo_gotypes.go\", it quotes each \"#cgo LDFLAGS\" argument with strconv.Quote in a \"//go:cgo_ldflag\" directive, but \"cmd/compile\" and \"cmd/go\" parsed those directives by splitting on raw quote characters without handling backslash escapes or unquoting the string. This mismatch allowed disallowed linker flags or unvalidated linker search paths to be smuggled past the go command''s flag checks and passed to the external linker. In addition, deduplicating LDFLAGS in the go command could panic with an out-of-bounds slice index when a prefix of the flag list matched near the end of the slice.\n\n\"cmd/compile\" and \"cmd/go\" now properly handle backslash-escaped quotes and unquote \"//go:cgo_*\" pragma strings with strconv.Unquote, and the slice bounds check in processCgoOutputs has been fixed.","aliases":["CVE-2026-97043"],"modified":"2026-11-11T03:15:14.770362892Z","published":"2026-11-11T02:51:11Z","database_specific":{"url":"https://pkg.go.dev/vuln/GO-2026-6848","review_status":"REVIEWED"},"references":[{"type":"FIX","url":"https://go.dev/cl/862156"},{"type":"REPORT","url":"https://go.dev/issue/82567"},{"type":"WEB","url":"https://groups.google.com/g/golang-announce/c/iY8TY0wWgbM"}],"affected":[{"package":{"name":"toolchain","ecosystem":"Go","purl":"pkg:golang/toolchain"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"1.26.11"},{"introduced":"1.27.0-0"},{"fixed":"1.27.4"}]}],"ecosystem_specific":{"imports":[{"path":"cmd/go"},{"path":"cmd/compile"}]},"database_specific":{"source":"https://vuln.go.dev/ID/GO-2026-6848.json"}}],"schema_version":"1.9.2"}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "1990"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:45:58 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-72d947df8345f1b504d79f41c0396d31-fac84787669ffc3d-00
+            X-Cloud-Trace-Context:
+                - 72d947df8345f1b504d79f41c0396d31/18070772151692033085
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 189.561833ms
+    - id: 28
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.osv.dev/v1/vulns/GO-2026-6849
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1923
+        body: '{"id":"GO-2026-6849","summary":"Linker flag injection via cgo_import_dynamic and PE DLL names in cmd/cgo, cmd/compile, and cmd/link","details":"Building a malicious package that uses \"//go:cgo_import_dynamic\" or links against a crafted PE object on Windows could pass unsafe library arguments to the external linker.\n\nThe compiler only checked the first character of the library name in \"//go:cgo_import_dynamic\" directives and skipped validation in cgo-generated files. In addition, on Windows, \"cmd/cgo\" and \"cmd/link\" did not validate imported DLL names extracted from PE object files before emitting \"-l\u003cname\u003e\" flags for the external linker, allowing a crafted DLL name containing \"..\" path traversal or special characters to reference arbitrary files on disk.\n\nThe compiler now validates every character of the library name in \"//go:cgo_import_dynamic\" directives (including in cgo-generated files on Windows) and rejects \"..\" path traversal, and \"cmd/cgo\" and \"cmd/link\" reject PE imported DLL names containing path separators, \"..\", \":\", or leading \"-\" or \"@\".","aliases":["CVE-2026-97042"],"modified":"2026-11-11T03:15:14.799110962Z","published":"2026-11-11T02:51:11Z","database_specific":{"review_status":"REVIEWED","url":"https://pkg.go.dev/vuln/GO-2026-6849"},"references":[{"type":"FIX","url":"https://go.dev/cl/862155"},{"type":"REPORT","url":"https://go.dev/issue/82568"},{"type":"WEB","url":"https://groups.google.com/g/golang-announce/c/iY8TY0wWgbM"}],"affected":[{"package":{"name":"toolchain","ecosystem":"Go","purl":"pkg:golang/toolchain"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"1.26.11"},{"introduced":"1.27.0-0"},{"fixed":"1.27.4"}]}],"ecosystem_specific":{"imports":[{"path":"cmd/cgo"},{"path":"cmd/compile"},{"path":"cmd/link"}]},"database_specific":{"source":"https://vuln.go.dev/ID/GO-2026-6849.json"}}],"schema_version":"1.9.2"}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "1923"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:45:58 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-4a6fa0d7324bebc504d79f41c03963c6-e28878595b5b7daa-00
+            X-Cloud-Trace-Context:
+                - 4a6fa0d7324bebc504d79f41c03963c6/16323429174584507818
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 194.831708ms
+    - id: 29
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.osv.dev/v1/vulns/GO-2026-6850
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 2146
+        body: '{"id":"GO-2026-6850","summary":"Host linker flag injection via //go:cgo_* directives in cmd/compile and cmd/link","details":"Building a malicious package containing \"//go:cgo_*\" compiler directives could inject arbitrary flags into the external linker invocation on ELF platforms.\n\nThe compiler and linker did not reject commas in \"//go:cgo_import_dynamic\", \"//go:cgo_export_dynamic\", \"//go:cgo_export_static\", \"//go:cgo_import_static\", and \"//go:cgo_dynamic_linker\" directives, and the linker passed the dynamic linker path using \"-Wl,--dynamic-linker,\u003cpath\u003e\". Furthermore, the two-argument form of \"//go:cgo_import_dynamic\" (which is permitted in non-cgo Go source files) could overwrite the external symbol name of a symbol already marked for cgo export. A symbol name or dynamic linker path containing a comma or leading \"@\" could split \"-Wl,--export-dynamic-symbol=\" or \"-Wl,--dynamic-linker,\" into arbitrary host linker flags or response file arguments.\n\nThe compiler and linker now reject commas in \"//go:cgo_*\" symbol and dynamic linker directives, the linker passes \"-Wl,--dynamic-linker=\u003cpath\u003e\", and \"cgo_import_dynamic\" no longer overwrites symbols exported via \"cgo_export_dynamic\" or \"cgo_export_static\".","aliases":["CVE-2026-97041"],"modified":"2026-11-11T03:15:14.803931428Z","published":"2026-11-11T02:51:11Z","database_specific":{"review_status":"REVIEWED","url":"https://pkg.go.dev/vuln/GO-2026-6850"},"references":[{"type":"FIX","url":"https://go.dev/cl/862154"},{"type":"REPORT","url":"https://go.dev/issue/82569"},{"type":"WEB","url":"https://groups.google.com/g/golang-announce/c/iY8TY0wWgbM"}],"affected":[{"package":{"name":"toolchain","ecosystem":"Go","purl":"pkg:golang/toolchain"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"1.26.11"},{"introduced":"1.27.0-0"},{"fixed":"1.27.4"}]}],"ecosystem_specific":{"imports":[{"path":"cmd/compile"},{"path":"cmd/link"}]},"database_specific":{"source":"https://vuln.go.dev/ID/GO-2026-6850.json"}}],"schema_version":"1.9.2","credits":[{"name":"RyotaK (https://ryotak.net) of GMO Flatt Security Inc."}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "2146"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:45:58 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-65fdd319b042ca8d04d79f41c0396fdd-2736876cfd4fb2a5-00
+            X-Cloud-Trace-Context:
+                - 65fdd319b042ca8d04d79f41c0396fdd/2825594718397641381
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 176.191375ms
+    - id: 30
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.osv.dev/v1/vulns/GO-2026-6851
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1993
+        body: '{"id":"GO-2026-6851","summary":"Cgo directive injection via .syso files disguised as Go object files in cmd/go and cmd/link","details":"Building a package containing a crafted \".syso\" file could bypass cgo flag validation and inject arbitrary linker flags when linking.\n\nWhen loading \".syso\" entries from a package archive, the linker only checked for recognized host object headers (ELF, Mach-O, PE, and XCOFF) before falling through to Go object parsing. A \".syso\" file beginning with a \"go object\" header was parsed as a Go compiler object, allowing untrusted cgo metadata directives (such as \"cgo_ldflag\" or \"cgo_dynamic_linker\") embedded in the \".syso\" file to be passed to the external linker without validation. Additionally, \".syso\" filenames longer than 16 bytes lost their \".syso\" extension when truncated in archive headers, and unrecognized \".syso\" formats forced external linking in pure-Go builds.\n\nThe linker now rejects \".syso\" files that are not recognized host object formats, and \"cmd/go\" and \"cmd/pack\" preserve the \".syso\" suffix when truncating long archive member names.","aliases":["CVE-2026-97040"],"modified":"2026-11-11T03:15:14.815322039Z","published":"2026-11-11T02:51:11Z","database_specific":{"review_status":"REVIEWED","url":"https://pkg.go.dev/vuln/GO-2026-6851"},"references":[{"type":"FIX","url":"https://go.dev/cl/862153"},{"type":"REPORT","url":"https://go.dev/issue/82570"},{"type":"WEB","url":"https://groups.google.com/g/golang-announce/c/iY8TY0wWgbM"}],"affected":[{"package":{"name":"toolchain","ecosystem":"Go","purl":"pkg:golang/toolchain"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"1.26.11"},{"introduced":"1.27.0-0"},{"fixed":"1.27.4"}]}],"ecosystem_specific":{"imports":[{"path":"cmd/go"},{"path":"cmd/link"}]},"database_specific":{"source":"https://vuln.go.dev/ID/GO-2026-6851.json"}}],"schema_version":"1.9.2","credits":[{"name":"RyotaK (https://ryotak.net) of GMO Flatt Security Inc."}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "1993"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:45:59 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-3b21bafc4d3c864b04d79f41c0396297-c79318f8d60972ae-00
+            X-Cloud-Trace-Context:
+                - 3b21bafc4d3c864b04d79f41c0396297/14380865492146025134
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 177.585459ms
+    - id: 31
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.osv.dev/v1/vulns/GO-2026-6852
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1917
+        body: '{"id":"GO-2026-6852","summary":"Flag sanitization bypass via \"#cgo pkg-config:\" directives in cmd/go","details":"Building a malicious package that uses \"#cgo pkg-config:\" directives could load untrusted pkg-config \".pc\" files or inject unvalidated compiler and linker flags.\n\nThe pkg-config flag allowlist previously permitted \"--with-path=\" and \"--personality=\", allowed \"--define-variable=\" values beginning with \"=\" or \"$\" (which can rewrite paths in system \".pc\" files into sysroot-prefixed \"-L=\" or \"-L$SYSROOT\" linker search paths), and allowed package arguments ending in \".pc\" or containing path separators or \"..\", which caused pkg-config to load local \".pc\" files directly from the package directory. In addition, flags returned by \"pkg-config --cflags\" in cgoCPPFLAGS were not checked when determining whether internal linking is safe.\n\nThe go command now disallows \"--with-path=\", \"--personality=\", leading \"=\" or \"$\" characters in \"--define-variable=\" values, and local \".pc\" paths in \"#cgo pkg-config:\" directives, and inspects cgoCPPFLAGS when checking internal linking compatibility.","aliases":["CVE-2026-97039"],"modified":"2026-11-11T03:15:14.802903591Z","published":"2026-11-11T02:51:11Z","database_specific":{"url":"https://pkg.go.dev/vuln/GO-2026-6852","review_status":"REVIEWED"},"references":[{"type":"FIX","url":"https://go.dev/cl/862152"},{"type":"REPORT","url":"https://go.dev/issue/82571"},{"type":"WEB","url":"https://groups.google.com/g/golang-announce/c/iY8TY0wWgbM"}],"affected":[{"package":{"name":"toolchain","ecosystem":"Go","purl":"pkg:golang/toolchain"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"1.26.11"},{"introduced":"1.27.0-0"},{"fixed":"1.27.4"}]}],"ecosystem_specific":{"imports":[{"path":"cmd/go"}]},"database_specific":{"source":"https://vuln.go.dev/ID/GO-2026-6852.json"}}],"schema_version":"1.9.2"}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "1917"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:45:58 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-ec0bb58f46915b6804d79f41c0396437-fd4f1e3e94bca1df-00
+            X-Cloud-Trace-Context:
+                - ec0bb58f46915b6804d79f41c0396437/18252841068888105439
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 175.0505ms
+    - id: 32
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.osv.dev/v1/vulns/GO-2026-6853
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 2112
+        body: '{"id":"GO-2026-6853","summary":"Arbitrary code execution via crafted .syso files and cgo linker input files in cmd/go","details":"Building a malicious package containing \".syso\" files or cgo linker inputs could inject arbitrary linker flags or execute arbitrary code at link time.\n\nLinker input files—including \".syso\" files, direct object or library inputs in \"#cgo LDFLAGS\", and libraries in \"-L\" directories—were passed to the external linker without validating their format or checking for embedded linker options. Across platforms, this allowed executing GNU ld implicit linker scripts disguised as libraries or \".syso\" files (or loaded via \"-l:\u003cfilename\u003e\" or \"-l\" containing path separators), injecting unallowlisted linker flags via PE/COFF \".drectve\" sections on Windows or Mach-O \"LC_LINKER_OPTION\" load commands on Darwin, or invoking LTO plugins via GCC or LLVM LTO intermediate representation sections in ELF, PE/COFF, or Mach-O objects.\n\nThe go command now verifies that \".syso\" files, direct linker inputs, and libraries in \"-L\" directories are valid binary objects or archives that do not contain unallowlisted \".drectve\" directives, \"LC_LINKER_OPTION\" load commands, or LTO IR sections, and disallows \"-l:\u003cfilename\u003e\" and \":\", \"=\", or path separators in \"-l\" flags.","aliases":["CVE-2026-97038"],"modified":"2026-11-11T03:15:14.801899979Z","published":"2026-11-11T02:51:11Z","database_specific":{"url":"https://pkg.go.dev/vuln/GO-2026-6853","review_status":"REVIEWED"},"references":[{"type":"FIX","url":"https://go.dev/cl/862151"},{"type":"REPORT","url":"https://go.dev/issue/82572"},{"type":"WEB","url":"https://groups.google.com/g/golang-announce/c/iY8TY0wWgbM"}],"affected":[{"package":{"name":"toolchain","ecosystem":"Go","purl":"pkg:golang/toolchain"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"1.26.11"},{"introduced":"1.27.0-0"},{"fixed":"1.27.4"}]}],"ecosystem_specific":{"imports":[{"path":"cmd/go"}]},"database_specific":{"source":"https://vuln.go.dev/ID/GO-2026-6853.json"}}],"schema_version":"1.9.2"}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "2112"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:45:59 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-d679457348b3d2a204d79f41c0396d8d-a284c5a20ef9d16b-00
+            X-Cloud-Trace-Context:
+                - d679457348b3d2a204d79f41c0396d8d/11710702230896759147
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 186.962042ms
+    - id: 33
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.osv.dev/v1/vulns/GO-2026-6854
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1906
+        body: '{"id":"GO-2026-6854","summary":"Linker script injection via split -Wl, flags and Darwin or symbol linker flags in cgo in cmd/go","details":"Building a malicious package that uses cgo could cause arbitrary code execution at link time by passing linker script files to the host linker via \"#cgo LDFLAGS\".\n\nSplit \"-Wl,\" flags that consume a following argument (such as \"-Wl,-rpath\", \"-Wl,--just-symbols\", and \"-Wl,-undefined\") previously accepted a bare second argument without a \"-Wl,\" prefix, which the compiler driver passes directly to the linker as a positional input file. Additionally, when using GNU ld.bfd, flags such as \"-framework\", \"-Wl,-framework\", \"-Wl,-undefined\", \"-Wl,--just-symbols\", \"-Wl,-R\", \"-Wl,-subsystem\", and (on non-Darwin platforms) \"-Wl,-sectcreate\" could cause ld.bfd to interpret their arguments as linker scripts if they named a regular file on disk.\n\nThe go command now requires a \"-Wl,\" prefix on the second token of split \"-Wl,\" flags (except \"-Wl,-R\"), verifies that these flags do not reference linker script files, and disallows bare \"-Wl,--warn-backrefs-exclude\".","aliases":["CVE-2026-97037"],"modified":"2026-11-11T03:15:14.799312883Z","published":"2026-11-11T02:51:11Z","database_specific":{"url":"https://pkg.go.dev/vuln/GO-2026-6854","review_status":"REVIEWED"},"references":[{"type":"FIX","url":"https://go.dev/cl/862150"},{"type":"REPORT","url":"https://go.dev/issue/82573"},{"type":"WEB","url":"https://groups.google.com/g/golang-announce/c/iY8TY0wWgbM"}],"affected":[{"package":{"name":"toolchain","ecosystem":"Go","purl":"pkg:golang/toolchain"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"1.26.11"},{"introduced":"1.27.0-0"},{"fixed":"1.27.4"}]}],"ecosystem_specific":{"imports":[{"path":"cmd/go"}]},"database_specific":{"source":"https://vuln.go.dev/ID/GO-2026-6854.json"}}],"schema_version":"1.9.2"}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "1906"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:45:59 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-78e265f4e307642e04d79f41c03961ee-ec48a7d15b93e7bd-00
+            X-Cloud-Trace-Context:
+                - 78e265f4e307642e04d79f41c03961ee/17026042908900583357
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 181.876334ms
+    - id: 34
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.osv.dev/v1/vulns/GO-2026-6856
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1731
+        body: '{"id":"GO-2026-6856","summary":"Unexpected code execution and arbitrary file write via Clang -gen-* and GCC -gnat* flags in cgo in cmd/go","details":"When using Clang or GCC, building a malicious package that uses cgo could cause unexpected code execution at build time or write files to arbitrary directories via \"-gen-*\" or \"-gnat*\" flags in \"#cgo\" directives.\n\nThe \"-g*\" wildcard in the compiler and linker flag allowlists previously matched Clang''s two-argument \"-gen-cdb-fragment-path \u003cdir\u003e\" flag and GCC''s two-argument \"-gnatO \u003cfile\u003e\" flag, permitting compilation database fragments and sidecar output files to be written to arbitrary directories and desynchronizing flag argument parsing between the go command and the compiler driver so that subsequent arguments could be passed as unvalidated positional inputs to the linker.\n\n\"-gen-*\" and \"-gnat*\" flags are now disallowed in \"#cgo\" compiler and linker flags.","aliases":["CVE-2026-97035"],"modified":"2026-11-11T03:15:15.719402274Z","published":"2026-11-11T02:51:11Z","database_specific":{"url":"https://pkg.go.dev/vuln/GO-2026-6856","review_status":"REVIEWED"},"references":[{"type":"FIX","url":"https://go.dev/cl/862148"},{"type":"REPORT","url":"https://go.dev/issue/82575"},{"type":"WEB","url":"https://groups.google.com/g/golang-announce/c/iY8TY0wWgbM"}],"affected":[{"package":{"name":"toolchain","ecosystem":"Go","purl":"pkg:golang/toolchain"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"1.26.11"},{"introduced":"1.27.0-0"},{"fixed":"1.27.4"}]}],"ecosystem_specific":{"imports":[{"path":"cmd/go"}]},"database_specific":{"source":"https://vuln.go.dev/ID/GO-2026-6856.json"}}],"schema_version":"1.9.2"}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "1731"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:45:59 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-169ffdbaa1acd0c204d79f41c0396dfe-57c67756d87efcd4-00
+            X-Cloud-Trace-Context:
+                - 169ffdbaa1acd0c204d79f41c0396dfe/6324873941571534036
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 176.459333ms
+    - id: 35
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.osv.dev/v1/vulns/GO-2026-6855
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1651
+        body: '{"id":"GO-2026-6855","summary":"Arbitrary code execution during build on darwin via \"-l to_library\" in cgo in cmd/go","details":"On Darwin, building a malicious package that uses cgo could cause arbitrary code execution when using the Apple linker due to passing \"-l to_library \u003cpath\u003e\" in a \"#cgo LDFLAGS\" directive.\n\nThe Apple linker recombines the separated arguments \"-l\" and \"to_library\" into \"-lto_library\", which loads an arbitrary LTO plugin dynamic library at link time.\n\nThe go command now disallows \"-l\" followed by \"to_library\" in \"#cgo LDFLAGS\", rejects \"-lazy_library\", \"-lazy_framework\", \"-load_hidden\", \"-library\", and \"-library-path\", and checks recombined \"-l\" arguments against disallowed linker flags and patterns.","aliases":["CVE-2026-97036"],"modified":"2026-11-11T03:15:15.677114364Z","published":"2026-11-11T02:51:11Z","database_specific":{"review_status":"REVIEWED","url":"https://pkg.go.dev/vuln/GO-2026-6855"},"references":[{"type":"FIX","url":"https://go.dev/cl/862149"},{"type":"REPORT","url":"https://go.dev/issue/82574"},{"type":"WEB","url":"https://groups.google.com/g/golang-announce/c/iY8TY0wWgbM"}],"affected":[{"package":{"name":"toolchain","ecosystem":"Go","purl":"pkg:golang/toolchain"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"1.26.11"},{"introduced":"1.27.0-0"},{"fixed":"1.27.4"}]}],"ecosystem_specific":{"imports":[{"path":"cmd/go","goos":["darwin"]}]},"database_specific":{"source":"https://vuln.go.dev/ID/GO-2026-6855.json"}}],"schema_version":"1.9.2","credits":[{"name":"Ali Sherif (https://www.linkedin.com/in/ali-sherif-13812b276/)"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "1651"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:45:59 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-3901602d6e2b8df404d79f41c0396769-60bd6aad0b81d670-00
+            X-Cloud-Trace-Context:
+                - 3901602d6e2b8df404d79f41c0396769/6970845089694340720
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 287.976167ms
+    - id: 36
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.osv.dev/v1/vulns/GO-2026-6857
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1810
+        body: '{"id":"GO-2026-6857","summary":"Arbitrary command execution via GCC spec files in cgo linker search directories in cmd/go","details":"When using GCC, building a malicious package that uses cgo could cause arbitrary command execution at link time via untrusted GCC spec files (\"specs\" or \"*.spec\").\n\nWhen linking with \"-fopenmp\", \"-fopenacc\", or \"-fsanitize=\" in \"#cgo LDFLAGS\", GCC''s built-in link spec evaluates \"%:include(libgomp.spec)\" or \"%:include(libsanitizer.spec)\" and searches for spec files in \"-L\" and sysroot directories (including subdirectories and multilib sibling directories such as \"../lib64\"), as well as the working directory when \"-fopenmp\" or \"-fopenacc\" is used or when \"-fsanitize=\" is combined with \"-static\" or \"-static-lib*\".\n\nThe go command now rejects \"-L\", \"-isysroot\", and \"-Wl,-syslibroot\" directories (and the working and package directories when applicable) that contain GCC spec files, and disallows \"@\" and \"-\" prefixes in \"-fsanitize=\" compiler flag values.","aliases":["CVE-2026-97034"],"modified":"2026-11-11T03:15:14.793749820Z","published":"2026-11-11T02:51:11Z","database_specific":{"url":"https://pkg.go.dev/vuln/GO-2026-6857","review_status":"REVIEWED"},"references":[{"type":"FIX","url":"https://go.dev/cl/862147"},{"type":"REPORT","url":"https://go.dev/issue/82576"},{"type":"WEB","url":"https://groups.google.com/g/golang-announce/c/iY8TY0wWgbM"}],"affected":[{"package":{"name":"toolchain","ecosystem":"Go","purl":"pkg:golang/toolchain"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"1.26.11"},{"introduced":"1.27.0-0"},{"fixed":"1.27.4"}]}],"ecosystem_specific":{"imports":[{"path":"cmd/go"}]},"database_specific":{"source":"https://vuln.go.dev/ID/GO-2026-6857.json"}}],"schema_version":"1.9.2"}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "1810"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:45:59 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-54f61fa828c3abab281d792a3f8c52c8-3663f978b4c18874-00
+            X-Cloud-Trace-Context:
+                - 54f61fa828c3abab281d792a3f8c52c8/3919250397566437492
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 173.287083ms
+    - id: 37
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.osv.dev/v1/vulns/GO-2026-6858
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1847
+        body: '{"id":"GO-2026-6858","summary":"Unexpected code execution via --sysroot, -target, -isysroot, -Wl,-syslibroot, and -x cgo flags in cmd/go","details":"Building a malicious package that uses cgo could cause arbitrary code execution at build time through several compiler and linker flags permitted in \"#cgo\" directives.\n\nSpecifically, \"--sysroot\" in GCC and Clang relocates compiler subprograms, spec files, and CRT startup objects to an attacker-controlled directory; \"-target\" in Clang falls back to executing target helper tools from the current working directory when not found in PATH; \"-isysroot\" and \"-Wl,-syslibroot\" can pass a regular file on disk to GNU ld.bfd, which interprets it as a positional linker script; and \"-x\" permitted specifying arbitrary compiler input languages beyond those supported by cgo.\n\n\"--sysroot\" and \"-target\" are now disallowed in \"#cgo\" flags, \"-isysroot\" and \"-Wl,-syslibroot\" are verified not to point to regular files, and \"-x\" is restricted to the C, C++, Objective-C, and assembler languages supported by cgo.","aliases":["CVE-2026-97033"],"modified":"2026-11-11T03:15:14.803158957Z","published":"2026-11-11T02:51:11Z","database_specific":{"url":"https://pkg.go.dev/vuln/GO-2026-6858","review_status":"REVIEWED"},"references":[{"type":"FIX","url":"https://go.dev/cl/862146"},{"type":"REPORT","url":"https://go.dev/issue/82577"},{"type":"WEB","url":"https://groups.google.com/g/golang-announce/c/iY8TY0wWgbM"}],"affected":[{"package":{"name":"toolchain","ecosystem":"Go","purl":"pkg:golang/toolchain"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"1.26.11"},{"introduced":"1.27.0-0"},{"fixed":"1.27.4"}]}],"ecosystem_specific":{"imports":[{"path":"cmd/go"}]},"database_specific":{"source":"https://vuln.go.dev/ID/GO-2026-6858.json"}}],"schema_version":"1.9.2"}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "1847"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:45:59 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-df3bc586f622f834281d792a3f8c5d7c-d1e90a8844d6d8f2-00
+            X-Cloud-Trace-Context:
+                - df3bc586f622f834281d792a3f8c5d7c/15125632403887282418
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 186.47975ms

@@ -26,7 +26,7 @@ checks your own against the [registry entry schema](/reference/registry-schema).
 | `awscli` | `aws-cli`, `aws` | [aws/aws-cli](https://github.com/aws/aws-cli) | `structured-json` | semver, tags |  |  |
 | `claude-code` | `claude` | [anthropics/claude-code](https://github.com/anthropics/claude-code) | `changelog-file`, `gh-release` | semver, releases |  | npm: `@anthropic-ai/claude-code` |
 | `gh` | `github-cli` | [cli/cli](https://github.com/cli/cli) | `gh-release` | semver, releases |  | Go: `github.com/cli/cli/v2` |
-| `go` | `golang` | [golang/go](https://github.com/golang/go) | `web-doc` | loose, tags | [go](https://endoflife.date/go) | Go: `stdlib` |
+| `go` | `golang` | [golang/go](https://github.com/golang/go) | `web-doc` | loose, tags | [go](https://endoflife.date/go) | Go: `stdlib`, Go: `toolchain` |
 | `golangci-lint` |  | [golangci/golangci-lint](https://github.com/golangci/golangci-lint) | `changelog-file` | semver, releases |  |  |
 | `helm` |  | [helm/helm](https://github.com/helm/helm) | `gh-release` | semver, releases |  | Go: `helm.sh/helm/v3`, Go: `helm.sh/helm/v4` |
 | `k9s` |  | [derailed/k9s](https://github.com/derailed/k9s) | `changelog-file`, `gh-release` | semver, releases |  |  |

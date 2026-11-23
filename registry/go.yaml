@@ -17,3 +17,4 @@ sources:
 eol: { product: go, cycle: "{major}.{minor}" }
 osv:
   - { ecosystem: Go, name: stdlib }
+  - { ecosystem: Go, name: toolchain }
