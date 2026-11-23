@@ -7,6 +7,7 @@
 | `breaking_changes` | `tool`, `from`, `to?`, `min_confidence?`, `cursor?` | the same digest with only the breaking and deprecation entries (the most common agent question) |
 | `outdated` | `path?`, `cursor?` | the report of `relgap outdated <path>` |
 | `drift` | `roots[]`, `tools?[]`, `latest?`, `ignore_constraints?`, `cursor?` | the report of `relgap drift <roots...>` |
+| `audit` | `roots?[]`, `tools?[]`, `vuln_severity?`, `cursor?` | the report of `relgap audit <roots...>`, with only the findings at or above `vuln_severity` and those of unknown severity ([vulnerability-audit](vulnerability-audit.md)) |
 | `resolve` | `tool` | the resolution of `relgap resolve <tool>` |
 
 `tool` and `from` (and `roots` for drift) are required unless `cursor` is set; a cursor call

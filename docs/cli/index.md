@@ -44,7 +44,7 @@ relgap audit ~/src/infra
 | [relgap digest](/cli/digest) | Merge the release notes of every version in a range into one digest |
 | [relgap drift](/cli/drift) | Show which repositories pin different versions of the same tool |
 | [relgap mcp](/cli/mcp) | Serve digest, breaking\_changes, outdated, drift and resolve to an MCP client over stdio |
-| [relgap notify](/cli/notify) | Publish saved digest, outdated and drift reports as a GitHub pull request comment |
+| [relgap notify](/cli/notify) | Publish saved digest, outdated, drift and audit reports as a GitHub pull request comment |
 | [relgap outdated](/cli/outdated) | Compare every pinned tool version in a project with the latest release |
 | [relgap pins](/cli/pins) | List the tool versions pinned in your repositories, with file and line |
 | [relgap registry](/cli/registry/) | Check, test and update relgap registry entries |

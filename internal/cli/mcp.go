@@ -150,14 +150,15 @@ func runMCP(cmd *cobra.Command, d *app.Deps, g *globals, f mcpFlags, serve serve
 		MaxBytes: maxBytes,
 		Roots:    f.roots,
 		Cwd:      cwd,
-		Backend:  s.backend(),
+		Backend:  s.backend(g.offline),
 	})
 	d.Logger.InfoContext(ctx, "serving MCP on stdio", "roots", f.roots)
 	return serve(ctx, srv)
 }
 
-// backend runs the MCP tools through the same pipelines as the commands.
-func (s *session) backend() mcpserver.Backend {
+// backend runs the MCP tools through the same pipelines as the commands. offline is --offline,
+// which makes audit report when its oldest OSV answer was stored.
+func (s *session) backend(offline bool) mcpserver.Backend {
 	return mcpserver.Backend{
 		Digest: func(ctx context.Context, a mcpserver.DigestArgs) (*report.ToolDigest, error) {
 			minConfidence := s.d.Config.Config.Policy.MinConfidence
@@ -193,6 +194,13 @@ func (s *session) backend() mcpserver.Backend {
 				return nil, nil, err
 			}
 			return out, driftErrors(res, out), nil
+		},
+		Audit: func(ctx context.Context, a mcpserver.AuditArgs) (*report.Audit, []render.Error, error) {
+			run, err := s.audit(ctx, auditArgs{roots: a.Roots, tools: a.Tools, base: a.Base, offline: offline})
+			if err != nil {
+				return nil, nil, err
+			}
+			return run.out, append(run.errors(), run.sourceErrors()...), nil
 		},
 		Resolve: s.resolve,
 	}

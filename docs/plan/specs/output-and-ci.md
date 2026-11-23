@@ -116,7 +116,7 @@ reasoning; tfcensus shares the code.
 - `--format github` for `outdated` and `drift` turns the SARIF results into workflow commands
   (`sarif.WriteGitHub`): error, warning, or notice for note, with the pin's file and line.
 - `relgap notify --from <json> --notify github-pr-comment` reads saved digest, outdated and drift
-  envelopes (told apart by their data) and keeps one comment per kind with the
+  envelopes (and audit ones since M29, vulnerability-audit.md) (told apart by their data) and keeps one comment per kind with the
   `<!-- relgap:v1 {"kind","scope":"pull-request","hash"} -->` marker. A digest is open when it
   covers a tool, an outdated report when a pin is outdated, EOL, vulnerable or failed, and a
   drift report when a tool drifts or failed. An unchanged hash means no write; a closed report

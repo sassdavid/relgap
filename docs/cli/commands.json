@@ -95,7 +95,7 @@
     {
       "name": "notify",
       "path": "/cli/notify",
-      "short": "Publish saved digest, outdated and drift reports as a GitHub pull request comment",
+      "short": "Publish saved digest, outdated, drift and audit reports as a GitHub pull request comment",
       "hidden": false
     },
     {

@@ -5,8 +5,8 @@ description: Register relgap as an MCP server in Claude Code or another client, 
 # Use relgap from Claude Code or another MCP client
 
 `relgap mcp` runs a Model Context Protocol server on stdin and stdout. An agent can then ask what
-breaks between two versions, which pins are behind and where repositories disagree, and gets the
-JSON that `--format json` prints. [MCP tools and prompts](/reference/mcp) has the input schema of
+breaks between two versions, which pins are behind or vulnerable and where repositories
+disagree, and gets the JSON that `--format json` prints. [MCP tools and prompts](/reference/mcp) has the input schema of
 every tool.
 
 ## Register the server
@@ -27,7 +27,7 @@ environment that starts the client. Logs go to stderr; add `-v` after `mcp` for 
 
 ## Choose what it may read
 
-`outdated` and `drift` read only directories inside the server's roots:
+`outdated`, `drift` and `audit` read only directories inside the server's roots:
 
 1. the `--root` directories, when you pass any
 2. else the roots the client lists: Claude Code lists its launch directory and the directories
@@ -50,6 +50,7 @@ reads the config file once at startup, and the search for `.relgap.yaml` stops a
 | `breaking_changes` | the same digest with only the breaking and deprecation entries |
 | `outdated` | `relgap outdated <path>` |
 | `drift` | `relgap drift <roots...>`, with `tools`, `latest` and `ignore_constraints` |
+| `audit` | `relgap audit <roots...>`, with `tools` and `vuln_severity`, which lists only the findings at that rating or higher and those of unknown severity |
 | `resolve` | `relgap resolve <tool>` |
 
 The tools are read-only. They write nothing except the HTTP cache, which they share with the other
@@ -67,7 +68,8 @@ relgap mcp --offline
 A result over `--max-result-bytes` (default 50,000, Claude Code's limit for showing a result to
 the model) is split into pages. The envelope then has a `page` field, and the agent calls the
 same tool with only `page.next_cursor` to get the rest. Breaking changes, failed and outdated
-pins, and drifting tools come first. A digest page lists only the versions its entries cite. A
+pins, and drifting tools come first. An audit page takes findings first, then unchecked tool
+versions, then suppressed findings. A digest page lists only the versions its entries cite. A
 cursor lasts 15 minutes after its last use. `--max-result-bytes 0` never splits.
 
 ## The upgrade_review prompt

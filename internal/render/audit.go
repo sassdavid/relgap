@@ -69,8 +69,10 @@ func AuditText(w io.Writer, a *report.Audit, color bool) error {
 }
 
 // AuditMarkdown writes the findings as a Markdown table with the same sections as [AuditText].
-// Mentions and issue references in advisory summaries are silenced.
-func AuditMarkdown(w io.Writer, a *report.Audit) error {
+// Mentions and issue references in advisory summaries are silenced. failed are the envelope
+// errors of a saved report, listed under "Failed"; a report fresh from a run passes nil, since
+// its pins carry their failures.
+func AuditMarkdown(w io.Writer, a *report.Audit, failed []Error) error {
 	var b strings.Builder
 	if len(a.Findings) > 0 {
 		rows := auditRows(a)
@@ -95,7 +97,11 @@ func AuditMarkdown(w io.Writer, a *report.Audit) error {
 		}
 		b.WriteString("\n")
 	}
-	if lines := auditFailedLines(a); len(lines) > 0 {
+	lines := auditFailedLines(a)
+	for _, e := range failed {
+		lines = append(lines, errorLine(e))
+	}
+	if len(lines) > 0 {
 		b.WriteString("Failed:\n\n")
 		for _, line := range lines {
 			b.WriteString("- " + mdCell(line) + "\n")
@@ -320,4 +326,12 @@ func AuditSARIF(a *report.Audit, problems []scan.Problem, version string) *sarif
 			scan.Location{Repo: pr.Repo, File: pr.File}, "", "")
 	}
 	return r.log
+}
+
+// errorLine describes an envelope error as "target: message".
+func errorLine(e Error) string {
+	if e.Target == "" {
+		return e.Message
+	}
+	return e.Target + ": " + e.Message
 }

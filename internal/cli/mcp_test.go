@@ -152,6 +152,18 @@ func mcpCases() []mcpCase {
 			golden: "drift/tree.json", schema: "drift-v1.json", items: "/data/tools",
 		},
 		{
+			name: "audit", now: "2026-11-23T12:00:00Z",
+			cassettes: auditTreeCassettes(),
+			setup: func(t *testing.T, f *mcpFixture) {
+				t.Helper()
+				if err := writeAuditTree(filepath.Join(f.dir, "tree")); err != nil {
+					t.Fatal(err)
+				}
+			},
+			tool: "audit", args: map[string]any{"roots": []string{"tree"}},
+			golden: "audit/tree.json", schema: "audit-v1.json", items: "/data/findings",
+		},
+		{
 			name: "resolve", now: "2026-11-12T12:00:00Z",
 			tool: "resolve", args: map[string]any{"tool": "terraform"},
 			golden: "resolve/terraform.json", schema: "report-v1.json",
@@ -652,7 +664,8 @@ func TestMCP_listsOnlyReadOnlyTools(t *testing.T) {
 			}
 		}
 		slices.Sort(names)
-		if want := []string{"breaking_changes", "digest", "drift", "outdated", "resolve"}; !slices.Equal(names, want) {
+		want := []string{"audit", "breaking_changes", "digest", "drift", "outdated", "resolve"}
+		if !slices.Equal(names, want) {
 			t.Errorf("tools = %q, want %q", names, want)
 		}
 	})
