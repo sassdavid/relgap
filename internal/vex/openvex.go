@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 	"time"
 )
@@ -59,7 +60,7 @@ type Component struct {
 
 // File is a document read from a path.
 type File struct {
-	Path     string
+	Path     string // slash-separated
 	Document Document
 }
 
@@ -73,7 +74,8 @@ func Read(path string) (File, error) {
 	if err != nil {
 		return File{}, fmt.Errorf("read vex document %s: %w", path, err)
 	}
-	return File{Path: path, Document: doc}, nil
+	// Reports show the path slash-separated, as they show every other path.
+	return File{Path: filepath.ToSlash(path), Document: doc}, nil
 }
 
 // Parse decodes an OpenVEX v0.2.0 document. Another @context, such as that of the older
