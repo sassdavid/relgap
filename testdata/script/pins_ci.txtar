@@ -1,5 +1,6 @@
 # ci: image keys, a GitHub job container, *_VERSION and *-version keys. uses: lines count only
-# with scan.detectors.ci_actions.
+# with scan.detectors.ci_actions. A commit SHA with a full version in its line comment is exact
+# at that version; a bare SHA or a major tag in the comment is not.
 env TEST_NOW=2026-11-11T00:00:00Z
 exec relgap pins --format json
 jsonschema pins-v1.json stdout
@@ -32,6 +33,10 @@ jobs:
       - uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: ${{ env.TERRAFORM_VERSION }}
+      - uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
+      - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # renovate: tag=v4.3.0
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
 -- .gitlab-ci.yml --
 image:
   name: hashicorp/terraform:1.15.8

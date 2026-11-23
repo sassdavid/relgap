@@ -28,6 +28,7 @@ field came from.
 | `npm:package` | `npm:prettier` | the registries, then the npm registry |
 | `pypi:package` | `pypi:black` | the registries, then PyPI |
 | `image:name`, `image:name:<prefix>*<suffix>` | `image:nginx:*-alpine` | the image registry's tags; the source label's GitHub repository becomes the notes tool |
+| `action:owner/repo`, `action:owner/repo/path` | `action:github/codeql-action/init` | the action's github.com repository, `github/codeql-action`; no registry layer applies |
 
 When a registry knows the tool, every form gives the same result as its name: `github:hashicorp/terraform`
 and `TERRAFORM_VERSION` both resolve to terraform with its curated entry.

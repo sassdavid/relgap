@@ -182,12 +182,33 @@ func (o *Options) ciPin(key string, val *yaml.Node) (Pin, bool) {
 		if !o.Actions || !found || strings.HasPrefix(action, ".") {
 			return Pin{}, false
 		}
-		return Pin{Tool: "action:" + action, RawName: action, Kind: KindAction, Value: version, Location: loc}, true
+		p := Pin{Tool: "action:" + action, RawName: action, Kind: KindAction, Value: version, Location: loc}
+		if cv := commentVersion(val.LineComment); commitSHA.MatchString(version) && cv != "" {
+			p.Match, p.Version = MatchExact, cv
+		}
+		return p, true
 	}
 	if m := versionKey.FindStringSubmatch(key); m != nil {
 		return Pin{RawName: key, Kind: KindTool, Value: v, Location: loc, lookup: envName(key)}, true
 	}
 	return Pin{}, false
+}
+
+var (
+	commitSHA   = regexp.MustCompile(`^(?:[0-9a-f]{40}|[0-9a-f]{64})$`)
+	commentLead = regexp.MustCompile(`(?i)^(?:renovate\s*:\s*)?(?:pin\s+|tag\s*=\s*)?@?`)
+)
+
+// commentVersion returns the full version a SHA pin's line comment names, without a leading v,
+// or "". It reads the forms Renovate's github-actions manager reads: # v4.1.2, # tag=v4.1.2,
+// # renovate: tag=v4.1.2 and # pin @v4.1.2. A major tag such as # v4 names no single release.
+func commentVersion(comment string) string {
+	c := strings.TrimSpace(strings.TrimPrefix(strings.TrimSpace(comment), "#"))
+	fields := strings.Fields(commentLead.ReplaceAllString(c, ""))
+	if len(fields) == 0 || !fullVersion.MatchString(fields[0]) {
+		return ""
+	}
+	return strings.TrimPrefix(fields[0], "v")
 }
 
 func cmpNode(ns ...*yaml.Node) *yaml.Node {

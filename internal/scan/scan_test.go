@@ -327,3 +327,22 @@ func TestExtractPrefix(t *testing.T) {
 		assert.Equal(t, []any{tt.want, tt.ok}, []any{got, ok}, tt.extract)
 	}
 }
+
+func TestCommentVersion(t *testing.T) {
+	t.Parallel()
+	tests := map[string]string{
+		"# v4.1.3":                  "4.1.3",
+		"#v4.1.3":                   "4.1.3",
+		"# 4.1.3 (latest)":          "4.1.3",
+		"# tag=v4.1.3":              "4.1.3",
+		"# renovate: tag=v4.1.3":    "4.1.3",
+		"# pin @v4.1.3":             "4.1.3",
+		"# v4":                      "",
+		"# v4.1":                    "",
+		"# keep in step with build": "",
+		"":                          "",
+	}
+	for comment, want := range tests {
+		assert.Equal(t, want, scan.CommentVersion(comment), comment)
+	}
+}

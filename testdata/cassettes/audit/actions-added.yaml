@@ -1,0 +1,323 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 282
+        host: api.github.com
+        body: |
+            {"query":"query($first:Int!$n0:String!$o0:String!){r0: repository(owner: $o0, name: $n0){releases(first: $first, orderBy: {field: CREATED_AT, direction: DESC}){nodes{tagName,isDraft,isPrerelease,publishedAt,url}}}}","variables":{"first":30,"n0":"download-artifact","o0":"actions"}}
+        headers:
+            Content-Type:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.github.com/graphql
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"data":{"r0":{"releases":{"nodes":[{"tagName":"v8.0.2","isDraft":false,"isPrerelease":false,"publishedAt":"2026-10-07T10:09:51Z","url":"https://github.com/actions/download-artifact/releases/tag/v8.0.2"},{"tagName":"v3.1.0","isDraft":false,"isPrerelease":false,"publishedAt":"2026-03-17T13:36:17Z","url":"https://github.com/actions/download-artifact/releases/tag/v3.1.0"},{"tagName":"v3.1.0-node20","isDraft":false,"isPrerelease":false,"publishedAt":"2026-03-17T13:32:59Z","url":"https://github.com/actions/download-artifact/releases/tag/v3.1.0-node20"},{"tagName":"v8.0.1","isDraft":false,"isPrerelease":false,"publishedAt":"2026-03-11T15:44:25Z","url":"https://github.com/actions/download-artifact/releases/tag/v8.0.1"},{"tagName":"v8.0.0","isDraft":false,"isPrerelease":false,"publishedAt":"2026-02-26T18:21:25Z","url":"https://github.com/actions/download-artifact/releases/tag/v8.0.0"},{"tagName":"v7.0.0","isDraft":false,"isPrerelease":false,"publishedAt":"2025-12-12T18:49:01Z","url":"https://github.com/actions/download-artifact/releases/tag/v7.0.0"},{"tagName":"v6.0.0","isDraft":false,"isPrerelease":false,"publishedAt":"2025-10-24T18:19:24Z","url":"https://github.com/actions/download-artifact/releases/tag/v6.0.0"},{"tagName":"v5.0.0","isDraft":false,"isPrerelease":false,"publishedAt":"2025-08-05T21:38:42Z","url":"https://github.com/actions/download-artifact/releases/tag/v5.0.0"},{"tagName":"v4.3.0","isDraft":false,"isPrerelease":false,"publishedAt":"2025-04-24T16:28:16Z","url":"https://github.com/actions/download-artifact/releases/tag/v4.3.0"},{"tagName":"v4.2.1","isDraft":false,"isPrerelease":false,"publishedAt":"2025-03-19T15:54:58Z","url":"https://github.com/actions/download-artifact/releases/tag/v4.2.1"},{"tagName":"v4.2.0","isDraft":false,"isPrerelease":false,"publishedAt":"2025-03-18T16:04:25Z","url":"https://github.com/actions/download-artifact/releases/tag/v4.2.0"},{"tagName":"v4.1.9","isDraft":false,"isPrerelease":false,"publishedAt":"2025-02-25T21:26:04Z","url":"https://github.com/actions/download-artifact/releases/tag/v4.1.9"},{"tagName":"v4.1.8","isDraft":false,"isPrerelease":false,"publishedAt":"2024-07-05T15:12:41Z","url":"https://github.com/actions/download-artifact/releases/tag/v4.1.8"},{"tagName":"v4.1.7","isDraft":false,"isPrerelease":false,"publishedAt":"2024-04-24T14:48:32Z","url":"https://github.com/actions/download-artifact/releases/tag/v4.1.7"},{"tagName":"v4.1.6","isDraft":false,"isPrerelease":false,"publishedAt":"2024-04-22T16:02:58Z","url":"https://github.com/actions/download-artifact/releases/tag/v4.1.6"},{"tagName":"v4.1.5","isDraft":false,"isPrerelease":false,"publishedAt":"2024-04-18T14:32:59Z","url":"https://github.com/actions/download-artifact/releases/tag/v4.1.5"},{"tagName":"v4.1.4","isDraft":false,"isPrerelease":false,"publishedAt":"2024-03-01T18:28:41Z","url":"https://github.com/actions/download-artifact/releases/tag/v4.1.4"},{"tagName":"v4.1.3","isDraft":false,"isPrerelease":false,"publishedAt":"2024-02-26T20:25:47Z","url":"https://github.com/actions/download-artifact/releases/tag/v4.1.3"},{"tagName":"v4.1.2","isDraft":false,"isPrerelease":false,"publishedAt":"2024-02-05T21:28:08Z","url":"https://github.com/actions/download-artifact/releases/tag/v4.1.2"},{"tagName":"v4.1.1","isDraft":false,"isPrerelease":false,"publishedAt":"2024-01-10T17:24:44Z","url":"https://github.com/actions/download-artifact/releases/tag/v4.1.1"},{"tagName":"v4.1.0","isDraft":false,"isPrerelease":false,"publishedAt":"2023-12-18T22:24:23Z","url":"https://github.com/actions/download-artifact/releases/tag/v4.1.0"},{"tagName":"v4.0.0","isDraft":false,"isPrerelease":false,"publishedAt":"2023-12-14T16:40:17Z","url":"https://github.com/actions/download-artifact/releases/tag/v4.0.0"},{"tagName":"v2.1.1","isDraft":false,"isPrerelease":false,"publishedAt":"2023-03-08T21:53:32Z","url":"https://github.com/actions/download-artifact/releases/tag/v2.1.1"},{"tagName":"v3.0.2","isDraft":false,"isPrerelease":false,"publishedAt":"2023-01-05T21:13:22Z","url":"https://github.com/actions/download-artifact/releases/tag/v3.0.2"},{"tagName":"v3.0.1","isDraft":false,"isPrerelease":false,"publishedAt":"2022-10-20T23:34:13Z","url":"https://github.com/actions/download-artifact/releases/tag/v3.0.1"},{"tagName":"v3.0.0","isDraft":false,"isPrerelease":false,"publishedAt":"2022-03-02T18:50:42Z","url":"https://github.com/actions/download-artifact/releases/tag/v3.0.0"},{"tagName":"v2.1.0","isDraft":false,"isPrerelease":false,"publishedAt":"2021-12-07T19:22:58Z","url":"https://github.com/actions/download-artifact/releases/tag/v2.1.0"},{"tagName":"v2.0.10","isDraft":false,"isPrerelease":false,"publishedAt":"2021-06-16T20:22:22Z","url":"https://github.com/actions/download-artifact/releases/tag/v2.0.10"},{"tagName":"v2.0.9","isDraft":false,"isPrerelease":false,"publishedAt":"2021-04-06T21:05:28Z","url":"https://github.com/actions/download-artifact/releases/tag/v2.0.9"},{"tagName":"v2.0.8","isDraft":false,"isPrerelease":false,"publishedAt":"2021-01-04T17:38:03Z","url":"https://github.com/actions/download-artifact/releases/tag/v2.0.8"}]}}}}'
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/json; charset=utf-8
+            Date:
+                - Mon, 23 Nov 2026 13:59:07 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept-Encoding, Accept, X-Requested-With
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.v4; format=json
+            X-Ratelimit-Limit:
+                - "5000"
+            X-Ratelimit-Remaining:
+                - "4966"
+            X-Ratelimit-Reset:
+                - "1795443940"
+            X-Ratelimit-Resource:
+                - graphql
+            X-Ratelimit-Used:
+                - "34"
+            X-Xss-Protection:
+                - "0"
+        status: 200 OK
+        code: 200
+        duration: 424.659542ms
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 801
+        host: api.github.com
+        body: |
+            {"query":"query($name:String!$owner:String!$t0:String!$t1:String!$t2:String!$t3:String!$t4:String!$t5:String!){repository(owner: $owner, name: $name){r0: release(tagName: $t0){tagName,isDraft,isPrerelease,publishedAt,url,description},r1: release(tagName: $t1){tagName,isDraft,isPrerelease,publishedAt,url,description},r2: release(tagName: $t2){tagName,isDraft,isPrerelease,publishedAt,url,description},r3: release(tagName: $t3){tagName,isDraft,isPrerelease,publishedAt,url,description},r4: release(tagName: $t4){tagName,isDraft,isPrerelease,publishedAt,url,description},r5: release(tagName: $t5){tagName,isDraft,isPrerelease,publishedAt,url,description}}}","variables":{"name":"download-artifact","owner":"actions","t0":"v5.0.0","t1":"v6.0.0","t2":"v7.0.0","t3":"v8.0.0","t4":"v8.0.1","t5":"v8.0.2"}}
+        headers:
+            Content-Type:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.github.com/graphql
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: "{\"data\":{\"repository\":{\"r0\":{\"tagName\":\"v5.0.0\",\"isDraft\":false,\"isPrerelease\":false,\"publishedAt\":\"2025-08-05T21:38:42Z\",\"url\":\"https://github.com/actions/download-artifact/releases/tag/v5.0.0\",\"description\":\"## What's Changed\\r\\n* Update README.md by @nebuk89 in https://github.com/actions/download-artifact/pull/407\\r\\n* BREAKING fix: inconsistent path behavior for single artifact downloads by ID by @GrantBirki in https://github.com/actions/download-artifact/pull/416\\r\\n\\r\\n## v5.0.0\\r\\n\\r\\n### \U0001F6A8 Breaking Change\\r\\n\\r\\nThis release fixes an inconsistency in path behavior for single artifact downloads by ID. **If you're downloading single artifacts by ID, the output path may change.**\\r\\n\\r\\n#### What Changed\\r\\n\\r\\nPreviously, **single artifact downloads** behaved differently depending on how you specified the artifact:\\r\\n\\r\\n- **By name**: `name: my-artifact` → extracted to `path/` (direct)\\r\\n- **By ID**: `artifact-ids: 12345` → extracted to `path/my-artifact/` (nested)\\r\\n\\r\\nNow both methods are consistent:\\r\\n\\r\\n- **By name**: `name: my-artifact` → extracted to `path/` (unchanged)\\r\\n- **By ID**: `artifact-ids: 12345` → extracted to `path/` (fixed - now direct)\\r\\n\\r\\n#### Migration Guide\\r\\n\\r\\n##### ✅ No Action Needed If:\\r\\n\\r\\n- You download artifacts by **name**\\r\\n- You download **multiple** artifacts by ID\\r\\n- You already use `merge-multiple: true` as a workaround\\r\\n\\r\\n##### ⚠️ Action Required If:\\r\\n\\r\\nYou download **single artifacts by ID** and your workflows expect the nested directory structure.\\r\\n\\r\\n**Before v5 (nested structure):**\\r\\n\\r\\n```yaml\\r\\n- uses: actions/download-artifact@v4\\r\\n  with:\\r\\n    artifact-ids: 12345\\r\\n    path: dist\\r\\n# Files were in: dist/my-artifact/\\r\\n```\\r\\n\\r\\n> Where `my-artifact` is the name of the artifact you previously uploaded\\r\\n\\r\\n**To maintain old behavior (if needed):**\\r\\n\\r\\n```yaml\\r\\n- uses: actions/download-artifact@v5\\r\\n  with:\\r\\n    artifact-ids: 12345\\r\\n    path: dist/my-artifact  # Explicitly specify the nested path\\r\\n```\\r\\n\\r\\n## New Contributors\\r\\n* @nebuk89 made their first contribution in https://github.com/actions/download-artifact/pull/407\\r\\n\\r\\n**Full Changelog**: https://github.com/actions/download-artifact/compare/v4...v5.0.0\"},\"r1\":{\"tagName\":\"v6.0.0\",\"isDraft\":false,\"isPrerelease\":false,\"publishedAt\":\"2025-10-24T18:19:24Z\",\"url\":\"https://github.com/actions/download-artifact/releases/tag/v6.0.0\",\"description\":\"## What's Changed\\r\\n\\r\\n**BREAKING CHANGE:** this update supports Node `v24.x`. This is not a breaking change per-se but we're treating it as such.\\r\\n\\r\\n* Update README for download-artifact v5 changes by @yacaovsnc in https://github.com/actions/download-artifact/pull/417\\r\\n* Update README with artifact extraction details by @yacaovsnc in https://github.com/actions/download-artifact/pull/424\\r\\n* Readme: spell out the first use of GHES by @danwkennedy in https://github.com/actions/download-artifact/pull/431\\r\\n* Bump `@actions/artifact` to `v4.0.0`\\r\\n* Prepare `v6.0.0` by @danwkennedy in https://github.com/actions/download-artifact/pull/438\\r\\n\\r\\n## New Contributors\\r\\n* @danwkennedy made their first contribution in https://github.com/actions/download-artifact/pull/431\\r\\n\\r\\n**Full Changelog**: https://github.com/actions/download-artifact/compare/v5...v6.0.0\"},\"r2\":{\"tagName\":\"v7.0.0\",\"isDraft\":false,\"isPrerelease\":false,\"publishedAt\":\"2025-12-12T18:49:01Z\",\"url\":\"https://github.com/actions/download-artifact/releases/tag/v7.0.0\",\"description\":\"## v7 - What's new\\r\\n\\r\\n> [!IMPORTANT]\\r\\n> actions/download-artifact@v7 now runs on Node.js 24 (`runs.using: node24`) and requires a minimum Actions Runner version of 2.327.1. If you are using self-hosted runners, ensure they are updated before upgrading.\\r\\n### Node.js 24\\r\\n\\r\\nThis release updates the runtime to Node.js 24. v6 had preliminary support for Node 24, however this action was by default still running on Node.js 20. Now this action by default will run on Node.js 24.\\r\\n\\r\\n## What's Changed\\r\\n* Update GHES guidance to include reference to Node 20 version by @patrikpolyak in https://github.com/actions/download-artifact/pull/440\\r\\n* Download Artifact Node24 support by @salmanmkc in https://github.com/actions/download-artifact/pull/415\\r\\n* fix: update @actions/artifact to fix Node.js 24 punycode deprecation by @salmanmkc in https://github.com/actions/download-artifact/pull/451\\r\\n* prepare release v7.0.0 for Node.js 24 support by @salmanmkc in https://github.com/actions/download-artifact/pull/452\\r\\n\\r\\n## New Contributors\\r\\n* @patrikpolyak made their first contribution in https://github.com/actions/download-artifact/pull/440\\r\\n* @salmanmkc made their first contribution in https://github.com/actions/download-artifact/pull/415\\r\\n\\r\\n**Full Changelog**: https://github.com/actions/download-artifact/compare/v6.0.0...v7.0.0\"},\"r3\":{\"tagName\":\"v8.0.0\",\"isDraft\":false,\"isPrerelease\":false,\"publishedAt\":\"2026-02-26T18:21:25Z\",\"url\":\"https://github.com/actions/download-artifact/releases/tag/v8.0.0\",\"description\":\"## v8 - What's new\\r\\n\\r\\n> [!IMPORTANT]\\r\\n> actions/download-artifact@v8 has been migrated to an ESM module. This should be transparent to the caller but forks might need to make significant changes.\\r\\n\\r\\n> [!IMPORTANT]\\r\\n> Hash mismatches will now error by default. Users can override this behavior with a setting change (see below).\\r\\n\\r\\n### Direct downloads\\r\\n\\r\\nTo support direct uploads in `actions/upload-artifact`, the action will no longer attempt to unzip all downloaded files. Instead, the action checks the `Content-Type` header ahead of unzipping and skips non-zipped files. Callers wishing to download a zipped file as-is can also set the new `skip-decompress` parameter to `true`.\\r\\n\\r\\n### Enforced checks (breaking)\\r\\n\\r\\nA previous release introduced digest checks on the download. If a download hash didn't match the expected hash from the server, the action would log a warning. Callers can now configure the behavior on mismatch with the `digest-mismatch` parameter. To be secure by default, we are now defaulting the behavior to `error` which will fail the workflow run.\\r\\n\\r\\n### ESM\\r\\n\\r\\nTo support new versions of the @actions/* packages, we've upgraded the package to ESM.\\r\\n\\r\\n## What's Changed\\r\\n* Don't attempt to un-zip non-zipped downloads by @danwkennedy in https://github.com/actions/download-artifact/pull/460\\r\\n* Add a setting to specify what to do on hash mismatch and default it to `error` by @danwkennedy in https://github.com/actions/download-artifact/pull/461\\r\\n\\r\\n\\r\\n**Full Changelog**: https://github.com/actions/download-artifact/compare/v7...v8.0.0\"},\"r4\":{\"tagName\":\"v8.0.1\",\"isDraft\":false,\"isPrerelease\":false,\"publishedAt\":\"2026-03-11T15:44:25Z\",\"url\":\"https://github.com/actions/download-artifact/releases/tag/v8.0.1\",\"description\":\"## What's Changed\\r\\n\\r\\n* Support for CJK characters in the artifact name by @danwkennedy in https://github.com/actions/download-artifact/pull/471\\r\\n* Add a regression test for artifact name + content-type mismatches by @danwkennedy in https://github.com/actions/download-artifact/pull/472\\r\\n\\r\\n**Full Changelog**: https://github.com/actions/download-artifact/compare/v8...v8.0.1\"},\"r5\":{\"tagName\":\"v8.0.2\",\"isDraft\":false,\"isPrerelease\":false,\"publishedAt\":\"2026-10-07T10:09:51Z\",\"url\":\"https://github.com/actions/download-artifact/releases/tag/v8.0.2\",\"description\":\"## What's Changed\\r\\n* Update the readme by @danwkennedy in https://github.com/actions/download-artifact/pull/473\\r\\n* Improves artifact download retries when the service returns HTTP 429 (rate limiting), including honoring valid Retry-After headers.\\r\\n* Update @actions/artifact to 6.3.1 by @tunc-d in https://github.com/actions/download-artifact/pull/492\\r\\n* Prepare download-artifact v8.0.2 by @tunc-d in https://github.com/actions/download-artifact/pull/493\\r\\n\\r\\n## New Contributors\\r\\n* @tunc-d made their first contribution in https://github.com/actions/download-artifact/pull/492\\r\\n\\r\\n**Full Changelog**: https://github.com/actions/download-artifact/compare/v8.0.1...v8.0.2\"}}}}"
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/json; charset=utf-8
+            Date:
+                - Mon, 23 Nov 2026 13:59:08 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept-Encoding, Accept, X-Requested-With
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.v4; format=json
+            X-Ratelimit-Limit:
+                - "5000"
+            X-Ratelimit-Remaining:
+                - "4964"
+            X-Ratelimit-Reset:
+                - "1795443940"
+            X-Ratelimit-Resource:
+                - graphql
+            X-Ratelimit-Used:
+                - "36"
+            X-Xss-Protection:
+                - "0"
+        status: 200 OK
+        code: 200
+        duration: 412.8225ms
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 1237
+        host: api.github.com
+        body: |
+            {"query":"query($name:String!$owner:String!$t0:String!$t1:String!$t2:String!$t3:String!$t4:String!$t5:String!$t6:String!$t7:String!$t8:String!$t9:String!){repository(owner: $owner, name: $name){r0: release(tagName: $t0){tagName,isDraft,isPrerelease,publishedAt,url,description},r1: release(tagName: $t1){tagName,isDraft,isPrerelease,publishedAt,url,description},r2: release(tagName: $t2){tagName,isDraft,isPrerelease,publishedAt,url,description},r3: release(tagName: $t3){tagName,isDraft,isPrerelease,publishedAt,url,description},r4: release(tagName: $t4){tagName,isDraft,isPrerelease,publishedAt,url,description},r5: release(tagName: $t5){tagName,isDraft,isPrerelease,publishedAt,url,description},r6: release(tagName: $t6){tagName,isDraft,isPrerelease,publishedAt,url,description},r7: release(tagName: $t7){tagName,isDraft,isPrerelease,publishedAt,url,description},r8: release(tagName: $t8){tagName,isDraft,isPrerelease,publishedAt,url,description},r9: release(tagName: $t9){tagName,isDraft,isPrerelease,publishedAt,url,description}}}","variables":{"name":"download-artifact","owner":"actions","t0":"v4.1.3","t1":"v4.1.4","t2":"v4.1.5","t3":"v4.1.6","t4":"v4.1.7","t5":"v4.1.8","t6":"v4.1.9","t7":"v4.2.0","t8":"v4.2.1","t9":"v4.3.0"}}
+        headers:
+            Content-Type:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.github.com/graphql
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"data":{"repository":{"r0":{"tagName":"v4.1.3","isDraft":false,"isPrerelease":false,"publishedAt":"2024-02-26T20:25:47Z","url":"https://github.com/actions/download-artifact/releases/tag/v4.1.3","description":"## What''s Changed\r\n* Update release-new-action-version.yml by @konradpabjan in https://github.com/actions/download-artifact/pull/292\r\n* Update toolkit dependency with updated unzip logic by @bethanyj28 in https://github.com/actions/download-artifact/pull/299\r\n* Update @actions/artifact by @bethanyj28 in https://github.com/actions/download-artifact/pull/303\r\n\r\n## New Contributors\r\n* @bethanyj28 made their first contribution in https://github.com/actions/download-artifact/pull/299\r\n\r\n**Full Changelog**: https://github.com/actions/download-artifact/compare/v4...v4.1.3"},"r1":{"tagName":"v4.1.4","isDraft":false,"isPrerelease":false,"publishedAt":"2024-03-01T18:28:41Z","url":"https://github.com/actions/download-artifact/releases/tag/v4.1.4","description":"## What''s Changed\r\n* Update @actions/artifact by @bethanyj28 in https://github.com/actions/download-artifact/pull/307\r\n\r\n\r\n**Full Changelog**: https://github.com/actions/download-artifact/compare/v4...v4.1.4"},"r2":{"tagName":"v4.1.5","isDraft":false,"isPrerelease":false,"publishedAt":"2024-04-18T14:32:59Z","url":"https://github.com/actions/download-artifact/releases/tag/v4.1.5","description":"## What''s Changed\r\n* Update readme with v3/v2/v1 deprecation notice by @robherley in https://github.com/actions/download-artifact/pull/322\r\n* Update dependencies `@actions/core` to v1.10.1 and `@actions/artifact` to v2.1.5\r\n\r\n**Full Changelog**: https://github.com/actions/download-artifact/compare/v4.1.4...v4.1.5"},"r3":{"tagName":"v4.1.6","isDraft":false,"isPrerelease":false,"publishedAt":"2024-04-22T16:02:58Z","url":"https://github.com/actions/download-artifact/releases/tag/v4.1.6","description":"## What''s Changed\r\n* updating `@actions/artifact` dependency to v2.1.6 by @eggyhead in https://github.com/actions/download-artifact/pull/324\r\n\r\n\r\n**Full Changelog**: https://github.com/actions/download-artifact/compare/v4.1.5...v4.1.6\r\n"},"r4":{"tagName":"v4.1.7","isDraft":false,"isPrerelease":false,"publishedAt":"2024-04-24T14:48:32Z","url":"https://github.com/actions/download-artifact/releases/tag/v4.1.7","description":"## What''s Changed\r\n* Update @actions/artifact dependency by @bethanyj28 in https://github.com/actions/download-artifact/pull/325\r\n\r\n\r\n**Full Changelog**: https://github.com/actions/download-artifact/compare/v4.1.6...v4.1.7"},"r5":{"tagName":"v4.1.8","isDraft":false,"isPrerelease":false,"publishedAt":"2024-07-05T15:12:41Z","url":"https://github.com/actions/download-artifact/releases/tag/v4.1.8","description":"## What''s Changed\r\n* Update @actions/artifact version, bump dependencies by @robherley in https://github.com/actions/download-artifact/pull/341\r\n\r\n\r\n**Full Changelog**: https://github.com/actions/download-artifact/compare/v4.1.7...v4.1.8"},"r6":{"tagName":"v4.1.9","isDraft":false,"isPrerelease":false,"publishedAt":"2025-02-25T21:26:04Z","url":"https://github.com/actions/download-artifact/releases/tag/v4.1.9","description":"## What''s Changed\r\n* Add workflow file for publishing releases to immutable action package by @Jcambass in https://github.com/actions/download-artifact/pull/354\r\n* docs: small migration fix by @froblesmartin in https://github.com/actions/download-artifact/pull/370\r\n* Update MIGRATION.md by @andyfeller in https://github.com/actions/download-artifact/pull/372\r\n* Update artifact package to 2.2.2 by @yacaovsnc in https://github.com/actions/download-artifact/pull/380\r\n\r\n## New Contributors\r\n* @Jcambass made their first contribution in https://github.com/actions/download-artifact/pull/354\r\n* @froblesmartin made their first contribution in https://github.com/actions/download-artifact/pull/370\r\n* @andyfeller made their first contribution in https://github.com/actions/download-artifact/pull/372\r\n* @yacaovsnc made their first contribution in https://github.com/actions/download-artifact/pull/380\r\n\r\n**Full Changelog**: https://github.com/actions/download-artifact/compare/v4.1.8...v4.1.9"},"r7":{"tagName":"v4.2.0","isDraft":false,"isPrerelease":false,"publishedAt":"2025-03-18T16:04:25Z","url":"https://github.com/actions/download-artifact/releases/tag/v4.2.0","description":"## What''s Changed\r\n* Update README.md by @lkfortuna in https://github.com/actions/download-artifact/pull/384\r\n* Bump artifact version, do digest check by @GhadimiR in https://github.com/actions/download-artifact/pull/383\r\n\r\n## New Contributors\r\n* @lkfortuna made their first contribution in https://github.com/actions/download-artifact/pull/384\r\n* @GhadimiR made their first contribution in https://github.com/actions/download-artifact/pull/383\r\n\r\n**Full Changelog**: https://github.com/actions/download-artifact/compare/v4.1.9...v4.2.0"},"r8":{"tagName":"v4.2.1","isDraft":false,"isPrerelease":false,"publishedAt":"2025-03-19T15:54:58Z","url":"https://github.com/actions/download-artifact/releases/tag/v4.2.1","description":"## What''s Changed\r\n* Add unit tests by @GhadimiR in https://github.com/actions/download-artifact/pull/392\r\n* Fix bug introduced in 4.2.0 by @GhadimiR in https://github.com/actions/download-artifact/pull/391\r\n\r\n\r\n**Full Changelog**: https://github.com/actions/download-artifact/compare/v4.2.0...v4.2.1"},"r9":{"tagName":"v4.3.0","isDraft":false,"isPrerelease":false,"publishedAt":"2025-04-24T16:28:16Z","url":"https://github.com/actions/download-artifact/releases/tag/v4.3.0","description":"## What''s Changed\r\n* feat: implement new `artifact-ids` input by @GrantBirki in https://github.com/actions/download-artifact/pull/401\r\n* Fix workflow example for downloading by artifact ID by @joshmgross in https://github.com/actions/download-artifact/pull/402\r\n* Prep for v4.3.0 release by @robherley in https://github.com/actions/download-artifact/pull/404\r\n\r\n## New Contributors\r\n* @GrantBirki made their first contribution in https://github.com/actions/download-artifact/pull/401\r\n\r\n**Full Changelog**: https://github.com/actions/download-artifact/compare/v4.2.1...v4.3.0"}}}}'
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/json; charset=utf-8
+            Date:
+                - Mon, 23 Nov 2026 13:59:08 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept-Encoding, Accept, X-Requested-With
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.v4; format=json
+            X-Ratelimit-Limit:
+                - "5000"
+            X-Ratelimit-Remaining:
+                - "4965"
+            X-Ratelimit-Reset:
+                - "1795443940"
+            X-Ratelimit-Resource:
+                - graphql
+            X-Ratelimit-Used:
+                - "35"
+            X-Xss-Protection:
+                - "0"
+        status: 200 OK
+        code: 200
+        duration: 416.044916ms
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 1237
+        host: api.github.com
+        body: |
+            {"query":"query($name:String!$owner:String!$t0:String!$t1:String!$t2:String!$t3:String!$t4:String!$t5:String!$t6:String!$t7:String!$t8:String!$t9:String!){repository(owner: $owner, name: $name){r0: release(tagName: $t0){tagName,isDraft,isPrerelease,publishedAt,url,description},r1: release(tagName: $t1){tagName,isDraft,isPrerelease,publishedAt,url,description},r2: release(tagName: $t2){tagName,isDraft,isPrerelease,publishedAt,url,description},r3: release(tagName: $t3){tagName,isDraft,isPrerelease,publishedAt,url,description},r4: release(tagName: $t4){tagName,isDraft,isPrerelease,publishedAt,url,description},r5: release(tagName: $t5){tagName,isDraft,isPrerelease,publishedAt,url,description},r6: release(tagName: $t6){tagName,isDraft,isPrerelease,publishedAt,url,description},r7: release(tagName: $t7){tagName,isDraft,isPrerelease,publishedAt,url,description},r8: release(tagName: $t8){tagName,isDraft,isPrerelease,publishedAt,url,description},r9: release(tagName: $t9){tagName,isDraft,isPrerelease,publishedAt,url,description}}}","variables":{"name":"download-artifact","owner":"actions","t0":"v4.1.4","t1":"v4.1.5","t2":"v4.1.6","t3":"v4.1.7","t4":"v4.1.8","t5":"v4.1.9","t6":"v4.2.0","t7":"v4.2.1","t8":"v4.3.0","t9":"v5.0.0"}}
+        headers:
+            Content-Type:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.github.com/graphql
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: "{\"data\":{\"repository\":{\"r0\":{\"tagName\":\"v4.1.4\",\"isDraft\":false,\"isPrerelease\":false,\"publishedAt\":\"2024-03-01T18:28:41Z\",\"url\":\"https://github.com/actions/download-artifact/releases/tag/v4.1.4\",\"description\":\"## What's Changed\\r\\n* Update @actions/artifact by @bethanyj28 in https://github.com/actions/download-artifact/pull/307\\r\\n\\r\\n\\r\\n**Full Changelog**: https://github.com/actions/download-artifact/compare/v4...v4.1.4\"},\"r1\":{\"tagName\":\"v4.1.5\",\"isDraft\":false,\"isPrerelease\":false,\"publishedAt\":\"2024-04-18T14:32:59Z\",\"url\":\"https://github.com/actions/download-artifact/releases/tag/v4.1.5\",\"description\":\"## What's Changed\\r\\n* Update readme with v3/v2/v1 deprecation notice by @robherley in https://github.com/actions/download-artifact/pull/322\\r\\n* Update dependencies `@actions/core` to v1.10.1 and `@actions/artifact` to v2.1.5\\r\\n\\r\\n**Full Changelog**: https://github.com/actions/download-artifact/compare/v4.1.4...v4.1.5\"},\"r2\":{\"tagName\":\"v4.1.6\",\"isDraft\":false,\"isPrerelease\":false,\"publishedAt\":\"2024-04-22T16:02:58Z\",\"url\":\"https://github.com/actions/download-artifact/releases/tag/v4.1.6\",\"description\":\"## What's Changed\\r\\n* updating `@actions/artifact` dependency to v2.1.6 by @eggyhead in https://github.com/actions/download-artifact/pull/324\\r\\n\\r\\n\\r\\n**Full Changelog**: https://github.com/actions/download-artifact/compare/v4.1.5...v4.1.6\\r\\n\"},\"r3\":{\"tagName\":\"v4.1.7\",\"isDraft\":false,\"isPrerelease\":false,\"publishedAt\":\"2024-04-24T14:48:32Z\",\"url\":\"https://github.com/actions/download-artifact/releases/tag/v4.1.7\",\"description\":\"## What's Changed\\r\\n* Update @actions/artifact dependency by @bethanyj28 in https://github.com/actions/download-artifact/pull/325\\r\\n\\r\\n\\r\\n**Full Changelog**: https://github.com/actions/download-artifact/compare/v4.1.6...v4.1.7\"},\"r4\":{\"tagName\":\"v4.1.8\",\"isDraft\":false,\"isPrerelease\":false,\"publishedAt\":\"2024-07-05T15:12:41Z\",\"url\":\"https://github.com/actions/download-artifact/releases/tag/v4.1.8\",\"description\":\"## What's Changed\\r\\n* Update @actions/artifact version, bump dependencies by @robherley in https://github.com/actions/download-artifact/pull/341\\r\\n\\r\\n\\r\\n**Full Changelog**: https://github.com/actions/download-artifact/compare/v4.1.7...v4.1.8\"},\"r5\":{\"tagName\":\"v4.1.9\",\"isDraft\":false,\"isPrerelease\":false,\"publishedAt\":\"2025-02-25T21:26:04Z\",\"url\":\"https://github.com/actions/download-artifact/releases/tag/v4.1.9\",\"description\":\"## What's Changed\\r\\n* Add workflow file for publishing releases to immutable action package by @Jcambass in https://github.com/actions/download-artifact/pull/354\\r\\n* docs: small migration fix by @froblesmartin in https://github.com/actions/download-artifact/pull/370\\r\\n* Update MIGRATION.md by @andyfeller in https://github.com/actions/download-artifact/pull/372\\r\\n* Update artifact package to 2.2.2 by @yacaovsnc in https://github.com/actions/download-artifact/pull/380\\r\\n\\r\\n## New Contributors\\r\\n* @Jcambass made their first contribution in https://github.com/actions/download-artifact/pull/354\\r\\n* @froblesmartin made their first contribution in https://github.com/actions/download-artifact/pull/370\\r\\n* @andyfeller made their first contribution in https://github.com/actions/download-artifact/pull/372\\r\\n* @yacaovsnc made their first contribution in https://github.com/actions/download-artifact/pull/380\\r\\n\\r\\n**Full Changelog**: https://github.com/actions/download-artifact/compare/v4.1.8...v4.1.9\"},\"r6\":{\"tagName\":\"v4.2.0\",\"isDraft\":false,\"isPrerelease\":false,\"publishedAt\":\"2025-03-18T16:04:25Z\",\"url\":\"https://github.com/actions/download-artifact/releases/tag/v4.2.0\",\"description\":\"## What's Changed\\r\\n* Update README.md by @lkfortuna in https://github.com/actions/download-artifact/pull/384\\r\\n* Bump artifact version, do digest check by @GhadimiR in https://github.com/actions/download-artifact/pull/383\\r\\n\\r\\n## New Contributors\\r\\n* @lkfortuna made their first contribution in https://github.com/actions/download-artifact/pull/384\\r\\n* @GhadimiR made their first contribution in https://github.com/actions/download-artifact/pull/383\\r\\n\\r\\n**Full Changelog**: https://github.com/actions/download-artifact/compare/v4.1.9...v4.2.0\"},\"r7\":{\"tagName\":\"v4.2.1\",\"isDraft\":false,\"isPrerelease\":false,\"publishedAt\":\"2025-03-19T15:54:58Z\",\"url\":\"https://github.com/actions/download-artifact/releases/tag/v4.2.1\",\"description\":\"## What's Changed\\r\\n* Add unit tests by @GhadimiR in https://github.com/actions/download-artifact/pull/392\\r\\n* Fix bug introduced in 4.2.0 by @GhadimiR in https://github.com/actions/download-artifact/pull/391\\r\\n\\r\\n\\r\\n**Full Changelog**: https://github.com/actions/download-artifact/compare/v4.2.0...v4.2.1\"},\"r8\":{\"tagName\":\"v4.3.0\",\"isDraft\":false,\"isPrerelease\":false,\"publishedAt\":\"2025-04-24T16:28:16Z\",\"url\":\"https://github.com/actions/download-artifact/releases/tag/v4.3.0\",\"description\":\"## What's Changed\\r\\n* feat: implement new `artifact-ids` input by @GrantBirki in https://github.com/actions/download-artifact/pull/401\\r\\n* Fix workflow example for downloading by artifact ID by @joshmgross in https://github.com/actions/download-artifact/pull/402\\r\\n* Prep for v4.3.0 release by @robherley in https://github.com/actions/download-artifact/pull/404\\r\\n\\r\\n## New Contributors\\r\\n* @GrantBirki made their first contribution in https://github.com/actions/download-artifact/pull/401\\r\\n\\r\\n**Full Changelog**: https://github.com/actions/download-artifact/compare/v4.2.1...v4.3.0\"},\"r9\":{\"tagName\":\"v5.0.0\",\"isDraft\":false,\"isPrerelease\":false,\"publishedAt\":\"2025-08-05T21:38:42Z\",\"url\":\"https://github.com/actions/download-artifact/releases/tag/v5.0.0\",\"description\":\"## What's Changed\\r\\n* Update README.md by @nebuk89 in https://github.com/actions/download-artifact/pull/407\\r\\n* BREAKING fix: inconsistent path behavior for single artifact downloads by ID by @GrantBirki in https://github.com/actions/download-artifact/pull/416\\r\\n\\r\\n## v5.0.0\\r\\n\\r\\n### \U0001F6A8 Breaking Change\\r\\n\\r\\nThis release fixes an inconsistency in path behavior for single artifact downloads by ID. **If you're downloading single artifacts by ID, the output path may change.**\\r\\n\\r\\n#### What Changed\\r\\n\\r\\nPreviously, **single artifact downloads** behaved differently depending on how you specified the artifact:\\r\\n\\r\\n- **By name**: `name: my-artifact` → extracted to `path/` (direct)\\r\\n- **By ID**: `artifact-ids: 12345` → extracted to `path/my-artifact/` (nested)\\r\\n\\r\\nNow both methods are consistent:\\r\\n\\r\\n- **By name**: `name: my-artifact` → extracted to `path/` (unchanged)\\r\\n- **By ID**: `artifact-ids: 12345` → extracted to `path/` (fixed - now direct)\\r\\n\\r\\n#### Migration Guide\\r\\n\\r\\n##### ✅ No Action Needed If:\\r\\n\\r\\n- You download artifacts by **name**\\r\\n- You download **multiple** artifacts by ID\\r\\n- You already use `merge-multiple: true` as a workaround\\r\\n\\r\\n##### ⚠️ Action Required If:\\r\\n\\r\\nYou download **single artifacts by ID** and your workflows expect the nested directory structure.\\r\\n\\r\\n**Before v5 (nested structure):**\\r\\n\\r\\n```yaml\\r\\n- uses: actions/download-artifact@v4\\r\\n  with:\\r\\n    artifact-ids: 12345\\r\\n    path: dist\\r\\n# Files were in: dist/my-artifact/\\r\\n```\\r\\n\\r\\n> Where `my-artifact` is the name of the artifact you previously uploaded\\r\\n\\r\\n**To maintain old behavior (if needed):**\\r\\n\\r\\n```yaml\\r\\n- uses: actions/download-artifact@v5\\r\\n  with:\\r\\n    artifact-ids: 12345\\r\\n    path: dist/my-artifact  # Explicitly specify the nested path\\r\\n```\\r\\n\\r\\n## New Contributors\\r\\n* @nebuk89 made their first contribution in https://github.com/actions/download-artifact/pull/407\\r\\n\\r\\n**Full Changelog**: https://github.com/actions/download-artifact/compare/v4...v5.0.0\"}}}}"
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/json; charset=utf-8
+            Date:
+                - Mon, 23 Nov 2026 13:59:08 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept-Encoding, Accept, X-Requested-With
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.v4; format=json
+            X-Ratelimit-Limit:
+                - "5000"
+            X-Ratelimit-Remaining:
+                - "4963"
+            X-Ratelimit-Reset:
+                - "1795443940"
+            X-Ratelimit-Resource:
+                - graphql
+            X-Ratelimit-Used:
+                - "37"
+            X-Xss-Protection:
+                - "0"
+        status: 200 OK
+        code: 200
+        duration: 401.071583ms
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 692
+        host: api.github.com
+        body: |
+            {"query":"query($name:String!$owner:String!$t0:String!$t1:String!$t2:String!$t3:String!$t4:String!){repository(owner: $owner, name: $name){r0: release(tagName: $t0){tagName,isDraft,isPrerelease,publishedAt,url,description},r1: release(tagName: $t1){tagName,isDraft,isPrerelease,publishedAt,url,description},r2: release(tagName: $t2){tagName,isDraft,isPrerelease,publishedAt,url,description},r3: release(tagName: $t3){tagName,isDraft,isPrerelease,publishedAt,url,description},r4: release(tagName: $t4){tagName,isDraft,isPrerelease,publishedAt,url,description}}}","variables":{"name":"download-artifact","owner":"actions","t0":"v6.0.0","t1":"v7.0.0","t2":"v8.0.0","t3":"v8.0.1","t4":"v8.0.2"}}
+        headers:
+            Content-Type:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.github.com/graphql
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"data":{"repository":{"r0":{"tagName":"v6.0.0","isDraft":false,"isPrerelease":false,"publishedAt":"2025-10-24T18:19:24Z","url":"https://github.com/actions/download-artifact/releases/tag/v6.0.0","description":"## What''s Changed\r\n\r\n**BREAKING CHANGE:** this update supports Node `v24.x`. This is not a breaking change per-se but we''re treating it as such.\r\n\r\n* Update README for download-artifact v5 changes by @yacaovsnc in https://github.com/actions/download-artifact/pull/417\r\n* Update README with artifact extraction details by @yacaovsnc in https://github.com/actions/download-artifact/pull/424\r\n* Readme: spell out the first use of GHES by @danwkennedy in https://github.com/actions/download-artifact/pull/431\r\n* Bump `@actions/artifact` to `v4.0.0`\r\n* Prepare `v6.0.0` by @danwkennedy in https://github.com/actions/download-artifact/pull/438\r\n\r\n## New Contributors\r\n* @danwkennedy made their first contribution in https://github.com/actions/download-artifact/pull/431\r\n\r\n**Full Changelog**: https://github.com/actions/download-artifact/compare/v5...v6.0.0"},"r1":{"tagName":"v7.0.0","isDraft":false,"isPrerelease":false,"publishedAt":"2025-12-12T18:49:01Z","url":"https://github.com/actions/download-artifact/releases/tag/v7.0.0","description":"## v7 - What''s new\r\n\r\n> [!IMPORTANT]\r\n> actions/download-artifact@v7 now runs on Node.js 24 (`runs.using: node24`) and requires a minimum Actions Runner version of 2.327.1. If you are using self-hosted runners, ensure they are updated before upgrading.\r\n### Node.js 24\r\n\r\nThis release updates the runtime to Node.js 24. v6 had preliminary support for Node 24, however this action was by default still running on Node.js 20. Now this action by default will run on Node.js 24.\r\n\r\n## What''s Changed\r\n* Update GHES guidance to include reference to Node 20 version by @patrikpolyak in https://github.com/actions/download-artifact/pull/440\r\n* Download Artifact Node24 support by @salmanmkc in https://github.com/actions/download-artifact/pull/415\r\n* fix: update @actions/artifact to fix Node.js 24 punycode deprecation by @salmanmkc in https://github.com/actions/download-artifact/pull/451\r\n* prepare release v7.0.0 for Node.js 24 support by @salmanmkc in https://github.com/actions/download-artifact/pull/452\r\n\r\n## New Contributors\r\n* @patrikpolyak made their first contribution in https://github.com/actions/download-artifact/pull/440\r\n* @salmanmkc made their first contribution in https://github.com/actions/download-artifact/pull/415\r\n\r\n**Full Changelog**: https://github.com/actions/download-artifact/compare/v6.0.0...v7.0.0"},"r2":{"tagName":"v8.0.0","isDraft":false,"isPrerelease":false,"publishedAt":"2026-02-26T18:21:25Z","url":"https://github.com/actions/download-artifact/releases/tag/v8.0.0","description":"## v8 - What''s new\r\n\r\n> [!IMPORTANT]\r\n> actions/download-artifact@v8 has been migrated to an ESM module. This should be transparent to the caller but forks might need to make significant changes.\r\n\r\n> [!IMPORTANT]\r\n> Hash mismatches will now error by default. Users can override this behavior with a setting change (see below).\r\n\r\n### Direct downloads\r\n\r\nTo support direct uploads in `actions/upload-artifact`, the action will no longer attempt to unzip all downloaded files. Instead, the action checks the `Content-Type` header ahead of unzipping and skips non-zipped files. Callers wishing to download a zipped file as-is can also set the new `skip-decompress` parameter to `true`.\r\n\r\n### Enforced checks (breaking)\r\n\r\nA previous release introduced digest checks on the download. If a download hash didn''t match the expected hash from the server, the action would log a warning. Callers can now configure the behavior on mismatch with the `digest-mismatch` parameter. To be secure by default, we are now defaulting the behavior to `error` which will fail the workflow run.\r\n\r\n### ESM\r\n\r\nTo support new versions of the @actions/* packages, we''ve upgraded the package to ESM.\r\n\r\n## What''s Changed\r\n* Don''t attempt to un-zip non-zipped downloads by @danwkennedy in https://github.com/actions/download-artifact/pull/460\r\n* Add a setting to specify what to do on hash mismatch and default it to `error` by @danwkennedy in https://github.com/actions/download-artifact/pull/461\r\n\r\n\r\n**Full Changelog**: https://github.com/actions/download-artifact/compare/v7...v8.0.0"},"r3":{"tagName":"v8.0.1","isDraft":false,"isPrerelease":false,"publishedAt":"2026-03-11T15:44:25Z","url":"https://github.com/actions/download-artifact/releases/tag/v8.0.1","description":"## What''s Changed\r\n\r\n* Support for CJK characters in the artifact name by @danwkennedy in https://github.com/actions/download-artifact/pull/471\r\n* Add a regression test for artifact name + content-type mismatches by @danwkennedy in https://github.com/actions/download-artifact/pull/472\r\n\r\n**Full Changelog**: https://github.com/actions/download-artifact/compare/v8...v8.0.1"},"r4":{"tagName":"v8.0.2","isDraft":false,"isPrerelease":false,"publishedAt":"2026-10-07T10:09:51Z","url":"https://github.com/actions/download-artifact/releases/tag/v8.0.2","description":"## What''s Changed\r\n* Update the readme by @danwkennedy in https://github.com/actions/download-artifact/pull/473\r\n* Improves artifact download retries when the service returns HTTP 429 (rate limiting), including honoring valid Retry-After headers.\r\n* Update @actions/artifact to 6.3.1 by @tunc-d in https://github.com/actions/download-artifact/pull/492\r\n* Prepare download-artifact v8.0.2 by @tunc-d in https://github.com/actions/download-artifact/pull/493\r\n\r\n## New Contributors\r\n* @tunc-d made their first contribution in https://github.com/actions/download-artifact/pull/492\r\n\r\n**Full Changelog**: https://github.com/actions/download-artifact/compare/v8.0.1...v8.0.2"}}}}'
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/json; charset=utf-8
+            Date:
+                - Mon, 23 Nov 2026 13:59:08 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept-Encoding, Accept, X-Requested-With
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.v4; format=json
+            X-Ratelimit-Limit:
+                - "5000"
+            X-Ratelimit-Remaining:
+                - "4962"
+            X-Ratelimit-Reset:
+                - "1795443940"
+            X-Ratelimit-Resource:
+                - graphql
+            X-Ratelimit-Used:
+                - "38"
+            X-Xss-Protection:
+                - "0"
+        status: 200 OK
+        code: 200
+        duration: 422.311958ms

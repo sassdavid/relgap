@@ -187,7 +187,7 @@ func (e *Enricher) BinaryVulns(ctx context.Context, bins []*Binary) error {
 		p := registry.OSVPackage{Ecosystem: q.Package.Ecosystem, Name: q.Package.Name}
 		for _, h := range hits[qi] {
 			if rec := records[h.ID]; rec != nil {
-				b.Vulns = append(b.Vulns, vulnOf(rec, p, q, Request{}))
+				b.Vulns = append(b.Vulns, vulnOf(rec, p, q.Version, Request{}))
 			}
 		}
 	}

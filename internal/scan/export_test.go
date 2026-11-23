@@ -19,3 +19,6 @@ func ExtractAffixes(extract string) (string, string, bool) { return extractAffix
 
 // GitRemote exposes gitRemote to the tests.
 func GitRemote(addr string) (string, string, bool) { return gitRemote(addr) }
+
+// CommentVersion exposes commentVersion to the tests.
+func CommentVersion(comment string) string { return commentVersion(comment) }

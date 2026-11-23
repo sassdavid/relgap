@@ -85,8 +85,11 @@ A detector reads one family of files. Every file that matches a detector's names
 <!--@include: ../parts/detectors.md-->
 
 Two detectors are off by default. `scan.detectors.ci_actions` adds the `uses:` pins of GitHub
-Actions; CI files are read for tool versions either way. `scan.detectors.generic` reads the files
-`scan.extra_files` names, such as `Makefile` or `**/*.env`, for `NAME_VERSION = x.y.z` lines.
+Actions; CI files are read for tool versions either way. A pin by commit SHA is exact at the
+version its line comment names (`@<sha> # v4.1.3`, also `# tag=v4.1.3`), the comment Renovate
+writes when it pins an action. A bare SHA, or a comment with only a major version (`# v4`), is
+not exact. `scan.detectors.generic` reads the files `scan.extra_files` names, such as `Makefile`
+or `**/*.env`, for `NAME_VERSION = x.y.z` lines.
 
 ## From a name to a tool
 

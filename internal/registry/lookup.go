@@ -28,6 +28,10 @@ const (
 	KindGitLab    = "gitlab"
 )
 
+// KindAction is the prefix of a GitHub Action, action:owner/repo[/path], resolved to its
+// repository on github.com without a lookup.
+const KindAction = "action"
+
 // ErrAmbiguous is wrapped by lookup errors when a name matches more than one package.
 var ErrAmbiguous = errors.New("ambiguous name")
 

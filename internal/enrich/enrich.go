@@ -98,7 +98,7 @@ func (e *Enricher) Enrich(ctx context.Context, reqs []Request) (map[string]Resul
 		covs[i] = r.coverage()
 	}
 	ans := e.osvResults(ctx, reqs, covs)
-	fixes := e.fixTargets(ctx, reqs, ans.vulns, ans.sources, ans.modules)
+	fixes := e.fixTargets(ctx, reqs, ans)
 	wg.Wait()
 	problems := slices.Concat(eolProblems, ans.problems)
 	if err := ctx.Err(); err != nil {
@@ -168,10 +168,13 @@ func (e *Enricher) eolResults(ctx context.Context, reqs []Request) (map[string]*
 	return out, problems
 }
 
-// queryRef ties one OSV query to the request and package it came from.
+// queryRef ties a request's package to the OSV query that asks about it, and to the version its
+// answer is evaluated at.
 type queryRef struct {
-	req int
-	pkg registry.OSVPackage
+	req     int
+	pkg     registry.OSVPackage
+	query   int    // index into the queries
+	version string // the request's current version as the package's ranges spell it
 }
 
 // osvAnswer is what OSV said about the requests.
@@ -180,6 +183,7 @@ type osvAnswer struct {
 	failed   map[int]error      // by request index, for each request whose queries failed
 	problems []Problem          // the failed sources
 	sources  map[int][]evidence // by request index, the records of advisories of Current
+	local    map[int][]evidence // by request index, every record of its versionless packages
 	modules  map[string]string  // the module each go: path resolved to
 }
 
@@ -188,7 +192,7 @@ func (e *Enricher) osvResults(ctx context.Context, reqs []Request, covs []Covera
 	modules, failed, problems := e.resolveModules(ctx, reqs, covs)
 	ans := osvAnswer{
 		vulns: map[string][]Vuln{}, failed: failed, problems: problems,
-		sources: map[int][]evidence{}, modules: modules,
+		sources: map[int][]evidence{}, local: map[int][]evidence{}, modules: modules,
 	}
 	out := ans.vulns
 	for i := range reqs {
@@ -218,7 +222,7 @@ func (e *Enricher) osvResults(ctx context.Context, reqs []Request, covs []Covera
 	if err != nil {
 		return fail(err)
 	}
-	ans.collect(reqs, queries, refs, hits, records)
+	ans.collect(reqs, refs, hits, records)
 	lists := make([][]Vuln, 0, len(out))
 	for k, vs := range out {
 		out[k] = mergeAliases(vs)
@@ -234,22 +238,25 @@ func (e *Enricher) osvResults(ctx context.Context, reqs []Request, covs []Covera
 }
 
 // collect adds the vulnerability each record describes to its request, and keeps the records of
-// the advisories of Current as their evidence.
-func (ans osvAnswer) collect(
-	reqs []Request,
-	queries []Query,
-	refs []queryRef,
-	hits [][]Hit,
-	records map[string]*Record,
-) {
-	for qi, ref := range refs {
+// the advisories of Current as their evidence. A versionless answer lists every advisory of the
+// package, so only the records whose ranges hold Current count; one whose ranges can't place
+// Current doesn't, since OSV didn't match it to the version.
+func (ans osvAnswer) collect(reqs []Request, refs []queryRef, hits [][]Hit, records map[string]*Record) {
+	for _, ref := range refs {
 		r := reqs[ref.req]
-		for _, h := range hits[qi] {
+		for _, h := range hits[ref.query] {
 			rec := records[h.ID]
 			if rec == nil {
 				continue
 			}
-			v := vulnOf(rec, ref.pkg, queries[qi], r)
+			if versionless(ref.pkg) {
+				ans.local[ref.req] = append(ans.local[ref.req], evidence{rec: rec, pkg: ref.pkg})
+				pkg := Package{Ecosystem: ref.pkg.Ecosystem, Name: ref.pkg.Name}
+				if affected, known := Affects(rec, pkg, ref.version); !affected || !known {
+					continue
+				}
+			}
+			v := vulnOf(rec, ref.pkg, ref.version, r)
 			ans.vulns[r.Key] = append(ans.vulns[r.Key], v)
 			if v.AffectsCurrent {
 				ans.sources[ref.req] = append(ans.sources[ref.req], evidence{rec: rec, pkg: ref.pkg})
@@ -287,7 +294,8 @@ func failureReason(err error) string {
 }
 
 // osvQueries lists the OSV queries of every request that failed doesn't exclude, with the module
-// each go: path resolved to.
+// each go: path resolved to. Each distinct query is sent once: a versionless package is asked
+// about once for all its versions.
 func osvQueries(
 	reqs []Request,
 	covs []Coverage,
@@ -298,6 +306,7 @@ func osvQueries(
 		queries []Query
 		refs    []queryRef
 	)
+	index := map[Query]int{}
 	for i, r := range reqs {
 		if failed(i) {
 			continue
@@ -307,11 +316,18 @@ func osvQueries(
 			pkgs = append(slices.Clip(pkgs), registry.OSVPackage{Ecosystem: EcosystemGo, Name: m})
 		}
 		for _, p := range pkgs {
-			queries = append(queries, Query{
-				Package: Package{Ecosystem: p.Ecosystem, Name: p.Name},
-				Version: QueryVersion(p, r.tag(r.Current), r.Current),
-			})
-			refs = append(refs, queryRef{req: i, pkg: p})
+			ver := QueryVersion(p, r.tag(r.Current), r.Current)
+			q := Query{Package: Package{Ecosystem: p.Ecosystem, Name: p.Name}, Version: ver}
+			if versionless(p) {
+				q.Version = ""
+			}
+			at, ok := index[q]
+			if !ok {
+				at = len(queries)
+				index[q] = at
+				queries = append(queries, q)
+			}
+			refs = append(refs, queryRef{req: i, pkg: p, query: at, version: ver})
 		}
 	}
 	return queries, refs
@@ -363,8 +379,8 @@ func goPathRefs(covs []Coverage) []queryRef {
 	return out
 }
 
-// vulnOf evaluates rec for the current and target versions of r.
-func vulnOf(rec *Record, p registry.OSVPackage, q Query, r Request) Vuln {
+// vulnOf evaluates rec for the current version of r, spelled at, and for its target version.
+func vulnOf(rec *Record, p registry.OSVPackage, at string, r Request) Vuln {
 	pkg := Package{Ecosystem: p.Ecosystem, Name: p.Name}
 	v := Vuln{
 		ID:       rec.ID,
@@ -372,9 +388,9 @@ func vulnOf(rec *Record, p registry.OSVPackage, q Query, r Request) Vuln {
 		Summary:  rec.Summary,
 		Package:  pkg,
 		Severity: rec.Score(pkg),
-		FixedIn:  FixedIn(rec, pkg, q.Version),
+		FixedIn:  FixedIn(rec, pkg, at),
 	}
-	affected, known := Affects(rec, pkg, q.Version)
+	affected, known := Affects(rec, pkg, at)
 	// OSV returned the record for this version, so an undecidable range counts as affected.
 	v.AffectsCurrent = affected || !known
 	if !r.Target.IsZero() && known {

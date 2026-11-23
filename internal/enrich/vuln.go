@@ -15,10 +15,13 @@ import (
 const (
 	EcosystemGo  = "Go"
 	EcosystemGit = "GIT"
-	ecosystemPy  = "PyPI"
-	rangeSemver  = "SEMVER"
-	rangeEco     = "ECOSYSTEM"
-	introducedAt = "0" // an introduced event at the start of time
+	// EcosystemActions holds GitHub Actions advisories. OSV doesn't evaluate their ECOSYSTEM
+	// ranges for a version, so relgap asks without one and matches the ranges itself.
+	EcosystemActions = "GitHub Actions"
+	ecosystemPy      = "PyPI"
+	rangeSemver      = "SEMVER"
+	rangeEco         = "ECOSYSTEM"
+	introducedAt     = "0" // an introduced event at the start of time
 )
 
 // Vuln is one known vulnerability of a tool's current version.
@@ -63,7 +66,7 @@ func compareFor(rangeType, ecosystem string) compare {
 			return nil
 		}
 		return schemeCompare(s, strings.TrimSpace)
-	case rangeType == rangeEco && (ecosystem == "npm" || ecosystem == "crates.io"):
+	case rangeType == rangeEco && (ecosystem == "npm" || ecosystem == "crates.io" || ecosystem == EcosystemActions):
 		return schemeCompare(version.Semver(), strings.TrimSpace)
 	default:
 		return nil
@@ -264,6 +267,10 @@ func PackagesFor(pkgs []registry.OSVPackage, s version.Scheme, v version.V) []re
 	}
 	return out
 }
+
+// versionless reports whether OSV is asked about every version of p, and p's ranges are matched
+// locally.
+func versionless(p registry.OSVPackage) bool { return p.Ecosystem == EcosystemActions }
 
 // QueryVersion is the version string OSV expects for v of a package: the tag for GIT, the Go
 // semver form for Go, and the version itself elsewhere.

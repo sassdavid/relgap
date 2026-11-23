@@ -56,7 +56,9 @@ type fixSearch struct {
 	cands    []version.V // releases above the current version, oldest first
 	latest   version.V
 	advs     []*advisory
+	local    []evidence       // every record of the versionless packages, matched to candidates here
 	observed map[string][]int // advisories OSV lists for a version it was asked about
+	settled  map[string]bool  // versions the local records were matched to
 	latestOK bool             // OSV answered for latest
 	failed   bool
 }
@@ -68,22 +70,17 @@ type fixRef struct {
 }
 
 // fixTargets returns the fix target of every request with a vulnerability of its current
-// version, by key. vulns are the merged vulnerabilities by key, sources the records behind them
-// by request index, and modules the module each go: path resolved to.
-func (e *Enricher) fixTargets(
-	ctx context.Context,
-	reqs []Request,
-	vulns map[string][]Vuln,
-	sources map[int][]evidence,
-	modules map[string]string,
-) map[string]*Fix {
+// version, by key, from OSV's answer about the current versions.
+func (e *Enricher) fixTargets(ctx context.Context, reqs []Request, ans osvAnswer) map[string]*Fix {
 	var searches []*fixSearch
 	for i, r := range reqs {
-		affected := slices.ContainsFunc(vulns[r.Key], func(v Vuln) bool { return v.AffectsCurrent })
+		affected := slices.ContainsFunc(ans.vulns[r.Key], func(v Vuln) bool { return v.AffectsCurrent })
 		if r.Versions == nil || !affected {
 			continue
 		}
-		searches = append(searches, &fixSearch{req: r, modules: modules, advs: advisoriesOf(vulns[r.Key], sources[i])})
+		searches = append(searches, &fixSearch{
+			req: r, modules: ans.modules, advs: advisoriesOf(ans.vulns[r.Key], ans.sources[i]), local: ans.local[i],
+		})
 	}
 	out := map[string]*Fix{}
 	if len(searches) == 0 {
@@ -91,6 +88,9 @@ func (e *Enricher) fixTargets(
 	}
 	e.loadVersions(ctx, searches)
 	for range maxFixRounds {
+		for _, s := range searches {
+			s.settle()
+		}
 		if !e.fixRound(ctx, searches) {
 			break
 		}
@@ -151,6 +151,7 @@ func (s *fixSearch) init(u *version.Universe) {
 		s.level = version.LineMajor
 	}
 	s.observed = map[string][]int{}
+	s.settled = map[string]bool{}
 	pre := s.scheme.IsPrerelease(s.req.Current)
 	for _, v := range u.Versions() {
 		if !v.Prerelease {
@@ -194,13 +195,53 @@ func (e *Enricher) fixRound(ctx context.Context, searches []*fixSearch) bool {
 	return false
 }
 
-// pendingBatch lists one query per package and version the searches still have to check.
+// settle matches the local records to the versions the search still has to check whose packages
+// are all versionless, until no such version is left. OSV's answer for such a version would be
+// empty, since it doesn't evaluate their ranges, and the versionless answer already holds every
+// record of the package.
+func (s *fixSearch) settle() {
+	for {
+		var next []version.V
+		for _, v := range s.pending() {
+			if !slices.ContainsFunc(s.packagesAt(v), func(p registry.OSVPackage) bool { return !versionless(p) }) {
+				next = append(next, v)
+			}
+		}
+		if len(next) == 0 {
+			return
+		}
+		for _, v := range next {
+			s.matchLocal(v)
+			s.asked(v)
+		}
+	}
+}
+
+// matchLocal records the local records whose ranges hold version v, once per version.
+func (s *fixSearch) matchLocal(v version.V) {
+	if s.settled[v.String()] {
+		return
+	}
+	s.settled[v.String()] = true
+	for _, ev := range s.local {
+		pkg := Package{Ecosystem: ev.pkg.Ecosystem, Name: ev.pkg.Name}
+		if affected, known := Affects(ev.rec, pkg, QueryVersion(ev.pkg, s.req.tag(v), v)); affected && known {
+			s.observe(v, ev.rec, ev.pkg)
+		}
+	}
+}
+
+// pendingBatch lists one query per package and version the searches still have to check. A
+// versionless package is matched locally instead.
 func pendingBatch(searches []*fixSearch) fixBatch {
 	var b fixBatch
 	index := map[Query]int{}
 	for _, s := range searches {
 		for _, v := range s.pending() {
 			for _, p := range s.packagesAt(v) {
+				if versionless(p) {
+					continue
+				}
 				q := Query{
 					Package: Package{Ecosystem: p.Ecosystem, Name: p.Name},
 					Version: QueryVersion(p, s.req.tag(v), v),
@@ -238,6 +279,7 @@ func (b fixBatch) apply(hits [][]Hit, records map[string]*Record) {
 	for qi, rs := range b.refs {
 		for _, r := range rs {
 			r.search.asked(r.v)
+			r.search.matchLocal(r.v)
 			for _, h := range hits[qi] {
 				if at := r.search.known(h.ID); at >= 0 {
 					r.search.mark(r.v, at)

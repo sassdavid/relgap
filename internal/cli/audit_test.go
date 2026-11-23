@@ -76,33 +76,42 @@ func cmdGenAuditTree(ts *testscript.TestScript, neg bool, args []string) {
 	ts.Check(writeAuditTree(ts.MkAbs(args[0])))
 }
 
-var osvQueriesField = regexp.MustCompile(` osv_versioned_queries=(\d+)$`)
+var osvQueriesField = regexp.MustCompile(` osv_versioned_queries=(\d+) osv_versionless_queries=(\d+)$`)
 
-// cmdOSVQueries counts the versioned queries of the OSV querybatch requests relgap logged to
-// $TEST_REQUESTS since the last `requests reset`. The first querybatch with a versioned query asks
-// about the pins; the later ones ask about fix target candidates.
+// cmdOSVQueries counts the queries of the OSV querybatch requests relgap logged to $TEST_REQUESTS
+// since the last `requests reset`. The first querybatch with a versioned query asks about the
+// pins; the later ones ask about fix target candidates. Versionless queries are counted apart,
+// over every querybatch: GitHub Actions packages and the go: module search send them.
 //
-//	osvqueries 8        fail unless the pins took exactly 8 queries and no candidate was asked about
-//	osvqueries 8 fix 3  the same, with exactly 3 candidate queries
+//	osvqueries 8                 fail unless the pins took exactly 8 versioned queries and no
+//	                             candidate was asked about
+//	osvqueries 8 fix 3           the same, with exactly 3 candidate queries
+//	osvqueries 0 versionless 1   no versioned query, and exactly 1 versionless one
 func cmdOSVQueries(ts *testscript.TestScript, neg bool, args []string) {
-	want := "0"
-	switch {
-	case neg || (len(args) != 1 && len(args) != 3) || (len(args) == 3 && args[1] != "fix"):
-		ts.Fatalf("usage: osvqueries <n> [fix <m>]")
-	case len(args) == 3:
-		want = args[2]
+	const usage = "usage: osvqueries <n> [fix <m>] [versionless <k>]"
+	if neg || len(args)%2 != 1 {
+		ts.Fatalf(usage)
+	}
+	want := map[string]string{"fix": "0"}
+	for i := 1; i < len(args); i += 2 {
+		if args[i] != "fix" && args[i] != "versionless" {
+			ts.Fatalf(usage)
+		}
+		want[args[i]] = args[i+1]
 	}
 	data, err := os.ReadFile(ts.Getenv(envRequests))
 	if err != nil && !os.IsNotExist(err) {
 		ts.Fatalf("read request log: %v", err)
 	}
-	pins, candidates, batches := 0, 0, 0
+	pins, candidates, versionless, batches := 0, 0, 0, 0
 	for line := range strings.Lines(string(data)) {
 		m := osvQueriesField.FindStringSubmatch(strings.TrimSpace(line))
 		if m == nil {
 			continue
 		}
 		k, _ := strconv.Atoi(m[1])
+		n, _ := strconv.Atoi(m[2])
+		versionless += n
 		switch {
 		case k == 0:
 		case batches == 0:
@@ -115,8 +124,11 @@ func cmdOSVQueries(ts *testscript.TestScript, neg bool, args []string) {
 	if got := strconv.Itoa(pins); got != args[0] {
 		ts.Fatalf("relgap sent %s versioned OSV queries for the pins, want %s:\n%s", got, args[0], data)
 	}
-	if got := strconv.Itoa(candidates); got != want {
-		ts.Fatalf("relgap sent %s OSV queries for fix target candidates, want %s:\n%s", got, want, data)
+	if got := strconv.Itoa(candidates); got != want["fix"] {
+		ts.Fatalf("relgap sent %s OSV queries for fix target candidates, want %s:\n%s", got, want["fix"], data)
+	}
+	if w, ok := want["versionless"]; ok && strconv.Itoa(versionless) != w {
+		ts.Fatalf("relgap sent %d versionless OSV queries, want %s:\n%s", versionless, w, data)
 	}
 }
 
@@ -134,4 +146,12 @@ func TestSpec_vulnerability_audit_3(t *testing.T) {
 func TestSpec_vulnerability_audit_4(t *testing.T) {
 	t.Parallel()
 	testscript.Run(t, scriptParams(t, filepath.Join(scriptDir, "spec_vulnerability_audit_4.txtar")))
+}
+
+// TestSpec_vulnerability_audit_6: an action pin at an affected tag gets GHSA-cxww-7g56-2vh6 from a
+// versionless query, the fixed tag, pinned by SHA with a version comment, doesn't, and the fix
+// target is the fixed tag.
+func TestSpec_vulnerability_audit_6(t *testing.T) {
+	t.Parallel()
+	testscript.Run(t, scriptParams(t, filepath.Join(scriptDir, "spec_vulnerability_audit_6.txtar")))
 }

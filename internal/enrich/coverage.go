@@ -42,9 +42,9 @@ func (c Coverage) Checked() bool { return c.Reason == "" }
 
 // CoverageOf returns what relgap asks OSV about version v of tool t, whose pins name it name (the
 // name `relgap digest` accepts, such as chart:argo/argo-cd). A curated osv list wins. Otherwise a
-// package backend names the package, and a github.com tool gets its Go module and a GIT query on
-// its repository, the mapping mise audit uses. Hosts other than github.com and gitlab.com are
-// never sent.
+// package backend names the package, an action its GitHub Actions package, and a github.com tool
+// gets its Go module and a GIT query on its repository, the mapping mise audit uses. Hosts other
+// than github.com and gitlab.com are never sent.
 func CoverageOf(name string, t registry.ToolSpec, v version.V) Coverage {
 	if len(t.OSV) > 0 {
 		rules, err := t.Version.Rules()
@@ -59,10 +59,26 @@ func CoverageOf(name string, t registry.ToolSpec, v version.V) Coverage {
 	if reason, ok := NameReason(name); ok {
 		return Coverage{Reason: reason}
 	}
-	if kind, _, _ := strings.Cut(name, ":"); kind == registry.KindTFModule {
+	switch kind, rest, _ := strings.Cut(name, ":"); kind {
+	case registry.KindTFModule:
 		return Coverage{Reason: ReasonNoSource}
+	case registry.KindAction:
+		return actionCoverage(rest, t)
 	}
 	return repoCoverage(t, v)
+}
+
+// actionCoverage queries the GitHub Actions ecosystem about an action, owner/repo[/path], by its
+// repository: advisories name owner/repo, also for an action in a subdirectory.
+func actionCoverage(action string, t registry.ToolSpec) Coverage {
+	repo, ok := registry.ActionRepo(action)
+	switch {
+	case !ok:
+		return Coverage{Reason: ReasonNoSource}
+	case !forge.IsGitHub(t.Host):
+		return Coverage{Reason: ReasonPrivate}
+	}
+	return Coverage{Packages: []registry.OSVPackage{{Ecosystem: EcosystemActions, Name: repo}}}
 }
 
 // NameReason returns the unchecked reason of a pin whose tool name alone says OSV is never asked
