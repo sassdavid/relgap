@@ -99,13 +99,15 @@ The last line of the table counts the skipped pins, and `--format json` lists ea
 reason. A pin on a channel such as `lts` isn't compared. [Find pins behind latest or past
 EOL](/guides/outdated) says how CURRENT and LATEST are chosen.
 
-## EOL shows ? or VULNS is empty
+## EOL or VULNS shows ?
 
 EOL needs a curated registry entry that names an endoflife.date product
-([Supported tools](/reference/tools)). `?` means endoflife.date doesn't list the pin's release
-cycle. VULNS is `-` when relgap has no OSV source for the tool, such as a chart or a tool on a
-private host; [EOL and vulnerabilities](/concepts/enrichment#vulnerabilities) lists the sources. When endoflife.date or OSV is down, relgap warns and prints the rest; under
-`--fail-on eol` or `--fail-on vuln` the run exits 1, since the gate can't pass on missing data.
+([Supported tools](/reference/tools)). `?` in EOL means endoflife.date doesn't list the pin's
+release cycle. `?` in VULNS means relgap didn't ask OSV about the pin, such as a chart, a tool on
+a private host or an `lts` pin. The list under "Not checked for vulnerabilities" gives each
+reason, and [Unchecked pins](/concepts/enrichment#unchecked-pins) explains them. When
+endoflife.date or OSV is down, relgap warns and prints the rest; under `--fail-on eol` or
+`--fail-on vuln` the run exits 1, since the gate can't pass on missing data.
 
 ## Still stuck
 

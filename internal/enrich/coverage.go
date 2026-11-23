@@ -1,11 +1,13 @@
 package enrich
 
 import (
+	"errors"
 	"regexp"
 	"strconv"
 	"strings"
 
 	"github.com/sassdavid/relgap/internal/forge"
+	"github.com/sassdavid/relgap/internal/httpx"
 	"github.com/sassdavid/relgap/internal/registry"
 	"github.com/sassdavid/relgap/internal/version"
 )
@@ -65,6 +67,27 @@ func CoverageOf(name string, t registry.ToolSpec, v version.V) Coverage {
 		return Coverage{Reason: ReasonNoSource}
 	}
 	return repoCoverage(t, v)
+}
+
+// SkipReason returns why a pin of the tool name isn't checked when resolving name failed with
+// err: a tool relgap doesn't know is unresolved, a registry it may not read or that wants an
+// account is private, and a failed lookup is offline or failed.
+func SkipReason(name string, err error) string {
+	kind, rest, _ := strings.Cut(name, ":")
+	switch {
+	case errors.Is(err, httpx.ErrOffline):
+		return ReasonOffline
+	case errors.Is(err, httpx.ErrUnauthorized):
+		return ReasonPrivate
+	case errors.Is(err, registry.ErrUnknownTool):
+		return ReasonUnresolved
+	case kind == registry.KindImage && !publicRegistry(rest):
+		return ReasonPrivate
+	case errors.Is(err, registry.ErrNoRepo), errors.Is(err, registry.ErrUnsupported):
+		return ReasonNoSource
+	default:
+		return ReasonFailed
+	}
 }
 
 // backendCoverage maps a package backend (npm:prettier, pipx:black[extras], go:path) to its OSV

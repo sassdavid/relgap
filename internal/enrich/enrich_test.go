@@ -2,6 +2,8 @@ package enrich_test
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"io"
 	"log/slog"
 	"net/http"
@@ -18,6 +20,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/sassdavid/relgap/internal/enrich"
+	"github.com/sassdavid/relgap/internal/httpx"
 	"github.com/sassdavid/relgap/internal/registry"
 	"github.com/sassdavid/relgap/internal/testutil/ghtest"
 	"github.com/sassdavid/relgap/internal/testutil/vcr"
@@ -304,4 +307,84 @@ func exe(name string) string {
 		return name + ".exe"
 	}
 	return name
+}
+
+// failTransport fails every OSV request with err and answers endoflife.date with no cycles.
+type failTransport struct{ err error }
+
+func (f failTransport) RoundTrip(req *http.Request) (*http.Response, error) {
+	if req.URL.Host == "api.osv.dev" {
+		return nil, f.err
+	}
+	return &http.Response{
+		StatusCode: http.StatusOK,
+		Header:     http.Header{"Content-Type": {"application/json"}},
+		Body:       io.NopCloser(strings.NewReader(`{"result":{"releases":[]}}`)),
+		Request:    req,
+	}, nil
+}
+
+// TestUncheckedWhenOSVFails: a request whose OSV queries fail is unchecked with reason failed,
+// or offline when --offline had no cached answer. A request coverage already left unchecked
+// keeps its own reason.
+func TestUncheckedWhenOSVFails(t *testing.T) {
+	t.Parallel()
+	tests := []struct {
+		name string
+		err  error
+		want string
+	}{
+		{"outage", errors.New("connection refused"), enrich.ReasonFailed},
+		{"offline", fmt.Errorf("%w: POST https://api.osv.dev/v1/querybatch", httpx.ErrOffline), enrich.ReasonOffline},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			hc := &http.Client{Transport: failTransport{err: tt.err}}
+			k9s := spec("k9s", nil)
+			k9s.Repo = "derailed/k9s"
+			alpine := spec("image:alpine", nil)
+			alpine.Image = "alpine"
+			res, problems, err := enrich.NewEnricher(slog.New(slog.DiscardHandler),
+				enrich.NewEOLClient(hc, ""), enrich.NewOSVClient(hc, ""), 2).
+				Enrich(t.Context(), []enrich.Request{
+					{Key: "k9s", Tool: k9s, Current: semver(t, "0.50.16")},
+					{Key: "alpine", Name: "image:alpine", Tool: alpine, Current: semver(t, "3.22.0")},
+				})
+			require.NoError(t, err)
+			require.Len(t, problems, 1)
+			assert.Equal(t, enrich.SourceOSV, problems[0].Source)
+			assert.Nil(t, res["k9s"].Vulns)
+			assert.Equal(t, tt.want, res["k9s"].Unchecked)
+			assert.Equal(t, enrich.ReasonNoSource, res["alpine"].Unchecked)
+		})
+	}
+}
+
+func TestSkipReason(t *testing.T) {
+	t.Parallel()
+	tests := []struct {
+		name string
+		err  error
+		want string
+	}{
+		{"ghost", fmt.Errorf("%w: ghost", registry.ErrUnknownTool), enrich.ReasonUnresolved},
+		{"action:actions/checkout", fmt.Errorf("%w: unknown prefix", registry.ErrUnsupported), enrich.ReasonNoSource},
+		{"asdf-only", fmt.Errorf("%w for asdf-only", registry.ErrNoRepo), enrich.ReasonNoSource},
+		{
+			"image:registry.example.com/team/app",
+			fmt.Errorf("%w: not allowed", registry.ErrUnsupported),
+			enrich.ReasonPrivate,
+		},
+		{
+			"image:ghcr.io/team/app",
+			fmt.Errorf("%w: %w", registry.ErrUnknownTool, httpx.ErrUnauthorized),
+			enrich.ReasonPrivate,
+		},
+		{"chart:argo/argo-cd", fmt.Errorf("look up: %w", httpx.ErrOffline), enrich.ReasonOffline},
+		{"tfprovider:hashicorp/aws", errors.New("HTTP 502"), enrich.ReasonFailed},
+	}
+	for _, tt := range tests {
+		assert.Equal(t, tt.want, enrich.SkipReason(tt.name, tt.err), tt.name)
+	}
 }

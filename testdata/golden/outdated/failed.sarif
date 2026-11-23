@@ -83,6 +83,21 @@
               "defaultConfiguration": {
                 "level": "error"
               }
+            },
+            {
+              "id": "unchecked",
+              "shortDescription": {
+                "text": "relgap didn't check this pin for vulnerabilities"
+              },
+              "fullDescription": {
+                "text": "OSV wasn't asked about the pinned version, so no result here doesn't mean the version is clean. The message gives the reason: no-advisory-source, private-source, not-exact, unresolved, offline or failed."
+              },
+              "help": {
+                "text": "Pin an exact version, or check the tool another way. Details: https://relgap.sasskovacs.dev/concepts/enrichment#unchecked-pins"
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              }
             }
           ]
         }
@@ -109,6 +124,29 @@
           ],
           "partialFingerprints": {
             "relgapFinding/v1": "failed|ghost|mise.toml|"
+          }
+        },
+        {
+          "ruleId": "unchecked",
+          "ruleIndex": 5,
+          "level": "note",
+          "message": {
+            "text": "ghost 1.0.0: not checked for vulnerabilities: failed"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "mise.toml"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "unchecked|ghost|mise.toml|failed"
           }
         },
         {
@@ -155,6 +193,29 @@
           ],
           "partialFingerprints": {
             "relgapFinding/v1": "outdated|k9s|mise.toml|0.50.16"
+          }
+        },
+        {
+          "ruleId": "unchecked",
+          "ruleIndex": 5,
+          "level": "note",
+          "message": {
+            "text": "k9s 0.50.16: not checked for vulnerabilities: failed"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "mise.toml"
+                },
+                "region": {
+                  "startLine": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "unchecked|k9s|mise.toml|failed"
           }
         }
       ]

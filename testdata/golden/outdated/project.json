@@ -42,7 +42,8 @@
           "other": 0,
           "security": 0
         },
-        "status": "current"
+        "status": "current",
+        "vulns": []
       },
       {
         "tool": "go",
@@ -547,7 +548,8 @@
           "security": 0
         },
         "hidden": 44,
-        "status": "outdated"
+        "status": "outdated",
+        "vulns": []
       },
       {
         "tool": "image:alpine",
@@ -575,7 +577,8 @@
           "patch": 2
         },
         "status": "outdated",
-        "note": "docker.io/library/alpine has no source label that names a GitHub repository, so the versions come from https://registry-1.docker.io/v2/library/alpine/tags/list without notes"
+        "note": "docker.io/library/alpine has no source label that names a GitHub repository, so the versions come from https://registry-1.docker.io/v2/library/alpine/tags/list without notes",
+        "unchecked": "no-advisory-source"
       },
       {
         "tool": "k9s",
@@ -613,7 +616,8 @@
           "security": 0
         },
         "hidden": 167,
-        "status": "outdated"
+        "status": "outdated",
+        "vulns": []
       },
       {
         "tool": "node",
@@ -634,7 +638,8 @@
           }
         },
         "status": "unknown",
-        "note": "can't compare: \"lts\" is a channel"
+        "note": "can't compare: \"lts\" is a channel",
+        "unchecked": "not-exact"
       },
       {
         "tool": "ruff",
@@ -671,7 +676,8 @@
           "other": 0,
           "security": 0
         },
-        "status": "current"
+        "status": "current",
+        "vulns": []
       },
       {
         "tool": "terraform",
@@ -726,7 +732,8 @@
             "is_eol": false,
             "latest_in_cycle": "1.17.2"
           }
-        }
+        },
+        "vulns": []
       },
       {
         "tool": "terraform",
@@ -780,7 +787,8 @@
             "is_eol": false,
             "latest_in_cycle": "1.17.2"
           }
-        }
+        },
+        "vulns": []
       },
       {
         "tool": "uv",
@@ -817,7 +825,36 @@
           "other": 0,
           "security": 0
         },
-        "status": "current"
+        "status": "current",
+        "vulns": []
+      }
+    ],
+    "unchecked": [
+      {
+        "tool": "image:alpine",
+        "version": "3.22",
+        "reason": "no-advisory-source",
+        "pins": [
+          {
+            "repo": ".",
+            "file": "Dockerfile",
+            "line": 1,
+            "detector": "dockerfile"
+          }
+        ]
+      },
+      {
+        "tool": "node",
+        "version": "lts",
+        "reason": "not-exact",
+        "pins": [
+          {
+            "repo": ".",
+            "file": "mise.toml",
+            "line": 7,
+            "detector": "mise"
+          }
+        ]
       }
     ]
   },

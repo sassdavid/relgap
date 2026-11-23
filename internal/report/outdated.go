@@ -43,9 +43,10 @@ const (
 
 // Outdated is the data of `relgap outdated --format json`.
 type Outdated struct {
-	Repos    []string         `json:"repos"`
-	Pins     []OutdatedPin    `json:"pins"`
-	Binaries []*enrich.Binary `json:"binaries,omitzero"` // with --binaries; empty when none found
+	Repos     []string         `json:"repos"`
+	Pins      []OutdatedPin    `json:"pins"`
+	Unchecked []Unchecked      `json:"unchecked,omitzero"` // after enrichment; empty when OSV checked every pin
+	Binaries  []*enrich.Binary `json:"binaries,omitzero"`  // with --binaries; empty when none found
 }
 
 // OutdatedPin compares one pin with the latest version of its tool.
@@ -62,11 +63,17 @@ type OutdatedPin struct {
 	Hidden  int                   `json:"hidden,omitempty"` // entries below the minimum confidence
 	Status  Status                `json:"status"`
 	Note    string                `json:"note,omitempty"`
-	EOL     *enrich.EOL           `json:"eol,omitempty"`   // absent without an endoflife.date product
-	Vulns   []enrich.Vuln         `json:"vulns,omitempty"` // known vulnerabilities of Current
+	EOL     *enrich.EOL           `json:"eol,omitempty"` // absent without an endoflife.date product
+	// Vulns are the known vulnerabilities of Current, empty when OSV has none. Absent when OSV
+	// wasn't asked (see Unchecked) or enrichment didn't run.
+	Vulns     []enrich.Vuln `json:"vulns,omitzero"`
+	Unchecked string        `json:"unchecked,omitempty"` // an enrich.Reason* constant saying why OSV wasn't asked
 
 	// Digest is the digest Counts come from; pins with the same tool and Current share it.
 	Digest *ToolDigest `json:"-"`
+
+	failure     error  // why the lookup failed, for a skipped or failed pin
+	vulnVersion string // the version OSV is asked about
 }
 
 // Behind measures how far Current is from Latest. Every field comes from the digest's versions.
@@ -167,12 +174,7 @@ func (o *Outdater) Outdated(ctx context.Context, req OutdatedRequest) (*Outdated
 		return nil, err
 	}
 	slices.SortStableFunc(out.Pins, func(a, b OutdatedPin) int {
-		return cmp.Or(
-			registry.CompareTools(a.Tool, b.Tool),
-			cmp.Compare(a.Pin.Location.Repo, b.Pin.Location.Repo),
-			cmp.Compare(a.Pin.Location.File, b.Pin.Location.File),
-			cmp.Compare(a.Pin.Location.Line, b.Pin.Location.Line),
-		)
+		return cmp.Or(registry.CompareTools(a.Tool, b.Tool), compareLocations(a.Pin.Location, b.Pin.Location))
 	})
 	return out, nil
 }
@@ -279,7 +281,7 @@ type comparer struct {
 // fail marks row as failed with err and returns it.
 func (c *comparer) fail(row OutdatedPin, err error) OutdatedPin {
 	c.auth.record(err)
-	row.Status, row.Note = statusOf(err), err.Error()
+	row.Status, row.Note, row.failure = statusOf(err), err.Error(), err
 	return row
 }
 
@@ -287,7 +289,7 @@ func (c *comparer) compare(ctx context.Context, i int) OutdatedPin {
 	pin := c.req.Pins[i]
 	row := OutdatedPin{Tool: pin.Tool, Repo: c.tool.spec.Repo, Host: c.tool.spec.Host, Pin: pin}
 	if c.tool.err != nil {
-		row.Status, row.Note = skipStatus(c.tool.err), c.tool.err.Error()
+		row.Status, row.Note, row.failure = skipStatus(c.tool.err), c.tool.err.Error(), c.tool.err
 		return row
 	}
 	if c.recent.Err != nil {

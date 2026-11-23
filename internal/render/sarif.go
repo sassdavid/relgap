@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/sassdavid/relgap/internal/classify"
+	"github.com/sassdavid/relgap/internal/docsurl"
 	"github.com/sassdavid/relgap/internal/enrich"
 	"github.com/sassdavid/relgap/internal/report"
 	"github.com/sassdavid/relgap/internal/sarif"
@@ -25,6 +26,7 @@ const (
 	RuleDrift       = "drift"
 	RuleOutdated    = "outdated"
 	RuleFailed      = "failed"
+	RuleUnchecked   = "unchecked"
 )
 
 // fingerprintKey names relgap's partial fingerprint. GitHub ignores it and hashes the pin's line
@@ -33,7 +35,7 @@ const fingerprintKey = "relgapFinding/v1"
 
 // OutdatedRules returns the IDs of the fixed rules in outdated's SARIF, in their order there.
 func OutdatedRules() []string {
-	return []string{RuleBreaking, RuleDeprecation, RuleEOL, RuleOutdated, RuleFailed}
+	return []string{RuleBreaking, RuleDeprecation, RuleEOL, RuleOutdated, RuleFailed, RuleUnchecked}
 }
 
 // DriftRules returns the IDs of the rules in drift's SARIF, in their order there.
@@ -95,6 +97,16 @@ func SARIFRule(id string) sarif.Rule {
 			Help:                 sarif.Message{Text: "Fix the file, or run relgap again with -v to see the failing request."},
 			DefaultConfiguration: sarif.Configuration{Level: sarif.LevelError},
 		},
+		RuleUnchecked: {
+			ID:               RuleUnchecked,
+			ShortDescription: sarif.Message{Text: "relgap didn't check this pin for vulnerabilities"},
+			FullDescription: sarif.Message{Text: "OSV wasn't asked about the pinned version, so no result here " +
+				"doesn't mean the version is clean. The message gives the reason: no-advisory-source, " +
+				"private-source, not-exact, unresolved, offline or failed."},
+			Help: sarif.Message{Text: "Pin an exact version, or check the tool another way. " +
+				"Details: " + docsurl.Page("concepts/enrichment") + "#unchecked-pins"},
+			DefaultConfiguration: sarif.Configuration{Level: sarif.LevelNote},
+		},
 	}[id]
 }
 
@@ -142,8 +154,8 @@ func (r *sarifRun) add(rule, level, msg string, loc scan.Location, tool, subject
 
 // OutdatedSARIF returns a SARIF log with a result per pin behind latest, per pin on an EOL cycle,
 // per pin whose upgrade has breaking changes or deprecations, per advisory that affects a pin,
-// and per pin or file that failed. Results don't depend on --fail-on. Rules are in --fail-on
-// order, then failed, then one rule per OSV ID.
+// per pin or file that failed, and per pin OSV wasn't asked about. Results don't depend on
+// --fail-on. Rules are in --fail-on order, then failed and unchecked, then one rule per OSV ID.
 func OutdatedSARIF(o *report.Outdated, problems []scan.Problem, version string) *sarif.Log {
 	r := newSARIFRun(version, OutdatedRules()...)
 	for _, rule := range vulnRules(o) {
@@ -151,6 +163,15 @@ func OutdatedSARIF(o *report.Outdated, problems []scan.Problem, version string) 
 	}
 	for i := range o.Pins {
 		r.pin(&o.Pins[i])
+	}
+	for _, u := range o.Unchecked {
+		if u.Reason != enrich.ReasonUnresolved {
+			continue // the pin's own results carry the others
+		}
+		for _, loc := range u.Pins {
+			r.add(RuleUnchecked, sarif.LevelNote, fmt.Sprintf("%s %s: not checked for vulnerabilities: %s",
+				u.Tool, u.Version, u.Reason), loc, u.Tool, u.Reason)
+		}
 	}
 	for _, pr := range problems {
 		r.add(RuleFailed, sarif.LevelError, "can't read pins: "+pr.Message,
@@ -164,7 +185,6 @@ func (r *sarifRun) pin(p *report.OutdatedPin) {
 	loc := p.Pin.Location
 	if p.Status == report.StatusError {
 		r.add(RuleFailed, sarif.LevelError, fmt.Sprintf("%s %s: %s", p.Tool, p.Pin.Value, p.Note), loc, p.Tool, "")
-		return
 	}
 	outdated := p.Status == report.StatusOutdated
 	if outdated {
@@ -186,6 +206,10 @@ func (r *sarifRun) pin(p *report.OutdatedPin) {
 	}
 	if outdated {
 		r.add(RuleOutdated, sarif.LevelWarning, outdatedMessage(p), loc, p.Tool, p.Current)
+	}
+	if p.Unchecked != "" {
+		r.add(RuleUnchecked, sarif.LevelNote, fmt.Sprintf("%s %s: not checked for vulnerabilities: %s",
+			p.Tool, p.Pin.Value, p.Unchecked), loc, p.Tool, p.Unchecked)
 	}
 }
 
