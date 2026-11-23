@@ -653,7 +653,7 @@ one session can't finish, the open boxes carry over to a follow-up session.
   (vulnerability-audit criterion 9)
 - [x] The audit guide, the network page and the generated reference. (vulnerability-audit
   criterion 10)
-- [ ] Private repositories on github.com and gitlab.com, private `go:` modules, private scoped
+- [x] Private repositories on github.com and gitlab.com, private `go:` modules, private scoped
   npm packages and the main modules of `outdated --binaries` executables reach OSV only as an
-  ADR-0020 detail settled with this box decides. Found with box 10 on 2026-11-23; today the
-  network page names an `ignore` rule as the way out (vulnerability-audit, Network).
+  ADR-0020 detail settled with this box decides. Found with box 10 on 2026-11-23; settled as
+  ADR-0020 details 39 to 42 the same day (vulnerability-audit, Network).

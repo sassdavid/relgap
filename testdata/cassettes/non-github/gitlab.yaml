@@ -1,5 +1,5 @@
 ---
-# Written by hand from the GitLab REST API reference: tags on two pages linked with Link rel=next, releases of a nested-group project on gitlab.com, and a self-managed host without releases whose notes are in CHANGELOG.md and whose rate limit is almost used up. Not a recording.
+# Written by hand from the GitLab REST API reference: tags on two pages linked with Link rel=next, releases of a nested-group project on gitlab.com, the project itself with its visibility, and a self-managed host without releases whose notes are in CHANGELOG.md and whose rate limit is almost used up. Not a recording.
 version: 2
 interactions:
     - id: 0
@@ -202,6 +202,36 @@ interactions:
         headers:
             Content-Type:
                 - "text/plain; charset=utf-8"
+        status: 200 OK
+        code: 200
+        duration: 0s
+    - id: 7
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: gitlab.com
+        headers:
+            Accept:
+                - "application/json"
+        url: "https://gitlab.com/api/v4/projects/example-group%2Fplatform%2Ftf-dns"
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 87
+        body: "{\"id\":1001,\"path_with_namespace\":\"example-group/platform/tf-dns\",\"visibility\":\"public\"}"
+        headers:
+            Ratelimit-Limit:
+                - "500"
+            Ratelimit-Remaining:
+                - "490"
+            Ratelimit-Reset:
+                - "1795694460"
+            Content-Type:
+                - "application/json"
         status: 200 OK
         code: 200
         duration: 0s

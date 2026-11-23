@@ -25,9 +25,18 @@ func EnvVars() []EnvVar {
 			"request from in GitHub Actions."},
 		{
 			"HOME",
-			"Home directory: the config and cache directories, and mise's data directory for outdated --binaries.",
+			"Home directory: the config and cache directories, the go command's settings file, and mise's data " +
+				"directory for outdated --binaries.",
 		},
-		{"XDG_CONFIG_HOME", "Base of the user config file: $XDG_CONFIG_HOME/relgap/config.yaml."},
+		{"XDG_CONFIG_HOME", "Base of the user config file, $XDG_CONFIG_HOME/relgap/config.yaml, and of the go " +
+			"command's settings file, $XDG_CONFIG_HOME/go/env, on Linux."},
+		{"GOPRIVATE", "Go module path patterns that never reach OSV, as the go command keeps them from its " +
+			"proxy and checksum database. Read like the go command does: the variable, else the go env file."},
+		{"GONOPROXY", "More Go module path patterns that never reach OSV; defaults to GOPRIVATE."},
+		{"GONOSUMDB", "More Go module path patterns that never reach OSV; defaults to GOPRIVATE."},
+		{"GOENV", "The go command's settings file that GOPRIVATE, GONOPROXY and GONOSUMDB are read from " +
+			"when the variables are empty; off reads none. Default: go/env in the user config directory."},
+		{"APPDATA", "The user config directory on Windows, where the go command's settings file is."},
 		{"XDG_CACHE_HOME", "Base of the cache directory: $XDG_CACHE_HOME/relgap."},
 		{"XDG_DATA_HOME", "Base of mise's data directory for outdated --binaries when MISE_DATA_DIR is not set."},
 		{"MISE_DATA_DIR", "mise's data directory, whose installs outdated --binaries looks at."},

@@ -243,6 +243,7 @@
         "go_version": { "type": "string", "minLength": 1 },
         "module": { "type": "string", "minLength": 1 },
         "module_version": { "description": "Absent for (devel) builds.", "type": "string", "minLength": 1 },
+        "module_unchecked": { "description": "Why OSV wasn't asked about the main module: private-source when its tool may be private or GOPRIVATE names it.", "enum": ["private-source", "offline", "failed"] },
         "queries": {
           "type": "array",
           "items": {

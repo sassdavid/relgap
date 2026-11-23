@@ -266,6 +266,10 @@ func renovateDepPin(manager, datasource, dep, pkg, extract, registryURL string) 
 		p.Kind, p.Tool = KindChart, "chart:"+dep
 	case manager == "github-actions":
 		p.Kind, p.Tool = KindAction, "action:"+name
+	case datasource == "npm" && !publicNPM(registryURL):
+		// A package from another registry isn't the npm package of that name, so it is never
+		// looked up on registry.npmjs.org.
+		p.Tool, p.Registry = "npm:"+name, strings.TrimRight(registryURL, "/")
 	case datasource == "npm" || datasource == "pypi":
 		p.lookup, p.fallback = name, datasource+":"+name
 	default:
@@ -275,6 +279,18 @@ func renovateDepPin(manager, datasource, dep, pkg, extract, registryURL string) 
 		}
 	}
 	return p
+}
+
+// npmRegistryHost is the host of the public npm registry.
+const npmRegistryHost = "registry.npmjs.org"
+
+// publicNPM reports whether a Renovate registry URL is the public npm registry, or no URL.
+func publicNPM(registryURL string) bool {
+	if registryURL == "" {
+		return true
+	}
+	u, err := url.Parse(registryURL)
+	return err == nil && strings.EqualFold(u.Hostname(), npmRegistryHost)
 }
 
 func isForgeDatasource(datasource string) bool {

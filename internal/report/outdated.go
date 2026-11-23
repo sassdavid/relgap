@@ -131,7 +131,7 @@ type toolPins struct {
 // only for a failure that affects every tool, such as a rejected token.
 func (o *Outdater) Outdated(ctx context.Context, req OutdatedRequest) (*Outdated, error) {
 	out := &Outdated{Repos: append([]string{}, req.Repos...), Pins: make([]OutdatedPin, len(req.Pins))}
-	tools := groupTools(req)
+	tools := groupToolsOf(req, markPrivateRegistries(req.Pins, out.Pins))
 	var queries []github.RecentQuery
 	for _, t := range tools {
 		if t.err == nil && fromRecent(t.spec) {
@@ -182,6 +182,26 @@ func (o *Outdater) Outdated(ctx context.Context, req OutdatedRequest) (*Outdated
 	return out, nil
 }
 
+// markPrivateRegistries fills the row of each pin whose package comes from a registry other than
+// the public one, and returns the filter that leaves those pins out of every lookup.
+func markPrivateRegistries(pins []scan.Pin, rows []OutdatedPin) func(int) bool {
+	for i, p := range pins {
+		if p.PrivateRegistry() {
+			rows[i] = privateRegistryRow(p)
+		}
+	}
+	return func(i int) bool { return !pins[i].PrivateRegistry() }
+}
+
+// privateRegistryRow is the row of a pin whose package comes from a registry other than the public
+// one: no registry is asked about it, and OSV isn't either.
+func privateRegistryRow(p scan.Pin) OutdatedPin {
+	return OutdatedPin{
+		Tool: p.Tool, Pin: p, Status: StatusSkipped, Unchecked: enrich.ReasonPrivate,
+		Note: "from the registry " + p.Registry + ", which relgap doesn't read",
+	}
+}
+
 // fromRecent reports whether the batched GitHub lookup knows t's newest versions: a tool on
 // GitHub whose versions are its releases or tags.
 func fromRecent(t registry.ToolSpec) bool {
@@ -202,8 +222,6 @@ func (t *toolPins) needsFullList(pins []scan.Pin) bool {
 	}
 	return false
 }
-
-func groupTools(req OutdatedRequest) []*toolPins { return groupToolsOf(req, nil) }
 
 // groupToolsOf groups the pins that keep accepts (all when nil) by tool and resolves each tool.
 func groupToolsOf(req OutdatedRequest, keep func(int) bool) []*toolPins {

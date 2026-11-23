@@ -11,6 +11,7 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/sassdavid/relgap/internal/forge"
 	"github.com/sassdavid/relgap/internal/registry"
 )
 
@@ -24,13 +25,17 @@ const goStdlib = "stdlib"
 // Binary is an installed Go executable of a tool and what OSV knows about its Go version and
 // main module.
 type Binary struct {
-	Tool          string  `json:"tool"`
-	Path          string  `json:"path"`
-	GoVersion     string  `json:"go_version"`               // as OSV takes it, such as 1.24.3
-	Module        string  `json:"module,omitempty"`         // the main module path
-	ModuleVersion string  `json:"module_version,omitempty"` // absent for (devel) builds
-	Queries       []Query `json:"queries"`
-	Vulns         []Vuln  `json:"vulns"`
+	Tool          string `json:"tool"`
+	Path          string `json:"path"`
+	GoVersion     string `json:"go_version"`               // as OSV takes it, such as 1.24.3
+	Module        string `json:"module,omitempty"`         // the main module path
+	ModuleVersion string `json:"module_version,omitempty"` // absent for (devel) builds
+	// ModuleUnchecked says why OSV wasn't asked about the main module, such as private-source.
+	ModuleUnchecked string  `json:"module_unchecked,omitempty"`
+	Queries         []Query `json:"queries"`
+	Vulns           []Vuln  `json:"vulns"`
+
+	spec registry.ToolSpec
 }
 
 // BinaryFinder finds a tool's executables on PATH and among mise's installed versions.
@@ -119,7 +124,7 @@ func (f BinaryFinder) miseDataDir() string {
 }
 
 func exeName(n string) string {
-	if runtime.GOOS == "windows" && !strings.HasSuffix(strings.ToLower(n), ".exe") {
+	if runtime.GOOS == goosWindows && !strings.HasSuffix(strings.ToLower(n), ".exe") {
 		return n + ".exe"
 	}
 	return n
@@ -130,7 +135,7 @@ func executable(p string) bool {
 	if err != nil || !st.Mode().IsRegular() {
 		return false
 	}
-	return runtime.GOOS == "windows" || st.Mode().Perm()&0o111 != 0
+	return runtime.GOOS == goosWindows || st.Mode().Perm()&0o111 != 0
 }
 
 // shim reports whether p is mise itself, which is what a mise shim links to.
@@ -139,14 +144,15 @@ func shim(p string) bool {
 	return base == "mise"
 }
 
-// ReadBinary reads the Go build info of the executable at path and the OSV queries it implies:
-// the standard library at the Go version, and the main module unless it was built as (devel).
-func ReadBinary(tool, path string) (*Binary, error) {
+// ReadBinary reads the Go build info of the executable of tool t at path and the OSV queries it
+// implies: the standard library at the Go version, and the main module unless it was built as
+// (devel). [Enricher.BinaryVulns] drops the main module when it may be private.
+func ReadBinary(t registry.ToolSpec, path string) (*Binary, error) {
 	bi, err := buildinfo.ReadFile(path)
 	if err != nil {
 		return nil, fmt.Errorf("read go build info of %s: %w", path, err)
 	}
-	b := &Binary{Tool: tool, Path: path, GoVersion: GoSemver(bi.GoVersion), Vulns: []Vuln{}}
+	b := &Binary{Tool: t.Name, Path: path, GoVersion: GoSemver(bi.GoVersion), Vulns: []Vuln{}, spec: t}
 	if strings.HasPrefix(bi.GoVersion, "devel") || !goTag.MatchString(strings.Fields(bi.GoVersion + " ")[0]) {
 		return nil, fmt.Errorf("read go build info of %s: development Go version %q", path, bi.GoVersion)
 	}
@@ -166,6 +172,10 @@ func ReadBinary(tool, path string) (*Binary, error) {
 // marking the ones the suppressor names and adding the feeds' fields. It returns the feeds
 // that failed as problems, and an error when OSV failed.
 func (e *Enricher) BinaryVulns(ctx context.Context, bins []*Binary) ([]Problem, error) {
+	problems, err := e.screenModules(ctx, bins)
+	if err != nil {
+		return nil, err
+	}
 	var (
 		queries []Query
 		owner   []int
@@ -177,7 +187,7 @@ func (e *Enricher) BinaryVulns(ctx context.Context, bins []*Binary) ([]Problem, 
 		}
 	}
 	if len(queries) == 0 {
-		return nil, nil
+		return problems, nil
 	}
 	hits, err := e.osv.QueryBatch(ctx, queries)
 	if err != nil {
@@ -208,7 +218,66 @@ func (e *Enricher) BinaryVulns(ctx context.Context, bins []*Binary) ([]Problem, 
 		e.suppressBinary(b)
 		sortVulns(b.Vulns)
 	}
-	return e.prioritize(ctx, lists), nil
+	return append(problems, e.prioritize(ctx, lists)...), nil
+}
+
+// screenModules drops the main module query of each binary whose module GOPRIVATE names or whose
+// tool may be private: OSV hears about the module only when the tool's repository comes from a
+// registry or its forge says it is public.
+func (e *Enricher) screenModules(ctx context.Context, bins []*Binary) ([]Problem, error) {
+	reasons := make([]string, len(bins))
+	var repos []Repo
+	at := map[int]Repo{}
+	for i, b := range bins {
+		switch {
+		case b.ModuleVersion == "":
+		case e.privacy.Go.Matches(b.Module):
+			reasons[i] = ReasonPrivate
+		case b.spec.UserRepo:
+			r, ok := toolRepo(b.spec)
+			if !ok {
+				reasons[i] = ReasonPrivate
+				continue
+			}
+			at[i] = r
+			repos = append(repos, r)
+		}
+	}
+	var problems []Problem
+	if len(repos) > 0 {
+		answers, err := e.public(ctx, repos)
+		if err != nil {
+			return nil, err
+		}
+		for i, r := range at {
+			if reasons[i] = visibilityReason(answers[r]); reasons[i] == ReasonFailed {
+				problems = append(problems, Problem{Source: SourceOSV, Tool: bins[i].Tool, Err: answers[r]})
+			}
+		}
+	}
+	for i, b := range bins {
+		if reasons[i] == "" {
+			continue
+		}
+		b.ModuleUnchecked = reasons[i]
+		b.Queries = slices.DeleteFunc(b.Queries, func(q Query) bool { return q.Package.Name == b.Module })
+	}
+	slices.SortFunc(problems, func(x, y Problem) int { return strings.Compare(x.Tool, y.Tool) })
+	return problems, nil
+}
+
+// toolRepo returns the repository of t on github.com or gitlab.com. The second result is false
+// on any other host, which OSV never hears about.
+func toolRepo(t registry.ToolSpec) (Repo, bool) {
+	switch {
+	case t.Repo == "":
+		return Repo{}, false
+	case forge.IsGitHub(t.Host):
+		return Repo{Host: forge.GitHub, Path: t.Repo}, true
+	case strings.EqualFold(t.Host, forge.GitLab):
+		return Repo{Host: forge.GitLab, Path: t.Repo}, true
+	}
+	return Repo{}, false
 }
 
 // suppressBinary marks each advisory of b that the suppressor names, with b's tool and the purl

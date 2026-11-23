@@ -79,11 +79,11 @@ An unchecked pin never counts as clean. Each has one reason:
 | Reason | Example |
 |---|---|
 | `no-advisory-source` | an image, a chart or a `tfmodule:` pin; OSV has no records for them |
-| `private-source` | a tool on Bitbucket or a self-managed GitLab host, an image on a private registry |
+| `private-source` | a tool on Bitbucket or a self-managed GitLab host, an image on a private registry, a private repository you named with `github:` or `tools.<name>.repo`, a module `GOPRIVATE` names, an npm package from your own registry |
 | `not-exact` | `node = "lts"`, a branch, a commit SHA without a version comment |
 | `unresolved` | a name relgap can't map to a tool ([Map unresolved pins](/guides/unresolved)) |
 | `offline` | `--offline` and no cached answer |
-| `failed` | OSV or the version lookup failed; the warnings name the request |
+| `failed` | OSV, the version lookup or the repository's visibility lookup failed; the warnings name the request |
 
 `--fail-on unchecked` turns them into findings. A pin is `unresolved` until you map it, and an
 image stays `no-advisory-source`, so drop the pins you never want checked with an

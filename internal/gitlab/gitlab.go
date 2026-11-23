@@ -278,3 +278,30 @@ func (c *Client) RootFiles(ctx context.Context, repo string) ([]github.File, err
 	}
 	return out, nil
 }
+
+// ErrNotPublic means the project's visibility is private or internal.
+var ErrNotPublic = errors.New("the project isn't public")
+
+// Visibility returns nil when the project at repo is public, [ErrNotPublic] when it is private or
+// internal, and the lookup's error otherwise. A project the client can't see answers 404.
+func (c *Client) Visibility(ctx context.Context, repo string) error {
+	u, err := c.projectURL(repo)
+	if err != nil {
+		return err
+	}
+	body, _, err := c.get(ctx, u, "application/json")
+	if err != nil {
+		return err
+	}
+	var p struct {
+		Visibility string `json:"visibility"`
+	}
+	if err = json.Unmarshal(body, &p); err != nil {
+		return fmt.Errorf("gitlab: decode %s: %w", u, err)
+	}
+	// An anonymous answer is public whatever the fields say.
+	if p.Visibility != "public" && c.Authenticated() {
+		return fmt.Errorf("%s on %s: %w", repo, c.host, ErrNotPublic)
+	}
+	return nil
+}

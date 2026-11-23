@@ -34,6 +34,7 @@ const (
 type Coverage struct {
 	Packages []registry.OSVPackage // queried at the version
 	GoPath   string                // a go: package path; its longest prefix OSV knows is queried at the version
+	Repo     Repo                  // the repository the packages name; zero for a curated list or a package backend
 	Reason   string                // why nothing is queried; empty when the tool is checked
 }
 
@@ -78,7 +79,10 @@ func actionCoverage(action string, t registry.ToolSpec) Coverage {
 	case !forge.IsGitHub(t.Host):
 		return Coverage{Reason: ReasonPrivate}
 	}
-	return Coverage{Packages: []registry.OSVPackage{{Ecosystem: EcosystemActions, Name: repo}}}
+	return Coverage{
+		Packages: []registry.OSVPackage{{Ecosystem: EcosystemActions, Name: repo}},
+		Repo:     Repo{Host: forge.GitHub, Path: repo},
+	}
 }
 
 // NameReason returns the unchecked reason of a pin whose tool name alone says OSV is never asked
@@ -174,11 +178,11 @@ func repoCoverage(t registry.ToolSpec, v version.V) Coverage {
 		return Coverage{Packages: []registry.OSVPackage{
 			{Ecosystem: EcosystemGo, Name: goModule("github.com/"+t.Repo, t.Version, v)},
 			{Ecosystem: EcosystemGit, Name: "https://github.com/" + t.Repo},
-		}}
+		}, Repo: Repo{Host: forge.GitHub, Path: t.Repo}}
 	case strings.EqualFold(t.Host, forge.GitLab):
 		return Coverage{Packages: []registry.OSVPackage{
 			{Ecosystem: EcosystemGit, Name: "https://" + forge.GitLab + "/" + t.Repo},
-		}}
+		}, Repo: Repo{Host: forge.GitLab, Path: t.Repo}}
 	default:
 		return Coverage{Reason: ReasonPrivate}
 	}

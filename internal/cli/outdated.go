@@ -243,9 +243,14 @@ func (s *session) enrich(ctx context.Context, c *comparison, hc *http.Client, pi
 		return err
 	}
 	c.rules = rules
+	gh, _, err := s.clients(ctx)
+	if err != nil {
+		return err
+	}
 	en := enrich.NewEnricher(d.Logger, enrich.NewEOLClient(hc, ""), enrich.NewOSVClient(hc, ""),
 		d.Config.Config.GitHub.Concurrency)
 	en.SetSuppressor(rules)
+	en.SetPrivacy(s.privacy(ctx, gh))
 	en.SetFeeds(s.feeds(hc))
 	results, problems, err := en.Enrich(ctx, c.out.EnrichRequests(resolveFunc(ctx, s), c.digester.Universe))
 	if err != nil {
@@ -284,7 +289,7 @@ func (s *session) binaries(ctx context.Context, c *comparison, en *enrich.Enrich
 			continue
 		}
 		for _, path := range finder.Find(ctx, spec) {
-			b, readErr := enrich.ReadBinary(spec.Name, path)
+			b, readErr := enrich.ReadBinary(spec, path)
 			if readErr != nil {
 				d.Logger.DebugContext(ctx, "skipping an executable", "tool", spec.Name, "error", readErr)
 				continue

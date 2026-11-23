@@ -40,6 +40,8 @@ type Request struct {
 	// Refs are other values the pins give the version, such as an action's commit SHA, which a
 	// VEX statement can name instead of the tag.
 	Refs []string
+
+	goPrivate GoPrivate // set by the enricher; patterns of modules never sent
 }
 
 // tag is the tag of v, which GIT queries use: the tool's tag prefix and the version.
@@ -59,9 +61,10 @@ type Result struct {
 // coverage returns what OSV is asked about the request.
 func (r Request) coverage() Coverage { return r.coverageAt(r.Current) }
 
-// coverageAt returns what OSV is asked about version v of the request's tool.
+// coverageAt returns what OSV is asked about version v of the request's tool, without the
+// modules GOPRIVATE names.
 func (r Request) coverageAt(v version.V) Coverage {
-	return CoverageOf(cmp.Or(r.Name, r.Tool.Name), r.Tool, v)
+	return r.goPrivate.screen(CoverageOf(cmp.Or(r.Name, r.Tool.Name), r.Tool, v))
 }
 
 // Problem is a source that failed for a tool. The rest of the report stands.
@@ -80,6 +83,8 @@ type Enricher struct {
 	suppressor  Suppressor
 	kev         *KEVClient
 	epss        *EPSSClient
+	privacy     Privacy
+	vis         visibility
 }
 
 // NewEnricher returns an enricher that uses eol and osv with up to concurrency requests at once.
@@ -93,6 +98,12 @@ func NewEnricher(logger *slog.Logger, eol *EOLClient, osv *OSVClient, concurrenc
 // source becomes a [Problem]; only a canceled context is an error.
 func (e *Enricher) Enrich(ctx context.Context, reqs []Request) (map[string]Result, []Problem, error) {
 	out := make(map[string]Result, len(reqs))
+	reqs = slices.Clone(reqs)
+	covs := make([]Coverage, len(reqs))
+	for i := range reqs {
+		reqs[i].goPrivate = e.privacy.Go
+		covs[i] = reqs[i].coverage()
+	}
 	var (
 		eols        map[string]*EOL
 		eolProblems []Problem
@@ -101,16 +112,17 @@ func (e *Enricher) Enrich(ctx context.Context, reqs []Request) (map[string]Resul
 	if e.eol != nil {
 		wg.Go(func() { eols, eolProblems = e.eolResults(ctx, reqs) })
 	}
-	covs := make([]Coverage, len(reqs))
-	for i, r := range reqs {
-		covs[i] = r.coverage()
+	repoProblems, screenErr := e.screenRepos(ctx, reqs, covs)
+	if screenErr != nil {
+		wg.Wait()
+		return nil, nil, screenErr
 	}
 	ans := e.osvResults(ctx, reqs, covs)
 	e.suppress(reqs, ans)
 	fixes := e.fixTargets(ctx, reqs, ans)
 	feedProblems := e.prioritize(ctx, slices.Collect(maps.Values(ans.vulns)))
 	wg.Wait()
-	problems := slices.Concat(eolProblems, ans.problems, feedProblems)
+	problems := slices.Concat(eolProblems, repoProblems, ans.problems, feedProblems)
 	if err := ctx.Err(); err != nil {
 		return nil, nil, err //nolint:wrapcheck // the caller matches context errors
 	}

@@ -140,6 +140,14 @@ func TestSpec_vulnerability_audit_3(t *testing.T) {
 	testscript.Run(t, scriptParams(t, filepath.Join(scriptDir, "spec_vulnerability_audit_3.txtar")))
 }
 
+// TestSpec_vulnerability_audit_1_private: a repository the user named reaches OSV only when its
+// forge says it is public, GOPRIVATE keeps a module away without a lookup, and an npm package from
+// another registry is asked about nowhere.
+func TestSpec_vulnerability_audit_1_private(t *testing.T) {
+	t.Parallel()
+	testscript.Run(t, scriptParams(t, filepath.Join(scriptDir, "spec_vulnerability_audit_1_private.txtar")))
+}
+
 // TestSpec_vulnerability_audit_4: a GO- record without a rating takes its GHSA alias's rating, a
 // record without any rating counts under --vuln-severity high in audit and outdated, a withdrawn
 // record is dropped, and a record with an unchanged modified time isn't fetched again.

@@ -28,7 +28,9 @@ func SentToOSV() []SentField {
 		{SentQueryBatch, "queries[].package.name", "The package name as the pin or the registry entry " +
 			"writes it (PyPI names normalized); a Go module path, every prefix of a `go:` path while " +
 			"relgap looks for the module, or the main module of an executable under `outdated " +
-			"--binaries`; the URL of a github.com or gitlab.com repository for `GIT`; owner/repo of an action."},
+			"--binaries`; the URL of a github.com or gitlab.com repository for `GIT`; owner/repo of an action. " +
+			"A repository you named only when its forge says it is public, and never a module path " +
+			"that `GOPRIVATE` names."},
 		{SentQueryBatch, "queries[].version", "The version relgap checks: an exact pin, the version a " +
 			"pin marked ≈ stands for, or a fix target candidate or latest release. Left out when relgap " +
 			"looks for a `go:` module or asks about an action."},

@@ -119,6 +119,7 @@ type ToolSpec struct {
 	Bin             []string      `json:"bin"` // executable names; empty means the tool name
 	Backend         string        `json:"-"`   // the input's npm: or pypi: name, else the first backend of its mise entry
 	Versions        []version.Ref `json:"-"`   // the versions of a [UniverseChart] or [UniverseImage] tool
+	UserRepo        bool          `json:"-"`   // Repo comes from the input, the config or a GitHub search, not a registry
 }
 
 // Listed reports whether the tool's versions come from a lookup instead of its repository.

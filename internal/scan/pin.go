@@ -44,7 +44,7 @@ type Pin struct {
 	Tool     string   `json:"tool"`     // name `relgap digest` accepts; empty when unresolved
 	RawName  string   `json:"raw_name"` // as written: TERRAFORM_VERSION, hashicorp/aws, http:kafka
 	Kind     Kind     `json:"kind"`
-	Registry string   `json:"registry_url,omitempty"` // a chart pin's Helm repository URL
+	Registry string   `json:"registry_url,omitempty"` // a chart pin's Helm repository URL, or an npm registry other than registry.npmjs.org
 	Value    string   `json:"value"`                  // as written
 	Version  string   `json:"version"`                // Value without a leading v or go, for comparison
 	Exact    bool     `json:"exact"`
@@ -80,6 +80,12 @@ type Location struct {
 
 // Resolved reports whether the pin maps to a tool.
 func (p *Pin) Resolved() bool { return p.Tool != "" }
+
+// PrivateRegistry reports whether the pin's package comes from a registry other than the public
+// one, so neither that registry's public counterpart nor OSV hears about it.
+func (p *Pin) PrivateRegistry() bool {
+	return p.Kind == KindTool && strings.HasPrefix(p.Tool, "npm:") && p.Registry != ""
+}
 
 var (
 	fullVersion    = regexp.MustCompile(`^v?\d+\.\d+\.\d+([.+-][0-9A-Za-z.+_-]*)?$`)
