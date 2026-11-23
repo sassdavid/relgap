@@ -156,6 +156,7 @@ relgap audit --format json | jq '.data.findings[] | {tool, version, id}'
 
 ## Related
 
+- [Audit pinned versions for vulnerabilities](/guides/audit)
 - [EOL and vulnerabilities](/concepts/enrichment)
 - [Gate CI on breaking changes, EOL and vulnerabilities](/guides/ci-gate)
 - [Upload SARIF to code scanning](/guides/sarif)

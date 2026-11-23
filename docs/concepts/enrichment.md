@@ -48,6 +48,7 @@ A tool without an `osv` list gets its packages from its backend, the way `mise a
 | `go:<path>` | `Go` / the longest prefix of the path that OSV has records of |
 | a github.com repository (`github:`, `aqua:`, `tfprovider:`) | `Go` / `github.com/<owner>/<repo>`, with `/vN` from major 2 on, and `GIT` / the repository URL at the tag |
 | `gitlab:<path>` on gitlab.com | `GIT` / the repository URL at the tag |
+| an action pin (`scan.detectors.ci_actions`) | `GitHub Actions` / `<owner>/<repo>` without a version, once per action, its ranges matched by relgap |
 
 A tool known by name takes the first backend of its mise registry entry. Tools on Bitbucket or a
 self-managed GitLab host, images on a private registry, and package names with `:` or `@` after
@@ -78,9 +79,9 @@ only for a checked pin without advisories. Each unchecked pin has one reason:
 
 | Reason | When |
 |---|---|
-| `no-advisory-source` | No curated `osv` list and no backend or repository OSV knows: images, charts, `tfmodule:` pins, GitHub Action pins, tools without a repository |
+| `no-advisory-source` | No curated `osv` list and no backend or repository OSV knows: images, charts, `tfmodule:` pins, tools without a repository |
 | `private-source` | A host or registry relgap never sends to OSV: Bitbucket, a self-managed GitLab host, a private image registry, a registry that wants an account |
-| `not-exact` | The pin resolves to no single version: a channel other than `latest` (`lts`), a value that isn't a version |
+| `not-exact` | The pin resolves to no single version: a channel other than `latest` (`lts`), a branch, a commit SHA without a version comment, a value that isn't a version |
 | `unresolved` | The pin resolves to no tool |
 | `offline` | `--offline` and no cached answer |
 | `failed` | The version lookup or OSV failed for this pin; the warnings and the JSON `errors` name the request |

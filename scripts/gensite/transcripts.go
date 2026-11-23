@@ -76,13 +76,21 @@ func transcriptProblems(page []byte, scripts string) []string {
 		switch {
 		case last == "":
 			problems = append(problems, fmt.Sprintf("%d: %s has no relgap command above it", n, golden))
-		case !strings.Contains(scripts, "\nexec "+last+"\ngolden stdout "+golden+"\n"):
+		case !ranAgainst(scripts, last, golden):
 			problems = append(problems, fmt.Sprintf(
 				"%d: no script in testdata/script runs %q and compares its output with %s", n, last, golden))
 		}
 		last = ""
 	}
 	return problems
+}
+
+// ranAgainst reports whether a script runs the relgap command and compares its stdout with golden
+// right after. The command may run under expect-exit, as a command that exits 3 on a gate does.
+func ranAgainst(scripts, command, golden string) bool {
+	re := regexp.MustCompile(`\nexec (expect-exit \d+ )?` + regexp.QuoteMeta(command) +
+		`\ngolden stdout ` + regexp.QuoteMeta(golden) + `\n`)
+	return re.MatchString(scripts)
 }
 
 // scriptText returns every test script, each line with its leading spaces and a [cond] prefix

@@ -160,6 +160,7 @@ code.
 | `docs/parts/source-kinds.md`, `placeholders.md`, `web-hosts.md` | `source.Kinds`, `registry.Placeholders` with `source.ExpandPrev`, `registry.WebHosts` | `TestSourceKinds`, `TestPlaceholders` |
 | `docs/parts/confidence.md` | `classify.Signals` | `TestSignals` (every rule's confidence has a row) |
 | `docs/parts/network-hosts.md` | host constants of `httpx`, `enrich`, `remote`, `registry` and `summarize` | `TestNetworkHosts` (every host in the cassettes is listed) |
+| `docs/parts/osv-sent.md` | `enrich.SentToOSV` | `TestSentToOSV` (the fields match the requests the OSV client sends) |
 | `docs/parts/relgap-action.md` | `scripts/gensite/relgap-action.yml`, the action's `action.yml` at the commit `docs/ci/relgap-action.yml` pins | `TestActionPart`; `mise run docs:action` refreshes the copy |
 | `docs/.vitepress/theme/data/sent-to-model.json` | `summarize.SentToModel` | `TestSentToModel` (the fields match the user message `Summarize` builds) |
 | `docs/.vitepress/theme/data/home-strata.json` | `testdata/golden/digest/kubectl.json` | `TestBuildStrata` |

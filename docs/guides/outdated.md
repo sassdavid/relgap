@@ -69,12 +69,15 @@ the pin's variant count, so `nginx:1.27.0-alpine` is `image:nginx:*-alpine` and 
 repository, the counts come from that repository's notes; otherwise the row has versions only
 and a note says why.
 
-GitHub Action pins, tools without a repository relgap can read, and images on another or a
-private registry are skipped. The last line counts them, they appear in the list of pins not
-checked for vulnerabilities, and `--format json` lists each with the reason:
+GitHub Action pins (`scan.detectors.ci_actions`) compare with the action's releases. A pin by
+commit SHA stands for the version its line comment names, such as `# v4.1.3`.
+
+Tools without a repository relgap can read, and images on another or a private registry, are
+skipped. The last line counts them, they appear in the list of pins not checked for
+vulnerabilities, and `--format json` lists each with the reason in `note`:
 
 ```sh
-relgap outdated --format json | jq '.data.pins[] | select(.status == "outdated")'
+relgap outdated --format json | jq '.data.pins[] | select(.status == "skipped") | {tool, note}'
 ```
 
 A pin whose name maps to no tool shows up in `relgap pins --unresolved`;
@@ -102,5 +105,7 @@ relgap digest --all ~/src/infra --format md > upgrade-notes.md
 ```
 
 To fail a CI job on these findings, see [Gate CI on breaking changes, EOL and
-vulnerabilities](/guides/ci-gate). Ignore rules in the config (`ignore`) drop pins you don't
-want reported, as the [configuration reference](/reference/config#ignore) shows.
+vulnerabilities](/guides/ci-gate). [Audit pinned versions for vulnerabilities](/guides/audit)
+covers the vulnerabilities alone, over many repositories. Ignore rules in the config (`ignore`)
+drop pins you don't want reported, as the [configuration reference](/reference/config#ignore)
+shows.

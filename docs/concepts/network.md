@@ -1,5 +1,5 @@
 ---
-description: Every host relgap sends requests to, the programs it runs, where each token goes, what the cache keeps and what --summarize sends to a model.
+description: Every host relgap sends requests to, the programs it runs, where each token goes, what OSV receives, what the cache keeps and what --summarize sends to a model.
 ---
 
 # Network, privacy and tokens
@@ -28,6 +28,32 @@ Pages of release notes come from GitHub through the API. Web pages come only fro
 and `relgap registry lint` rejects an entry whose URL points anywhere else:
 
 <!--@include: ../parts/web-hosts.md-->
+
+## What OSV receives
+
+`relgap audit` and `relgap outdated` ask `api.osv.dev` about every pin they can check, with no
+token. The table lists every value those requests carry. It comes from the list in relgap's
+source that a test compares with the requests the OSV client sends:
+
+<!--@include: ../parts/osv-sent.md-->
+
+relgap never sends OSV a file path, a pin's location, the name of the repository that pins a tool,
+or a token. It never queries a tool on a host it doesn't send to: Bitbucket, a self-managed GitLab
+host, a `github.host` other than github.com, an image registry, or a package name with `:` or `@`
+after the npm scope. Those pins are unchecked with reason `private-source` or
+`no-advisory-source` ([Unchecked pins](/concepts/enrichment#unchecked-pins)).
+
+relgap doesn't know whether a repository on github.com or gitlab.com is private. A tool you map
+to a private repository with `tools.<name>.repo`, or a `github:` backend that names one, goes to
+OSV as its Go module path and repository URL. A `go:` pin of a private module sends each prefix of
+its path, a scoped npm package its name, and `outdated --binaries` the main module of each
+executable. To keep a tool away from OSV, add an [`ignore`](/reference/config#ignore) rule for it.
+relgap drops ignored pins before any request, so the tool also leaves every other report:
+
+```yaml
+ignore:
+  - tool: deploy-cli
+```
 
 ## Programs relgap runs
 
