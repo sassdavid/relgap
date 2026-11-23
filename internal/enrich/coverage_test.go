@@ -202,6 +202,8 @@ func TestCoverageOf(t *testing.T) {
 	aquaTool.Backend = "aqua:derailed/k9s"
 	ginkgo := repoTool("ginkgo", "", "onsi/ginkgo", "v")
 	ginkgo.Backend = "go:github.com/onsi/ginkgo/v2/ginkgo"
+	codeql := repoTool("action:github/codeql-action/init", "", "github/codeql-action", "")
+	privateAction := repoTool("action:team/deploy", "git.example.com", "team/deploy", "")
 	tests := []struct {
 		name string
 		tool registry.ToolSpec
@@ -217,6 +219,11 @@ func TestCoverageOf(t *testing.T) {
 			{Ecosystem: "GIT", Name: "https://github.com/derailed/k9s"},
 		}}},
 		{"ginkgo", ginkgo, "2.1.0", enrich.Coverage{GoPath: "github.com/onsi/ginkgo/v2/ginkgo"}},
+		// Advisories name the repository, also for an action in a subdirectory.
+		{"action:github/codeql-action/init", codeql, "3.29.0", enrich.Coverage{
+			Packages: []registry.OSVPackage{{Ecosystem: "GitHub Actions", Name: "github/codeql-action"}},
+		}},
+		{"action:team/deploy", privateAction, "1.0.0", enrich.Coverage{Reason: enrich.ReasonPrivate}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

@@ -45,7 +45,11 @@ the tool's versions from GitHub or another host.
 
 A pin with a curated osv list in its registry entry queries those packages. Other pins query
 the package their backend names (npm:, pypi:, cargo:, gem:, go:, dotnet:), or the Go module
-and git repository of a github.com tool. A finding is one advisory that affects one tool
+and git repository of a github.com tool. An action pin (scan.detectors.ci_actions) queries the
+GitHub Actions package of its repository once without a version, because OSV doesn't match
+those ranges to a version, and relgap matches them itself. A pin by commit SHA is checked at
+the version its line comment names (# v4.1.3), as Renovate reads it; without one it is
+not-exact. A finding is one advisory that affects one tool
 version, with every pin of that version, its severity, the lowest fixed version and its
 osv.dev page. A record without a rating takes the rating of its GHSA alias, else its severity
 is unknown. Findings sort by severity, unknown last, then by ID.

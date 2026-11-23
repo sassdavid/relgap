@@ -1,7 +1,7 @@
-# outdated looks up tfprovider: and chart: pins in the Terraform registry and Artifact Hub, and
-# image: pins in their registry. It skips action: pins and images on a registry relgap doesn't
-# read. With --offline and an empty cache every lookup fails without a request, so an error
-# status shows that the lookup was tried. A chart whose repository URL
+# outdated looks up tfprovider: and chart: pins in the Terraform registry and Artifact Hub,
+# image: pins in their registry and action: pins in the action's releases. It skips images on a
+# registry relgap doesn't read. With --offline and an empty cache every lookup fails without a
+# request, so an error status shows that the lookup was tried. A chart whose repository URL
 # fails the lookup keeps the URL in its name instead of searching by name.
 [recording] stop
 env RELGAP_CACHE_DIR=$WORK/empty-cache
@@ -10,7 +10,7 @@ cd repo
 exec expect-exit 1 relgap outdated --offline --format json
 stdout '"tool": "image:node",\s+"pin": \{[^{}]*"location": \{[^{}]*\}\s*\},\s+"status": "error"'
 stdout '"tool": "image:registry.example.com/team/app",\s+"pin": \{[^{}]*"location": \{[^{}]*\}\s*\},\s+"status": "skipped",\s+"note": "[^"]*registry not allowed: registry.example.com'
-stdout '"tool": "action:actions/checkout",\s+"pin": \{[^{}]*"location": \{[^{}]*\}\s*\},\s+"status": "skipped"'
+stdout '"tool": "action:actions/checkout",\s+"repo": "actions/checkout",\s+"pin": \{[^{}]*"location": \{[^{}]*\}\s*\},\s+"status": "error"'
 stdout '"tool": "tfprovider:hashicorp/aws",\s+"repo": "hashicorp/terraform-provider-aws",\s+"pin": \{[^{}]*"location": \{[^{}]*\}\s*\},\s+"status": "error"'
 stdout '"tool": "chart:https://argoproj.github.io/argo-helm/argo-cd",\s+"pin": \{[^{}]*"location": \{[^{}]*\}\s*\},\s+"status": "error"'
 

@@ -644,7 +644,7 @@ one session can't finish, the open boxes carry over to a follow-up session.
   criterion 4)
 - [x] Each finding has a fix target, and an affected latest version warns. (vulnerability-audit
   criterion 5)
-- [ ] Action pins are checked against the GitHub Actions ecosystem. (vulnerability-audit
+- [x] Action pins are checked against the GitHub Actions ecosystem. (vulnerability-audit
   criterion 6)
 - [ ] `vulns.ignore` with reason and expiry, OpenVEX input and `--format openvex`.
   (vulnerability-audit criterion 7)

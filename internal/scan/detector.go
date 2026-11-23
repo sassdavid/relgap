@@ -52,7 +52,8 @@ func DetectorDocs() []DetectorDoc {
 		{
 			DetectorCI, "GitHub Actions workflows, .gitlab-ci.yml and bitbucket-pipelines.yml",
 			"image keys and job containers as image pins, keys such as TERRAFORM_VERSION or go-version as tool " +
-				"pins, and uses: as action pins with scan.detectors.ci_actions; values with variables are skipped",
+				"pins, and uses: as action pins with scan.detectors.ci_actions (a commit SHA takes the version in its " +
+				"line comment); values with variables are skipped",
 			[]string{".github/workflows/ci.yml", ".gitlab-ci.yml", "bitbucket-pipelines.yml"},
 		},
 		{

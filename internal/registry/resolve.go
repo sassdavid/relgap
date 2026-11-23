@@ -325,7 +325,7 @@ type identity struct {
 // Resolve identifies input and merges every layer that knows the tool. input is a name, an
 // alias, a NAME_VERSION variable, github:owner/repo, bitbucket:workspace/repo, gitlab:path,
 // aqua:package, tfprovider:namespace/name, tfmodule:namespace/name/provider, chart:repo/name,
-// chart:name, chart:url/name, npm:package, pypi:package or image:name.
+// chart:name, chart:url/name, npm:package, pypi:package, image:name or action:owner/repo[/path].
 func (r *Resolver) Resolve(ctx context.Context, input string, opts ResolveOptions) (*Resolution, error) {
 	input = strings.TrimSpace(input)
 	if input == "" {
@@ -415,6 +415,8 @@ func (r *Resolver) identify(ctx context.Context, input string, opts ResolveOptio
 		var forgeRest string
 		forgeRest, tagPrefix, _ = SplitTagPrefix(rest)
 		id, err = r.identifyForge(prefix, forgeRest)
+	case explicit && prefix == KindAction:
+		id, err = identifyAction(rest)
 	case explicit:
 		explicitRest := rest
 		if prefix == backendGitHub {
@@ -428,6 +430,30 @@ func (r *Resolver) identify(ctx context.Context, input string, opts ResolveOptio
 		}
 	}
 	return id, tagPrefix, err
+}
+
+// identifyAction names an action, owner/repo or owner/repo/path, after itself and gives it the
+// repository in its first two parts. No registry layer applies: a repository can hold a tool
+// and an action with their own releases.
+func identifyAction(rest string) (identity, error) {
+	repo, ok := ActionRepo(rest)
+	if !ok {
+		return identity{}, fmt.Errorf("%w: action:%s is not action:owner/repo[/path]", ErrUnsupported, rest)
+	}
+	return identity{
+		repo:  repo,
+		match: Match{By: "action", Value: rest, Layer: LayerExplicit},
+		found: &Found{Repo: repo, Name: KindAction + ":" + rest, Layer: LayerExplicit},
+	}, nil
+}
+
+// ActionRepo returns the repository of the action owner/repo[/path]: its first two parts. The
+// second result is false when they don't form owner/repo.
+func ActionRepo(action string) (string, bool) {
+	owner, rest, _ := strings.Cut(action, "/")
+	name, _, _ := strings.Cut(rest, "/")
+	repo := owner + "/" + name
+	return repo, repoRe.MatchString(repo)
 }
 
 func (r *Resolver) relgapSource(name string) string {
@@ -661,6 +687,10 @@ func (r *Resolver) Identify(input string) (string, bool) {
 		}
 		return forgeName(host, repo, tagPrefix), true
 	}
+	if prefix == KindAction {
+		_, ok := ActionRepo(rest)
+		return input, ok
+	}
 	if prefix != backendGitHub && prefix != backendAqua {
 		return "", false
 	}
@@ -714,7 +744,7 @@ func (r *Resolver) identifyExplicit(prefix, rest string) (string, Match, *AquaEn
 	default:
 		return "", Match{}, nil, "", fmt.Errorf(
 			"%w: unknown prefix %q (relgap knows github, bitbucket, gitlab, aqua, tfprovider, tfmodule, chart, "+
-				"npm, pypi and image)",
+				"npm, pypi, image and action)",
 			ErrUnsupported,
 			prefix+":",
 		)

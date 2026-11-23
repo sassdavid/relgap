@@ -217,36 +217,41 @@ func (c cassetteChain) RoundTrip(req *http.Request) (*http.Response, error) {
 	return nil, errors.New("no cassette")
 }
 
-// osvVersionedQueries counts the queries of an OSV querybatch request that ask about a version.
-// The second result is false for any other request.
-func osvVersionedQueries(req *http.Request) (int, bool) {
+// osvQueryCounts counts the queries of an OSV querybatch request that ask about a version, and
+// the first pages of those that ask about every version. The third result is false for any
+// other request.
+func osvQueryCounts(req *http.Request) (int, int, bool) {
 	if req.URL.Host != "api.osv.dev" || req.URL.Path != "/v1/querybatch" || req.GetBody == nil {
-		return 0, false
+		return 0, 0, false
 	}
 	body, err := req.GetBody()
 	if err != nil {
-		return 0, false
+		return 0, 0, false
 	}
 	defer body.Close()
 	var batch struct {
 		Queries []struct {
-			Version string `json:"version"`
+			Version   string `json:"version"`
+			PageToken string `json:"page_token"`
 		} `json:"queries"`
 	}
 	if json.NewDecoder(body).Decode(&batch) != nil {
-		return 0, false
+		return 0, 0, false
 	}
-	n := 0
+	versioned, versionless := 0, 0
 	for _, q := range batch.Queries {
-		if q.Version != "" {
-			n++
+		switch {
+		case q.Version != "":
+			versioned++
+		case q.PageToken == "":
+			versionless++
 		}
 	}
-	return n, true
+	return versioned, versionless, true
 }
 
 // requestLog appends "METHOD URL" to a file for every request before sending it, with the number
-// of versioned queries for an OSV querybatch.
+// of versioned and versionless queries for an OSV querybatch.
 type requestLog struct {
 	file string
 	rt   http.RoundTripper
@@ -258,8 +263,9 @@ func (l requestLog) RoundTrip(req *http.Request) (*http.Response, error) {
 		return nil, fmt.Errorf("open request log: %w", err)
 	}
 	line := req.Method + " " + req.URL.Redacted()
-	if n, ok := osvVersionedQueries(req); ok {
-		line += " osv_versioned_queries=" + strconv.Itoa(n)
+	if versioned, versionless, ok := osvQueryCounts(req); ok {
+		line += " osv_versioned_queries=" + strconv.Itoa(versioned) +
+			" osv_versionless_queries=" + strconv.Itoa(versionless)
 	}
 	_, err = fmt.Fprintln(f, line)
 	if closeErr := f.Close(); err == nil {

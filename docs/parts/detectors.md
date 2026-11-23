@@ -3,7 +3,7 @@
 | Detector | Files | Pins |
 |---|---|---|
 | `aqua` | aqua.yaml and aqua.yml, with or without a leading dot, and YAML files in an aqua directory | packages[] entries written as name: pkg@version or name plus version |
-| `ci` | GitHub Actions workflows, .gitlab-ci.yml and bitbucket-pipelines.yml | image keys and job containers as image pins, keys such as TERRAFORM_VERSION or go-version as tool pins, and uses: as action pins with scan.detectors.ci_actions; values with variables are skipped |
+| `ci` | GitHub Actions workflows, .gitlab-ci.yml and bitbucket-pipelines.yml | image keys and job containers as image pins, keys such as TERRAFORM_VERSION or go-version as tool pins, and uses: as action pins with scan.detectors.ci_actions (a commit SHA takes the version in its line comment); values with variables are skipped |
 | `dockerfile` | Dockerfile*, Containerfile* and *.dockerfile | FROM image tags with ARG defaults filled in, and ARG or ENV NAME_VERSION values; a # renovate: comment above an ARG or ENV names the tool |
 | `generic` | the files scan.extra_files names, with scan.detectors.generic on | NAME_VERSION = x.y.z assignments in any text file |
 | `helm` | Chart.yaml | dependencies[] as chart pins with their repository URL, and appVersion as a pin of the tool named like the chart |

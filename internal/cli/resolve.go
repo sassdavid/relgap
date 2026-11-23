@@ -29,8 +29,9 @@ func newResolveCmd(d *app.Deps, g *globals) *cobra.Command {
 
 <tool> is a name or alias (terraform, tf), a NAME_VERSION variable (TERRAFORM_VERSION),
 github:owner/repo, aqua:package, tfprovider:namespace/name, tfmodule:namespace/name/provider,
-chart:repo/name, chart:name, chart:url/name, npm:package or pypi:package. When a registry knows
-the tool, the result is the same as for its name.
+chart:repo/name, chart:name, chart:url/name, npm:package, pypi:package or action:owner/repo[/path].
+When a registry knows the tool, the result is the same as for its name. An action:
+name resolves to the action's github.com repository and never to a tool a registry lists for it.
 
 tfprovider:, tfmodule:, chart:, npm: and pypi: names that no registry knows are looked up in the
 Terraform registry, Artifact Hub, the npm registry or PyPI, which name the source repository. A
