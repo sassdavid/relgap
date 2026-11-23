@@ -30,12 +30,14 @@ relgap digest terraform 1.9.0..1.10.0
 relgap outdated --fail-on breaking
 relgap pins ~/src/infra
 relgap drift ~/src/infra ~/src/apps
+relgap audit ~/src/infra
 ```
 
 ## Subcommands
 
 | Command | Description |
 |---|---|
+| [relgap audit](/cli/audit) | List the known vulnerabilities of every pinned tool version, and the pins OSV can't check |
 | [relgap cache](/cli/cache/) | Inspect or clear the HTTP cache |
 | [relgap completion](/cli/completion) | Generate the autocompletion script for the specified shell |
 | [relgap config](/cli/config/) | Inspect and validate configuration |

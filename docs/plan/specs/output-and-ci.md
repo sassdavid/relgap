@@ -142,7 +142,7 @@ the exit codes.
   match exits 1, including an endoflife.date outage under `--fail-on eol` and an OSV outage
   under `--fail-on vuln`. Usage errors exit 2, auth errors 4.
 - The values keep the order of the table and the config schema enum: breaking, deprecation,
-  eol, vuln, drift, outdated. Help text, error messages and SARIF rules follow it. A matched
+  eol, vuln, drift, outdated, unchecked (`audit` only, vulnerability-audit.md). Help text, error messages and SARIF rules follow it. A matched
   value's error names its count and findings: `--fail-on vuln matched 2 advisories: GO-2025-3521
   in kubectl 1.34.13 (mise.toml:2), ...`.
 - `--vuln-severity` and `policy.vuln_severity` set the lowest CVSS rating `--fail-on vuln`

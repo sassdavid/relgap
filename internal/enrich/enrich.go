@@ -65,6 +65,7 @@ type Enricher struct {
 }
 
 // NewEnricher returns an enricher that uses eol and osv with up to concurrency requests at once.
+// A nil eol skips endoflife.date.
 func NewEnricher(logger *slog.Logger, eol *EOLClient, osv *OSVClient, concurrency int) *Enricher {
 	return &Enricher{logger: logger, eol: eol, osv: osv, concurrency: max(concurrency, 1)}
 }
@@ -79,7 +80,9 @@ func (e *Enricher) Enrich(ctx context.Context, reqs []Request) (map[string]Resul
 		eolProblems []Problem
 		wg          sync.WaitGroup
 	)
-	wg.Go(func() { eols, eolProblems = e.eolResults(ctx, reqs) })
+	if e.eol != nil {
+		wg.Go(func() { eols, eolProblems = e.eolResults(ctx, reqs) })
+	}
 	covs := make([]Coverage, len(reqs))
 	for i, r := range reqs {
 		covs[i] = r.coverage()

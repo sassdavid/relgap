@@ -45,7 +45,7 @@ func PinsMarkdown(w io.Writer, pins []scan.Pin, unresolved bool) error {
 }
 
 func pinRows(pins []scan.Pin, unresolved bool) [][]string {
-	first := "TOOL"
+	first := headTool
 	if unresolved {
 		first = "RAW NAME"
 	}

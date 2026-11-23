@@ -281,7 +281,7 @@ func kindRules(n *schemaNode) *table {
 // sarifRulesPage writes /reference/sarif-rules from the rules render puts in SARIF logs.
 func sarifRulesPage(_ string, files map[string][]byte) error {
 	t := &table{head: []string{"Rule", "Level", "Commands", "Description", "Help"}}
-	ids := slices.Concat(render.OutdatedRules(), render.DriftRules())
+	ids := slices.Concat(render.OutdatedRules(), render.DriftRules(), render.AuditRules())
 	seen := map[string]bool{}
 	for _, id := range ids {
 		if seen[id] {
@@ -299,16 +299,20 @@ func sarifRulesPage(_ string, files map[string][]byte) error {
 		if slices.Contains(render.DriftRules(), id) {
 			cmds = append(cmds, link("drift", "/cli/drift"))
 		}
+		if slices.Contains(render.AuditRules(), id) {
+			cmds = append(cmds, link("audit", "/cli/audit"))
+		}
 		t.add(code(id), r.DefaultConfiguration.Level, strings.Join(cmds, ", "),
 			prose(r.ShortDescription.Text)+". "+prose(r.FullDescription.Text), prose(r.Help.Text))
 	}
-	body := "`relgap outdated --format sarif` and `relgap drift --format sarif` write SARIF 2.1.0 for GitHub code\n" +
-		"scanning. Each log lists the rules below, and every result points at the pin's file and line.\n\n" +
+	body := "`relgap outdated --format sarif`, `relgap drift --format sarif` and `relgap audit --format sarif` write\n" +
+		"SARIF 2.1.0 for GitHub code scanning. Each log lists the rules below, and every result points at the\n" +
+		"pin's file and line.\n\n" +
 		t.String() + `
 ## Vulnerabilities
 
-outdated adds one rule per OSV advisory that affects a pinned version, with the OSV ID as the rule
-ID. Its level comes from the advisory's CVSS rating: error for high and critical, warning for
+outdated and audit add one rule per OSV advisory that affects a pinned version, with the OSV ID as
+the rule ID. Its level comes from the advisory's CVSS rating: error for high and critical, warning for
 medium, and note for low or no rating. The rule carries the score as ` + "`security-severity`" + `, which
 code scanning shows as the alert's severity, and its help links to the advisory on osv.dev.
 
@@ -319,6 +323,7 @@ what the result is about. GitHub ignores it and hashes the pin's line itself; ot
 match results across runs with it.
 `
 	files["docs/reference/sarif-rules.md"] = page("SARIF rules",
-		"The SARIF rules relgap outdated and drift report to code scanning, with their levels and help text.", body)
+		"The SARIF rules relgap outdated, drift and audit report to code scanning, with their levels and help text.",
+		body)
 	return nil
 }

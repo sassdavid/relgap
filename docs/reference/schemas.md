@@ -11,6 +11,7 @@ Each schema's `$id` is the URL it is served at, so an editor or a validator can 
 
 | Schema | Title | Description |
 |---|---|---|
+| [`audit-v1.json`](/schemas/audit-v1.json) | relgap audit --format json | The report-v1.json envelope with audit data: the OSV advisories that affect the pinned tool versions under the roots, and the tool versions OSV wasn't asked about. |
 | [`config-v1.json`](/schemas/config-v1.json) | relgap configuration | Schema for $XDG\_CONFIG\_HOME/relgap/config.yaml and .relgap.yaml. Generated from internal/config by `mise run test:golden -- -update`; do not edit. |
 | [`digest-v1.json`](/schemas/digest-v1.json) | relgap digest --format json | The report-v1.json envelope with digest data: per tool, the versions in the range and the classified entries of their release notes. |
 | [`drift-v1.json`](/schemas/drift-v1.json) | relgap drift --format json | The report-v1.json envelope with drift data: every resolved pin of the scanned repositories, grouped by tool, with the distinct versions they stand for. |

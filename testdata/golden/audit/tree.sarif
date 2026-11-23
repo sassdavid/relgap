@@ -1,0 +1,2064 @@
+{
+  "$schema": "https://docs.oasis-open.org/sarif/sarif/v2.1.0/errata01/os/schemas/sarif-schema-2.1.0.json",
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "relgap",
+          "version": "dev",
+          "informationUri": "https://github.com/sassdavid/relgap",
+          "rules": [
+            {
+              "id": "failed",
+              "shortDescription": {
+                "text": "relgap couldn't check this pin or file"
+              },
+              "fullDescription": {
+                "text": "A file didn't parse, or looking up the tool's versions failed."
+              },
+              "help": {
+                "text": "Fix the file, or run relgap again with -v to see the failing request."
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              }
+            },
+            {
+              "id": "unchecked",
+              "shortDescription": {
+                "text": "relgap didn't check this pin for vulnerabilities"
+              },
+              "fullDescription": {
+                "text": "OSV wasn't asked about the pinned version, so no result here doesn't mean the version is clean. The message gives the reason: no-advisory-source, private-source, not-exact, unresolved, offline or failed."
+              },
+              "help": {
+                "text": "Pin an exact version, or check the tool another way. Details: https://relgap.sasskovacs.dev/concepts/enrichment#unchecked-pins"
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              }
+            },
+            {
+              "id": "GHSA-8394-6f8r-whxg",
+              "shortDescription": {
+                "text": "Terragrunt: Arbitrary File Deletion via Malicious Module Manifest"
+              },
+              "fullDescription": {
+                "text": "Terragrunt: Arbitrary File Deletion via Malicious Module Manifest (CVE-2026-45099, GO-2026-6241)"
+              },
+              "help": {
+                "text": "Upgrade past the affected versions. Details: https://osv.dev/vulnerability/GHSA-8394-6f8r-whxg"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "security-severity": "6.9",
+                "tags": [
+                  "security",
+                  "vulnerability"
+                ]
+              }
+            },
+            {
+              "id": "GHSA-h626-pv66-hhm7",
+              "shortDescription": {
+                "text": "Terraform allows arbitrary file write during the `init` operation"
+              },
+              "fullDescription": {
+                "text": "Terraform allows arbitrary file write during the `init` operation (CVE-2023-4782, GO-2023-2055)"
+              },
+              "help": {
+                "text": "Upgrade past the affected versions. Details: https://osv.dev/vulnerability/GHSA-h626-pv66-hhm7"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "security-severity": "6.3",
+                "tags": [
+                  "security",
+                  "vulnerability"
+                ]
+              }
+            },
+            {
+              "id": "GHSA-hr2v-4r36-88hr",
+              "shortDescription": {
+                "text": "Helm Chart extraction output directory collapse via `Chart.yaml` name dot-segment"
+              },
+              "fullDescription": {
+                "text": "Helm Chart extraction output directory collapse via `Chart.yaml` name dot-segment (BIT-helm-2026-35206, CVE-2026-35206, GO-2026-5435)"
+              },
+              "help": {
+                "text": "Upgrade past the affected versions. Details: https://osv.dev/vulnerability/GHSA-hr2v-4r36-88hr"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "security-severity": "4.8",
+                "tags": [
+                  "security",
+                  "vulnerability"
+                ]
+              }
+            },
+            {
+              "id": "GHSA-r6j8-c6r2-37rr",
+              "shortDescription": {
+                "text": "kube-controller-manager is vulnerable to half-blind Server Side Request Forgery through in-tree Portworx StorageClass"
+              },
+              "fullDescription": {
+                "text": "kube-controller-manager is vulnerable to half-blind Server Side Request Forgery through in-tree Portworx StorageClass (CVE-2025-13281, GO-2025-4240)"
+              },
+              "help": {
+                "text": "Upgrade past the affected versions. Details: https://osv.dev/vulnerability/GHSA-r6j8-c6r2-37rr"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "security-severity": "5.8",
+                "tags": [
+                  "security",
+                  "vulnerability"
+                ]
+              }
+            },
+            {
+              "id": "GHSA-wv6g-x823-wx9m",
+              "shortDescription": {
+                "text": "Terragrunt catalog predictable temp symlink clobber"
+              },
+              "fullDescription": {
+                "text": "Terragrunt catalog predictable temp symlink clobber (CVE-2026-64672, GO-2026-6768)"
+              },
+              "help": {
+                "text": "Upgrade past the affected versions. Details: https://osv.dev/vulnerability/GHSA-wv6g-x823-wx9m"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "security-severity": "4.4",
+                "tags": [
+                  "security",
+                  "vulnerability"
+                ]
+              }
+            },
+            {
+              "id": "GO-2025-3521",
+              "shortDescription": {
+                "text": "Kubernetes GitRepo Volume Inadvertent Local Repository Access in k8s.io/kubernetes"
+              },
+              "fullDescription": {
+                "text": "Kubernetes GitRepo Volume Inadvertent Local Repository Access in k8s.io/kubernetes (CVE-2025-1767, GHSA-3wgm-2gw2-vh5m)"
+              },
+              "help": {
+                "text": "Upgrade past the affected versions. Details: https://osv.dev/vulnerability/GO-2025-3521"
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "vulnerability"
+                ]
+              }
+            },
+            {
+              "id": "GO-2025-3547",
+              "shortDescription": {
+                "text": "Kubernetes kube-apiserver Vulnerable to Race Condition in k8s.io/kubernetes"
+              },
+              "fullDescription": {
+                "text": "Kubernetes kube-apiserver Vulnerable to Race Condition in k8s.io/kubernetes (CVE-2024-7598, GHSA-r56h-j38w-hrqq)"
+              },
+              "help": {
+                "text": "Upgrade past the affected versions. Details: https://osv.dev/vulnerability/GO-2025-3547"
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "vulnerability"
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "results": [
+        {
+          "ruleId": "GHSA-8394-6f8r-whxg",
+          "ruleIndex": 2,
+          "level": "warning",
+          "message": {
+            "text": "terragrunt 0.93.13 is affected by GHSA-8394-6f8r-whxg (CVE-2026-45099, GO-2026-6241), medium: Terragrunt: Arbitrary File Deletion via Malicious Module Manifest; fixed in 1.0.4"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-0/repo-03/mise.toml"
+                },
+                "region": {
+                  "startLine": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GHSA-8394-6f8r-whxg|terragrunt|tree/team-0/repo-03/mise.toml|GHSA-8394-6f8r-whxg"
+          }
+        },
+        {
+          "ruleId": "GHSA-h626-pv66-hhm7",
+          "ruleIndex": 3,
+          "level": "warning",
+          "message": {
+            "text": "terraform 1.5.0 is affected by GHSA-h626-pv66-hhm7 (CVE-2023-4782, GO-2023-2055), medium: Terraform allows arbitrary file write during the `init` operation; fixed in 1.5.7"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-0/repo-00/.terraform-version"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GHSA-h626-pv66-hhm7|terraform|tree/team-0/repo-00/.terraform-version|GHSA-h626-pv66-hhm7"
+          }
+        },
+        {
+          "ruleId": "GHSA-h626-pv66-hhm7",
+          "ruleIndex": 3,
+          "level": "warning",
+          "message": {
+            "text": "terraform 1.5.0 is affected by GHSA-h626-pv66-hhm7 (CVE-2023-4782, GO-2023-2055), medium: Terraform allows arbitrary file write during the `init` operation; fixed in 1.5.7"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-0/repo-01/.terraform-version"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GHSA-h626-pv66-hhm7|terraform|tree/team-0/repo-01/.terraform-version|GHSA-h626-pv66-hhm7"
+          }
+        },
+        {
+          "ruleId": "GHSA-h626-pv66-hhm7",
+          "ruleIndex": 3,
+          "level": "warning",
+          "message": {
+            "text": "terraform 1.5.0 is affected by GHSA-h626-pv66-hhm7 (CVE-2023-4782, GO-2023-2055), medium: Terraform allows arbitrary file write during the `init` operation; fixed in 1.5.7"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-0/repo-02/.terraform-version"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GHSA-h626-pv66-hhm7|terraform|tree/team-0/repo-02/.terraform-version|GHSA-h626-pv66-hhm7"
+          }
+        },
+        {
+          "ruleId": "GHSA-h626-pv66-hhm7",
+          "ruleIndex": 3,
+          "level": "warning",
+          "message": {
+            "text": "terraform 1.5.0 is affected by GHSA-h626-pv66-hhm7 (CVE-2023-4782, GO-2023-2055), medium: Terraform allows arbitrary file write during the `init` operation; fixed in 1.5.7"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-0/repo-03/.terraform-version"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GHSA-h626-pv66-hhm7|terraform|tree/team-0/repo-03/.terraform-version|GHSA-h626-pv66-hhm7"
+          }
+        },
+        {
+          "ruleId": "GHSA-h626-pv66-hhm7",
+          "ruleIndex": 3,
+          "level": "warning",
+          "message": {
+            "text": "terraform 1.5.0 is affected by GHSA-h626-pv66-hhm7 (CVE-2023-4782, GO-2023-2055), medium: Terraform allows arbitrary file write during the `init` operation; fixed in 1.5.7"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-0/repo-04/.terraform-version"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GHSA-h626-pv66-hhm7|terraform|tree/team-0/repo-04/.terraform-version|GHSA-h626-pv66-hhm7"
+          }
+        },
+        {
+          "ruleId": "GHSA-h626-pv66-hhm7",
+          "ruleIndex": 3,
+          "level": "warning",
+          "message": {
+            "text": "terraform 1.5.0 is affected by GHSA-h626-pv66-hhm7 (CVE-2023-4782, GO-2023-2055), medium: Terraform allows arbitrary file write during the `init` operation; fixed in 1.5.7"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-1/repo-05/.terraform-version"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GHSA-h626-pv66-hhm7|terraform|tree/team-1/repo-05/.terraform-version|GHSA-h626-pv66-hhm7"
+          }
+        },
+        {
+          "ruleId": "GHSA-h626-pv66-hhm7",
+          "ruleIndex": 3,
+          "level": "warning",
+          "message": {
+            "text": "terraform 1.5.0 is affected by GHSA-h626-pv66-hhm7 (CVE-2023-4782, GO-2023-2055), medium: Terraform allows arbitrary file write during the `init` operation; fixed in 1.5.7"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-1/repo-06/.terraform-version"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GHSA-h626-pv66-hhm7|terraform|tree/team-1/repo-06/.terraform-version|GHSA-h626-pv66-hhm7"
+          }
+        },
+        {
+          "ruleId": "GHSA-h626-pv66-hhm7",
+          "ruleIndex": 3,
+          "level": "warning",
+          "message": {
+            "text": "terraform 1.5.0 is affected by GHSA-h626-pv66-hhm7 (CVE-2023-4782, GO-2023-2055), medium: Terraform allows arbitrary file write during the `init` operation; fixed in 1.5.7"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-1/repo-07/.terraform-version"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GHSA-h626-pv66-hhm7|terraform|tree/team-1/repo-07/.terraform-version|GHSA-h626-pv66-hhm7"
+          }
+        },
+        {
+          "ruleId": "GHSA-h626-pv66-hhm7",
+          "ruleIndex": 3,
+          "level": "warning",
+          "message": {
+            "text": "terraform 1.5.0 is affected by GHSA-h626-pv66-hhm7 (CVE-2023-4782, GO-2023-2055), medium: Terraform allows arbitrary file write during the `init` operation; fixed in 1.5.7"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-1/repo-08/.terraform-version"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GHSA-h626-pv66-hhm7|terraform|tree/team-1/repo-08/.terraform-version|GHSA-h626-pv66-hhm7"
+          }
+        },
+        {
+          "ruleId": "GHSA-h626-pv66-hhm7",
+          "ruleIndex": 3,
+          "level": "warning",
+          "message": {
+            "text": "terraform 1.5.0 is affected by GHSA-h626-pv66-hhm7 (CVE-2023-4782, GO-2023-2055), medium: Terraform allows arbitrary file write during the `init` operation; fixed in 1.5.7"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-1/repo-09/.terraform-version"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GHSA-h626-pv66-hhm7|terraform|tree/team-1/repo-09/.terraform-version|GHSA-h626-pv66-hhm7"
+          }
+        },
+        {
+          "ruleId": "GHSA-h626-pv66-hhm7",
+          "ruleIndex": 3,
+          "level": "warning",
+          "message": {
+            "text": "terraform 1.5.0 is affected by GHSA-h626-pv66-hhm7 (CVE-2023-4782, GO-2023-2055), medium: Terraform allows arbitrary file write during the `init` operation; fixed in 1.5.7"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-2/repo-10/.terraform-version"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GHSA-h626-pv66-hhm7|terraform|tree/team-2/repo-10/.terraform-version|GHSA-h626-pv66-hhm7"
+          }
+        },
+        {
+          "ruleId": "GHSA-h626-pv66-hhm7",
+          "ruleIndex": 3,
+          "level": "warning",
+          "message": {
+            "text": "terraform 1.5.0 is affected by GHSA-h626-pv66-hhm7 (CVE-2023-4782, GO-2023-2055), medium: Terraform allows arbitrary file write during the `init` operation; fixed in 1.5.7"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-2/repo-11/.terraform-version"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GHSA-h626-pv66-hhm7|terraform|tree/team-2/repo-11/.terraform-version|GHSA-h626-pv66-hhm7"
+          }
+        },
+        {
+          "ruleId": "GHSA-h626-pv66-hhm7",
+          "ruleIndex": 3,
+          "level": "warning",
+          "message": {
+            "text": "terraform 1.5.0 is affected by GHSA-h626-pv66-hhm7 (CVE-2023-4782, GO-2023-2055), medium: Terraform allows arbitrary file write during the `init` operation; fixed in 1.5.7"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-2/repo-12/.terraform-version"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GHSA-h626-pv66-hhm7|terraform|tree/team-2/repo-12/.terraform-version|GHSA-h626-pv66-hhm7"
+          }
+        },
+        {
+          "ruleId": "GHSA-h626-pv66-hhm7",
+          "ruleIndex": 3,
+          "level": "warning",
+          "message": {
+            "text": "terraform 1.5.0 is affected by GHSA-h626-pv66-hhm7 (CVE-2023-4782, GO-2023-2055), medium: Terraform allows arbitrary file write during the `init` operation; fixed in 1.5.7"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-2/repo-13/.terraform-version"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GHSA-h626-pv66-hhm7|terraform|tree/team-2/repo-13/.terraform-version|GHSA-h626-pv66-hhm7"
+          }
+        },
+        {
+          "ruleId": "GHSA-h626-pv66-hhm7",
+          "ruleIndex": 3,
+          "level": "warning",
+          "message": {
+            "text": "terraform 1.5.0 is affected by GHSA-h626-pv66-hhm7 (CVE-2023-4782, GO-2023-2055), medium: Terraform allows arbitrary file write during the `init` operation; fixed in 1.5.7"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-2/repo-14/.terraform-version"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GHSA-h626-pv66-hhm7|terraform|tree/team-2/repo-14/.terraform-version|GHSA-h626-pv66-hhm7"
+          }
+        },
+        {
+          "ruleId": "GHSA-h626-pv66-hhm7",
+          "ruleIndex": 3,
+          "level": "warning",
+          "message": {
+            "text": "terraform 1.5.0 is affected by GHSA-h626-pv66-hhm7 (CVE-2023-4782, GO-2023-2055), medium: Terraform allows arbitrary file write during the `init` operation; fixed in 1.5.7"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-3/repo-15/.terraform-version"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GHSA-h626-pv66-hhm7|terraform|tree/team-3/repo-15/.terraform-version|GHSA-h626-pv66-hhm7"
+          }
+        },
+        {
+          "ruleId": "GHSA-h626-pv66-hhm7",
+          "ruleIndex": 3,
+          "level": "warning",
+          "message": {
+            "text": "terraform 1.5.0 is affected by GHSA-h626-pv66-hhm7 (CVE-2023-4782, GO-2023-2055), medium: Terraform allows arbitrary file write during the `init` operation; fixed in 1.5.7"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-3/repo-16/.terraform-version"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GHSA-h626-pv66-hhm7|terraform|tree/team-3/repo-16/.terraform-version|GHSA-h626-pv66-hhm7"
+          }
+        },
+        {
+          "ruleId": "GHSA-h626-pv66-hhm7",
+          "ruleIndex": 3,
+          "level": "warning",
+          "message": {
+            "text": "terraform 1.5.0 is affected by GHSA-h626-pv66-hhm7 (CVE-2023-4782, GO-2023-2055), medium: Terraform allows arbitrary file write during the `init` operation; fixed in 1.5.7"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-3/repo-17/.terraform-version"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GHSA-h626-pv66-hhm7|terraform|tree/team-3/repo-17/.terraform-version|GHSA-h626-pv66-hhm7"
+          }
+        },
+        {
+          "ruleId": "GHSA-h626-pv66-hhm7",
+          "ruleIndex": 3,
+          "level": "warning",
+          "message": {
+            "text": "terraform 1.5.0 is affected by GHSA-h626-pv66-hhm7 (CVE-2023-4782, GO-2023-2055), medium: Terraform allows arbitrary file write during the `init` operation; fixed in 1.5.7"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-3/repo-18/.terraform-version"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GHSA-h626-pv66-hhm7|terraform|tree/team-3/repo-18/.terraform-version|GHSA-h626-pv66-hhm7"
+          }
+        },
+        {
+          "ruleId": "GHSA-h626-pv66-hhm7",
+          "ruleIndex": 3,
+          "level": "warning",
+          "message": {
+            "text": "terraform 1.5.0 is affected by GHSA-h626-pv66-hhm7 (CVE-2023-4782, GO-2023-2055), medium: Terraform allows arbitrary file write during the `init` operation; fixed in 1.5.7"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-3/repo-19/.terraform-version"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GHSA-h626-pv66-hhm7|terraform|tree/team-3/repo-19/.terraform-version|GHSA-h626-pv66-hhm7"
+          }
+        },
+        {
+          "ruleId": "GHSA-r6j8-c6r2-37rr",
+          "ruleIndex": 5,
+          "level": "warning",
+          "message": {
+            "text": "kubectl 1.33.5 is affected by GHSA-r6j8-c6r2-37rr (CVE-2025-13281, GO-2025-4240), medium: kube-controller-manager is vulnerable to half-blind Server Side Request Forgery through in-tree Portworx StorageClass; fixed in 1.33.6"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-0/repo-01/mise.toml"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GHSA-r6j8-c6r2-37rr|kubectl|tree/team-0/repo-01/mise.toml|GHSA-r6j8-c6r2-37rr"
+          }
+        },
+        {
+          "ruleId": "GHSA-r6j8-c6r2-37rr",
+          "ruleIndex": 5,
+          "level": "warning",
+          "message": {
+            "text": "kubectl 1.33.5 is affected by GHSA-r6j8-c6r2-37rr (CVE-2025-13281, GO-2025-4240), medium: kube-controller-manager is vulnerable to half-blind Server Side Request Forgery through in-tree Portworx StorageClass; fixed in 1.33.6"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-0/repo-03/mise.toml"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GHSA-r6j8-c6r2-37rr|kubectl|tree/team-0/repo-03/mise.toml|GHSA-r6j8-c6r2-37rr"
+          }
+        },
+        {
+          "ruleId": "GHSA-r6j8-c6r2-37rr",
+          "ruleIndex": 5,
+          "level": "warning",
+          "message": {
+            "text": "kubectl 1.33.5 is affected by GHSA-r6j8-c6r2-37rr (CVE-2025-13281, GO-2025-4240), medium: kube-controller-manager is vulnerable to half-blind Server Side Request Forgery through in-tree Portworx StorageClass; fixed in 1.33.6"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-1/repo-05/mise.toml"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GHSA-r6j8-c6r2-37rr|kubectl|tree/team-1/repo-05/mise.toml|GHSA-r6j8-c6r2-37rr"
+          }
+        },
+        {
+          "ruleId": "GHSA-r6j8-c6r2-37rr",
+          "ruleIndex": 5,
+          "level": "warning",
+          "message": {
+            "text": "kubectl 1.33.5 is affected by GHSA-r6j8-c6r2-37rr (CVE-2025-13281, GO-2025-4240), medium: kube-controller-manager is vulnerable to half-blind Server Side Request Forgery through in-tree Portworx StorageClass; fixed in 1.33.6"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-1/repo-07/mise.toml"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GHSA-r6j8-c6r2-37rr|kubectl|tree/team-1/repo-07/mise.toml|GHSA-r6j8-c6r2-37rr"
+          }
+        },
+        {
+          "ruleId": "GHSA-r6j8-c6r2-37rr",
+          "ruleIndex": 5,
+          "level": "warning",
+          "message": {
+            "text": "kubectl 1.33.5 is affected by GHSA-r6j8-c6r2-37rr (CVE-2025-13281, GO-2025-4240), medium: kube-controller-manager is vulnerable to half-blind Server Side Request Forgery through in-tree Portworx StorageClass; fixed in 1.33.6"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-1/repo-09/mise.toml"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GHSA-r6j8-c6r2-37rr|kubectl|tree/team-1/repo-09/mise.toml|GHSA-r6j8-c6r2-37rr"
+          }
+        },
+        {
+          "ruleId": "GHSA-r6j8-c6r2-37rr",
+          "ruleIndex": 5,
+          "level": "warning",
+          "message": {
+            "text": "kubectl 1.33.5 is affected by GHSA-r6j8-c6r2-37rr (CVE-2025-13281, GO-2025-4240), medium: kube-controller-manager is vulnerable to half-blind Server Side Request Forgery through in-tree Portworx StorageClass; fixed in 1.33.6"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-2/repo-11/mise.toml"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GHSA-r6j8-c6r2-37rr|kubectl|tree/team-2/repo-11/mise.toml|GHSA-r6j8-c6r2-37rr"
+          }
+        },
+        {
+          "ruleId": "GHSA-r6j8-c6r2-37rr",
+          "ruleIndex": 5,
+          "level": "warning",
+          "message": {
+            "text": "kubectl 1.33.5 is affected by GHSA-r6j8-c6r2-37rr (CVE-2025-13281, GO-2025-4240), medium: kube-controller-manager is vulnerable to half-blind Server Side Request Forgery through in-tree Portworx StorageClass; fixed in 1.33.6"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-2/repo-13/mise.toml"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GHSA-r6j8-c6r2-37rr|kubectl|tree/team-2/repo-13/mise.toml|GHSA-r6j8-c6r2-37rr"
+          }
+        },
+        {
+          "ruleId": "GHSA-r6j8-c6r2-37rr",
+          "ruleIndex": 5,
+          "level": "warning",
+          "message": {
+            "text": "kubectl 1.33.5 is affected by GHSA-r6j8-c6r2-37rr (CVE-2025-13281, GO-2025-4240), medium: kube-controller-manager is vulnerable to half-blind Server Side Request Forgery through in-tree Portworx StorageClass; fixed in 1.33.6"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-3/repo-15/mise.toml"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GHSA-r6j8-c6r2-37rr|kubectl|tree/team-3/repo-15/mise.toml|GHSA-r6j8-c6r2-37rr"
+          }
+        },
+        {
+          "ruleId": "GHSA-r6j8-c6r2-37rr",
+          "ruleIndex": 5,
+          "level": "warning",
+          "message": {
+            "text": "kubectl 1.33.5 is affected by GHSA-r6j8-c6r2-37rr (CVE-2025-13281, GO-2025-4240), medium: kube-controller-manager is vulnerable to half-blind Server Side Request Forgery through in-tree Portworx StorageClass; fixed in 1.33.6"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-3/repo-17/mise.toml"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GHSA-r6j8-c6r2-37rr|kubectl|tree/team-3/repo-17/mise.toml|GHSA-r6j8-c6r2-37rr"
+          }
+        },
+        {
+          "ruleId": "GHSA-r6j8-c6r2-37rr",
+          "ruleIndex": 5,
+          "level": "warning",
+          "message": {
+            "text": "kubectl 1.33.5 is affected by GHSA-r6j8-c6r2-37rr (CVE-2025-13281, GO-2025-4240), medium: kube-controller-manager is vulnerable to half-blind Server Side Request Forgery through in-tree Portworx StorageClass; fixed in 1.33.6"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-3/repo-19/mise.toml"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GHSA-r6j8-c6r2-37rr|kubectl|tree/team-3/repo-19/mise.toml|GHSA-r6j8-c6r2-37rr"
+          }
+        },
+        {
+          "ruleId": "GHSA-hr2v-4r36-88hr",
+          "ruleIndex": 4,
+          "level": "warning",
+          "message": {
+            "text": "helm 3.19.0 is affected by GHSA-hr2v-4r36-88hr (BIT-helm-2026-35206, CVE-2026-35206, GO-2026-5435), medium: Helm Chart extraction output directory collapse via `Chart.yaml` name dot-segment; fixed in 3.20.2"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-0/repo-01/mise.toml"
+                },
+                "region": {
+                  "startLine": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GHSA-hr2v-4r36-88hr|helm|tree/team-0/repo-01/mise.toml|GHSA-hr2v-4r36-88hr"
+          }
+        },
+        {
+          "ruleId": "GHSA-hr2v-4r36-88hr",
+          "ruleIndex": 4,
+          "level": "warning",
+          "message": {
+            "text": "helm 3.19.0 is affected by GHSA-hr2v-4r36-88hr (BIT-helm-2026-35206, CVE-2026-35206, GO-2026-5435), medium: Helm Chart extraction output directory collapse via `Chart.yaml` name dot-segment; fixed in 3.20.2"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-1/repo-05/mise.toml"
+                },
+                "region": {
+                  "startLine": 4
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GHSA-hr2v-4r36-88hr|helm|tree/team-1/repo-05/mise.toml|GHSA-hr2v-4r36-88hr"
+          }
+        },
+        {
+          "ruleId": "GHSA-hr2v-4r36-88hr",
+          "ruleIndex": 4,
+          "level": "warning",
+          "message": {
+            "text": "helm 3.19.0 is affected by GHSA-hr2v-4r36-88hr (BIT-helm-2026-35206, CVE-2026-35206, GO-2026-5435), medium: Helm Chart extraction output directory collapse via `Chart.yaml` name dot-segment; fixed in 3.20.2"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-1/repo-09/mise.toml"
+                },
+                "region": {
+                  "startLine": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GHSA-hr2v-4r36-88hr|helm|tree/team-1/repo-09/mise.toml|GHSA-hr2v-4r36-88hr"
+          }
+        },
+        {
+          "ruleId": "GHSA-hr2v-4r36-88hr",
+          "ruleIndex": 4,
+          "level": "warning",
+          "message": {
+            "text": "helm 3.19.0 is affected by GHSA-hr2v-4r36-88hr (BIT-helm-2026-35206, CVE-2026-35206, GO-2026-5435), medium: Helm Chart extraction output directory collapse via `Chart.yaml` name dot-segment; fixed in 3.20.2"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-2/repo-13/mise.toml"
+                },
+                "region": {
+                  "startLine": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GHSA-hr2v-4r36-88hr|helm|tree/team-2/repo-13/mise.toml|GHSA-hr2v-4r36-88hr"
+          }
+        },
+        {
+          "ruleId": "GHSA-hr2v-4r36-88hr",
+          "ruleIndex": 4,
+          "level": "warning",
+          "message": {
+            "text": "helm 3.19.0 is affected by GHSA-hr2v-4r36-88hr (BIT-helm-2026-35206, CVE-2026-35206, GO-2026-5435), medium: Helm Chart extraction output directory collapse via `Chart.yaml` name dot-segment; fixed in 3.20.2"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-3/repo-17/mise.toml"
+                },
+                "region": {
+                  "startLine": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GHSA-hr2v-4r36-88hr|helm|tree/team-3/repo-17/mise.toml|GHSA-hr2v-4r36-88hr"
+          }
+        },
+        {
+          "ruleId": "GHSA-wv6g-x823-wx9m",
+          "ruleIndex": 6,
+          "level": "warning",
+          "message": {
+            "text": "terragrunt 0.93.13 is affected by GHSA-wv6g-x823-wx9m (CVE-2026-64672, GO-2026-6768), medium: Terragrunt catalog predictable temp symlink clobber; fixed in 1.1.1"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-0/repo-03/mise.toml"
+                },
+                "region": {
+                  "startLine": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GHSA-wv6g-x823-wx9m|terragrunt|tree/team-0/repo-03/mise.toml|GHSA-wv6g-x823-wx9m"
+          }
+        },
+        {
+          "ruleId": "GO-2025-3521",
+          "ruleIndex": 7,
+          "level": "note",
+          "message": {
+            "text": "kubectl 1.33.5 is affected by GO-2025-3521 (CVE-2025-1767, GHSA-3wgm-2gw2-vh5m): Kubernetes GitRepo Volume Inadvertent Local Repository Access in k8s.io/kubernetes"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-0/repo-01/mise.toml"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GO-2025-3521|kubectl|tree/team-0/repo-01/mise.toml|GO-2025-3521"
+          }
+        },
+        {
+          "ruleId": "GO-2025-3521",
+          "ruleIndex": 7,
+          "level": "note",
+          "message": {
+            "text": "kubectl 1.33.5 is affected by GO-2025-3521 (CVE-2025-1767, GHSA-3wgm-2gw2-vh5m): Kubernetes GitRepo Volume Inadvertent Local Repository Access in k8s.io/kubernetes"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-0/repo-03/mise.toml"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GO-2025-3521|kubectl|tree/team-0/repo-03/mise.toml|GO-2025-3521"
+          }
+        },
+        {
+          "ruleId": "GO-2025-3521",
+          "ruleIndex": 7,
+          "level": "note",
+          "message": {
+            "text": "kubectl 1.33.5 is affected by GO-2025-3521 (CVE-2025-1767, GHSA-3wgm-2gw2-vh5m): Kubernetes GitRepo Volume Inadvertent Local Repository Access in k8s.io/kubernetes"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-1/repo-05/mise.toml"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GO-2025-3521|kubectl|tree/team-1/repo-05/mise.toml|GO-2025-3521"
+          }
+        },
+        {
+          "ruleId": "GO-2025-3521",
+          "ruleIndex": 7,
+          "level": "note",
+          "message": {
+            "text": "kubectl 1.33.5 is affected by GO-2025-3521 (CVE-2025-1767, GHSA-3wgm-2gw2-vh5m): Kubernetes GitRepo Volume Inadvertent Local Repository Access in k8s.io/kubernetes"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-1/repo-07/mise.toml"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GO-2025-3521|kubectl|tree/team-1/repo-07/mise.toml|GO-2025-3521"
+          }
+        },
+        {
+          "ruleId": "GO-2025-3521",
+          "ruleIndex": 7,
+          "level": "note",
+          "message": {
+            "text": "kubectl 1.33.5 is affected by GO-2025-3521 (CVE-2025-1767, GHSA-3wgm-2gw2-vh5m): Kubernetes GitRepo Volume Inadvertent Local Repository Access in k8s.io/kubernetes"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-1/repo-09/mise.toml"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GO-2025-3521|kubectl|tree/team-1/repo-09/mise.toml|GO-2025-3521"
+          }
+        },
+        {
+          "ruleId": "GO-2025-3521",
+          "ruleIndex": 7,
+          "level": "note",
+          "message": {
+            "text": "kubectl 1.33.5 is affected by GO-2025-3521 (CVE-2025-1767, GHSA-3wgm-2gw2-vh5m): Kubernetes GitRepo Volume Inadvertent Local Repository Access in k8s.io/kubernetes"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-2/repo-11/mise.toml"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GO-2025-3521|kubectl|tree/team-2/repo-11/mise.toml|GO-2025-3521"
+          }
+        },
+        {
+          "ruleId": "GO-2025-3521",
+          "ruleIndex": 7,
+          "level": "note",
+          "message": {
+            "text": "kubectl 1.33.5 is affected by GO-2025-3521 (CVE-2025-1767, GHSA-3wgm-2gw2-vh5m): Kubernetes GitRepo Volume Inadvertent Local Repository Access in k8s.io/kubernetes"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-2/repo-13/mise.toml"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GO-2025-3521|kubectl|tree/team-2/repo-13/mise.toml|GO-2025-3521"
+          }
+        },
+        {
+          "ruleId": "GO-2025-3521",
+          "ruleIndex": 7,
+          "level": "note",
+          "message": {
+            "text": "kubectl 1.33.5 is affected by GO-2025-3521 (CVE-2025-1767, GHSA-3wgm-2gw2-vh5m): Kubernetes GitRepo Volume Inadvertent Local Repository Access in k8s.io/kubernetes"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-3/repo-15/mise.toml"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GO-2025-3521|kubectl|tree/team-3/repo-15/mise.toml|GO-2025-3521"
+          }
+        },
+        {
+          "ruleId": "GO-2025-3521",
+          "ruleIndex": 7,
+          "level": "note",
+          "message": {
+            "text": "kubectl 1.33.5 is affected by GO-2025-3521 (CVE-2025-1767, GHSA-3wgm-2gw2-vh5m): Kubernetes GitRepo Volume Inadvertent Local Repository Access in k8s.io/kubernetes"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-3/repo-17/mise.toml"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GO-2025-3521|kubectl|tree/team-3/repo-17/mise.toml|GO-2025-3521"
+          }
+        },
+        {
+          "ruleId": "GO-2025-3521",
+          "ruleIndex": 7,
+          "level": "note",
+          "message": {
+            "text": "kubectl 1.33.5 is affected by GO-2025-3521 (CVE-2025-1767, GHSA-3wgm-2gw2-vh5m): Kubernetes GitRepo Volume Inadvertent Local Repository Access in k8s.io/kubernetes"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-3/repo-19/mise.toml"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GO-2025-3521|kubectl|tree/team-3/repo-19/mise.toml|GO-2025-3521"
+          }
+        },
+        {
+          "ruleId": "GO-2025-3521",
+          "ruleIndex": 7,
+          "level": "note",
+          "message": {
+            "text": "kubectl 1.34.2 is affected by GO-2025-3521 (CVE-2025-1767, GHSA-3wgm-2gw2-vh5m): Kubernetes GitRepo Volume Inadvertent Local Repository Access in k8s.io/kubernetes"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-0/repo-00/mise.toml"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GO-2025-3521|kubectl|tree/team-0/repo-00/mise.toml|GO-2025-3521"
+          }
+        },
+        {
+          "ruleId": "GO-2025-3521",
+          "ruleIndex": 7,
+          "level": "note",
+          "message": {
+            "text": "kubectl 1.34.2 is affected by GO-2025-3521 (CVE-2025-1767, GHSA-3wgm-2gw2-vh5m): Kubernetes GitRepo Volume Inadvertent Local Repository Access in k8s.io/kubernetes"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-0/repo-02/mise.toml"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GO-2025-3521|kubectl|tree/team-0/repo-02/mise.toml|GO-2025-3521"
+          }
+        },
+        {
+          "ruleId": "GO-2025-3521",
+          "ruleIndex": 7,
+          "level": "note",
+          "message": {
+            "text": "kubectl 1.34.2 is affected by GO-2025-3521 (CVE-2025-1767, GHSA-3wgm-2gw2-vh5m): Kubernetes GitRepo Volume Inadvertent Local Repository Access in k8s.io/kubernetes"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-0/repo-04/mise.toml"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GO-2025-3521|kubectl|tree/team-0/repo-04/mise.toml|GO-2025-3521"
+          }
+        },
+        {
+          "ruleId": "GO-2025-3521",
+          "ruleIndex": 7,
+          "level": "note",
+          "message": {
+            "text": "kubectl 1.34.2 is affected by GO-2025-3521 (CVE-2025-1767, GHSA-3wgm-2gw2-vh5m): Kubernetes GitRepo Volume Inadvertent Local Repository Access in k8s.io/kubernetes"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-1/repo-06/mise.toml"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GO-2025-3521|kubectl|tree/team-1/repo-06/mise.toml|GO-2025-3521"
+          }
+        },
+        {
+          "ruleId": "GO-2025-3521",
+          "ruleIndex": 7,
+          "level": "note",
+          "message": {
+            "text": "kubectl 1.34.2 is affected by GO-2025-3521 (CVE-2025-1767, GHSA-3wgm-2gw2-vh5m): Kubernetes GitRepo Volume Inadvertent Local Repository Access in k8s.io/kubernetes"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-1/repo-08/mise.toml"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GO-2025-3521|kubectl|tree/team-1/repo-08/mise.toml|GO-2025-3521"
+          }
+        },
+        {
+          "ruleId": "GO-2025-3521",
+          "ruleIndex": 7,
+          "level": "note",
+          "message": {
+            "text": "kubectl 1.34.2 is affected by GO-2025-3521 (CVE-2025-1767, GHSA-3wgm-2gw2-vh5m): Kubernetes GitRepo Volume Inadvertent Local Repository Access in k8s.io/kubernetes"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-2/repo-10/mise.toml"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GO-2025-3521|kubectl|tree/team-2/repo-10/mise.toml|GO-2025-3521"
+          }
+        },
+        {
+          "ruleId": "GO-2025-3521",
+          "ruleIndex": 7,
+          "level": "note",
+          "message": {
+            "text": "kubectl 1.34.2 is affected by GO-2025-3521 (CVE-2025-1767, GHSA-3wgm-2gw2-vh5m): Kubernetes GitRepo Volume Inadvertent Local Repository Access in k8s.io/kubernetes"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-2/repo-12/mise.toml"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GO-2025-3521|kubectl|tree/team-2/repo-12/mise.toml|GO-2025-3521"
+          }
+        },
+        {
+          "ruleId": "GO-2025-3521",
+          "ruleIndex": 7,
+          "level": "note",
+          "message": {
+            "text": "kubectl 1.34.2 is affected by GO-2025-3521 (CVE-2025-1767, GHSA-3wgm-2gw2-vh5m): Kubernetes GitRepo Volume Inadvertent Local Repository Access in k8s.io/kubernetes"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-2/repo-14/mise.toml"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GO-2025-3521|kubectl|tree/team-2/repo-14/mise.toml|GO-2025-3521"
+          }
+        },
+        {
+          "ruleId": "GO-2025-3521",
+          "ruleIndex": 7,
+          "level": "note",
+          "message": {
+            "text": "kubectl 1.34.2 is affected by GO-2025-3521 (CVE-2025-1767, GHSA-3wgm-2gw2-vh5m): Kubernetes GitRepo Volume Inadvertent Local Repository Access in k8s.io/kubernetes"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-3/repo-16/mise.toml"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GO-2025-3521|kubectl|tree/team-3/repo-16/mise.toml|GO-2025-3521"
+          }
+        },
+        {
+          "ruleId": "GO-2025-3521",
+          "ruleIndex": 7,
+          "level": "note",
+          "message": {
+            "text": "kubectl 1.34.2 is affected by GO-2025-3521 (CVE-2025-1767, GHSA-3wgm-2gw2-vh5m): Kubernetes GitRepo Volume Inadvertent Local Repository Access in k8s.io/kubernetes"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-3/repo-18/mise.toml"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GO-2025-3521|kubectl|tree/team-3/repo-18/mise.toml|GO-2025-3521"
+          }
+        },
+        {
+          "ruleId": "GO-2025-3547",
+          "ruleIndex": 8,
+          "level": "note",
+          "message": {
+            "text": "kubectl 1.33.5 is affected by GO-2025-3547 (CVE-2024-7598, GHSA-r56h-j38w-hrqq): Kubernetes kube-apiserver Vulnerable to Race Condition in k8s.io/kubernetes"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-0/repo-01/mise.toml"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GO-2025-3547|kubectl|tree/team-0/repo-01/mise.toml|GO-2025-3547"
+          }
+        },
+        {
+          "ruleId": "GO-2025-3547",
+          "ruleIndex": 8,
+          "level": "note",
+          "message": {
+            "text": "kubectl 1.33.5 is affected by GO-2025-3547 (CVE-2024-7598, GHSA-r56h-j38w-hrqq): Kubernetes kube-apiserver Vulnerable to Race Condition in k8s.io/kubernetes"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-0/repo-03/mise.toml"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GO-2025-3547|kubectl|tree/team-0/repo-03/mise.toml|GO-2025-3547"
+          }
+        },
+        {
+          "ruleId": "GO-2025-3547",
+          "ruleIndex": 8,
+          "level": "note",
+          "message": {
+            "text": "kubectl 1.33.5 is affected by GO-2025-3547 (CVE-2024-7598, GHSA-r56h-j38w-hrqq): Kubernetes kube-apiserver Vulnerable to Race Condition in k8s.io/kubernetes"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-1/repo-05/mise.toml"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GO-2025-3547|kubectl|tree/team-1/repo-05/mise.toml|GO-2025-3547"
+          }
+        },
+        {
+          "ruleId": "GO-2025-3547",
+          "ruleIndex": 8,
+          "level": "note",
+          "message": {
+            "text": "kubectl 1.33.5 is affected by GO-2025-3547 (CVE-2024-7598, GHSA-r56h-j38w-hrqq): Kubernetes kube-apiserver Vulnerable to Race Condition in k8s.io/kubernetes"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-1/repo-07/mise.toml"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GO-2025-3547|kubectl|tree/team-1/repo-07/mise.toml|GO-2025-3547"
+          }
+        },
+        {
+          "ruleId": "GO-2025-3547",
+          "ruleIndex": 8,
+          "level": "note",
+          "message": {
+            "text": "kubectl 1.33.5 is affected by GO-2025-3547 (CVE-2024-7598, GHSA-r56h-j38w-hrqq): Kubernetes kube-apiserver Vulnerable to Race Condition in k8s.io/kubernetes"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-1/repo-09/mise.toml"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GO-2025-3547|kubectl|tree/team-1/repo-09/mise.toml|GO-2025-3547"
+          }
+        },
+        {
+          "ruleId": "GO-2025-3547",
+          "ruleIndex": 8,
+          "level": "note",
+          "message": {
+            "text": "kubectl 1.33.5 is affected by GO-2025-3547 (CVE-2024-7598, GHSA-r56h-j38w-hrqq): Kubernetes kube-apiserver Vulnerable to Race Condition in k8s.io/kubernetes"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-2/repo-11/mise.toml"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GO-2025-3547|kubectl|tree/team-2/repo-11/mise.toml|GO-2025-3547"
+          }
+        },
+        {
+          "ruleId": "GO-2025-3547",
+          "ruleIndex": 8,
+          "level": "note",
+          "message": {
+            "text": "kubectl 1.33.5 is affected by GO-2025-3547 (CVE-2024-7598, GHSA-r56h-j38w-hrqq): Kubernetes kube-apiserver Vulnerable to Race Condition in k8s.io/kubernetes"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-2/repo-13/mise.toml"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GO-2025-3547|kubectl|tree/team-2/repo-13/mise.toml|GO-2025-3547"
+          }
+        },
+        {
+          "ruleId": "GO-2025-3547",
+          "ruleIndex": 8,
+          "level": "note",
+          "message": {
+            "text": "kubectl 1.33.5 is affected by GO-2025-3547 (CVE-2024-7598, GHSA-r56h-j38w-hrqq): Kubernetes kube-apiserver Vulnerable to Race Condition in k8s.io/kubernetes"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-3/repo-15/mise.toml"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GO-2025-3547|kubectl|tree/team-3/repo-15/mise.toml|GO-2025-3547"
+          }
+        },
+        {
+          "ruleId": "GO-2025-3547",
+          "ruleIndex": 8,
+          "level": "note",
+          "message": {
+            "text": "kubectl 1.33.5 is affected by GO-2025-3547 (CVE-2024-7598, GHSA-r56h-j38w-hrqq): Kubernetes kube-apiserver Vulnerable to Race Condition in k8s.io/kubernetes"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-3/repo-17/mise.toml"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GO-2025-3547|kubectl|tree/team-3/repo-17/mise.toml|GO-2025-3547"
+          }
+        },
+        {
+          "ruleId": "GO-2025-3547",
+          "ruleIndex": 8,
+          "level": "note",
+          "message": {
+            "text": "kubectl 1.33.5 is affected by GO-2025-3547 (CVE-2024-7598, GHSA-r56h-j38w-hrqq): Kubernetes kube-apiserver Vulnerable to Race Condition in k8s.io/kubernetes"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-3/repo-19/mise.toml"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GO-2025-3547|kubectl|tree/team-3/repo-19/mise.toml|GO-2025-3547"
+          }
+        },
+        {
+          "ruleId": "GO-2025-3547",
+          "ruleIndex": 8,
+          "level": "note",
+          "message": {
+            "text": "kubectl 1.34.2 is affected by GO-2025-3547 (CVE-2024-7598, GHSA-r56h-j38w-hrqq): Kubernetes kube-apiserver Vulnerable to Race Condition in k8s.io/kubernetes"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-0/repo-00/mise.toml"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GO-2025-3547|kubectl|tree/team-0/repo-00/mise.toml|GO-2025-3547"
+          }
+        },
+        {
+          "ruleId": "GO-2025-3547",
+          "ruleIndex": 8,
+          "level": "note",
+          "message": {
+            "text": "kubectl 1.34.2 is affected by GO-2025-3547 (CVE-2024-7598, GHSA-r56h-j38w-hrqq): Kubernetes kube-apiserver Vulnerable to Race Condition in k8s.io/kubernetes"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-0/repo-02/mise.toml"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GO-2025-3547|kubectl|tree/team-0/repo-02/mise.toml|GO-2025-3547"
+          }
+        },
+        {
+          "ruleId": "GO-2025-3547",
+          "ruleIndex": 8,
+          "level": "note",
+          "message": {
+            "text": "kubectl 1.34.2 is affected by GO-2025-3547 (CVE-2024-7598, GHSA-r56h-j38w-hrqq): Kubernetes kube-apiserver Vulnerable to Race Condition in k8s.io/kubernetes"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-0/repo-04/mise.toml"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GO-2025-3547|kubectl|tree/team-0/repo-04/mise.toml|GO-2025-3547"
+          }
+        },
+        {
+          "ruleId": "GO-2025-3547",
+          "ruleIndex": 8,
+          "level": "note",
+          "message": {
+            "text": "kubectl 1.34.2 is affected by GO-2025-3547 (CVE-2024-7598, GHSA-r56h-j38w-hrqq): Kubernetes kube-apiserver Vulnerable to Race Condition in k8s.io/kubernetes"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-1/repo-06/mise.toml"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GO-2025-3547|kubectl|tree/team-1/repo-06/mise.toml|GO-2025-3547"
+          }
+        },
+        {
+          "ruleId": "GO-2025-3547",
+          "ruleIndex": 8,
+          "level": "note",
+          "message": {
+            "text": "kubectl 1.34.2 is affected by GO-2025-3547 (CVE-2024-7598, GHSA-r56h-j38w-hrqq): Kubernetes kube-apiserver Vulnerable to Race Condition in k8s.io/kubernetes"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-1/repo-08/mise.toml"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GO-2025-3547|kubectl|tree/team-1/repo-08/mise.toml|GO-2025-3547"
+          }
+        },
+        {
+          "ruleId": "GO-2025-3547",
+          "ruleIndex": 8,
+          "level": "note",
+          "message": {
+            "text": "kubectl 1.34.2 is affected by GO-2025-3547 (CVE-2024-7598, GHSA-r56h-j38w-hrqq): Kubernetes kube-apiserver Vulnerable to Race Condition in k8s.io/kubernetes"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-2/repo-10/mise.toml"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GO-2025-3547|kubectl|tree/team-2/repo-10/mise.toml|GO-2025-3547"
+          }
+        },
+        {
+          "ruleId": "GO-2025-3547",
+          "ruleIndex": 8,
+          "level": "note",
+          "message": {
+            "text": "kubectl 1.34.2 is affected by GO-2025-3547 (CVE-2024-7598, GHSA-r56h-j38w-hrqq): Kubernetes kube-apiserver Vulnerable to Race Condition in k8s.io/kubernetes"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-2/repo-12/mise.toml"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GO-2025-3547|kubectl|tree/team-2/repo-12/mise.toml|GO-2025-3547"
+          }
+        },
+        {
+          "ruleId": "GO-2025-3547",
+          "ruleIndex": 8,
+          "level": "note",
+          "message": {
+            "text": "kubectl 1.34.2 is affected by GO-2025-3547 (CVE-2024-7598, GHSA-r56h-j38w-hrqq): Kubernetes kube-apiserver Vulnerable to Race Condition in k8s.io/kubernetes"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-2/repo-14/mise.toml"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GO-2025-3547|kubectl|tree/team-2/repo-14/mise.toml|GO-2025-3547"
+          }
+        },
+        {
+          "ruleId": "GO-2025-3547",
+          "ruleIndex": 8,
+          "level": "note",
+          "message": {
+            "text": "kubectl 1.34.2 is affected by GO-2025-3547 (CVE-2024-7598, GHSA-r56h-j38w-hrqq): Kubernetes kube-apiserver Vulnerable to Race Condition in k8s.io/kubernetes"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-3/repo-16/mise.toml"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GO-2025-3547|kubectl|tree/team-3/repo-16/mise.toml|GO-2025-3547"
+          }
+        },
+        {
+          "ruleId": "GO-2025-3547",
+          "ruleIndex": 8,
+          "level": "note",
+          "message": {
+            "text": "kubectl 1.34.2 is affected by GO-2025-3547 (CVE-2024-7598, GHSA-r56h-j38w-hrqq): Kubernetes kube-apiserver Vulnerable to Race Condition in k8s.io/kubernetes"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-3/repo-18/mise.toml"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GO-2025-3547|kubectl|tree/team-3/repo-18/mise.toml|GO-2025-3547"
+          }
+        },
+        {
+          "ruleId": "unchecked",
+          "ruleIndex": 1,
+          "level": "note",
+          "message": {
+            "text": "image:node 24.11.0: not checked for vulnerabilities: no-advisory-source"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-0/repo-02/Dockerfile"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "unchecked|image:node|tree/team-0/repo-02/Dockerfile|no-advisory-source"
+          }
+        },
+        {
+          "ruleId": "unchecked",
+          "ruleIndex": 1,
+          "level": "note",
+          "message": {
+            "text": "image:node 24.11.0: not checked for vulnerabilities: no-advisory-source"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-2/repo-12/Dockerfile"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "unchecked|image:node|tree/team-2/repo-12/Dockerfile|no-advisory-source"
+          }
+        },
+        {
+          "ruleId": "unchecked",
+          "ruleIndex": 1,
+          "level": "note",
+          "message": {
+            "text": "node lts: not checked for vulnerabilities: not-exact"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-1/repo-07/mise.toml"
+                },
+                "region": {
+                  "startLine": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "unchecked|node|tree/team-1/repo-07/mise.toml|not-exact"
+          }
+        },
+        {
+          "ruleId": "unchecked",
+          "ruleIndex": 1,
+          "level": "note",
+          "message": {
+            "text": "no-such-tool-relgap 1.0.0: not checked for vulnerabilities: unresolved"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tree/team-1/repo-09/mise.toml"
+                },
+                "region": {
+                  "startLine": 4
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "unchecked|no-such-tool-relgap|tree/team-1/repo-09/mise.toml|unresolved"
+          }
+        }
+      ]
+    }
+  ]
+}

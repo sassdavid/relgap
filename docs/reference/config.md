@@ -142,9 +142,9 @@ Each entry has these fields:
 
 | Type | Default | Allowed | Environment | Flag |
 |---|---|---|---|---|
-| `list of string` | `[]` | `breaking`, `deprecation`, `eol`, `vuln`, `drift`, `outdated` | `RELGAP_POLICY_FAIL_ON` | `--fail-on` |
+| `list of string` | `[]` | `breaking`, `deprecation`, `eol`, `vuln`, `drift`, `outdated`, `unchecked` | `RELGAP_POLICY_FAIL_ON` | `--fail-on` |
 
---fail-on values each command uses when the flag is not given; a command ignores the values it doesn't check.
+--fail-on values each command uses when the flag is not given; a command ignores the values it doesn't check. audit always gates vuln, and its values here add to it.
 
 ### policy.max_behind
 
@@ -299,7 +299,7 @@ schema_version: 1
 # ignore: []                      # pins never reported, for example [{tool: terraform, path: "**/legacy/**"}, {name: "git::*bitbucket.org*"}]
 #
 # policy:                         # defaults for the CI flags
-#   fail_on: []                   # breaking, deprecation, eol, vuln, drift, outdated
+#   fail_on: []                   # breaking, deprecation, eol, vuln, drift, outdated, unchecked
 #   max_behind: ""                # for example minor:2, releases:10 or days:90; empty allows any lag
 #   min_confidence: 0.5           # hide entries below this confidence, 0 to 1
 #   vuln_severity: ""             # low, medium, high or critical; empty counts every advisory

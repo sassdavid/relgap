@@ -18,7 +18,8 @@ const (
 	ansiGreen  = "\x1b[32m"
 	ansiYellow = "\x1b[33m"
 	noValue    = "-"
-	columnGap  = 2 // spaces between columns, as in the tabwriter tables
+	headTool   = "TOOL" // the first column header of the tables
+	columnGap  = 2      // spaces between columns, as in the tabwriter tables
 )
 
 // cell is a table cell with an optional ANSI style.
@@ -132,7 +133,7 @@ func mdCell(s string) string {
 }
 
 func outdatedRows(o *report.Outdated) ([][]cell, []string) {
-	header := []string{"TOOL", "CURRENT", "LATEST", "BEHIND", "BREAKING", "DEPRECATION", "EOL", "VULNS", "PIN"}
+	header := []string{headTool, "CURRENT", "LATEST", "BEHIND", "BREAKING", "DEPRECATION", "EOL", "VULNS", "PIN"}
 	rows := [][]cell{make([]cell, len(header))}
 	for i, h := range header {
 		rows[0][i] = cell{text: h}

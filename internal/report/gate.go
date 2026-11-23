@@ -19,6 +19,7 @@ const (
 	FailOnVuln        = "vuln"
 	FailOnDrift       = "drift"
 	FailOnOutdated    = "outdated"
+	FailOnUnchecked   = "unchecked"
 )
 
 // MaxBehind is a --max-behind threshold such as minor:2. The zero value allows nothing: any
@@ -82,7 +83,9 @@ func (m MaxBehind) Exceeded(b *Behind, now time.Time) (bool, bool) {
 
 // Values returns every --fail-on value in the order of the config schema.
 func Values() []string {
-	return []string{FailOnBreaking, FailOnDeprecation, FailOnEOL, FailOnVuln, FailOnDrift, FailOnOutdated}
+	return []string{
+		FailOnBreaking, FailOnDeprecation, FailOnEOL, FailOnVuln, FailOnDrift, FailOnOutdated, FailOnUnchecked,
+	}
 }
 
 // ParseVulnSeverity validates a --vuln-severity value. The empty string means any severity.
@@ -111,14 +114,16 @@ type Gate struct {
 // Has reports whether the gate checks value.
 func (g Gate) Has(value string) bool { return slices.Contains(g.Values, value) }
 
-// Finding is one thing a --fail-on value counts: a pin, an advisory of a pin, a digest or a
-// drifted pin.
+// Finding is one thing a --fail-on value counts: a pin, an advisory of a pin, a digest, a
+// drifted pin, an audit finding or an unchecked tool version.
 type Finding struct {
-	FailOn string
-	Pin    *OutdatedPin
-	Vuln   *enrich.Vuln // the advisory, for vuln
-	Digest *ToolDigest  // for breaking and deprecation in a single digest
-	Drift  *DriftTool   // the tool of a drifted pin
+	FailOn    string
+	Pin       *OutdatedPin
+	Vuln      *enrich.Vuln  // the advisory, for vuln in outdated
+	Digest    *ToolDigest   // for breaking and deprecation in a single digest
+	Drift     *DriftTool    // the tool of a drifted pin
+	Advisory  *AuditFinding // for vuln in audit
+	Unchecked *Unchecked    // for unchecked
 }
 
 // Match is a --fail-on value whose findings reached the minimum count.
@@ -186,13 +191,34 @@ func IsEOL(p *OutdatedPin) bool {
 }
 
 func (g Gate) countsVuln(v *enrich.Vuln) bool {
-	if !v.AffectsCurrent {
-		return false
-	}
+	return v.AffectsCurrent && g.atSeverity(v.Severity)
+}
+
+// atSeverity reports whether an advisory rated s reaches VulnSeverity.
+func (g Gate) atSeverity(s *enrich.Score) bool {
 	if g.VulnSeverity == "" {
 		return true
 	}
-	return v.Severity != nil && severityRank(v.Severity.Rating) >= severityRank(g.VulnSeverity)
+	return s != nil && severityRank(s.Rating) >= severityRank(g.VulnSeverity)
+}
+
+// CheckAudit returns a finding per audit finding at or above VulnSeverity for vuln, and per
+// unchecked tool version for unchecked.
+func (g Gate) CheckAudit(a *Audit) []Finding {
+	var findings []Finding
+	if g.Has(FailOnVuln) {
+		for i := range a.Findings {
+			if f := &a.Findings[i]; g.atSeverity(f.Severity) {
+				findings = append(findings, Finding{FailOn: FailOnVuln, Advisory: f})
+			}
+		}
+	}
+	if g.Has(FailOnUnchecked) {
+		for i := range a.Unchecked {
+			findings = append(findings, Finding{FailOn: FailOnUnchecked, Unchecked: &a.Unchecked[i]})
+		}
+	}
+	return findings
 }
 
 // CheckDigests returns a finding for each digest with a breaking or deprecation entry, for the

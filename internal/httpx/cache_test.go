@@ -192,6 +192,26 @@ func TestCacheModes(t *testing.T) {
 	assert.Equal(t, int32(3), o.requests.Load(), "--offline sends nothing")
 }
 
+// TestCacheAgeHeader: a response served from the cache says in Age how many seconds ago it was
+// stored, as RFC 9111 section 5.1 defines it.
+func TestCacheAgeHeader(t *testing.T) {
+	t.Parallel()
+	o := newOrigin(t, t0.Add(-400*day))
+	clk := &clock{now: t0}
+	dir := t.TempDir()
+	def, _ := cachedClient(t, o.srv.Client().Transport, dir, httpx.ModeDefault, clk, nil)
+	body(t, def, o.srv.URL)
+
+	clk.now = t0.Add(90 * time.Minute)
+	offline, _ := cachedClient(t, o.srv.Client().Transport, dir, httpx.ModeOffline, clk, nil)
+	req, err := http.NewRequestWithContext(t.Context(), http.MethodGet, o.srv.URL, http.NoBody)
+	require.NoError(t, err)
+	resp, err := offline.Do(req)
+	require.NoError(t, err)
+	defer resp.Body.Close()
+	assert.Equal(t, "5400", resp.Header.Get("Age"))
+}
+
 func TestCacheTTLOverride(t *testing.T) {
 	t.Parallel()
 	o := newOrigin(t, t0.Add(-400*day))

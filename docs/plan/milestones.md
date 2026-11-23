@@ -637,7 +637,7 @@ one session can't finish, the open boxes carry over to a follow-up session.
   `toolchain`, and private sources are never sent. (vulnerability-audit criterion 1)
 - [x] Unchecked pins are listed with a reason in every format of `outdated`, and VULNS shows `?`
   for them. `audit`'s formats list them with box 3. (vulnerability-audit criterion 2)
-- [ ] `relgap audit [roots...]` with its formats, `--tool`, the default `vuln` gate and
+- [x] `relgap audit [roots...]` with its formats, `--tool`, the default `vuln` gate and
   `--fail-on unchecked`. (vulnerability-audit criterion 3)
 - [ ] Unrated records take their GHSA alias's rating and otherwise count at every threshold,
   withdrawn records are dropped, and records are cached by `modified`. (vulnerability-audit
