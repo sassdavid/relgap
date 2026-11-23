@@ -36,7 +36,7 @@
         },
         "kind": { "enum": ["tool", "tfprovider", "tfmodule", "chart", "image", "action"] },
         "registry_url": {
-          "description": "The Helm repository a chart pin names (a Chart.yaml repository or a Renovate comment's registryUrl). Absent for other pins.",
+          "description": "The Helm repository a chart pin names (a Chart.yaml repository or a Renovate comment's registryUrl), or the registry of an npm pin whose Renovate registryUrl isn't registry.npmjs.org. Absent for other pins.",
           "type": "string",
           "minLength": 1
         },

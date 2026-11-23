@@ -208,6 +208,25 @@ func TestRenovateReport(t *testing.T) {
 	require.ErrorContains(t, err, "decode renovate report")
 }
 
+// TestRenovateNPMRegistry: an npm dependency from a registry other than registry.npmjs.org is
+// named npm:<name> with the registry and no lookup, so neither npm nor OSV hears about it.
+func TestRenovateNPMRegistry(t *testing.T) {
+	t.Parallel()
+	pins, err := scan.RenovateReport([]byte(`{"packageFiles":{"npm":[{"packageFile":"package.json","deps":[
+		{"depName":"@acme/cli","currentValue":"1.2.3","datasource":"npm","registryUrls":["https://npm.acme.example/"]},
+		{"depName":"@acme/public","currentValue":"2.0.0","datasource":"npm","registryUrls":["https://registry.npmjs.org/"]},
+		{"depName":"left-pad","currentValue":"1.3.0","datasource":"npm"}]}]}}`))
+	require.NoError(t, err)
+	require.Len(t, pins, 3)
+	assert.Equal(t, "npm:@acme/cli", pins[0].Tool)
+	assert.Equal(t, "https://npm.acme.example", pins[0].Registry)
+	assert.True(t, pins[0].PrivateRegistry())
+	for _, p := range pins[1:] {
+		assert.Empty(t, p.Registry, p.RawName)
+		assert.False(t, p.PrivateRegistry(), p.RawName)
+	}
+}
+
 func TestDockerfileEscapeDirective(t *testing.T) {
 	t.Parallel()
 	res := run(t, scan.Options{}, map[string]string{

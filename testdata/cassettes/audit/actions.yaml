@@ -6,6 +6,70 @@ interactions:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
+        content_length: 146
+        host: api.github.com
+        body: |
+            {"query":"query($n0:String!$o0:String!){r0: repository(owner: $o0, name: $n0){isPrivate}}","variables":{"n0":"download-artifact","o0":"actions"}}
+        headers:
+            Content-Type:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.github.com/graphql
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"data":{"r0":{"isPrivate":false}}}'
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/json; charset=utf-8
+            Date:
+                - Mon, 23 Nov 2026 17:59:55 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept-Encoding, Accept, X-Requested-With
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.v4; format=json
+            X-Ratelimit-Limit:
+                - "5000"
+            X-Ratelimit-Remaining:
+                - "4945"
+            X-Ratelimit-Reset:
+                - "1795457318"
+            X-Ratelimit-Resource:
+                - graphql
+            X-Ratelimit-Used:
+                - "55"
+            X-Xss-Protection:
+                - "0"
+        status: 200 OK
+        code: 200
+        duration: 426.792334ms
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
         content_length: 91
         host: api.osv.dev
         body: '{"queries":[{"package":{"ecosystem":"GitHub Actions","name":"actions/download-artifact"}}]}'
@@ -32,7 +96,7 @@ interactions:
             Content-Type:
                 - application/json
             Date:
-                - Mon, 23 Nov 2026 13:59:05 GMT
+                - Mon, 23 Nov 2026 17:59:55 GMT
             Grpc-Message:
                 - ""
             Grpc-Status:
@@ -40,15 +104,15 @@ interactions:
             Server:
                 - Google Frontend
             Traceparent:
-                - 00-19e2dabdd8423f17ca5222d73effe742-8c351263aaa8c62a-00
+                - 00-4b56cc21669c6cb4a566800d6d48dd17-a31f11458f6fc4f2-00
             X-Cloud-Trace-Context:
-                - 19e2dabdd8423f17ca5222d73effe742/10103001558349825578
+                - 4b56cc21669c6cb4a566800d6d48dd17/11754132542917166322
             X-Envoy-Decorator-Operation:
                 - ingress QueryAffectedBatch
         status: 200 OK
         code: 200
-        duration: 423.2355ms
-    - id: 1
+        duration: 411.909916ms
+    - id: 2
       request:
         proto: HTTP/1.1
         proto_major: 1
@@ -67,7 +131,7 @@ interactions:
         proto_major: 2
         proto_minor: 0
         content_length: 1936
-        body: '{"id":"GHSA-cxww-7g56-2vh6","summary":"@actions/download-artifact has an Arbitrary File Write via artifact extraction","details":"### Impact\n\nVersions of `actions/download-artifact` before 4.1.3 are vulnerable to arbitrary file write when downloading and extracting a specifically crafted artifact that contains path traversal filenames.\n\n### Patches\n\nUpgrade to version 4.1.3 or higher. Alternatively use ''v4'' tag which points to the latest and secure version.\n\n### References\n\n- https://snyk.io/research/zip-slip-vulnerability\n- https://github.com/actions/download-artifact/releases/tag/v4.1.3\n- https://github.com/actions/download-artifact/pull/299\n\n### CVE\n\nCVE-2024-42471\n\n### Credits\n\nJustin Taft from Google","modified":"2025-01-22T17:31:55Z","published":"2024-09-03T20:55:34Z","database_specific":{"github_reviewed":true,"github_reviewed_at":"2024-09-03T20:55:34Z","nvd_published_at":null,"cwe_ids":["CWE-22"],"severity":"HIGH"},"references":[{"type":"WEB","url":"https://github.com/actions/download-artifact/security/advisories/GHSA-cxww-7g56-2vh6"},{"type":"PACKAGE","url":"https://github.com/actions/download-artifact"},{"type":"WEB","url":"https://github.com/actions/download-artifact/releases/tag/v4.1.3"},{"type":"ADVISORY","url":"https://github.com/advisories/GHSA-6q32-hq47-5qq3"},{"type":"WEB","url":"https://snyk.io/research/zip-slip-vulnerability"}],"affected":[{"package":{"name":"actions/download-artifact","ecosystem":"GitHub Actions"},"ranges":[{"type":"ECOSYSTEM","events":[{"introduced":"4.0.0"},{"fixed":"4.1.3"}]}],"database_specific":{"source":"https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2024/09/GHSA-cxww-7g56-2vh6/GHSA-cxww-7g56-2vh6.json"}}],"schema_version":"1.9.0","severity":[{"type":"CVSS_V3","score":"CVSS:3.1/AV:N/AC:L/PR:L/UI:R/S:U/C:H/I:H/A:N"},{"type":"CVSS_V4","score":"CVSS:4.0/AV:N/AC:L/AT:N/PR:L/UI:N/VC:H/VI:H/VA:N/SC:N/SI:N/SA:N"}]}'
+        body: '{"id":"GHSA-cxww-7g56-2vh6","summary":"@actions/download-artifact has an Arbitrary File Write via artifact extraction","details":"### Impact\n\nVersions of `actions/download-artifact` before 4.1.3 are vulnerable to arbitrary file write when downloading and extracting a specifically crafted artifact that contains path traversal filenames.\n\n### Patches\n\nUpgrade to version 4.1.3 or higher. Alternatively use ''v4'' tag which points to the latest and secure version.\n\n### References\n\n- https://snyk.io/research/zip-slip-vulnerability\n- https://github.com/actions/download-artifact/releases/tag/v4.1.3\n- https://github.com/actions/download-artifact/pull/299\n\n### CVE\n\nCVE-2024-42471\n\n### Credits\n\nJustin Taft from Google","modified":"2025-01-22T17:31:55Z","published":"2024-09-03T20:55:34Z","database_specific":{"cwe_ids":["CWE-22"],"severity":"HIGH","github_reviewed":true,"github_reviewed_at":"2024-09-03T20:55:34Z","nvd_published_at":null},"references":[{"type":"WEB","url":"https://github.com/actions/download-artifact/security/advisories/GHSA-cxww-7g56-2vh6"},{"type":"PACKAGE","url":"https://github.com/actions/download-artifact"},{"type":"WEB","url":"https://github.com/actions/download-artifact/releases/tag/v4.1.3"},{"type":"ADVISORY","url":"https://github.com/advisories/GHSA-6q32-hq47-5qq3"},{"type":"WEB","url":"https://snyk.io/research/zip-slip-vulnerability"}],"affected":[{"package":{"name":"actions/download-artifact","ecosystem":"GitHub Actions"},"ranges":[{"type":"ECOSYSTEM","events":[{"introduced":"4.0.0"},{"fixed":"4.1.3"}]}],"database_specific":{"source":"https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2024/09/GHSA-cxww-7g56-2vh6/GHSA-cxww-7g56-2vh6.json"}}],"schema_version":"1.9.0","severity":[{"type":"CVSS_V3","score":"CVSS:3.1/AV:N/AC:L/PR:L/UI:R/S:U/C:H/I:H/A:N"},{"type":"CVSS_V4","score":"CVSS:4.0/AV:N/AC:L/AT:N/PR:L/UI:N/VC:H/VI:H/VA:N/SC:N/SI:N/SA:N"}]}'
         headers:
             Alt-Svc:
                 - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
@@ -76,7 +140,7 @@ interactions:
             Content-Type:
                 - application/json
             Date:
-                - Mon, 23 Nov 2026 13:59:05 GMT
+                - Mon, 23 Nov 2026 17:59:55 GMT
             Grpc-Message:
                 - ""
             Grpc-Status:
@@ -84,15 +148,15 @@ interactions:
             Server:
                 - Google Frontend
             Traceparent:
-                - 00-443a729b50c766acca5222d73effe655-eb2fdfbcf82cc8f0-00
+                - 00-65608e6030bca0aba566800d6d48d651-527c1d65a87eda16-00
             X-Cloud-Trace-Context:
-                - 443a729b50c766acca5222d73effe655/16947009925528996080
+                - 65608e6030bca0aba566800d6d48d651/5943657930678000150
             X-Envoy-Decorator-Operation:
                 - ingress GetVulnById
         status: 200 OK
         code: 200
-        duration: 187.942834ms
-    - id: 2
+        duration: 229.243541ms
+    - id: 3
       request:
         proto: HTTP/1.1
         proto_major: 1
@@ -124,7 +188,7 @@ interactions:
             Content-Type:
                 - application/json; charset=utf-8
             Date:
-                - Mon, 23 Nov 2026 13:59:06 GMT
+                - Mon, 23 Nov 2026 17:59:56 GMT
             Referrer-Policy:
                 - origin-when-cross-origin, strict-origin-when-cross-origin
             Server:
@@ -144,15 +208,15 @@ interactions:
             X-Ratelimit-Limit:
                 - "5000"
             X-Ratelimit-Remaining:
-                - "4967"
+                - "4944"
             X-Ratelimit-Reset:
-                - "1795443940"
+                - "1795457318"
             X-Ratelimit-Resource:
                 - graphql
             X-Ratelimit-Used:
-                - "33"
+                - "56"
             X-Xss-Protection:
                 - "0"
         status: 200 OK
         code: 200
-        duration: 508.600917ms
+        duration: 644.095583ms

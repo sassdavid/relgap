@@ -1,0 +1,65 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 363
+        host: api.github.com
+        body: |
+            {"query":"query($n0:String!$n1:String!$n2:String!$o0:String!$o1:String!$o2:String!){r0: repository(owner: $o0, name: $n0){isPrivate},r1: repository(owner: $o1, name: $n1){isPrivate},r2: repository(owner: $o2, name: $n2){isPrivate}}","variables":{"n0":"jq","n1":"download-artifact","n2":"no-such-repo","o0":"jqlang","o1":"actions","o2":"example-org-relgap-test"}}
+        headers:
+            Content-Type:
+                - application/json
+        url: https://api.github.com/graphql
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"data":{"r0":{"isPrivate":false},"r1":{"isPrivate":false},"r2":null},"errors":[{"type":"NOT_FOUND","path":["r2"],"locations":[{"line":1,"column":173}],"message":"Could not resolve to a Repository with the name ''example-org-relgap-test/no-such-repo''."}]}'
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/json; charset=utf-8
+            Date:
+                - Mon, 23 Nov 2026 17:53:18 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept-Encoding, Accept, X-Requested-With
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.v4; format=json
+            X-Ratelimit-Limit:
+                - "5000"
+            X-Ratelimit-Remaining:
+                - "4948"
+            X-Ratelimit-Reset:
+                - "1795457318"
+            X-Ratelimit-Resource:
+                - graphql
+            X-Ratelimit-Used:
+                - "52"
+            X-Xss-Protection:
+                - "0"
+        status: 200 OK
+        code: 200
+        duration: 573.472584ms

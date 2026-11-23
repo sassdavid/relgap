@@ -217,11 +217,12 @@ func TestCoverageOf(t *testing.T) {
 		{"k9s", aquaTool, "0.50.16", enrich.Coverage{Packages: []registry.OSVPackage{
 			{Ecosystem: "Go", Name: "github.com/derailed/k9s"},
 			{Ecosystem: "GIT", Name: "https://github.com/derailed/k9s"},
-		}}},
+		}, Repo: enrich.Repo{Host: "github.com", Path: "derailed/k9s"}}},
 		{"ginkgo", ginkgo, "2.1.0", enrich.Coverage{GoPath: "github.com/onsi/ginkgo/v2/ginkgo"}},
 		// Advisories name the repository, also for an action in a subdirectory.
 		{"action:github/codeql-action/init", codeql, "3.29.0", enrich.Coverage{
 			Packages: []registry.OSVPackage{{Ecosystem: "GitHub Actions", Name: "github/codeql-action"}},
+			Repo:     enrich.Repo{Host: "github.com", Path: "github/codeql-action"},
 		}},
 		{"action:team/deploy", privateAction, "1.0.0", enrich.Coverage{Reason: enrich.ReasonPrivate}},
 	}

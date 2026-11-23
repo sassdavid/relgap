@@ -330,7 +330,7 @@ func TestSpec_enrichment_3(t *testing.T) {
 	paths := finder.Find(t.Context(), registry.ToolSpec{Name: "fixture"})
 	require.Len(t, paths, 1)
 
-	got, err := enrich.ReadBinary("fixture", paths[0])
+	got, err := enrich.ReadBinary(registry.ToolSpec{Name: "fixture"}, paths[0])
 	require.NoError(t, err)
 	want := enrich.GoSemver(strings.TrimSpace(string(goVersion)))
 	assert.Equal(t, want, got.GoVersion)
@@ -342,7 +342,7 @@ func TestSpec_enrichment_3(t *testing.T) {
 		got.Queries,
 	)
 
-	_, err = enrich.ReadBinary("fixture", filepath.Join(src, "go.mod"))
+	_, err = enrich.ReadBinary(registry.ToolSpec{Name: "fixture"}, filepath.Join(src, "go.mod"))
 	require.Error(t, err, "not an executable")
 }
 

@@ -366,6 +366,7 @@ func (r *Resolver) Resolve(ctx context.Context, input string, opts ResolveOption
 		b.prov["version.tag_prefix"] = []Layer{LayerExplicit}
 	}
 	b.defaults()
+	b.spec.UserRepo = userRepo(b.prov["repo"])
 	if image && b.spec.Repo != "" {
 		notes, notesErr := r.Resolve(ctx, backendGitHub+":"+b.spec.Repo, ResolveOptions{})
 		if notesErr != nil {
@@ -465,6 +466,15 @@ func (r *Resolver) relgapSource(name string) string {
 		return RelgapSourceUpdated
 	}
 	return RelgapSourceEmbedded
+}
+
+// userRepo reports whether the layers that set a repository name it on the user's word: the
+// input, the config or a GitHub search. Such a repository can be private; the registries list
+// public projects only.
+func userRepo(layers []Layer) bool {
+	return slices.ContainsFunc(layers, func(l Layer) bool {
+		return l == LayerExplicit || l == LayerConfig || l == LayerGuess
+	})
 }
 
 func isLookupPrefix(prefix string) bool {

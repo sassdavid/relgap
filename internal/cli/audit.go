@@ -235,6 +235,7 @@ func (s *session) audit(ctx context.Context, a auditArgs) (*auditRun, error) {
 	osv := enrich.NewOSVClient(hc, "")
 	en := enrich.NewEnricher(d.Logger, nil, osv, d.Config.Config.GitHub.Concurrency)
 	en.SetSuppressor(run.rules)
+	en.SetPrivacy(s.privacy(ctx, gh))
 	en.SetFeeds(s.feeds(hc))
 	out.SetFeeds(feedsOn(d))
 	results, problems, err := en.Enrich(ctx, out.EnrichRequests(resolveFunc(ctx, s), dg.Universe))

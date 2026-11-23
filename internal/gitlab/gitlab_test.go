@@ -124,3 +124,41 @@ func TestTokensAndLinks(t *testing.T) {
 	_, err = client(t, f, gitlab.Options{Host: "gitlab.com"}).Tags(t.Context(), "a/missing")
 	require.ErrorIs(t, err, httpx.ErrNotFound)
 }
+
+// fixedAnswers answers each project path with its status and body.
+type fixedAnswers map[string]struct {
+	status int
+	body   string
+}
+
+func (f fixedAnswers) RoundTrip(req *http.Request) (*http.Response, error) {
+	a, ok := f[req.URL.EscapedPath()]
+	if !ok {
+		a.status, a.body = http.StatusNotFound, `{"message":"404 Project Not Found"}`
+	}
+	return &http.Response{
+		StatusCode: a.status, Header: http.Header{"Content-Type": {"application/json"}},
+		Body: io.NopCloser(strings.NewReader(a.body)), Request: req,
+	}, nil
+}
+
+// TestVisibility: a project is public only when GitLab says so; a token's answer of private or
+// internal and a project the client can't see are not.
+func TestVisibility(t *testing.T) {
+	t.Parallel()
+	rt := fixedAnswers{
+		"/api/v4/projects/team%2Fpublic":   {http.StatusOK, `{"visibility":"public"}`},
+		"/api/v4/projects/team%2Finternal": {http.StatusOK, `{"visibility":"internal"}`},
+		"/api/v4/projects/team%2Fprivate":  {http.StatusOK, `{"visibility":"private"}`},
+		"/api/v4/projects/team%2Fbare":     {http.StatusOK, `{}`},
+	}
+	authed := client(t, rt, gitlab.Options{Host: "gitlab.com", Token: "t"})
+	anonymous := client(t, rt, gitlab.Options{Host: "gitlab.com"})
+
+	require.NoError(t, authed.Visibility(t.Context(), "team/public"))
+	require.ErrorIs(t, authed.Visibility(t.Context(), "team/internal"), gitlab.ErrNotPublic)
+	require.ErrorIs(t, authed.Visibility(t.Context(), "team/private"), gitlab.ErrNotPublic)
+	require.ErrorIs(t, authed.Visibility(t.Context(), "team/bare"), gitlab.ErrNotPublic)
+	require.ErrorIs(t, authed.Visibility(t.Context(), "team/gone"), httpx.ErrNotFound)
+	require.NoError(t, anonymous.Visibility(t.Context(), "team/bare"), "an anonymous answer is public")
+}

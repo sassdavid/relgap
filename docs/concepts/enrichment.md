@@ -80,11 +80,11 @@ only for a checked pin without advisories. Each unchecked pin has one reason:
 | Reason | When |
 |---|---|
 | `no-advisory-source` | No curated `osv` list and no backend or repository OSV knows: images, charts, `tfmodule:` pins, tools without a repository |
-| `private-source` | A host or registry relgap never sends to OSV: Bitbucket, a self-managed GitLab host, a private image registry, a registry that wants an account |
+| `private-source` | A host or registry relgap never sends to OSV (Bitbucket, a self-managed GitLab host, a private image registry, an npm registry other than registry.npmjs.org, a registry that wants an account), a repository you named that its forge doesn't call public, or a module `GOPRIVATE` names ([What OSV receives](/concepts/network#what-osv-receives)) |
 | `not-exact` | The pin resolves to no single version: a channel other than `latest` (`lts`), a branch, a commit SHA without a version comment, a value that isn't a version |
 | `unresolved` | The pin resolves to no tool |
 | `offline` | `--offline` and no cached answer |
-| `failed` | The version lookup or OSV failed for this pin; the warnings and the JSON `errors` name the request |
+| `failed` | The version lookup, the repository's visibility lookup or OSV failed for this pin; the warnings and the JSON `errors` name the request |
 
 The table and Markdown list them after the notes, under "Not checked for vulnerabilities".
 `--format json` gives each pin an `unchecked` field and lists them in `data.unchecked`, one entry
@@ -189,7 +189,10 @@ An EPSS outage never changes the exit code.
 `relgap outdated --binaries` looks one step further. It finds the installed executables of each
 pinned tool, on `PATH` and in mise's installs directory (following mise shims), and reads the Go
 build info of each. The Go version becomes a query for the standard library, and the main module
-a query for its own advisories, unless it was built as `(devel)`. This is govulncheck's binary
+a query for its own advisories, unless it was built as `(devel)`. The main module goes to OSV
+only when the tool's repository comes from a registry or its forge says it is public, and
+`GOPRIVATE` doesn't name it; otherwise the binary's `module_unchecked` says why. This is
+govulncheck's binary
 mode without the check that the binary calls the vulnerable code, so a listed advisory may not
 reach any code the tool runs. An entry's `bin` list names the executables when they differ from
 the tool name.

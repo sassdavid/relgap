@@ -43,12 +43,34 @@ host, a `github.host` other than github.com, an image registry, or a package nam
 after the npm scope. Those pins are unchecked with reason `private-source` or
 `no-advisory-source` ([Unchecked pins](/concepts/enrichment#unchecked-pins)).
 
-relgap doesn't know whether a repository on github.com or gitlab.com is private. A tool you map
-to a private repository with `tools.<name>.repo`, or a `github:` backend that names one, goes to
-OSV as its Go module path and repository URL. A `go:` pin of a private module sends each prefix of
-its path, a scoped npm package its name, and `outdated --binaries` the main module of each
-executable. To keep a tool away from OSV, add an [`ignore`](/reference/config#ignore) rule for it.
-relgap drops ignored pins before any request, so the tool also leaves every other report:
+### Private repositories and modules
+
+A repository can be private on github.com or gitlab.com too, so relgap decides what may go to OSV
+as follows (relgap ADR-0020, details 39 to 42):
+
+- A repository from the relgap, mise or aqua registry, the Terraform registry, npm or PyPI is
+  public: those registries list public projects only.
+- A repository you named goes to OSV only when its forge says it is public. These are a `github:`
+  or `gitlab:` pin, a `tools.<name>.repo` entry, a `--guess` and a GitHub Action. With a GitHub
+  token relgap asks `isPrivate` in one GraphQL query per 100 repositories; without one it reads
+  `GET /repos/{owner}/{repo}`, which answers only for a public repository. On gitlab.com it reads
+  `GET /projects/:id` and its `visibility`. A repository the forge calls private or internal, or
+  doesn't find, is `private-source`; a failed lookup is `failed`.
+- A Go module path that `GOPRIVATE`, `GONOPROXY` or `GONOSUMDB` names never goes to OSV, matched
+  the way the go command matches it. relgap reads each variable, else the file `go env -w` writes.
+  This covers a curated Go package, a `go:` backend, the repository of a github.com or gitlab.com
+  tool or action (as `github.com/<owner>/<repo>`) and the main module of an executable.
+- `outdated --binaries` sends the main module of an executable only when the tool's repository is
+  public by the rules above. The standard library at the binary's Go version always goes.
+- An npm package that a Renovate comment or report names with a `registryUrl` other than
+  registry.npmjs.org is `private-source`: relgap asks neither registry.npmjs.org nor OSV about it.
+
+A `go:` pin or an npm package that no registry knows resolves to no tool, so it never reaches OSV
+either. relgap looks an `npm:` name up on registry.npmjs.org first, which answers 404 for a private
+package.
+
+To leave a tool out of every report and every request, add an
+[`ignore`](/reference/config#ignore) rule for it. relgap drops ignored pins before any request:
 
 ```yaml
 ignore:

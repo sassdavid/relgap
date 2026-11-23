@@ -142,6 +142,8 @@ func (a *Auditor) Audit(ctx context.Context, req AuditRequest) (*Audit, error) {
 	for i, p := range req.Pins {
 		if reason, ok := enrich.NameReason(p.Tool); ok {
 			rows[i] = OutdatedPin{Tool: p.Tool, Pin: p, Status: StatusSkipped, Unchecked: reason}
+		} else if p.PrivateRegistry() {
+			rows[i] = privateRegistryRow(p)
 		}
 	}
 	oreq := OutdatedRequest{Pins: req.Pins, Resolve: req.Resolve}
