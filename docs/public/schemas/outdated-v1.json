@@ -16,6 +16,11 @@
           "items": { "type": "string", "minLength": 1 }
         },
         "pins": { "type": "array", "items": { "$ref": "#/$defs/pin" } },
+        "unchecked": {
+          "description": "Tool versions OSV wasn't asked about, grouped by tool, version and reason, with the pins that resolve to no tool last. Never reported as clean. Empty when every pin was checked.",
+          "type": "array",
+          "items": { "$ref": "#/$defs/unchecked" }
+        },
         "binaries": {
           "description": "With --binaries: the Go executables of the pinned tools and the OSV vulnerabilities of the Go version and main module they were built with. Matched by version only, without symbol reachability.",
           "type": "array",
@@ -95,10 +100,33 @@
           }
         },
         "vulns": {
-          "description": "OSV vulnerabilities of the current version. Absent when the tool has no OSV package or OSV failed.",
+          "description": "OSV vulnerabilities of the current version, or of the pinned version when an exact pin's lookup failed. Empty when OSV has none; absent when OSV wasn't asked (see unchecked).",
           "type": "array",
           "items": { "$ref": "#/$defs/vuln" }
-        }
+        },
+        "unchecked": { "$ref": "#/$defs/reason" }
+      }
+    },
+    "reason": {
+      "description": "Why OSV wasn't asked about a pin: no-advisory-source (no curated osv list and no backend or repository OSV knows), private-source (a host or registry relgap never sends to OSV), not-exact (the pin resolves to no single version), unresolved (no tool), offline (--offline and no cached answer), failed (the lookup or OSV failed; the envelope's errors say why).",
+      "enum": ["no-advisory-source", "private-source", "not-exact", "unresolved", "offline", "failed"]
+    },
+    "unchecked": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tool", "version", "reason", "pins"],
+      "properties": {
+        "tool": {
+          "description": "The pins' tool, or the name as written for a pin that resolves to no tool.",
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "description": "The version OSV would be asked about, else the pin's value as written.",
+          "type": "string"
+        },
+        "reason": { "$ref": "#/$defs/reason" },
+        "pins": { "type": "array", "minItems": 1, "items": { "$ref": "pins-v1.json#/$defs/pin/properties/location" } }
       }
     },
     "eolStatus": {

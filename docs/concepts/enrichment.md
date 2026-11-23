@@ -54,7 +54,9 @@ self-managed GitLab host, images on a private registry, and package names with `
 the scope are never sent to OSV. Charts, `tfmodule:` pins and images have no OSV source.
 
 relgap sends one batch of queries for CURRENT of every pin, fetches each advisory once, and then
-checks the advisory's affected ranges itself:
+checks the advisory's affected ranges itself. A pin marked ≈ is checked at the version CURRENT
+resolved to, the way `mise audit` resolves `node = "22"` and pip-audit resolves a range. An exact
+pin whose version lookup failed is checked at its own version.
 
 - An advisory affects a version that its versions list names or that falls inside an
   introduced..fixed (or ..last_affected) range.
@@ -68,6 +70,30 @@ checks the advisory's affected ranges itself:
 
 A Go module whose path ends in `/v2` or higher belongs to that major version only. An entry can
 list `github.com/owner/mod` and `github.com/owner/mod/v2`, and a pin of 2.x queries only the second.
+
+## Unchecked pins
+
+A pin that relgap didn't ask OSV about is never counted as clean. VULNS shows `?` for it, and `0`
+only for a checked pin without advisories. Each unchecked pin has one reason:
+
+| Reason | When |
+|---|---|
+| `no-advisory-source` | No curated `osv` list and no backend or repository OSV knows: images, charts, `tfmodule:` pins, GitHub Action pins, tools without a repository |
+| `private-source` | A host or registry relgap never sends to OSV: Bitbucket, a self-managed GitLab host, a private image registry, a registry that wants an account |
+| `not-exact` | The pin resolves to no single version: a channel other than `latest` (`lts`), a value that isn't a version |
+| `unresolved` | The pin resolves to no tool |
+| `offline` | `--offline` and no cached answer |
+| `failed` | The version lookup or OSV failed for this pin; the warnings and the JSON `errors` name the request |
+
+The table and Markdown list them after the notes, under "Not checked for vulnerabilities".
+`--format json` gives each pin an `unchecked` field and lists them in `data.unchecked`, one entry
+per tool, version and reason with every pin location:
+
+```sh
+relgap outdated --format json | jq '.data.unchecked[] | select(.reason != "no-advisory-source")'
+```
+
+SARIF has a note-level [`unchecked`](/reference/sarif-rules) result per pin.
 
 ## Severity
 
@@ -85,7 +111,8 @@ into the alert level.
 ## When a source is down
 
 Both sources are cached for a day, so repeated runs ask once. When endoflife.date or OSV fails,
-relgap warns and prints the rest of the report with that column empty. A gate that depends on the
+relgap warns and prints the rest of the report. The EOL column stays empty, and VULNS shows `?`
+with reason `failed`. A gate that depends on the
 missing data can't pass on it: under `--fail-on eol` an endoflife.date outage exits 1, and so does
 an OSV outage under `--fail-on vuln`, unless another value matched and exited 3.
 [Exit codes](/reference/exit-codes) has the full order.

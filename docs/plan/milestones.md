@@ -635,8 +635,8 @@ its open details were settled on 2026-11-23. The boxes are in build order, and e
 one session can't finish, the open boxes carry over to a follow-up session.
 - [x] Pins without a curated `osv` list get OSV packages from their backend, `go` also queries
   `toolchain`, and private sources are never sent. (vulnerability-audit criterion 1)
-- [ ] Unchecked pins are listed with a reason in every format of `audit` and `outdated`, and
-  VULNS shows `?` for them. (vulnerability-audit criterion 2)
+- [x] Unchecked pins are listed with a reason in every format of `outdated`, and VULNS shows `?`
+  for them. `audit`'s formats list them with box 3. (vulnerability-audit criterion 2)
 - [ ] `relgap audit [roots...]` with its formats, `--tool`, the default `vuln` gate and
   `--fail-on unchecked`. (vulnerability-audit criterion 3)
 - [ ] Unrated records take their GHSA alias's rating and otherwise count at every threshold,

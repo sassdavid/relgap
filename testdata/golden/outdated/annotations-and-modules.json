@@ -45,7 +45,8 @@
           "security": 0
         },
         "hidden": 3,
-        "status": "outdated"
+        "status": "outdated",
+        "unchecked": "no-advisory-source"
       },
       {
         "tool": "github:cloudposse/terraform-null-label",
@@ -83,7 +84,8 @@
           "security": 0
         },
         "hidden": 23,
-        "status": "outdated"
+        "status": "outdated",
+        "vulns": []
       },
       {
         "tool": "tfmodule:terraform-aws-modules/vpc/aws",
@@ -120,7 +122,36 @@
           "other": 0,
           "security": 0
         },
-        "status": "outdated"
+        "status": "outdated",
+        "unchecked": "no-advisory-source"
+      }
+    ],
+    "unchecked": [
+      {
+        "tool": "chart:external-dns/external-dns",
+        "version": "1.23.0",
+        "reason": "no-advisory-source",
+        "pins": [
+          {
+            "repo": "repo",
+            "file": "variables.tf",
+            "line": 4,
+            "detector": "renovate-comment"
+          }
+        ]
+      },
+      {
+        "tool": "tfmodule:terraform-aws-modules/vpc/aws",
+        "version": "6.7.3",
+        "reason": "no-advisory-source",
+        "pins": [
+          {
+            "repo": "repo",
+            "file": "modules.tf",
+            "line": 3,
+            "detector": "terraform"
+          }
+        ]
       }
     ]
   },

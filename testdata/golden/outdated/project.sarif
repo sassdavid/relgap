@@ -85,6 +85,21 @@
               }
             },
             {
+              "id": "unchecked",
+              "shortDescription": {
+                "text": "relgap didn't check this pin for vulnerabilities"
+              },
+              "fullDescription": {
+                "text": "OSV wasn't asked about the pinned version, so no result here doesn't mean the version is clean. The message gives the reason: no-advisory-source, private-source, not-exact, unresolved, offline or failed."
+              },
+              "help": {
+                "text": "Pin an exact version, or check the tool another way. Details: https://relgap.sasskovacs.dev/concepts/enrichment#unchecked-pins"
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              }
+            },
+            {
               "id": "GO-2026-6599",
               "shortDescription": {
                 "text": "Reset context tracking on consecutive template expressions in html/template"
@@ -701,7 +716,7 @@
         },
         {
           "ruleId": "GO-2026-6599",
-          "ruleIndex": 5,
+          "ruleIndex": 6,
           "level": "note",
           "message": {
             "text": "go 1.25.14 is affected by GO-2026-6599 (BIT-golang-2026-94448, CVE-2026-94448): Reset context tracking on consecutive template expressions in html/template; fixed in 1.26.9"
@@ -724,7 +739,7 @@
         },
         {
           "ruleId": "GO-2026-6600",
-          "ruleIndex": 6,
+          "ruleIndex": 7,
           "level": "note",
           "message": {
             "text": "go 1.25.14 is affected by GO-2026-6600 (BIT-golang-2026-97030, CVE-2026-97030): Recognize yield as regexp preceder keyword in html/template; fixed in 1.26.9"
@@ -747,7 +762,7 @@
         },
         {
           "ruleId": "GO-2026-6601",
-          "ruleIndex": 7,
+          "ruleIndex": 8,
           "level": "note",
           "message": {
             "text": "go 1.25.14 is affected by GO-2026-6601 (BIT-golang-2026-94444, CVE-2026-94444): Checksum bypass for golang.org/fips140 in cmd/go; fixed in 1.26.9"
@@ -770,7 +785,7 @@
         },
         {
           "ruleId": "GO-2026-6602",
-          "ruleIndex": 8,
+          "ruleIndex": 9,
           "level": "note",
           "message": {
             "text": "go 1.25.14 is affected by GO-2026-6602 (BIT-golang-2026-94447, CVE-2026-94447): Checksum database bypass for golang.org/toolchain in cmd/go; fixed in 1.26.9"
@@ -793,7 +808,7 @@
         },
         {
           "ruleId": "GO-2026-6603",
-          "ruleIndex": 9,
+          "ruleIndex": 10,
           "level": "note",
           "message": {
             "text": "go 1.25.14 is affected by GO-2026-6603 (BIT-golang-2026-78659, CVE-2026-78659): HTTP/2 server memory exhaustion due to Trailer headers in net/http; fixed in 1.26.9"
@@ -816,7 +831,7 @@
         },
         {
           "ruleId": "GO-2026-6604",
-          "ruleIndex": 10,
+          "ruleIndex": 11,
           "level": "note",
           "message": {
             "text": "go 1.25.14 is affected by GO-2026-6604 (BIT-golang-2026-56857, CVE-2026-56857): Root.Mkdir(All) can follow junctions out of the root on Windows in os; fixed in 1.26.9"
@@ -839,7 +854,7 @@
         },
         {
           "ruleId": "GO-2026-6605",
-          "ruleIndex": 11,
+          "ruleIndex": 12,
           "level": "note",
           "message": {
             "text": "go 1.25.14 is affected by GO-2026-6605 (BIT-golang-2026-56866, CVE-2026-56866): HTTP/1 client connection desynchronization after CONNECT rejection in net/http; fixed in 1.26.9"
@@ -862,7 +877,7 @@
         },
         {
           "ruleId": "GO-2026-6607",
-          "ruleIndex": 12,
+          "ruleIndex": 13,
           "level": "note",
           "message": {
             "text": "go 1.25.14 is affected by GO-2026-6607 (BIT-golang-2026-97031, CVE-2026-97031): Reject malformed ECH outer extension references in crypto/tls; fixed in 1.26.9"
@@ -885,7 +900,7 @@
         },
         {
           "ruleId": "GO-2026-6608",
-          "ruleIndex": 13,
+          "ruleIndex": 14,
           "level": "note",
           "message": {
             "text": "go 1.25.14 is affected by GO-2026-6608 (BIT-golang-2026-94440, CVE-2026-94440): Memory limit bypass when parsing MIME headers in net/textproto, mime/multipart; fixed in 1.26.9"
@@ -908,7 +923,7 @@
         },
         {
           "ruleId": "GO-2026-6609",
-          "ruleIndex": 14,
+          "ruleIndex": 15,
           "level": "note",
           "message": {
             "text": "go 1.25.14 is affected by GO-2026-6609 (BIT-golang-2026-78667, CVE-2026-78667): Lack of limit on size of parsed Range headers in net/http; fixed in 1.26.9"
@@ -931,7 +946,7 @@
         },
         {
           "ruleId": "GO-2026-6610",
-          "ruleIndex": 15,
+          "ruleIndex": 16,
           "level": "note",
           "message": {
             "text": "go 1.25.14 is affected by GO-2026-6610 (BIT-golang-2026-78660, CVE-2026-78660): HTTP/2 transport accepts malformed framing-related headers in net/http; fixed in 1.26.9"
@@ -954,7 +969,7 @@
         },
         {
           "ruleId": "GO-2026-6611",
-          "ruleIndex": 16,
+          "ruleIndex": 17,
           "level": "note",
           "message": {
             "text": "go 1.25.14 is affected by GO-2026-6611 (BIT-golang-2026-78669, CVE-2026-78669): Excessive CPU consumption from repeated initial window changes in net/http; fixed in 1.26.9"
@@ -977,7 +992,7 @@
         },
         {
           "ruleId": "GO-2026-6612",
-          "ruleIndex": 17,
+          "ruleIndex": 18,
           "level": "note",
           "message": {
             "text": "go 1.25.14 is affected by GO-2026-6612 (BIT-golang-2026-78663, CVE-2026-78663): Double flow control refund on HTTP/2 server streams in net/http; fixed in 1.26.9"
@@ -1000,7 +1015,7 @@
         },
         {
           "ruleId": "GO-2026-6613",
-          "ruleIndex": 18,
+          "ruleIndex": 19,
           "level": "note",
           "message": {
             "text": "go 1.25.14 is affected by GO-2026-6613 (BIT-golang-2026-94439, CVE-2026-94439): HTTP/1 server connection desynchronization after 2xx CONNECT response in net/http; fixed in 1.26.9"
@@ -1023,7 +1038,7 @@
         },
         {
           "ruleId": "GO-2026-6617",
-          "ruleIndex": 19,
+          "ruleIndex": 20,
           "level": "note",
           "message": {
             "text": "go 1.25.14 is affected by GO-2026-6617 (BIT-golang-2026-97032, CVE-2026-97032): HTTP/2 server crash due to HPACK encoder race in net/http; fixed in 1.26.9"
@@ -1046,7 +1061,7 @@
         },
         {
           "ruleId": "GO-2026-6809",
-          "ruleIndex": 20,
+          "ruleIndex": 21,
           "level": "note",
           "message": {
             "text": "go 1.25.14 is affected by GO-2026-6809 (BIT-golang-2026-111943, CVE-2026-111943, RUSTSEC-2026-0381, RUSTSEC-2026-0382, RUSTSEC-2026-0383): Distrust compromised intermediate certificates in crypto/x509; fixed in 1.26.10"
@@ -1069,7 +1084,7 @@
         },
         {
           "ruleId": "GO-2026-6848",
-          "ruleIndex": 21,
+          "ruleIndex": 22,
           "level": "note",
           "message": {
             "text": "go 1.25.14 is affected by GO-2026-6848 (CVE-2026-97043): Unexpected code execution via escaped quotes in //go:cgo_ldflag in cmd/go and cmd/compile; fixed in 1.26.11"
@@ -1092,7 +1107,7 @@
         },
         {
           "ruleId": "GO-2026-6849",
-          "ruleIndex": 22,
+          "ruleIndex": 23,
           "level": "note",
           "message": {
             "text": "go 1.25.14 is affected by GO-2026-6849 (CVE-2026-97042): Linker flag injection via cgo_import_dynamic and PE DLL names in cmd/cgo, cmd/compile, and cmd/link; fixed in 1.26.11"
@@ -1115,7 +1130,7 @@
         },
         {
           "ruleId": "GO-2026-6850",
-          "ruleIndex": 23,
+          "ruleIndex": 24,
           "level": "note",
           "message": {
             "text": "go 1.25.14 is affected by GO-2026-6850 (CVE-2026-97041): Host linker flag injection via //go:cgo_* directives in cmd/compile and cmd/link; fixed in 1.26.11"
@@ -1138,7 +1153,7 @@
         },
         {
           "ruleId": "GO-2026-6851",
-          "ruleIndex": 24,
+          "ruleIndex": 25,
           "level": "note",
           "message": {
             "text": "go 1.25.14 is affected by GO-2026-6851 (CVE-2026-97040): Cgo directive injection via .syso files disguised as Go object files in cmd/go and cmd/link; fixed in 1.26.11"
@@ -1161,7 +1176,7 @@
         },
         {
           "ruleId": "GO-2026-6852",
-          "ruleIndex": 25,
+          "ruleIndex": 26,
           "level": "note",
           "message": {
             "text": "go 1.25.14 is affected by GO-2026-6852 (CVE-2026-97039): Flag sanitization bypass via \"#cgo pkg-config:\" directives in cmd/go; fixed in 1.26.11"
@@ -1184,7 +1199,7 @@
         },
         {
           "ruleId": "GO-2026-6853",
-          "ruleIndex": 26,
+          "ruleIndex": 27,
           "level": "note",
           "message": {
             "text": "go 1.25.14 is affected by GO-2026-6853 (CVE-2026-97038): Arbitrary code execution via crafted .syso files and cgo linker input files in cmd/go; fixed in 1.26.11"
@@ -1207,7 +1222,7 @@
         },
         {
           "ruleId": "GO-2026-6854",
-          "ruleIndex": 27,
+          "ruleIndex": 28,
           "level": "note",
           "message": {
             "text": "go 1.25.14 is affected by GO-2026-6854 (CVE-2026-97037): Linker script injection via split -Wl, flags and Darwin or symbol linker flags in cgo in cmd/go; fixed in 1.26.11"
@@ -1230,7 +1245,7 @@
         },
         {
           "ruleId": "GO-2026-6855",
-          "ruleIndex": 28,
+          "ruleIndex": 29,
           "level": "note",
           "message": {
             "text": "go 1.25.14 is affected by GO-2026-6855 (CVE-2026-97036): Arbitrary code execution during build on darwin via \"-l to_library\" in cgo in cmd/go; fixed in 1.26.11"
@@ -1253,7 +1268,7 @@
         },
         {
           "ruleId": "GO-2026-6856",
-          "ruleIndex": 29,
+          "ruleIndex": 30,
           "level": "note",
           "message": {
             "text": "go 1.25.14 is affected by GO-2026-6856 (CVE-2026-97035): Unexpected code execution and arbitrary file write via Clang -gen-* and GCC -gnat* flags in cgo in cmd/go; fixed in 1.26.11"
@@ -1276,7 +1291,7 @@
         },
         {
           "ruleId": "GO-2026-6857",
-          "ruleIndex": 30,
+          "ruleIndex": 31,
           "level": "note",
           "message": {
             "text": "go 1.25.14 is affected by GO-2026-6857 (CVE-2026-97034): Arbitrary command execution via GCC spec files in cgo linker search directories in cmd/go; fixed in 1.26.11"
@@ -1299,7 +1314,7 @@
         },
         {
           "ruleId": "GO-2026-6858",
-          "ruleIndex": 31,
+          "ruleIndex": 32,
           "level": "note",
           "message": {
             "text": "go 1.25.14 is affected by GO-2026-6858 (CVE-2026-97033): Unexpected code execution via --sysroot, -target, -isysroot, -Wl,-syslibroot, and -x cgo flags in cmd/go; fixed in 1.26.11"
@@ -1322,7 +1337,7 @@
         },
         {
           "ruleId": "GO-2026-6859",
-          "ruleIndex": 32,
+          "ruleIndex": 33,
           "level": "note",
           "message": {
             "text": "go 1.25.14 is affected by GO-2026-6859 (CVE-2026-97054): HTTP/1 server crash due to MaxBytesReader header race in net/http; fixed in 1.26.11"
@@ -1413,6 +1428,29 @@
           }
         },
         {
+          "ruleId": "unchecked",
+          "ruleIndex": 5,
+          "level": "note",
+          "message": {
+            "text": "image:alpine 3.22: not checked for vulnerabilities: no-advisory-source"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "Dockerfile"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "unchecked|image:alpine|Dockerfile|no-advisory-source"
+          }
+        },
+        {
           "ruleId": "breaking",
           "ruleIndex": 0,
           "level": "note",
@@ -1456,6 +1494,29 @@
           ],
           "partialFingerprints": {
             "relgapFinding/v1": "outdated|k9s|Dockerfile|0.50.16"
+          }
+        },
+        {
+          "ruleId": "unchecked",
+          "ruleIndex": 5,
+          "level": "note",
+          "message": {
+            "text": "node lts: not checked for vulnerabilities: not-exact"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "mise.toml"
+                },
+                "region": {
+                  "startLine": 7
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "unchecked|node|mise.toml|not-exact"
           }
         },
         {

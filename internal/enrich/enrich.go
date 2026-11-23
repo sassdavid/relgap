@@ -3,6 +3,7 @@ package enrich
 import (
 	"cmp"
 	"context"
+	"errors"
 	"fmt"
 	"log/slog"
 	"slices"
@@ -10,6 +11,7 @@ import (
 
 	"golang.org/x/sync/errgroup"
 
+	"github.com/sassdavid/relgap/internal/httpx"
 	"github.com/sassdavid/relgap/internal/registry"
 	"github.com/sassdavid/relgap/internal/version"
 )
@@ -35,11 +37,11 @@ func (r Request) tag(v version.V) string { return r.Tool.Version.TagPrefix + v.S
 
 // Result is what enrichment found for one request. A nil EOL means the tool has no
 // endoflife.date product or the source failed (see [Problem]). Vulns is nil when OSV wasn't
-// asked (see Unchecked) or failed.
+// asked or failed, and Unchecked says which.
 type Result struct {
 	EOL       *EOL
 	Vulns     []Vuln
-	Unchecked string // the Reason* constant saying why OSV wasn't asked; empty when it was
+	Unchecked string // a Reason* constant; empty when OSV answered
 }
 
 // coverage returns what OSV is asked about the request.
@@ -82,14 +84,18 @@ func (e *Enricher) Enrich(ctx context.Context, reqs []Request) (map[string]Resul
 	for i, r := range reqs {
 		covs[i] = r.coverage()
 	}
-	vulns, osvProblems := e.osvResults(ctx, reqs, covs)
+	vulns, failed, osvProblems := e.osvResults(ctx, reqs, covs)
 	wg.Wait()
 	problems := slices.Concat(eolProblems, osvProblems)
 	if err := ctx.Err(); err != nil {
 		return nil, nil, err //nolint:wrapcheck // the caller matches context errors
 	}
 	for i, r := range reqs {
-		out[r.Key] = Result{EOL: eols[r.Key], Vulns: vulns[r.Key], Unchecked: covs[i].Reason}
+		reason := covs[i].Reason
+		if err := failed[i]; err != nil && reason == "" {
+			reason = failureReason(err)
+		}
+		out[r.Key] = Result{EOL: eols[r.Key], Vulns: vulns[r.Key], Unchecked: reason}
 	}
 	return out, problems, nil
 }
@@ -154,31 +160,37 @@ type queryRef struct {
 	pkg registry.OSVPackage
 }
 
-func (e *Enricher) osvResults(ctx context.Context, reqs []Request, covs []Coverage) (map[string][]Vuln, []Problem) {
-	var problems []Problem
-	modules, err := e.goModules(ctx, covs)
-	failed := func(int) bool { return false }
-	if err != nil {
-		problems = problemsFor(reqs, goPathRefs(covs), err)
-		failed = func(i int) bool { return covs[i].GoPath != "" }
-	}
+// osvResults returns the vulnerabilities of each checked request by key, and the error of each
+// request, by index, whose queries failed.
+func (e *Enricher) osvResults(
+	ctx context.Context,
+	reqs []Request,
+	covs []Coverage,
+) (map[string][]Vuln, map[int]error, []Problem) {
+	modules, failed, problems := e.resolveModules(ctx, reqs, covs)
 	out := map[string][]Vuln{}
 	for i := range reqs {
-		if covs[i].Checked() && !failed(i) {
+		if covs[i].Checked() && failed[i] == nil {
 			out[reqs[i].Key] = []Vuln{}
 		}
 	}
-	queries, refs := osvQueries(reqs, covs, modules, failed)
+	queries, refs := osvQueries(reqs, covs, modules, func(i int) bool { return failed[i] != nil })
 	if len(queries) == 0 {
-		return out, problems
+		return out, failed, problems
+	}
+	fail := func(err error) (map[string][]Vuln, map[int]error, []Problem) {
+		for _, ref := range refs {
+			failed[ref.req] = err
+		}
+		return map[string][]Vuln{}, failed, append(problems, problemsFor(reqs, refs, err)...)
 	}
 	ids, err := e.osv.QueryBatch(ctx, queries)
 	if err != nil {
-		return map[string][]Vuln{}, append(problems, problemsFor(reqs, refs, err)...)
+		return fail(err)
 	}
 	records, err := e.records(ctx, ids)
 	if err != nil {
-		return map[string][]Vuln{}, append(problems, problemsFor(reqs, refs, err)...)
+		return fail(err)
 	}
 	for qi, ref := range refs {
 		r := reqs[ref.req]
@@ -191,7 +203,35 @@ func (e *Enricher) osvResults(ctx context.Context, reqs []Request, covs []Covera
 	for k, vs := range out {
 		out[k] = mergeAliases(vs)
 	}
-	return out, problems
+	return out, failed, problems
+}
+
+// resolveModules finds the module of each go: path. When that fails, every request with a go:
+// path fails with it.
+func (e *Enricher) resolveModules(
+	ctx context.Context,
+	reqs []Request,
+	covs []Coverage,
+) (map[string]string, map[int]error, []Problem) {
+	failed := map[int]error{}
+	modules, err := e.goModules(ctx, covs)
+	if err == nil {
+		return modules, failed, nil
+	}
+	for i, c := range covs {
+		if c.GoPath != "" {
+			failed[i] = err
+		}
+	}
+	return nil, failed, problemsFor(reqs, goPathRefs(covs), err)
+}
+
+// failureReason is the unchecked reason of a request whose OSV queries failed with err.
+func failureReason(err error) string {
+	if errors.Is(err, httpx.ErrOffline) {
+		return ReasonOffline
+	}
+	return ReasonFailed
 }
 
 // osvQueries lists the OSV queries of every request that failed doesn't exclude, with the module

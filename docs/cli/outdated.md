@@ -36,8 +36,11 @@ skipped; --format json lists them with the reason.
 EOL shows whether CURRENT's release cycle has reached its end on endoflife.date (yes, no, or
 ? when endoflife.date doesn't list the cycle), for tools whose registry entry names a
 product. --format json also has the state of LATEST's cycle. VULNS counts the OSV
-vulnerabilities of CURRENT, and how many of them upgrading to LATEST fixes. Both sources
-are cached for a day. When one is down, relgap warns and prints the rest.
+vulnerabilities of CURRENT, and how many of them upgrading to LATEST fixes; 0 means OSV has
+none. A pin OSV wasn't asked about shows ?, and the list after the notes gives the reason:
+no-advisory-source, private-source, not-exact, unresolved, offline or failed. --format json
+lists them in unchecked. Both sources are cached for a day. When one is down, relgap warns
+and prints the rest.
 
 --binaries also reads the Go build info of each pinned tool's installed executables (on
 PATH and in mise's installs directory) and lists the OSV vulnerabilities of the Go version
@@ -47,8 +50,8 @@ the binary calls the vulnerable code.
 --format sarif writes a SARIF 2.1.0 log for GitHub code scanning, located at each pin's
 file and line: a result per pin behind latest (outdated), per pin on an EOL cycle (eol), per
 upgrade with breaking changes or deprecations (breaking, deprecation), per advisory that
-affects a pin (one rule per OSV ID), and per pin or file that failed (failed). The results
-don't depend on --fail-on.
+affects a pin (one rule per OSV ID), per pin or file that failed (failed), and per pin not
+checked for vulnerabilities (unchecked, a note). The results don't depend on --fail-on.
 
 --fail-on takes breaking, deprecation, eol, vuln and outdated. Each value counts findings:
 outdated counts the pins further behind than --max-behind (major:N, minor:N, patch:N,

@@ -40,6 +40,12 @@ func OutdatedText(w io.Writer, o *report.Outdated, color bool) error {
 			b.WriteString("  " + n + "\n")
 		}
 	}
+	if len(o.Unchecked) > 0 {
+		b.WriteString("\n" + UncheckedTitle + ":\n")
+		for _, line := range uncheckedLines(o.Unchecked) {
+			b.WriteString("  " + line + "\n")
+		}
+	}
 	if o.Binaries != nil {
 		b.WriteString("\nBinaries (" + enrich.ReachabilityNote + "):\n")
 		for _, line := range binaryLines(o.Binaries) {
@@ -86,6 +92,12 @@ func OutdatedMarkdown(w io.Writer, o *report.Outdated) error {
 		b.WriteString("\n")
 		for _, n := range notes {
 			b.WriteString("- " + mdCell(n) + "\n")
+		}
+	}
+	if len(o.Unchecked) > 0 {
+		b.WriteString("\n" + UncheckedTitle + ":\n\n")
+		for _, line := range uncheckedLines(o.Unchecked) {
+			b.WriteString("- " + mdCell(line) + "\n")
 		}
 	}
 	if o.Binaries != nil {
@@ -162,7 +174,7 @@ func outdatedRow(p *report.OutdatedPin) []cell {
 		{text: noValue},
 		{text: noValue},
 		eolCell(p.EOL),
-		vulnCell(p.Vulns),
+		vulnCell(p),
 		{text: PinLocation(p.Pin.Location)},
 	}
 	switch p.Status {
@@ -209,9 +221,13 @@ func eolCell(e *enrich.EOL) cell {
 }
 
 // vulnCell counts the vulnerabilities of the current version, and how many the latest version
-// fixes.
-func vulnCell(vs []enrich.Vuln) cell {
-	if vs == nil {
+// fixes. It shows ? for a pin OSV wasn't asked about and - when enrichment didn't run.
+func vulnCell(p *report.OutdatedPin) cell {
+	vs := p.Vulns
+	switch {
+	case p.Unchecked != "":
+		return cell{text: "?"}
+	case vs == nil:
 		return cell{text: noValue}
 	}
 	fixed := 0
@@ -229,6 +245,25 @@ func vulnCell(vs []enrich.Vuln) cell {
 		c.style = ansiRed
 	}
 	return c
+}
+
+// UncheckedTitle heads the list of pins OSV wasn't asked about.
+const UncheckedTitle = "Not checked for vulnerabilities (VULNS ?)"
+
+// uncheckedLines describes each unchecked tool version: its reason and where it is pinned.
+func uncheckedLines(us []report.Unchecked) []string {
+	out := make([]string, 0, len(us))
+	for _, u := range us {
+		locs := make([]string, len(u.Pins))
+		for i, l := range u.Pins {
+			locs[i] = PinLocation(l)
+		}
+		out = append(
+			out,
+			fmt.Sprintf("%s %s (%s): %s", toolName(u.Tool), u.Version, strings.Join(locs, ", "), u.Reason),
+		)
+	}
+	return out
 }
 
 // binaryLines describes each installed executable and its vulnerabilities.

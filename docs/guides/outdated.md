@@ -49,8 +49,10 @@ of those kinds in the digest of CURRENT..LATEST, the same digest that
 
 EOL says whether CURRENT's release cycle has reached its end on endoflife.date: yes with the date,
 no, or ? when endoflife.date doesn't list the cycle. VULNS counts the OSV advisories that affect
-CURRENT, and in parentheses how many of them upgrading to LATEST fixes. A dash means the tool's
-registry entry names no endoflife.date product or OSV package.
+CURRENT, and in parentheses how many of them upgrading to LATEST fixes. A dash in EOL means the
+tool's registry entry names no endoflife.date product. A `?` in VULNS means relgap didn't ask OSV
+about the pin, and the list under "Not checked for vulnerabilities" says why
+([Unchecked pins](/concepts/enrichment#unchecked-pins)). `0` means OSV has no advisories for it.
 [EOL and vulnerabilities](/concepts/enrichment) has the details, and
 [Supported tools](/reference/tools) shows which tools have that data.
 
@@ -68,8 +70,8 @@ repository, the counts come from that repository's notes; otherwise the row has 
 and a note says why.
 
 GitHub Action pins, tools without a repository relgap can read, and images on another or a
-private registry are skipped. The last line counts them, and `--format json` lists each with the
-reason:
+private registry are skipped. The last line counts them, they appear in the list of pins not
+checked for vulnerabilities, and `--format json` lists each with the reason:
 
 ```sh
 relgap outdated --format json | jq '.data.pins[] | select(.status == "outdated")'

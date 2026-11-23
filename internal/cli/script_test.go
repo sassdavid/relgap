@@ -875,6 +875,13 @@ func TestSpec_enrichment_2(t *testing.T) {
 	testscript.Run(t, scriptParams(t, filepath.Join(scriptDir, "spec_enrichment_2.txtar")))
 }
 
+// TestSpec_vulnerability_audit_2: every unchecked reason appears in every format of outdated,
+// and VULNS shows ? for an unchecked pin.
+func TestSpec_vulnerability_audit_2(t *testing.T) {
+	t.Parallel()
+	testscript.Run(t, scriptParams(t, filepath.Join(scriptDir, "spec_vulnerability_audit_2.txtar")))
+}
+
 // TestSpec_pindiscovery_6: unknown *_VERSION names appear in --unresolved with file:line.
 func TestSpec_pindiscovery_6(t *testing.T) {
 	t.Parallel()
