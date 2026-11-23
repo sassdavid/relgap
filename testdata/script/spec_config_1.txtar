@@ -65,3 +65,5 @@ scan.extra_files           []                                                def
 scan.roots                 ["/src/infra","/src/github"]                      env RELGAP_SCAN_ROOTS
 schema_version             1                                                 project file $WORK/.relgap.yaml
 tools.hk.repo              jdx/hk                                            project file $WORK/.relgap.yaml
+vulns.ignore               []                                                default
+vulns.vex                  []                                                default

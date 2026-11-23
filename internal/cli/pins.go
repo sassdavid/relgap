@@ -156,7 +156,7 @@ func writePins(
 		case render.FormatMD:
 			return render.PinsMarkdown(w, pins, unresolved)
 		case render.FormatAuto, render.FormatTTY, render.FormatPlain, render.FormatCSV, render.FormatSARIF,
-			render.FormatGitHub:
+			render.FormatGitHub, render.FormatOpenVEX:
 		}
 		return render.PinsText(w, pins, unresolved)
 	})

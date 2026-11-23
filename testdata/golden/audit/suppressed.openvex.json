@@ -1,0 +1,64 @@
+{
+  "@context": "https://openvex.dev/ns/v0.2.0",
+  "@id": "https://openvex.dev/docs/public/vex-d561e68b0ce23788956afe9f9e606fd2ffb892ad9a40476ce72ca4702a6a0dfe",
+  "author": "Unknown Author",
+  "timestamp": "2026-11-23T12:00:00Z",
+  "version": 1,
+  "tooling": "relgap dev",
+  "statements": [
+    {
+      "vulnerability": {
+        "@id": "https://osv.dev/vulnerability/GO-2025-3547",
+        "name": "GO-2025-3547",
+        "description": "Kubernetes kube-apiserver Vulnerable to Race Condition in k8s.io/kubernetes",
+        "aliases": [
+          "CVE-2024-7598",
+          "GHSA-r56h-j38w-hrqq"
+        ]
+      },
+      "products": [
+        {
+          "@id": "pkg:golang/k8s.io/kubernetes@v1.37.2"
+        }
+      ],
+      "status": "affected",
+      "action_statement": "No release fixes it yet."
+    },
+    {
+      "vulnerability": {
+        "@id": "https://osv.dev/vulnerability/GO-2025-3521",
+        "name": "GO-2025-3521",
+        "description": "Kubernetes GitRepo Volume Inadvertent Local Repository Access in k8s.io/kubernetes",
+        "aliases": [
+          "CVE-2025-1767",
+          "GHSA-3wgm-2gw2-vh5m"
+        ]
+      },
+      "products": [
+        {
+          "@id": "pkg:golang/k8s.io/kubernetes@v1.37.2"
+        }
+      ],
+      "status": "not_affected",
+      "impact_statement": "no cluster mounts a gitRepo volume"
+    },
+    {
+      "vulnerability": {
+        "@id": "https://osv.dev/vulnerability/GO-2024-3080",
+        "name": "GO-2024-3080",
+        "description": "Kanister vulnerable to cluster-level privilege escalation in github.com/kanisterio/kanister",
+        "aliases": [
+          "CVE-2024-43403",
+          "GHSA-h27c-6xm3-mcqp"
+        ]
+      },
+      "products": [
+        {
+          "@id": "pkg:golang/github.com/kanisterio/kanister@v0.120.0"
+        }
+      ],
+      "status": "not_affected",
+      "impact_statement": "kanister runs only in the test cluster"
+    }
+  ]
+}

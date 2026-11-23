@@ -155,3 +155,11 @@ func TestSpec_vulnerability_audit_6(t *testing.T) {
 	t.Parallel()
 	testscript.Run(t, scriptParams(t, filepath.Join(scriptDir, "spec_vulnerability_audit_6.txtar")))
 }
+
+// TestSpec_vulnerability_audit_7: vulns.ignore suppresses by ID and by alias, an expired entry
+// warns and stops matching, an unused entry warns, an OpenVEX not_affected statement suppresses,
+// and --format openvex validates against the OpenVEX v0.2.0 JSON schema.
+func TestSpec_vulnerability_audit_7(t *testing.T) {
+	t.Parallel()
+	testscript.Run(t, scriptParams(t, filepath.Join(scriptDir, "spec_vulnerability_audit_7.txtar")))
+}

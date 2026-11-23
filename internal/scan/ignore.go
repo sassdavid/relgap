@@ -18,7 +18,7 @@ func Ignored(rules []Ignore, p *Pin) bool {
 		if r.Tool == "" && r.Name == "" && r.Path == "" {
 			continue
 		}
-		if r.Tool != "" && !strings.EqualFold(r.Tool, p.Tool) || r.Name != "" && !nameMatch(r.Name, p.RawName) {
+		if r.Tool != "" && !strings.EqualFold(r.Tool, p.Tool) || r.Name != "" && !MatchName(r.Name, p.RawName) {
 			continue
 		}
 		if r.Path == "" || globMatch(r.Path, path.Join(p.Location.Repo, p.Location.File)) ||
@@ -29,9 +29,10 @@ func Ignored(rules []Ignore, p *Pin) bool {
 	return false
 }
 
-// nameMatch matches a raw name against a glob whose * spans any characters, because raw names
-// such as git::git@bitbucket.org:ws/repo.git hold slashes.
-func nameMatch(pattern, name string) bool {
+// MatchName reports whether name matches pattern, ignoring case, where * spans any characters,
+// slashes included, because raw names such as git::git@bitbucket.org:ws/repo.git and tool names
+// such as npm:@scope/pkg hold them.
+func MatchName(pattern, name string) bool {
 	parts := strings.Split(strings.ToLower(pattern), "*")
 	name = strings.ToLower(name)
 	if len(parts) == 1 {

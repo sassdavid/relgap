@@ -90,6 +90,7 @@ md	Markdown
 json	JSON envelope for scripts
 sarif	SARIF 2.1.0 for code scanning
 github	GitHub Actions annotations
+openvex	OpenVEX v0.2.0 document
 :4
 -- golden/format-nodesc.txt --
 tty
@@ -98,6 +99,7 @@ md
 json
 sarif
 github
+openvex
 :4
 -- golden/fail-on.txt --
 breaking,deprecation	a deprecation in the range

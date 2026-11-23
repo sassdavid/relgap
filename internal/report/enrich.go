@@ -30,7 +30,7 @@ type VersionsFunc func(ctx context.Context, t registry.ToolSpec) (*version.Unive
 // version gets its unchecked reason here.
 func (o *Outdated) EnrichRequests(resolve ResolveFunc, versions VersionsFunc) []enrich.Request {
 	var out []enrich.Request
-	seen := map[string]bool{}
+	seen := map[string]int{}
 	for i := range o.Pins {
 		p := &o.Pins[i]
 		if p.Unchecked != "" {
@@ -43,11 +43,12 @@ func (o *Outdated) EnrichRequests(resolve ResolveFunc, versions VersionsFunc) []
 		}
 		p.vulnVersion = v.String()
 		key := enrichKey(p)
-		if seen[key] {
+		if at, ok := seen[key]; ok {
+			out[at].Refs = addRef(out[at].Refs, p)
 			continue
 		}
-		seen[key] = true
-		req := enrich.Request{Key: key, Name: p.Tool, Tool: spec, Current: v}
+		seen[key] = len(out)
+		req := enrich.Request{Key: key, Name: p.Tool, Tool: spec, Current: v, Refs: addRef(nil, p)}
 		if versions != nil {
 			req.Versions = func(ctx context.Context) (*version.Universe, error) { return versions(ctx, spec) }
 		}
@@ -61,6 +62,16 @@ func (o *Outdated) EnrichRequests(resolve ResolveFunc, versions VersionsFunc) []
 		out = append(out, req)
 	}
 	return out
+}
+
+// addRef adds the commit SHA of an action pinned by SHA to refs: a VEX statement can name the
+// action at the SHA instead of the tag its comment gives.
+func addRef(refs []string, p *OutdatedPin) []string {
+	if p.Pin.Kind != scan.KindAction || p.Pin.Version == "" || strings.TrimPrefix(p.Pin.Value, "v") == p.Pin.Version ||
+		slices.Contains(refs, p.Pin.Value) {
+		return refs
+	}
+	return append(refs, p.Pin.Value)
 }
 
 // vulnTarget returns the tool and version OSV is asked about for p, or the reason it can't be.

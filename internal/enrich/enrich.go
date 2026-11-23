@@ -35,6 +35,9 @@ type Request struct {
 	// Versions lists the tool's releases for the fix target; nil skips it. It runs only when OSV
 	// lists an advisory for Current.
 	Versions VersionLister
+	// Refs are other values the pins give the version, such as an action's commit SHA, which a
+	// VEX statement can name instead of the tag.
+	Refs []string
 }
 
 // tag is the tag of v, which GIT queries use: the tool's tag prefix and the version.
@@ -72,6 +75,7 @@ type Enricher struct {
 	eol         *EOLClient
 	osv         *OSVClient
 	concurrency int
+	suppressor  Suppressor
 }
 
 // NewEnricher returns an enricher that uses eol and osv with up to concurrency requests at once.
@@ -98,6 +102,7 @@ func (e *Enricher) Enrich(ctx context.Context, reqs []Request) (map[string]Resul
 		covs[i] = r.coverage()
 	}
 	ans := e.osvResults(ctx, reqs, covs)
+	e.suppress(reqs, ans)
 	fixes := e.fixTargets(ctx, reqs, ans)
 	wg.Wait()
 	problems := slices.Concat(eolProblems, ans.problems)
@@ -389,6 +394,9 @@ func vulnOf(rec *Record, p registry.OSVPackage, at string, r Request) Vuln {
 		Package:  pkg,
 		Severity: rec.Score(pkg),
 		FixedIn:  FixedIn(rec, pkg, at),
+	}
+	if pu, ok := r.packagePURLAt(p, at, r.tag(r.Current)); ok {
+		v.purl = pu.String()
 	}
 	affected, known := Affects(rec, pkg, at)
 	// OSV returned the record for this version, so an undecidable range counts as affected.

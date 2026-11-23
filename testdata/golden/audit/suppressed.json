@@ -1,0 +1,112 @@
+{
+  "schema_version": "1",
+  "tool": "relgap",
+  "version": "dev",
+  "generated_at": "2026-11-23T12:00:00Z",
+  "data": {
+    "repos": [
+      "."
+    ],
+    "checked": 2,
+    "findings": [
+      {
+        "tool": "kubectl",
+        "version": "1.37.2",
+        "pins": [
+          {
+            "repo": ".",
+            "file": "mise.toml",
+            "line": 2,
+            "detector": "mise"
+          }
+        ],
+        "id": "GO-2025-3547",
+        "aliases": [
+          "CVE-2024-7598",
+          "GHSA-r56h-j38w-hrqq"
+        ],
+        "summary": "Kubernetes kube-apiserver Vulnerable to Race Condition in k8s.io/kubernetes",
+        "package": {
+          "ecosystem": "Go",
+          "name": "k8s.io/kubernetes"
+        },
+        "severity": {
+          "score": 3.1,
+          "rating": "low",
+          "vector": "CVSS:3.1/AV:A/AC:H/PR:N/UI:N/S:U/C:L/I:N/A:N",
+          "from": "GHSA-r56h-j38w-hrqq"
+        },
+        "fix": null,
+        "url": "https://osv.dev/vulnerability/GO-2025-3547"
+      }
+    ],
+    "suppressed": [
+      {
+        "tool": "kubectl",
+        "version": "1.37.2",
+        "pins": [
+          {
+            "repo": ".",
+            "file": "mise.toml",
+            "line": 2,
+            "detector": "mise"
+          }
+        ],
+        "id": "GO-2025-3521",
+        "aliases": [
+          "CVE-2025-1767",
+          "GHSA-3wgm-2gw2-vh5m"
+        ],
+        "summary": "Kubernetes GitRepo Volume Inadvertent Local Repository Access in k8s.io/kubernetes",
+        "package": {
+          "ecosystem": "Go",
+          "name": "k8s.io/kubernetes"
+        },
+        "severity": {
+          "score": 6.5,
+          "rating": "medium",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:N",
+          "from": "GHSA-3wgm-2gw2-vh5m"
+        },
+        "url": "https://osv.dev/vulnerability/GO-2025-3521",
+        "suppressed": {
+          "kind": "ignore",
+          "reason": "no cluster mounts a gitRepo volume",
+          "until": "2026-12-31"
+        }
+      },
+      {
+        "tool": "github:kanisterio/kanister",
+        "version": "0.120.0",
+        "pins": [
+          {
+            "repo": ".",
+            "file": "mise.toml",
+            "line": 3,
+            "detector": "mise"
+          }
+        ],
+        "id": "GO-2024-3080",
+        "aliases": [
+          "CVE-2024-43403",
+          "GHSA-h27c-6xm3-mcqp"
+        ],
+        "summary": "Kanister vulnerable to cluster-level privilege escalation in github.com/kanisterio/kanister",
+        "package": {
+          "ecosystem": "Go",
+          "name": "github.com/kanisterio/kanister"
+        },
+        "severity": {
+          "rating": "unknown"
+        },
+        "url": "https://osv.dev/vulnerability/GO-2024-3080",
+        "suppressed": {
+          "kind": "ignore",
+          "reason": "kanister runs only in the test cluster"
+        }
+      }
+    ],
+    "unchecked": []
+  },
+  "errors": []
+}

@@ -12,7 +12,7 @@
     "data": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["repos", "checked", "findings", "unchecked"],
+      "required": ["repos", "checked", "findings", "suppressed", "unchecked"],
       "properties": {
         "repos": {
           "description": "Scanned repository directories, slash-separated.",
@@ -32,6 +32,13 @@
           "type": "array",
           "items": {
             "$ref": "#/$defs/finding"
+          }
+        },
+        "suppressed": {
+          "description": "Findings a vulns.ignore entry or an OpenVEX statement suppresses, each with suppressed saying why, sorted like findings. They don't count for --fail-on.",
+          "type": "array",
+          "items": {
+            "allOf": [{ "$ref": "#/$defs/finding" }, { "required": ["suppressed"] }]
           }
         },
         "unchecked": {
@@ -114,6 +121,9 @@
           "description": "The advisory's page on osv.dev.",
           "type": "string",
           "format": "uri"
+        },
+        "suppressed": {
+          "$ref": "outdated-v1.json#/$defs/suppression"
         }
       }
     }

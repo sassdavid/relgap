@@ -40,6 +40,7 @@ import (
 	"github.com/sassdavid/relgap/internal/testutil/ghtest"
 	"github.com/sassdavid/relgap/internal/testutil/sarifcheck"
 	"github.com/sassdavid/relgap/internal/testutil/vcr"
+	"github.com/sassdavid/relgap/internal/testutil/vexcheck"
 	"github.com/sassdavid/relgap/schemas"
 )
 
@@ -346,6 +347,7 @@ func scriptParams(t *testing.T, files ...string) testscript.Params {
 			"golden":       cmdGolden,
 			"jsonschema":   cmdJSONSchema,
 			"sarifschema":  cmdSARIFSchema,
+			"vexschema":    cmdVEXSchema,
 			"slowgithub":   cmdSlowGitHub,
 			"countsmatch":  cmdCountsMatch,
 			"gentree":      cmdGenTree,
@@ -464,6 +466,22 @@ func cmdSARIFSchema(ts *testscript.TestScript, neg bool, args []string) {
 		ts.Fatalf("%s unexpectedly valid SARIF", args[0])
 	case !neg && err != nil:
 		ts.Fatalf("%s isn't valid SARIF 2.1.0: %v", args[0], err)
+	}
+}
+
+// cmdVEXSchema validates stdout, stderr or a file against the OpenVEX v0.2.0 schema:
+//
+//	vexschema stdout
+func cmdVEXSchema(ts *testscript.TestScript, neg bool, args []string) {
+	if len(args) != 1 {
+		ts.Fatalf("usage: vexschema <stdout|stderr|file>")
+	}
+	err := vexcheck.Validate([]byte(ts.ReadFile(args[0])))
+	switch {
+	case neg && err == nil:
+		ts.Fatalf("%s unexpectedly valid OpenVEX", args[0])
+	case !neg && err != nil:
+		ts.Fatalf("%s isn't valid OpenVEX v0.2.0: %v", args[0], err)
 	}
 }
 

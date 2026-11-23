@@ -17,6 +17,7 @@ import (
 	"github.com/sassdavid/relgap/internal/buildinfo"
 	"github.com/sassdavid/relgap/internal/complete"
 	"github.com/sassdavid/relgap/internal/config"
+	"github.com/sassdavid/relgap/internal/enrich"
 	"github.com/sassdavid/relgap/internal/ghcomment"
 	"github.com/sassdavid/relgap/internal/github"
 	"github.com/sassdavid/relgap/internal/httpx"
@@ -306,7 +307,7 @@ func savedKind(raw json.RawMessage) (string, error) {
 
 func outdatedOpen(p report.OutdatedPin) bool {
 	return p.Status == report.StatusOutdated || p.Status == report.StatusError || report.IsEOL(&p) ||
-		len(p.Vulns) > 0
+		slices.ContainsFunc(p.Vulns, func(v enrich.Vuln) bool { return v.Suppressed == nil })
 }
 
 // restoreDriftErrors puts back the per-tool errors that JSON keeps in the envelope's errors.

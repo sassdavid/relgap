@@ -3,6 +3,7 @@ package render
 import (
 	"fmt"
 	"io"
+	"slices"
 	"strconv"
 	"strings"
 	"unicode/utf8"
@@ -43,6 +44,12 @@ func OutdatedText(w io.Writer, o *report.Outdated, color bool) error {
 	}
 	if lines := fixLines(o.Fixes()); len(lines) > 0 {
 		b.WriteString("\n" + FixTitle + ":\n")
+		for _, line := range lines {
+			b.WriteString("  " + line + "\n")
+		}
+	}
+	if lines := outdatedSuppressedLines(o); len(lines) > 0 {
+		b.WriteString("\n" + SuppressedTitle + ":\n")
 		for _, line := range lines {
 			b.WriteString("  " + line + "\n")
 		}
@@ -103,6 +110,12 @@ func OutdatedMarkdown(w io.Writer, o *report.Outdated) error {
 	}
 	if lines := fixLines(o.Fixes()); len(lines) > 0 {
 		b.WriteString("\n" + FixTitle + ":\n\n")
+		for _, line := range lines {
+			b.WriteString("- " + mdCell(line) + "\n")
+		}
+	}
+	if lines := outdatedSuppressedLines(o); len(lines) > 0 {
+		b.WriteString("\n" + SuppressedTitle + ":\n\n")
 		for _, line := range lines {
 			b.WriteString("- " + mdCell(line) + "\n")
 		}
@@ -233,16 +246,17 @@ func eolCell(e *enrich.EOL) cell {
 	}
 }
 
-// vulnCell counts the vulnerabilities of the current version, and how many the latest version
-// fixes. It shows ? for a pin OSV wasn't asked about and - when enrichment didn't run.
+// vulnCell counts the unsuppressed vulnerabilities of the current version, and how many the
+// latest version fixes. It shows ? for a pin OSV wasn't asked about and - when enrichment didn't
+// run.
 func vulnCell(p *report.OutdatedPin) cell {
-	vs := p.Vulns
 	switch {
 	case p.Unchecked != "":
 		return cell{text: "?"}
-	case vs == nil:
+	case p.Vulns == nil:
 		return cell{text: noValue}
 	}
+	vs := slices.DeleteFunc(slices.Clone(p.Vulns), func(v enrich.Vuln) bool { return v.Suppressed != nil })
 	fixed := 0
 	for _, v := range vs {
 		if v.FixedByTarget != nil && *v.FixedByTarget {

@@ -97,6 +97,7 @@
         "url": "https://osv.dev/vulnerability/GO-2024-3080"
       }
     ],
+    "suppressed": [],
     "unchecked": []
   },
   "errors": []

@@ -49,6 +49,10 @@ A pin with a vulnerability gets a fix target, listed under "Fix targets" and as 
 left behind, checked against OSV, and the same within CURRENT's line. An advisory the latest
 release still has is one no release fixes, and relgap warns when the latest release has any.
 
+Config vulns.ignore and OpenVEX documents in vulns.vex or --vex suppress advisories the way
+'relgap audit' says: VULNS and --fail-on vuln leave them out, and the "Suppressed" list and
+suppressed in --format json give the reason.
+
 --binaries also reads the Go build info of each pinned tool's installed executables (on
 PATH and in mise's installs directory) and lists the OSV vulnerabilities of the Go version
 and main module they were built with. Like govulncheck's binary mode, minus the check that
@@ -92,6 +96,7 @@ relgap outdated [path] [flags]
 | `--md-max-chars` | cut Markdown output to this many characters at a row or section boundary; 0 means no limit | int | `60000` |  |  |  |
 | `--min-count` | findings a --fail-on value needs before it exits 3 | int | `1` |  |  |  |
 | `--out` | also write the report to a file as format=path (repeatable); format is one of plain, md, json, sarif or github | string, repeatable |  | `plain`: table without color<br>`md`: Markdown<br>`json`: JSON envelope for scripts<br>`sarif`: SARIF 2.1.0 for code scanning<br>`github`: GitHub Actions annotations |  |  |
+| `--vex` | OpenVEX v0.2.0 document whose not\_affected and fixed statements suppress advisories; repeatable; replaces config vulns.vex | list, repeatable |  |  | [`vulns.vex`](/reference/config#vulns-vex) |  |
 | `--vuln-fixable` | --fail-on vuln counts only advisories with a fixed version above the pinned one (config policy.vuln\_fixable) | bool |  |  | [`policy.vuln_fixable`](/reference/config#policy-vuln-fixable) |  |
 | `--vuln-severity` | lowest rating --fail-on vuln counts: low, medium, high or critical; an unknown rating always counts, and empty counts all (config policy.vuln\_severity) | string |  | `low`: CVSS 0.1 to 3.9<br>`medium`: CVSS 4.0 to 6.9<br>`high`: CVSS 7.0 to 8.9<br>`critical`: CVSS 9.0 to 10.0 | [`policy.vuln_severity`](/reference/config#policy-vuln-severity) |  |
 

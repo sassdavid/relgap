@@ -1,0 +1,14 @@
+TOOL     VERSION  ADVISORY      SEVERITY  FIXED IN  PINS
+kubectl  1.37.2   GO-2025-3547  low 3.1   -         mise.toml:2
+
+Advisories:
+  GO-2025-3547 (CVE-2024-7598, GHSA-r56h-j38w-hrqq): Kubernetes kube-apiserver Vulnerable to Race Condition in k8s.io/kubernetes https://osv.dev/vulnerability/GO-2025-3547
+
+Fix targets:
+  kubectl 1.37.2: no release fixes GO-2025-3547; latest 1.37.2 still has GO-2025-3547
+
+Suppressed:
+  GO-2025-3521 in kubectl 1.37.2: ignored until 2026-12-31: no cluster mounts a gitRepo volume
+  GO-2024-3080 in github:kanisterio/kanister 0.120.0: ignored: kanister runs only in the test cluster
+
+1 finding in 1 of 2 checked tool versions. 2 suppressed.

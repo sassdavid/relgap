@@ -135,8 +135,8 @@ type Match struct {
 
 // Check returns the findings of the gate's values among the pins, and the outdated pins whose lag
 // it couldn't measure. A pin counts for eol when its current version's cycle has reached its end,
-// and for vuln once per advisory that affects its current version at or above VulnSeverity, with
-// a fixed version under VulnFixable. It counts for outdated, breaking and deprecation only when it
+// and for vuln once per unsuppressed advisory that affects its current version at or above
+// VulnSeverity, with a fixed version under VulnFixable. It counts for outdated, breaking and deprecation only when it
 // is behind latest.
 func (g Gate) Check(o *Outdated) ([]Finding, []*OutdatedPin) {
 	var (
@@ -193,7 +193,7 @@ func IsEOL(p *OutdatedPin) bool {
 }
 
 func (g Gate) countsVuln(v *enrich.Vuln) bool {
-	return v.AffectsCurrent && g.atSeverity(v.Severity) && g.fixable(v.FixedIn)
+	return v.Counts() && g.atSeverity(v.Severity) && g.fixable(v.FixedIn)
 }
 
 // fixable reports whether an advisory whose lowest fixed version above the current one is
