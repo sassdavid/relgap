@@ -20,7 +20,8 @@ import (
 const Name = "relgap"
 
 const instructions = `relgap answers questions about upgrading the tools a project pins: what breaks ` +
-	`between two versions, which pins are behind, and where repositories disagree. Every result is ` +
+	`between two versions, which pins are behind, which have known vulnerabilities, and where ` +
+	`repositories disagree. Every result is ` +
 	`the JSON envelope of relgap --format json. When the envelope has page.next_cursor, call the ` +
 	`same tool with only that cursor to get the rest. Directory arguments must be inside the ` +
 	`server's roots; relative ones start at the first root.`
@@ -51,12 +52,19 @@ type DriftArgs struct {
 	Base              string // name repositories relative to this directory
 }
 
+// AuditArgs says what an audit covers. Roots are checked against the server's roots.
+type AuditArgs struct {
+	Roots, Tools []string
+	Base         string // name repositories relative to this directory
+}
+
 // Backend runs the pipelines of the CLI commands. Errors make the call fail; the returned
 // [render.Error] lists say what a partial result misses.
 type Backend struct {
 	Digest   func(ctx context.Context, a DigestArgs) (*report.ToolDigest, error)
 	Outdated func(ctx context.Context, root, base string) (*report.Outdated, []render.Error, error)
 	Drift    func(ctx context.Context, a DriftArgs) (*report.Drift, []render.Error, error)
+	Audit    func(ctx context.Context, a AuditArgs) (*report.Audit, []render.Error, error)
 	Resolve  func(ctx context.Context, name string) (*registry.Resolution, error)
 }
 
@@ -112,6 +120,14 @@ func New(o Options) *mcpkit.Server {
 		OpenWorld: true,
 		Roots:     askRoots,
 	}, t.drift)
+	mcpkit.AddTool(s, mcpkit.Tool{
+		Name:  "audit",
+		Title: "Vulnerability audit",
+		Description: "Lists the known vulnerabilities of every tool version pinned in the repositories under the " +
+			"given directories, with fix targets, and the pins OSV couldn't check with the reason.",
+		OpenWorld: true,
+		Roots:     askRoots,
+	}, t.audit)
 	mcpkit.AddTool(s, mcpkit.Tool{
 		Name:  "resolve",
 		Title: "Resolve a tool",
@@ -247,6 +263,41 @@ func (t *tools) drift(ctx context.Context, req *mcp.CallToolRequest, in driftInp
 		return nil, err
 	}
 	return &mcpkit.Result{Envelope: t.envelope(out, errs), Pager: driftPager(out)}, nil
+}
+
+type auditInput struct {
+	mcpkit.Paging
+
+	Roots        []string `json:"roots,omitempty"         jsonschema:"Directories to scan for repositories, inside the server's roots. Default: the first root."`                            //nolint:lll // struct tag
+	Tools        []string `json:"tools,omitempty"         jsonschema:"Audit only these tools, such as terraform or npm:lodash."`                                                             //nolint:lll // struct tag
+	VulnSeverity string   `json:"vuln_severity,omitempty" jsonschema:"The lowest rating to list: low, medium, high or critical. Findings of unknown severity stay. Default: every finding."` //nolint:lll // struct tag
+}
+
+func (t *tools) audit(ctx context.Context, req *mcp.CallToolRequest, in auditInput) (*mcpkit.Result, error) {
+	severity, err := report.ParseVulnSeverity(in.VulnSeverity)
+	if err != nil {
+		return nil, err //nolint:wrapcheck // the message names the input
+	}
+	roots, err := t.roots(req)
+	if err != nil {
+		return nil, err
+	}
+	paths := in.Roots
+	if len(paths) == 0 {
+		paths = roots[:1]
+	}
+	dirs := make([]string, len(paths))
+	for i, p := range paths {
+		if dirs[i], err = within(p, roots); err != nil {
+			return nil, err
+		}
+	}
+	out, errs, err := t.o.Backend.Audit(ctx, AuditArgs{Roots: dirs, Tools: in.Tools, Base: roots[0]})
+	if err != nil {
+		return nil, err
+	}
+	out = out.AtSeverity(severity)
+	return &mcpkit.Result{Envelope: t.envelope(out, errs), Pager: auditPager(out)}, nil
 }
 
 type resolveInput struct {

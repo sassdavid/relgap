@@ -14,10 +14,55 @@ editLink: false
 The server sends this text to the client when it connects:
 
 ```text
-relgap answers questions about upgrading the tools a project pins: what breaks between two versions, which pins are behind, and where repositories disagree. Every result is the JSON envelope of relgap --format json. When the envelope has page.next_cursor, call the same tool with only that cursor to get the rest. Directory arguments must be inside the server's roots; relative ones start at the first root.
+relgap answers questions about upgrading the tools a project pins: what breaks between two versions, which pins are behind, which have known vulnerabilities, and where repositories disagree. Every result is the JSON envelope of relgap --format json. When the envelope has page.next_cursor, call the same tool with only that cursor to get the rest. Directory arguments must be inside the server's roots; relative ones start at the first root.
 ```
 
 ## Tools
+
+### audit
+
+Vulnerability audit. Read-only.
+
+Lists the known vulnerabilities of every tool version pinned in the repositories under the given directories, with fix targets, and the pins OSV couldn't check with the reason.
+
+Input schema:
+
+```json
+{
+  "additionalProperties": false,
+  "properties": {
+    "cursor": {
+      "description": "The next_cursor of an earlier result of this tool. Other arguments are then ignored.",
+      "type": "string"
+    },
+    "roots": {
+      "description": "Directories to scan for repositories, inside the server's roots. Default: the first root.",
+      "items": {
+        "type": "string"
+      },
+      "type": [
+        "null",
+        "array"
+      ]
+    },
+    "tools": {
+      "description": "Audit only these tools, such as terraform or npm:lodash.",
+      "items": {
+        "type": "string"
+      },
+      "type": [
+        "null",
+        "array"
+      ]
+    },
+    "vuln_severity": {
+      "description": "The lowest rating to list: low, medium, high or critical. Findings of unknown severity stay. Default: every finding.",
+      "type": "string"
+    }
+  },
+  "type": "object"
+}
+```
 
 ### breaking_changes
 

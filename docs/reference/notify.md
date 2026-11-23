@@ -4,13 +4,13 @@ description: The targets relgap notify publishes saved reports to, what each nee
 
 # Notify targets
 
-`relgap notify` reads the JSON reports that `digest`, `outdated` and `drift` write with
+`relgap notify` reads the JSON reports that `digest`, `outdated`, `drift` and `audit` write with
 `--format json` or `--out json=<path>`, and publishes them. It collects nothing itself, so the
 report and the comment always match. `--notify` names the target; there is one today.
 
 ## github-pr-comment
 
-Keeps one comment per report kind (digest, outdated, drift) on a GitHub pull request.
+Keeps one comment per report kind (digest, outdated, drift, audit) on a GitHub pull request.
 
 | Needs | From |
 |---|---|
@@ -31,12 +31,19 @@ comment into "Nothing to report" and creates none:
 | digest | it covers at least one tool |
 | outdated | a pin is outdated, end of life, vulnerable or failed |
 | drift | a tool drifts or failed |
+| audit | it has a finding or an error, or a pin is unchecked because OSV failed, `--offline` had no answer or the name resolves to no tool |
+
+An image, a chart or another pin no advisory source covers doesn't open an audit comment, since
+nearly every repository has one. `audit` exits 3 on a finding by default, so the example below
+passes `--fail-on=` to save the report and still reach `notify`.
 
 The comment is cut at a table row or section once it reaches `--md-max-chars` (60,000
 characters by default). `--dry-run-notify` reads the existing comments with GET requests and
 prints what it would change.
 
 ```sh
+relgap audit --fail-on= --format json > audit.json
+relgap notify --from audit.json --notify github-pr-comment
 relgap outdated --format json > outdated.json
 relgap notify --from outdated.json --notify github-pr-comment
 relgap notify --from digest.json --from drift.json --notify github-pr-comment --dry-run-notify

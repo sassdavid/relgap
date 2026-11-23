@@ -70,7 +70,7 @@
 - [relgap digest](https://relgap.sasskovacs.dev/cli/digest): Merge the release notes of every version in a range into one digest
 - [relgap drift](https://relgap.sasskovacs.dev/cli/drift): Show which repositories pin different versions of the same tool
 - [relgap mcp](https://relgap.sasskovacs.dev/cli/mcp): Serve digest, breaking_changes, outdated, drift and resolve to an MCP client over stdio
-- [relgap notify](https://relgap.sasskovacs.dev/cli/notify): Publish saved digest, outdated and drift reports as a GitHub pull request comment
+- [relgap notify](https://relgap.sasskovacs.dev/cli/notify): Publish saved digest, outdated, drift and audit reports as a GitHub pull request comment
 - [relgap outdated](https://relgap.sasskovacs.dev/cli/outdated): Compare every pinned tool version in a project with the latest release
 - [relgap pins](https://relgap.sasskovacs.dev/cli/pins): List the tool versions pinned in your repositories, with file and line
 - [relgap registry](https://relgap.sasskovacs.dev/cli/registry/): Check, test and update relgap registry entries

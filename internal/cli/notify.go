@@ -37,6 +37,7 @@ const (
 	kindDigest   = "digest"
 	kindOutdated = "outdated"
 	kindDrift    = "drift"
+	kindAudit    = "audit"
 )
 
 // notifyData is the data of notify --format json.
@@ -54,9 +55,9 @@ func newNotifyCmd(d *app.Deps, g *globals) *cobra.Command {
 	)
 	cmd := &cobra.Command{
 		Use:   "notify",
-		Short: "Publish saved digest, outdated and drift reports as a GitHub pull request comment",
-		Long: `notify reads the JSON that digest, outdated and drift print with --format json and publishes it.
-It never collects anything itself.
+		Short: "Publish saved digest, outdated, drift and audit reports as a GitHub pull request comment",
+		Long: `notify reads the JSON that digest, outdated, drift and audit print with --format json and
+publishes it. It never collects anything itself.
 
   github-pr-comment  one comment per report kind on a GitHub pull request, edited in place. The
                      repository comes from GITHUB_REPOSITORY and the pull request from the
@@ -68,7 +69,10 @@ nothing to report turns an existing comment into "Nothing to report" and creates
 longer than --md-max-chars is cut at a row or section boundary.
 
 A digest has something to report when it covers a tool, an outdated report when a pin is
-outdated, end of life, vulnerable or failed, and a drift report when a tool drifts or failed.
+outdated, end of life, vulnerable or failed, and a drift report when a tool drifts or failed. An
+audit report has something to report when it has a finding, an error, or a pin left unchecked
+for the reason failed, offline or unresolved. A pin no advisory source covers, such as an image
+or a chart, doesn't count.
 
 The token comes from GH_TOKEN, GITHUB_TOKEN or gh, as for digest. It needs pull-requests: write.
 --dry-run-notify reads the comments with GET requests and prints what would change.
@@ -77,6 +81,8 @@ Exit codes: 0 when every comment was published, 4 when GitHub refused the token,
 repository or the pull request is unknown, and 1 for any other failure.`,
 		Example: `  relgap outdated --format json > outdated.json
   relgap notify --from outdated.json --notify github-pr-comment
+  relgap audit --fail-on= --format json > audit.json
+  relgap notify --from audit.json --notify github-pr-comment
   relgap notify --from digest.json --from drift.json --notify github-pr-comment --dry-run-notify`,
 		Args: noArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
@@ -101,7 +107,7 @@ repository or the pull request is unknown, and 1 for any other failure.`,
 		},
 	}
 	f := cmd.Flags()
-	f.StringArrayVar(&from, flagFrom, nil, "digest, outdated or drift JSON file (repeatable)")
+	f.StringArrayVar(&from, flagFrom, nil, "digest, outdated, drift or audit JSON file (repeatable)")
 	f.StringSliceVar(&only, flagNotify, nil, complete.Usage("notifiers to run: {values}", choices))
 	f.BoolVar(&dryRun, flagDryRunNotify, false, "print what would change; read with GET only and write nothing")
 	f.IntVar(&g.mdMaxChars, flagMDMaxChars, render.DefaultMDMaxChars,
@@ -223,7 +229,7 @@ type savedEnvelope struct {
 	Errors []render.Error  `json:"errors"`
 }
 
-// readSaved reads a digest, outdated or drift envelope and renders it as a comment.
+// readSaved reads a digest, outdated, drift or audit envelope and renders it as a comment.
 func readSaved(path string) (ghcomment.Post, error) {
 	b, err := os.ReadFile(path)
 	if err != nil {
@@ -264,6 +270,12 @@ func readSaved(path string) (ghcomment.Post, error) {
 			open = slices.ContainsFunc(data.Tools, func(t report.DriftTool) bool { return t.Drift || t.Err != nil })
 			err = render.DriftMarkdown(&md, &data, render.DriftOptions{})
 		}
+	case kindAudit:
+		var data *report.Audit
+		if data, err = report.ParseAudit(env.Data); err == nil {
+			open = data.Open() || len(env.Errors) > 0
+			err = render.AuditMarkdown(&md, data, env.Errors)
+		}
 	}
 	if err != nil {
 		return ghcomment.Post{}, fmt.Errorf("%s: %w", path, err)
@@ -277,18 +289,21 @@ func readSaved(path string) (ghcomment.Post, error) {
 	}, nil
 }
 
-// savedKind tells the report kinds apart by their data: drift has repos and tools, digest only
-// tools, outdated has pins with a status.
+// savedKind tells the report kinds apart by their data: audit has findings, drift has repos and
+// tools, digest only tools, outdated has pins with a status.
 func savedKind(raw json.RawMessage) (string, error) {
 	var keys struct {
-		Repos json.RawMessage   `json:"repos"`
-		Tools json.RawMessage   `json:"tools"`
-		Pins  []json.RawMessage `json:"pins"`
+		Repos    json.RawMessage   `json:"repos"`
+		Tools    json.RawMessage   `json:"tools"`
+		Pins     []json.RawMessage `json:"pins"`
+		Findings json.RawMessage   `json:"findings"`
 	}
 	if err := json.Unmarshal(raw, &keys); err != nil {
 		return "", fmt.Errorf("parse data: %w", err)
 	}
 	switch {
+	case keys.Findings != nil:
+		return kindAudit, nil
 	case keys.Tools != nil && keys.Repos != nil:
 		return kindDrift, nil
 	case keys.Tools != nil:
@@ -298,11 +313,11 @@ func savedKind(raw json.RawMessage) (string, error) {
 			Status string `json:"status"`
 		}
 		if len(keys.Pins) > 0 && (json.Unmarshal(keys.Pins[0], &pin) != nil || pin.Status == "") {
-			return "", errors.New("a pins report has nothing to publish; save digest, outdated or drift")
+			return "", errors.New("a pins report has nothing to publish; save digest, outdated, drift or audit")
 		}
 		return kindOutdated, nil
 	}
-	return "", errors.New("not a digest, outdated or drift report")
+	return "", errors.New("not a digest, outdated, drift or audit report")
 }
 
 func outdatedOpen(p report.OutdatedPin) bool {

@@ -285,7 +285,7 @@ func writeAudit(w io.Writer, f render.Format, d *app.Deps, g *globals, r *auditR
 	return reportWriter{
 		data:   r.out,
 		errors: append(r.errors(), r.sourceErrors()...),
-		md:     func(w io.Writer) error { return render.AuditMarkdown(w, r.out) },
+		md:     func(w io.Writer) error { return render.AuditMarkdown(w, r.out, nil) },
 		sarif: func() *sarif.Log {
 			return render.AuditSARIF(r.out, r.scan.Problems, buildinfo.Get().Version)
 		},

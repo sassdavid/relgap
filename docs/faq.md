@@ -65,7 +65,7 @@ requests only. The pin detectors read GitLab CI and Bitbucket Pipelines files, s
 
 ## Can I use it from Claude Code?
 
-Yes. `relgap mcp` serves `digest`, `breaking_changes`, `outdated`, `drift` and `resolve` over
+Yes. `relgap mcp` serves `digest`, `breaking_changes`, `outdated`, `drift`, `audit` and `resolve` over
 MCP, and the `upgrade_review` prompt asks the agent to cite the entries it uses. [Use relgap
 from an MCP client](/guides/mcp) has the setup.
 

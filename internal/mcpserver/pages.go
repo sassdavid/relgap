@@ -63,6 +63,47 @@ func driftPager(d *report.Drift) mcpkit.Pager {
 		})
 }
 
+// auditItem is one entry of an audit page: a finding, an unchecked tool version or a suppressed
+// finding, by its index in that list.
+type auditItem struct {
+	list, index int
+}
+
+// The lists of an audit report, in the order pages take them.
+const (
+	auditFindings = iota
+	auditUnchecked
+	auditSuppressed
+)
+
+// auditPager splits an audit report across its findings, unchecked tool versions and suppressed
+// findings as one list, in that order, so no page repeats a list or grows past the cap with it.
+func auditPager(a *report.Audit) mcpkit.Pager {
+	items := make([]auditItem, 0, len(a.Findings)+len(a.Unchecked)+len(a.Suppressed))
+	for list, n := range []int{len(a.Findings), len(a.Unchecked), len(a.Suppressed)} {
+		for i := range n {
+			items = append(items, auditItem{list: list, index: i})
+		}
+	}
+	return mcpkit.SlicePager(items, "findings, unchecked and suppressed", nil,
+		func(keep []auditItem) any {
+			out := *a
+			out.Findings, out.Unchecked, out.Suppressed = []report.AuditFinding{}, []report.Unchecked{},
+				[]report.AuditFinding{}
+			for _, it := range keep {
+				switch it.list {
+				case auditFindings:
+					out.Findings = append(out.Findings, a.Findings[it.index])
+				case auditUnchecked:
+					out.Unchecked = append(out.Unchecked, a.Unchecked[it.index])
+				case auditSuppressed:
+					out.Suppressed = append(out.Suppressed, a.Suppressed[it.index])
+				}
+			}
+			return &out
+		})
+}
+
 // citedVersions returns the versions some entry cites, in their original order.
 func citedVersions(versions []report.Version, entries []classify.Entry) []report.Version {
 	cited := make(map[string]bool, len(entries))
