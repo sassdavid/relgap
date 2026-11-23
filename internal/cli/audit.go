@@ -28,12 +28,7 @@ type auditFlags struct {
 	submodules bool
 }
 
-func newAuditCmd(d *app.Deps, g *globals) *cobra.Command {
-	var f auditFlags
-	cmd := &cobra.Command{
-		Use:   "audit [roots...]",
-		Short: "List the known vulnerabilities of every pinned tool version, and the pins OSV can't check",
-		Long: `Scans each root for repositories the way 'relgap drift' does and asks OSV about the version
+const auditLong = `Scans each root for repositories the way 'relgap drift' does and asks OSV about the version
 of every pin: one query per tool, version and OSV package, however many repositories pin it.
 --tool limits the run to the named tools. Ignore rules in the config drop matching pins.
 
@@ -53,7 +48,8 @@ the version its line comment names (# v4.1.3), as Renovate reads it; without one
 not-exact. A finding is one advisory that affects one tool
 version, with every pin of that version, its severity, the lowest fixed version and its
 osv.dev page. A record without a rating takes the rating of its GHSA alias, else its severity
-is unknown. Findings sort by severity, unknown last, then by ID.
+is unknown. Findings sort by severity, unknown last, then by ID; with --kev and --epss,
+findings in the KEV catalog come first and the EPSS score breaks ties of severity.
 
 Each finding has a fix target, listed under "Fix targets" and as fix in --format json: the
 lowest stable release above the version that every advisory with a fix has left behind, and
@@ -75,6 +71,14 @@ fixed. A suppressed advisory is listed under "Suppressed" with its reason (suppr
 warns about an entry past its until date, which suppresses nothing, and, without --tool,
 about an entry that suppressed nothing.
 
+--kev (config vulns.kev) marks the findings whose CVE is in the CISA Known Exploited
+Vulnerabilities catalog, which relgap fetches from www.cisa.gov once a day, with the date CISA
+added it and whether it knows of ransomware use: a KEV column, and kev in --format json and
+SARIF. --epss (config vulns.epss) adds each finding's FIRST EPSS score, the probability of
+exploitation in the next 30 days, from api.first.org: an EPSS column with the percentile, and
+epss in --format json and SARIF. Both are off by default. When a feed is down, relgap warns,
+--format json lists the error, and the report goes on without that field.
+
 --format openvex writes an OpenVEX v0.2.0 document: one statement per advisory and tool
 version, affected with the fix target as the action statement, and not_affected (or the VEX
 status that suppressed it) with the reason. Products are the purls of the advisories'
@@ -85,24 +89,34 @@ pkg:githubactions/actions/checkout@v4.1.2.
 pin's file and line (one rule per OSV ID), a note per unchecked pin (unchecked), and a result
 per file or version lookup that failed (failed). The results don't depend on --fail-on.
 
---fail-on takes vuln and unchecked. vuln counts the findings at or above --vuln-severity and
-those of unknown severity, and with --vuln-fixable only those with a fixed version above the
-pinned one. unchecked counts the unchecked tool versions. audit gates vuln by default. Values
+--fail-on takes vuln, unchecked and kev. vuln counts the findings at or above --vuln-severity
+and those of unknown severity, and with --vuln-fixable only those with a fixed version above
+the pinned one. unchecked counts the unchecked tool versions. kev counts the findings in the
+KEV catalog, whatever their severity, and needs --kev. audit gates vuln by default. Values
 in config policy.fail_on that audit checks add to vuln, and --fail-on replaces the whole set:
 --fail-on unchecked gates only unchecked, and --fail-on= gates nothing. A value whose count
 reaches --min-count (default 1) exits 3. Otherwise a file or lookup that failed exits 1, and
-so does an OSV outage under --fail-on vuln, since a pass on partial data proves nothing.
+so does an OSV outage under --fail-on vuln or a KEV outage under --fail-on kev, since a pass on
+partial data proves nothing.
 
 --offline answers from the HTTP cache. Pins without a cached answer are unchecked with reason
 offline, and --format json has oldest_answer, when the oldest OSV answer was stored.
 
-Roots default to scan.roots, then the current directory.`,
+Roots default to scan.roots, then the current directory.`
+
+func newAuditCmd(d *app.Deps, g *globals) *cobra.Command {
+	var f auditFlags
+	cmd := &cobra.Command{
+		Use:   "audit [roots...]",
+		Short: "List the known vulnerabilities of every pinned tool version, and the pins OSV can't check",
+		Long:  auditLong,
 		Example: `  relgap audit
   relgap audit ~/src/infra ~/src/apps --format md
   relgap audit --tool terraform --tool node
   relgap audit --vuln-severity high --format sarif > audit.sarif
   relgap audit --fail-on vuln --fail-on unchecked
   relgap audit --vuln-fixable --vuln-severity high
+  relgap audit --kev --epss --fail-on kev
   relgap audit --vex vex/platform.json --format openvex > audit.vex.json
   relgap audit --format json | jq '.data.findings[] | {tool, version, id}'`,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -114,6 +128,7 @@ Roots default to scan.roots, then the current directory.`,
 	fl.BoolVar(&f.submodules, "submodules", false, "scan checked-out git submodules as repositories")
 	addGateFlags(cmd, auditValues())
 	addVEXFlag(cmd)
+	addFeedFlags(cmd)
 	addOutputFlags(cmd, g, auditFormats()...)
 	_ = cmd.RegisterFlagCompletionFunc("tool", completeToolList(d, g))
 	cmd.ValidArgsFunction = complete.Dirs()
@@ -220,6 +235,8 @@ func (s *session) audit(ctx context.Context, a auditArgs) (*auditRun, error) {
 	osv := enrich.NewOSVClient(hc, "")
 	en := enrich.NewEnricher(d.Logger, nil, osv, d.Config.Config.GitHub.Concurrency)
 	en.SetSuppressor(run.rules)
+	en.SetFeeds(s.feeds(hc))
+	out.SetFeeds(feedsOn(d))
 	results, problems, err := en.Enrich(ctx, out.EnrichRequests(resolveFunc(ctx, s), dg.Universe))
 	if err != nil {
 		return nil, err //nolint:wrapcheck // only a canceled context
@@ -234,7 +251,9 @@ func (s *session) audit(ctx context.Context, a auditArgs) (*auditRun, error) {
 }
 
 // auditValues lists the --fail-on values audit checks.
-func auditValues() []string { return []string{report.FailOnVuln, report.FailOnUnchecked} }
+func auditValues() []string {
+	return []string{report.FailOnVuln, report.FailOnUnchecked, report.FailOnKEV}
+}
 
 // newAuditGate builds audit's --fail-on checks. Without the flag, vuln is always on and the
 // config's audit values add to it, so a shared policy.fail_on can't turn the vulnerability gate
@@ -247,7 +266,7 @@ func newAuditGate(cmd *cobra.Command, d *app.Deps) (report.Gate, error) {
 	if !cmd.Flags().Changed(flagFailOn) && !gate.Has(report.FailOnVuln) {
 		gate.Values = append([]string{report.FailOnVuln}, gate.Values...)
 	}
-	return gate, nil
+	return gate, checkKEVGate(d, gate)
 }
 
 func auditFormats() []render.Format {
@@ -287,11 +306,11 @@ func (r *auditRun) errors() []render.Error {
 	return out
 }
 
-// sourceErrors lists the OSV requests that failed, as JSON envelope errors.
+// sourceErrors lists the OSV, KEV and EPSS requests that failed, as JSON envelope errors.
 func (r *auditRun) sourceErrors() []render.Error {
 	out := make([]render.Error, 0, len(r.problems))
 	for _, p := range r.problems {
-		out = append(out, render.Error{Target: p.Source + ": " + p.Tool, Message: p.Err.Error()})
+		out = append(out, render.Error{Target: problemTarget(p), Message: p.Err.Error()})
 	}
 	return out
 }
@@ -302,7 +321,9 @@ func (r *auditRun) warn(cmd *cobra.Command, d *app.Deps) {
 		d.Logger.WarnContext(ctx, "can't read pins", "repo", p.Repo, "file", p.File, "error", p.Message)
 	}
 	for _, p := range r.problems {
-		d.Logger.WarnContext(ctx, "OSV failed; those pins are unchecked", "tool", p.Tool, "error", p.Err)
+		if !warnFeed(cmd, d, p) {
+			d.Logger.WarnContext(ctx, "OSV failed; those pins are unchecked", "tool", p.Tool, "error", p.Err)
+		}
 	}
 	warnLatestAffected(ctx, d, r.out.Fixes())
 	// With --tool, entries for the other tools can't match, so only an unfiltered run says which
@@ -333,22 +354,22 @@ func warnLatestAffected(ctx context.Context, d *app.Deps, fixes []report.ToolFix
 	}
 }
 
-// partial returns why the gate can't pass: a file or version lookup failed, or OSV was down
-// under --fail-on vuln.
+// partial returns why the gate can't pass: a file or version lookup failed, OSV was down under
+// --fail-on vuln, or the KEV catalog under --fail-on kev.
 func (r *auditRun) partial(gate report.Gate) error {
 	if errs := r.errors(); len(errs) > 0 {
 		return fmt.Errorf("%d %s failed; the report is partial",
 			len(errs), plural(len(errs), "pin or file", "pins or files"))
 	}
-	if !gate.Has(report.FailOnVuln) || len(r.problems) == 0 {
-		return nil
-	}
 	var down []string
 	for _, p := range r.problems {
-		if !slices.Contains(down, p.Tool) {
+		if p.Source == enrich.SourceOSV && !slices.Contains(down, p.Tool) {
 			down = append(down, p.Tool)
 		}
 	}
-	return fmt.Errorf("--%s %s can't decide: %s failed for %s; the report is partial",
-		flagFailOn, report.FailOnVuln, enrich.SourceOSV, strings.Join(down, ", "))
+	if gate.Has(report.FailOnVuln) && len(down) > 0 {
+		return fmt.Errorf("--%s %s can't decide: %s failed for %s; the report is partial",
+			flagFailOn, report.FailOnVuln, enrich.SourceOSV, strings.Join(down, ", "))
+	}
+	return feedDown(gate, r.problems)
 }

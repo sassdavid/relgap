@@ -42,13 +42,13 @@ released in a year:
 | under 6 months old | 1 day |
 | older | 10 days |
 
-Answers from endoflife.date, OSV, the Terraform registry, Artifact Hub, npm and PyPI stay fresh
-for 1 day, and a 404 for 1 hour. A stale entry is revalidated with `If-None-Match`. GitHub
+Answers from endoflife.date, OSV, the CISA KEV catalog, EPSS, the Terraform registry, Artifact
+Hub, npm and PyPI stay fresh for 1 day, and a 404 for 1 hour. A stale entry is revalidated with `If-None-Match`. GitHub
 answers an unchanged resource with 304, which doesn't count against the rate limit when the
 request carries a token.
 
 `cache.ttl_override` sets a fixed lifetime per source or host, as a Go duration. The sources are
-`github`, `endoflife` and `osv`, and any key with a dot is a host name:
+`github`, `endoflife`, `osv`, `kev` and `epss`, and any key with a dot is a host name:
 
 ```yaml
 cache:

@@ -142,9 +142,9 @@ Each entry has these fields:
 
 | Type | Default | Allowed | Environment | Flag |
 |---|---|---|---|---|
-| `list of string` | `[]` | `breaking`, `deprecation`, `eol`, `vuln`, `drift`, `outdated`, `unchecked` | `RELGAP_POLICY_FAIL_ON` | `--fail-on` |
+| `list of string` | `[]` | `breaking`, `deprecation`, `eol`, `vuln`, `drift`, `outdated`, `unchecked`, `kev` | `RELGAP_POLICY_FAIL_ON` | `--fail-on` |
 
---fail-on values each command uses when the flag is not given; a command ignores the values it doesn't check. audit always gates vuln, and its values here add to it.
+--fail-on values each command uses when the flag is not given; a command ignores the values it doesn't check. audit always gates vuln, and its values here add to it. kev needs vulns.kev.
 
 ### policy.max_behind
 
@@ -204,6 +204,22 @@ Each entry has these fields:
 | `list of string` | `[]` |  | `RELGAP_VULNS_VEX` | `--vex` |
 
 OpenVEX v0.2.0 documents whose not\_affected and fixed statements suppress advisories, like --vex. A relative path resolves against the directory of the config file that lists it.
+
+### vulns.kev
+
+| Type | Default | Allowed | Environment | Flag |
+|---|---|---|---|---|
+| `boolean` | `false` |  | `RELGAP_VULNS_KEV` | `--kev` |
+
+Mark advisories in the CISA Known Exploited Vulnerabilities catalog, like --kev. relgap then fetches the catalog from www.cisa.gov once a day.
+
+### vulns.epss
+
+| Type | Default | Allowed | Environment | Flag |
+|---|---|---|---|---|
+| `boolean` | `false` |  | `RELGAP_VULNS_EPSS` | `--epss` |
+
+Add the FIRST EPSS score of each advisory's CVE, like --epss. relgap then sends the CVE IDs to api.first.org.
 
 ## llm
 
@@ -334,15 +350,17 @@ schema_version: 1
 # ignore: []                      # pins never reported, for example [{tool: terraform, path: "**/legacy/**"}, {name: "git::*bitbucket.org*"}]
 #
 # policy:                         # defaults for the CI flags
-#   fail_on: []                   # breaking, deprecation, eol, vuln, drift, outdated, unchecked
+#   fail_on: []                   # breaking, deprecation, eol, vuln, drift, outdated, unchecked, kev
 #   max_behind: ""                # for example minor:2, releases:10 or days:90; empty allows any lag
 #   min_confidence: 0.5           # hide entries below this confidence, 0 to 1
 #   vuln_severity: ""             # low, medium, high or critical; empty counts every advisory
 #   vuln_fixable: false           # count only advisories with a fixed version above the pin
 #
-# vulns:                          # advisories audit and outdated suppress
+# vulns:                          # advisories audit and outdated suppress and prioritize
 #   ignore: []                    # entries: id (or an alias), reason, until (YYYY-MM-DD), tools (globs)
 #   vex: []                       # OpenVEX v0.2.0 files, relative to this file
+#   kev: false                    # CISA KEV catalog from www.cisa.gov, like --kev
+#   epss: false                   # FIRST EPSS scores from api.first.org, like --epss
 #
 # llm:                            # only for 'relgap digest --summarize'
 #   provider: ""                  # empty is off; openai-compatible, anthropic, bedrock or bedrock-mantle

@@ -190,7 +190,33 @@
         "fixed_in": { "description": "Lowest fixed version above the current one.", "type": "string", "minLength": 1 },
         "affects_current": { "type": "boolean" },
         "fixed_by_target": { "description": "Whether the latest version is outside every affected range. Absent without a target or when the ranges can't be compared locally.", "type": "boolean" },
-        "suppressed": { "$ref": "#/$defs/suppression" }
+        "suppressed": { "$ref": "#/$defs/suppression" },
+        "kev": { "$ref": "#/$defs/kev" },
+        "epss": { "$ref": "#/$defs/epss" }
+      }
+    },
+    "kev": {
+      "description": "With --kev: the advisory's entry in the CISA Known Exploited Vulnerabilities catalog, from its CVE alias. Absent when no CVE alias is listed or the catalog failed.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["cve", "date_added", "due_date", "ransomware"],
+      "properties": {
+        "cve": { "description": "The CVE alias the catalog lists; the earliest added when it lists several.", "type": "string", "pattern": "^CVE-" },
+        "date_added": { "description": "When CISA added it to the catalog.", "type": "string", "format": "date" },
+        "due_date": { "description": "The remediation deadline for US federal agencies.", "type": "string", "format": "date" },
+        "ransomware": { "description": "Whether CISA knows of its use in ransomware campaigns.", "type": "boolean" }
+      }
+    },
+    "epss": {
+      "description": "With --epss: the FIRST EPSS score of the advisory's CVE alias, the highest when several have one. Absent when EPSS scores none or failed.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["cve", "score", "percentile", "date"],
+      "properties": {
+        "cve": { "type": "string", "pattern": "^CVE-" },
+        "score": { "description": "Probability of exploitation in the next 30 days.", "type": "number", "minimum": 0, "maximum": 1 },
+        "percentile": { "description": "Share of scored CVEs with this score or lower.", "type": "number", "minimum": 0, "maximum": 1 },
+        "date": { "description": "The day EPSS computed the score.", "type": "string", "format": "date" }
       }
     },
     "suppression": {

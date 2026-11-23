@@ -1,0 +1,31 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: www.cisa.gov
+        headers:
+            Accept:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 9
+        body: Forbidden
+        headers:
+            Content-Length:
+                - "9"
+            Content-Type:
+                - text/plain
+        status: 403 Forbidden
+        code: 403
+        duration: 0s

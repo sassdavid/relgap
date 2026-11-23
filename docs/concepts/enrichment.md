@@ -1,5 +1,5 @@
 ---
-description: How relgap adds end-of-life dates from endoflife.date and known vulnerabilities from OSV to the pins relgap outdated compares, and what it does when either source is down.
+description: How relgap adds end-of-life dates from endoflife.date, known vulnerabilities from OSV and the opt-in CISA KEV and EPSS feeds to the pins relgap outdated compares, and what it does when a source is down.
 ---
 
 # EOL and vulnerabilities
@@ -152,13 +152,35 @@ a fixed version above the pinned one, judged per advisory like Grype's `--only-f
 `--ignore-unfixed`. An advisory without one, including one with only git commit ranges, doesn't
 count and still shows in the report.
 
+## Known exploited and likely exploited
+
+Two opt-in feeds say which advisories attackers use. Both work on the advisory's CVE aliases, in
+`relgap outdated` and `relgap audit`:
+
+| Flag | Config | Source | Adds |
+|---|---|---|---|
+| `--kev` | `vulns.kev` | the CISA [Known Exploited Vulnerabilities](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) catalog, one file from `www.cisa.gov` | `kev`: the CVE, `date_added`, `due_date` and `ransomware` |
+| `--epss` | `vulns.epss` | FIRST [EPSS](https://www.first.org/epss/), the CVE IDs sent to `api.first.org` | `epss`: the CVE, `score` (the probability of exploitation in the next 30 days), `percentile` and `date` |
+
+An advisory with several CVE aliases takes the earliest catalog entry and the highest EPSS score.
+Advisories in the catalog sort first, then by severity, then by EPSS score. `relgap audit` shows a
+KEV and an EPSS column, VULNS in `relgap outdated` counts catalog entries as `1 KEV`, and SARIF
+results carry `kev` and `epss` as properties, with the catalog entry in the message. The SARIF level
+stays the one the CVSS rating gives.
+
+`--fail-on kev` counts the unsuppressed advisories in the catalog, whatever their rating, and needs
+`--kev`. Grype shows KEV and EPSS too, from its database, and sorts by a risk score built from
+both; relgap keeps the order above and leaves gating on an EPSS threshold to you.
+
 ## When a source is down
 
-Both sources are cached for a day, so repeated runs ask once. When endoflife.date or OSV fails,
+The sources are cached for a day, so repeated runs ask once. When endoflife.date or OSV fails,
 relgap warns and prints the rest of the report. The EOL column stays empty, and VULNS shows `?`
-with reason `failed`. A gate that depends on the
-missing data can't pass on it: under `--fail-on eol` an endoflife.date outage exits 1, and so does
-an OSV outage under `--fail-on vuln`, unless another value matched and exited 3.
+with reason `failed`. A KEV or EPSS outage is a warning and an entry in the JSON `errors`, and the
+report goes on without that field. A gate that depends on the missing data can't pass on it:
+under `--fail-on eol` an endoflife.date outage exits 1, and so do an OSV outage under
+`--fail-on vuln` and a KEV outage under `--fail-on kev`, unless another value matched and exited 3.
+An EPSS outage never changes the exit code.
 [Exit codes](/reference/exit-codes) has the full order.
 
 ## Installed binaries

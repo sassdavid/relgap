@@ -1,0 +1,36 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.first.org
+        form:
+            cve:
+                - CVE-2025-31125,CVE-2025-31486,CVE-2025-32395,CVE-2025-46565,CVE-2025-55182,CVE-2025-55183,CVE-2025-55184,CVE-2025-58751,CVE-2025-58752,CVE-2025-62522,CVE-2026-112942,CVE-2026-112943,CVE-2026-112944,CVE-2026-112945,CVE-2026-112946,CVE-2026-126187,CVE-2026-23864,CVE-2026-23869,CVE-2026-23870,CVE-2026-39363,CVE-2026-39365,CVE-2026-44907,CVE-2026-53571,CVE-2026-53632
+            limit:
+                - "24"
+        headers:
+            Accept:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.first.org/data/v1/epss?cve=CVE-2025-31125,CVE-2025-31486,CVE-2025-32395,CVE-2025-46565,CVE-2025-55182,CVE-2025-55183,CVE-2025-55184,CVE-2025-58751,CVE-2025-58752,CVE-2025-62522,CVE-2026-112942,CVE-2026-112943,CVE-2026-112944,CVE-2026-112945,CVE-2026-112946,CVE-2026-126187,CVE-2026-23864,CVE-2026-23869,CVE-2026-23870,CVE-2026-39363,CVE-2026-39365,CVE-2026-44907,CVE-2026-53571,CVE-2026-53632&limit=24
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 9
+        body: Forbidden
+        headers:
+            Content-Length:
+                - "9"
+            Content-Type:
+                - text/plain
+        status: 403 Forbidden
+        code: 403
+        duration: 0s

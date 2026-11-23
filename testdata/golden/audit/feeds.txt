@@ -1,0 +1,57 @@
+TOOL                          VERSION  ADVISORY             SEVERITY       KEV                    EPSS            FIXED IN  PINS
+npm:react-server-dom-webpack  19.0.0   GHSA-fv66-9v8q-g76r  critical 10.0  2025-12-05 ransomware  99.7% (99.9th)  19.0.1    mise.toml:3
+npm:vite                      6.2.3    GHSA-4r4m-qw57-chr8  medium 5.3     2026-01-22             74.9% (99.5th)  6.2.4     mise.toml:2
+npm:react-server-dom-webpack  19.0.0   GHSA-xqc2-xf4c-x3h3  critical 9.5   -                      3.2% (88.2th)   19.0.9    mise.toml:3
+npm:vite                      6.2.3    GHSA-p9ff-h696-f583  high 8.2       -                      3.4% (89.1th)   6.4.2     mise.toml:2
+npm:react-server-dom-webpack  19.0.0   GHSA-2m3v-v2m8-q956  high 7.5       -                      64.4% (99.2th)  19.0.2    mise.toml:3
+npm:react-server-dom-webpack  19.0.0   GHSA-83fc-fqcc-2hmg  high 7.5       -                      2.6% (85.6th)   19.0.4    mise.toml:3
+npm:vite                      6.2.3    GHSA-587h-7wmj-h5pm  high 7.5       -                      1.7% (77.7th)   6.4.4     mise.toml:2
+npm:react-server-dom-webpack  19.0.0   GHSA-479c-33wc-g2pg  high 7.5       -                      1.6% (76.0th)   19.0.5    mise.toml:3
+npm:react-server-dom-webpack  19.0.0   GHSA-rv78-f8rc-xrxh  high 7.5       -                      1.5% (75.4th)   19.0.6    mise.toml:3
+npm:react-server-dom-webpack  19.0.0   GHSA-wx67-qw84-cm4g  high 7.5       -                      0.6% (49.6th)   19.0.8    mise.toml:3
+npm:vite                      6.2.3    GHSA-fx2h-pf6j-xcff  medium 6.9     -                      0.6% (48.4th)   6.4.3     mise.toml:2
+npm:vite                      6.2.3    GHSA-4w7w-66w2-5vf9  medium 6.3     -                      0.9% (61.0th)   6.4.2     mise.toml:2
+npm:vite                      6.2.3    GHSA-rq7h-c2jc-7f22  medium 6.3     -                      0.9% (59.1th)   6.4.4     mise.toml:2
+npm:vite                      6.2.3    GHSA-r825-w8mm-5pxw  medium 6.3     -                      0.7% (54.2th)   6.4.4     mise.toml:2
+npm:vite                      6.2.3    GHSA-698v-4r3x-3vcv  medium 6.3     -                      0.4% (36.4th)   6.4.4     mise.toml:2
+npm:vite                      6.2.3    GHSA-356w-63v5-8wf4  medium 6.0     -                      1.8% (79.1th)   6.2.6     mise.toml:2
+npm:vite                      6.2.3    GHSA-859w-5945-r5v3  medium 6.0     -                      1.2% (69.9th)   6.2.7     mise.toml:2
+npm:vite                      6.2.3    GHSA-93m4-6634-74q7  medium 6.0     -                      1.0% (65.0th)   6.4.1     mise.toml:2
+npm:vite                      6.2.3    GHSA-v6wh-96g9-6wx3  medium 5.5     -                      0.5% (40.9th)   6.4.3     mise.toml:2
+npm:react-server-dom-webpack  19.0.0   GHSA-925w-6v3x-g4j4  medium 5.3     -                      64.0% (99.2th)  19.0.2    mise.toml:3
+npm:vite                      6.2.3    GHSA-xcj6-pq6g-qj4x  medium 5.3     -                      40.5% (98.6th)  6.2.5     mise.toml:2
+npm:vite                      6.2.3    GHSA-g4jq-h2w9-997c  low 2.3        -                      1.3% (71.7th)   6.3.6     mise.toml:2
+npm:vite                      6.2.3    GHSA-jqfw-vq24-v9c3  low 2.3        -                      0.6% (50.0th)   6.3.6     mise.toml:2
+npm:vite                      6.2.3    GHSA-9jrq-w75r-8gcw  low 2.1        -                      0.7% (53.0th)   6.4.4     mise.toml:2
+
+Advisories:
+  GHSA-fv66-9v8q-g76r (CVE-2025-55182): React Server Components are Vulnerable to RCE https://osv.dev/vulnerability/GHSA-fv66-9v8q-g76r
+  GHSA-4r4m-qw57-chr8 (CVE-2025-31125): Vite has a `server.fs.deny` bypassed for `inline` and `raw` with `?import` query https://osv.dev/vulnerability/GHSA-4r4m-qw57-chr8
+  GHSA-xqc2-xf4c-x3h3 (CVE-2026-126187): React: Unauthenticated Remote Code Execution in React Server Components https://osv.dev/vulnerability/GHSA-xqc2-xf4c-x3h3
+  GHSA-p9ff-h696-f583 (CVE-2026-39363): Vite Vulnerable to Arbitrary File Read via Vite Dev Server WebSocket https://osv.dev/vulnerability/GHSA-p9ff-h696-f583
+  GHSA-2m3v-v2m8-q956 (CVE-2025-55184): Denial of Service Vulnerability in React Server Components https://osv.dev/vulnerability/GHSA-2m3v-v2m8-q956
+  GHSA-83fc-fqcc-2hmg (CVE-2026-23864): React Server Components have multiple Denial of Service Vulnerabilities https://osv.dev/vulnerability/GHSA-83fc-fqcc-2hmg
+  GHSA-587h-7wmj-h5pm (CVE-2026-112942): launch-editor: `fs.existsSync()` existence check can be bypassed on Windows https://osv.dev/vulnerability/GHSA-587h-7wmj-h5pm
+  GHSA-479c-33wc-g2pg (CVE-2026-23869): React Server Components have a Denial of Service Vulnerability https://osv.dev/vulnerability/GHSA-479c-33wc-g2pg
+  GHSA-rv78-f8rc-xrxh (CVE-2026-23870): Facebook React has a Denial of Service Vulnerability in React Server Components https://osv.dev/vulnerability/GHSA-rv78-f8rc-xrxh
+  GHSA-wx67-qw84-cm4g (CVE-2026-44907): react-server-dom: Denial of Service in Server Functions https://osv.dev/vulnerability/GHSA-wx67-qw84-cm4g
+  GHSA-fx2h-pf6j-xcff (CVE-2026-53571): vite: `server.fs.deny` bypass on Windows alternate paths https://osv.dev/vulnerability/GHSA-fx2h-pf6j-xcff
+  GHSA-4w7w-66w2-5vf9 (CVE-2026-39365): Vite Vulnerable to Path Traversal in Optimized Deps `.map` Handling https://osv.dev/vulnerability/GHSA-4w7w-66w2-5vf9
+  GHSA-rq7h-c2jc-7f22 (CVE-2026-112946): Vite: Files outside `server.fs.allow` could be served when project paths match system paths on non-Windows machine https://osv.dev/vulnerability/GHSA-rq7h-c2jc-7f22
+  GHSA-r825-w8mm-5pxw (CVE-2026-112944): launch-editor: Editor CLI flag misinterpretation causing arbitrary command execution for some editors https://osv.dev/vulnerability/GHSA-r825-w8mm-5pxw
+  GHSA-698v-4r3x-3vcv (CVE-2026-112943): launch-editor: escapeCmdArgs() omits % escaping on Windows https://osv.dev/vulnerability/GHSA-698v-4r3x-3vcv
+  GHSA-356w-63v5-8wf4 (CVE-2025-32395): Vite has an `server.fs.deny` bypass with an invalid `request-target` https://osv.dev/vulnerability/GHSA-356w-63v5-8wf4
+  GHSA-859w-5945-r5v3 (CVE-2025-46565): Vite's server.fs.deny bypassed with /. for files under project root https://osv.dev/vulnerability/GHSA-859w-5945-r5v3
+  GHSA-93m4-6634-74q7 (CVE-2025-62522): vite allows server.fs.deny bypass via backslash on Windows https://osv.dev/vulnerability/GHSA-93m4-6634-74q7
+  GHSA-v6wh-96g9-6wx3 (CVE-2026-53632): launch-editor: NTLMv2 hash disclosure via UNC path handling on Windows https://osv.dev/vulnerability/GHSA-v6wh-96g9-6wx3
+  GHSA-925w-6v3x-g4j4 (CVE-2025-55183): Source Code Exposure Vulnerability in React Server Components https://osv.dev/vulnerability/GHSA-925w-6v3x-g4j4
+  GHSA-xcj6-pq6g-qj4x (CVE-2025-31486): Vite allows server.fs.deny to be bypassed with .svg or relative paths https://osv.dev/vulnerability/GHSA-xcj6-pq6g-qj4x
+  GHSA-g4jq-h2w9-997c (CVE-2025-58751): Vite middleware may serve files starting with the same name with the public directory https://osv.dev/vulnerability/GHSA-g4jq-h2w9-997c
+  GHSA-jqfw-vq24-v9c3 (CVE-2025-58752): Vite's `server.fs` settings were not applied to HTML files https://osv.dev/vulnerability/GHSA-jqfw-vq24-v9c3
+  GHSA-9jrq-w75r-8gcw (CVE-2026-112945): Vite: Cross origin script execution through Vite custom middleware https://osv.dev/vulnerability/GHSA-9jrq-w75r-8gcw
+
+Fix targets:
+  npm:react-server-dom-webpack 19.0.0: upgrade to 19.0.9
+  npm:vite 6.2.3: upgrade to 6.4.5
+
+24 findings in 2 of 2 checked tool versions.

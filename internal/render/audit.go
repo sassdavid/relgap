@@ -3,6 +3,7 @@ package render
 import (
 	"fmt"
 	"io"
+	"math"
 	"slices"
 	"strconv"
 	"strings"
@@ -72,7 +73,8 @@ func AuditText(w io.Writer, a *report.Audit, color bool) error {
 func AuditMarkdown(w io.Writer, a *report.Audit) error {
 	var b strings.Builder
 	if len(a.Findings) > 0 {
-		writeMarkdownTable(&b, auditRows(a), "| --- | --- | --- | --- | --- | --- |")
+		rows := auditRows(a)
+		writeMarkdownTable(&b, rows, strings.Repeat("| --- ", len(rows[0]))+"|")
 		b.WriteString("\nAdvisories:\n\n")
 		for _, line := range advisoryLines(a) {
 			b.WriteString("- " + mdCell(line) + "\n")
@@ -114,8 +116,17 @@ func AuditMarkdown(w io.Writer, a *report.Audit) error {
 	return nil
 }
 
+// auditRows has a column for the KEV entry and the EPSS score when the run asked those feeds.
 func auditRows(a *report.Audit) [][]cell {
-	header := []string{headTool, "VERSION", "ADVISORY", "SEVERITY", "FIXED IN", "PINS"}
+	feeds := a.Feeds()
+	header := []string{headTool, "VERSION", "ADVISORY", "SEVERITY"}
+	if feeds.KEV {
+		header = append(header, "KEV")
+	}
+	if feeds.EPSS {
+		header = append(header, "EPSS")
+	}
+	header = append(header, "FIXED IN", "PINS")
 	rows := [][]cell{make([]cell, len(header))}
 	for i, h := range header {
 		rows[0][i] = cell{text: h}
@@ -126,16 +137,48 @@ func auditRows(a *report.Audit) [][]cell {
 		if fixed == "" {
 			fixed = noValue
 		}
-		rows = append(rows, []cell{
-			{text: toolName(f.Tool)},
-			{text: f.Version},
-			{text: f.ID},
-			severityCell(f.Severity),
-			{text: fixed},
-			{text: pinsCell(f.Pins)},
-		})
+		row := []cell{{text: toolName(f.Tool)}, {text: f.Version}, {text: f.ID}, severityCell(f.Severity)}
+		if feeds.KEV {
+			row = append(row, kevCell(f.KEV))
+		}
+		if feeds.EPSS {
+			row = append(row, cell{text: epssText(f.EPSS)})
+		}
+		rows = append(rows, append(row, cell{text: fixed}, cell{text: pinsCell(f.Pins)}))
 	}
 	return rows
+}
+
+// kevCell shows the date CISA added the advisory to the KEV catalog, with "ransomware" when it
+// knows of its use in ransomware campaigns, or - when it isn't listed.
+func kevCell(k *enrich.KEV) cell {
+	if k == nil {
+		return cell{text: noValue}
+	}
+	text := k.DateAdded
+	if k.Ransomware {
+		text += " ransomware"
+	}
+	return cell{text: text, style: ansiBold + ansiRed}
+}
+
+// epssText shows an EPSS score as a percentage with its percentile, such as "89.5% (99.8th)",
+// or - without a score.
+func epssText(e *enrich.EPSS) string {
+	if e == nil {
+		return noValue
+	}
+	const (
+		percent  = 100
+		smallest = 0.05 // the smallest percentage one decimal shows
+	)
+	score := strconv.FormatFloat(e.Score*percent, 'f', 1, 64) + "%"
+	if e.Score > 0 && e.Score*percent < smallest {
+		score = "<0.1%"
+	}
+	// Rounding down keeps the top scores below 100th.
+	pct := math.Floor(e.Percentile*percent*10) / 10 //nolint:mnd // one decimal
+	return score + " (" + strconv.FormatFloat(pct, 'f', 1, 64) + "th)"
 }
 
 // severityCell shows the rating and score, such as "high 7.5", or unknown without a rating.
@@ -244,7 +287,10 @@ func AuditSARIF(a *report.Audit, problems []scan.Problem, version string) *sarif
 	}
 	for i := range all {
 		f := &all[i]
-		v := &enrich.Vuln{ID: f.ID, Aliases: f.Aliases, Summary: f.Summary, Severity: f.Severity, FixedIn: f.FixedIn}
+		v := &enrich.Vuln{
+			ID: f.ID, Aliases: f.Aliases, Summary: f.Summary, Severity: f.Severity, FixedIn: f.FixedIn,
+			KEV: f.KEV, EPSS: f.EPSS,
+		}
 		var msg string
 		if f.Suppressed != nil {
 			msg = vulnText(f.Tool, f.Version, v, nil) + "; " + suppressionText(f.Suppressed)
@@ -253,6 +299,7 @@ func AuditSARIF(a *report.Audit, problems []scan.Problem, version string) *sarif
 		}
 		for _, loc := range f.Pins {
 			r.add(f.ID, vulnLevel(v), msg, loc, f.Tool, f.ID)
+			r.feedsLast(v)
 			if f.Suppressed != nil {
 				r.suppressLast(f.Suppressed)
 			}

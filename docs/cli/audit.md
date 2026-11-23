@@ -27,7 +27,8 @@ the version its line comment names (# v4.1.3), as Renovate reads it; without one
 not-exact. A finding is one advisory that affects one tool
 version, with every pin of that version, its severity, the lowest fixed version and its
 osv.dev page. A record without a rating takes the rating of its GHSA alias, else its severity
-is unknown. Findings sort by severity, unknown last, then by ID.
+is unknown. Findings sort by severity, unknown last, then by ID; with --kev and --epss,
+findings in the KEV catalog come first and the EPSS score breaks ties of severity.
 
 Each finding has a fix target, listed under "Fix targets" and as fix in --format json: the
 lowest stable release above the version that every advisory with a fix has left behind, and
@@ -49,6 +50,14 @@ fixed. A suppressed advisory is listed under "Suppressed" with its reason (suppr
 warns about an entry past its until date, which suppresses nothing, and, without --tool,
 about an entry that suppressed nothing.
 
+--kev (config vulns.kev) marks the findings whose CVE is in the CISA Known Exploited
+Vulnerabilities catalog, which relgap fetches from www.cisa.gov once a day, with the date CISA
+added it and whether it knows of ransomware use: a KEV column, and kev in --format json and
+SARIF. --epss (config vulns.epss) adds each finding's FIRST EPSS score, the probability of
+exploitation in the next 30 days, from api.first.org: an EPSS column with the percentile, and
+epss in --format json and SARIF. Both are off by default. When a feed is down, relgap warns,
+--format json lists the error, and the report goes on without that field.
+
 --format openvex writes an OpenVEX v0.2.0 document: one statement per advisory and tool
 version, affected with the fix target as the action statement, and not\_affected (or the VEX
 status that suppressed it) with the reason. Products are the purls of the advisories'
@@ -59,13 +68,15 @@ pkg:githubactions/actions/checkout@v4.1.2.
 pin's file and line (one rule per OSV ID), a note per unchecked pin (unchecked), and a result
 per file or version lookup that failed (failed). The results don't depend on --fail-on.
 
---fail-on takes vuln and unchecked. vuln counts the findings at or above --vuln-severity and
-those of unknown severity, and with --vuln-fixable only those with a fixed version above the
-pinned one. unchecked counts the unchecked tool versions. audit gates vuln by default. Values
+--fail-on takes vuln, unchecked and kev. vuln counts the findings at or above --vuln-severity
+and those of unknown severity, and with --vuln-fixable only those with a fixed version above
+the pinned one. unchecked counts the unchecked tool versions. kev counts the findings in the
+KEV catalog, whatever their severity, and needs --kev. audit gates vuln by default. Values
 in config policy.fail\_on that audit checks add to vuln, and --fail-on replaces the whole set:
 --fail-on unchecked gates only unchecked, and --fail-on= gates nothing. A value whose count
 reaches --min-count (default 1) exits 3. Otherwise a file or lookup that failed exits 1, and
-so does an OSV outage under --fail-on vuln, since a pass on partial data proves nothing.
+so does an OSV outage under --fail-on vuln or a KEV outage under --fail-on kev, since a pass on
+partial data proves nothing.
 
 --offline answers from the HTTP cache. Pins without a cached answer are unchecked with reason
 offline, and --format json has oldest\_answer, when the oldest OSV answer was stored.
@@ -88,7 +99,9 @@ relgap audit [roots...] [flags]
 
 | Flag | Description | Type | Default | Values | Config key | Notes |
 |---|---|---|---|---|---|---|
-| `--fail-on` | exit 3 when this matches: vuln or unchecked; repeatable; replaces the default vuln, which config policy.fail\_on adds to | list, repeatable |  | `vuln`: a known vulnerability in a pinned version<br>`unchecked`: a pinned version OSV wasn't asked about | [`policy.fail_on`](/reference/config#policy-fail-on) |  |
+| `--epss` | add each advisory's FIRST EPSS score, asking api.first.org about its CVE IDs (config vulns.epss) | bool |  |  | [`vulns.epss`](/reference/config#vulns-epss) |  |
+| `--fail-on` | exit 3 when this matches: vuln, unchecked or kev; repeatable; replaces the default vuln, which config policy.fail\_on adds to | list, repeatable |  | `vuln`: a known vulnerability in a pinned version<br>`unchecked`: a pinned version OSV wasn't asked about<br>`kev`: a known vulnerability in the CISA KEV catalog; needs --kev | [`policy.fail_on`](/reference/config#policy-fail-on) |  |
+| `--kev` | mark advisories in the CISA Known Exploited Vulnerabilities catalog, fetched from www.cisa.gov (config vulns.kev) | bool |  |  | [`vulns.kev`](/reference/config#vulns-kev) |  |
 | `--md-max-chars` | cut Markdown output to this many characters at a row or section boundary; 0 means no limit | int | `60000` |  |  |  |
 | `--min-count` | findings a --fail-on value needs before it exits 3 | int | `1` |  |  |  |
 | `--out` | also write the report to a file as format=path (repeatable); format is one of plain, md, json, sarif, github or openvex | string, repeatable |  | `plain`: table without color<br>`md`: Markdown<br>`json`: JSON envelope for scripts<br>`sarif`: SARIF 2.1.0 for code scanning<br>`github`: GitHub Actions annotations<br>`openvex`: OpenVEX v0.2.0 document |  |  |
@@ -112,6 +125,7 @@ The [global flags](/cli/global-flags) work with every command.
 |---|---|
 | `vuln` | a known vulnerability in a pinned version |
 | `unchecked` | a pinned version OSV wasn't asked about |
+| `kev` | a known vulnerability in the CISA KEV catalog; needs --kev |
 
 ## Exit codes
 
@@ -135,6 +149,7 @@ relgap audit --tool terraform --tool node
 relgap audit --vuln-severity high --format sarif > audit.sarif
 relgap audit --fail-on vuln --fail-on unchecked
 relgap audit --vuln-fixable --vuln-severity high
+relgap audit --kev --epss --fail-on kev
 relgap audit --vex vex/platform.json --format openvex > audit.vex.json
 relgap audit --format json | jq '.data.findings[] | {tool, version, id}'
 ```

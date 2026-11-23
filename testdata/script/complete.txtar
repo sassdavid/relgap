@@ -106,6 +106,7 @@ breaking,deprecation	a deprecation in the range
 breaking,eol	a pinned version past its end of life
 breaking,vuln	a known vulnerability in a pinned version
 breaking,outdated	a pin further behind than --max-behind
+breaking,kev	a known vulnerability in the CISA KEV catalog; needs --kev
 :6
 -- golden/only.txt --
 breaking	breaking changes

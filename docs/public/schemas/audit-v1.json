@@ -28,7 +28,7 @@
           "minimum": 0
         },
         "findings": {
-          "description": "One entry per advisory and tool version, sorted by severity (unknown last), then by ID, tool and version.",
+          "description": "One entry per advisory and tool version: KEV entries first, then by severity (unknown last), then by EPSS score, then by ID, tool and version.",
           "type": "array",
           "items": {
             "$ref": "#/$defs/finding"
@@ -124,6 +124,12 @@
         },
         "suppressed": {
           "$ref": "outdated-v1.json#/$defs/suppression"
+        },
+        "kev": {
+          "$ref": "outdated-v1.json#/$defs/kev"
+        },
+        "epss": {
+          "$ref": "outdated-v1.json#/$defs/epss"
         }
       }
     }

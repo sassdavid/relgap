@@ -648,7 +648,7 @@ one session can't finish, the open boxes carry over to a follow-up session.
   criterion 6)
 - [x] `vulns.ignore` with reason and expiry, OpenVEX input and `--format openvex`.
   (vulnerability-audit criterion 7)
-- [ ] Opt-in KEV and EPSS annotations and `--fail-on kev`. (vulnerability-audit criterion 8)
+- [x] Opt-in KEV and EPSS annotations and `--fail-on kev`. (vulnerability-audit criterion 8)
 - [ ] The MCP `audit` tool, `notify` kind `audit`, and relgap-action `command: audit`.
   (vulnerability-audit criterion 9)
 - [ ] The audit guide, the network page and the generated reference. (vulnerability-audit

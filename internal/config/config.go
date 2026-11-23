@@ -83,17 +83,20 @@ type IgnoreRule struct {
 
 // Policy holds CI defaults for --fail-on and related flags.
 type Policy struct {
-	FailOn        []string `json:"fail_on"        jsonschema:"enum=breaking,enum=deprecation,enum=eol,enum=vuln,enum=drift,enum=outdated,enum=unchecked" jsonschema_description:"--fail-on values each command uses when the flag is not given; a command ignores the values it doesn't check. audit always gates vuln, and its values here add to it."`
-	MaxBehind     string   `json:"max_behind"     jsonschema:"pattern=^((major|minor|patch|releases|days):[0-9]+)?$"                                     jsonschema_description:"e.g. minor:2, releases:10, days:90."`
-	MinConfidence float64  `json:"min_confidence" jsonschema:"minimum=0,maximum=1"                                                                       jsonschema_description:"Entries below this confidence are hidden."`
-	VulnSeverity  string   `json:"vuln_severity"  jsonschema:"enum=,enum=low,enum=medium,enum=high,enum=critical"                                        jsonschema_description:"Lowest OSV rating --fail-on vuln counts; an advisory without a rating always counts, and empty counts every advisory."`
-	VulnFixable   bool     `json:"vuln_fixable"                                                                                                          jsonschema_description:"--fail-on vuln counts only advisories with a fixed version above the pinned one. Advisories without one still show in the report."`
+	FailOn        []string `json:"fail_on"        jsonschema:"enum=breaking,enum=deprecation,enum=eol,enum=vuln,enum=drift,enum=outdated,enum=unchecked,enum=kev" jsonschema_description:"--fail-on values each command uses when the flag is not given; a command ignores the values it doesn't check. audit always gates vuln, and its values here add to it. kev needs vulns.kev."`
+	MaxBehind     string   `json:"max_behind"     jsonschema:"pattern=^((major|minor|patch|releases|days):[0-9]+)?$"                                              jsonschema_description:"e.g. minor:2, releases:10, days:90."`
+	MinConfidence float64  `json:"min_confidence" jsonschema:"minimum=0,maximum=1"                                                                                jsonschema_description:"Entries below this confidence are hidden."`
+	VulnSeverity  string   `json:"vuln_severity"  jsonschema:"enum=,enum=low,enum=medium,enum=high,enum=critical"                                                 jsonschema_description:"Lowest OSV rating --fail-on vuln counts; an advisory without a rating always counts, and empty counts every advisory."`
+	VulnFixable   bool     `json:"vuln_fixable"                                                                                                                   jsonschema_description:"--fail-on vuln counts only advisories with a fixed version above the pinned one. Advisories without one still show in the report."`
 }
 
-// Vulns configures which advisories audit and outdated suppress.
+// Vulns configures which advisories audit and outdated suppress, and the feeds that prioritize
+// them.
 type Vulns struct {
 	Ignore []VulnIgnore `json:"ignore" jsonschema_description:"Advisories to suppress, by ID or any alias. A suppressed advisory stays in the report with its reason and doesn't count for --fail-on."`
 	VEX    []string     `json:"vex"    jsonschema_description:"OpenVEX v0.2.0 documents whose not_affected and fixed statements suppress advisories, like --vex. A relative path resolves against the directory of the config file that lists it."`
+	KEV    bool         `json:"kev"    jsonschema_description:"Mark advisories in the CISA Known Exploited Vulnerabilities catalog, like --kev. relgap then fetches the catalog from www.cisa.gov once a day."`
+	EPSS   bool         `json:"epss"   jsonschema_description:"Add the FIRST EPSS score of each advisory's CVE, like --epss. relgap then sends the CVE IDs to api.first.org."`
 }
 
 // VulnIgnore suppresses one advisory, for every tool or for the tools that match.

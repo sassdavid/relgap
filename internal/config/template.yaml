@@ -29,15 +29,17 @@ schema_version: 1
 # ignore: []                      # pins never reported, for example [{tool: terraform, path: "**/legacy/**"}, {name: "git::*bitbucket.org*"}]
 #
 # policy:                         # defaults for the CI flags
-#   fail_on: []                   # breaking, deprecation, eol, vuln, drift, outdated, unchecked
+#   fail_on: []                   # breaking, deprecation, eol, vuln, drift, outdated, unchecked, kev
 #   max_behind: ""                # for example minor:2, releases:10 or days:90; empty allows any lag
 #   min_confidence: 0.5           # hide entries below this confidence, 0 to 1
 #   vuln_severity: ""             # low, medium, high or critical; empty counts every advisory
 #   vuln_fixable: false           # count only advisories with a fixed version above the pin
 #
-# vulns:                          # advisories audit and outdated suppress
+# vulns:                          # advisories audit and outdated suppress and prioritize
 #   ignore: []                    # entries: id (or an alias), reason, until (YYYY-MM-DD), tools (globs)
 #   vex: []                       # OpenVEX v0.2.0 files, relative to this file
+#   kev: false                    # CISA KEV catalog from www.cisa.gov, like --kev
+#   epss: false                   # FIRST EPSS scores from api.first.org, like --epss
 #
 # llm:                            # only for 'relgap digest --summarize'
 #   provider: ""                  # empty is off; openai-compatible, anthropic, bedrock or bedrock-mantle

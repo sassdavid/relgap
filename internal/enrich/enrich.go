@@ -20,8 +20,10 @@ import (
 
 // Sources an [Problem] can name.
 const (
-	SourceEOL = "endoflife.date"
-	SourceOSV = "osv"
+	SourceEOL  = "endoflife.date"
+	SourceOSV  = "osv"
+	SourceKEV  = "kev"
+	SourceEPSS = "epss"
 )
 
 // Request asks for the EOL state and vulnerabilities of one tool version, and how a target
@@ -65,7 +67,7 @@ func (r Request) coverageAt(v version.V) Coverage {
 // Problem is a source that failed for a tool. The rest of the report stands.
 type Problem struct {
 	Source string
-	Tool   string
+	Tool   string // empty for a feed that failed for every tool (KEV, EPSS)
 	Err    error
 }
 
@@ -76,6 +78,8 @@ type Enricher struct {
 	osv         *OSVClient
 	concurrency int
 	suppressor  Suppressor
+	kev         *KEVClient
+	epss        *EPSSClient
 }
 
 // NewEnricher returns an enricher that uses eol and osv with up to concurrency requests at once.
@@ -104,8 +108,9 @@ func (e *Enricher) Enrich(ctx context.Context, reqs []Request) (map[string]Resul
 	ans := e.osvResults(ctx, reqs, covs)
 	e.suppress(reqs, ans)
 	fixes := e.fixTargets(ctx, reqs, ans)
+	feedProblems := e.prioritize(ctx, slices.Collect(maps.Values(ans.vulns)))
 	wg.Wait()
-	problems := slices.Concat(eolProblems, ans.problems)
+	problems := slices.Concat(eolProblems, ans.problems, feedProblems)
 	if err := ctx.Err(); err != nil {
 		return nil, nil, err //nolint:wrapcheck // the caller matches context errors
 	}
@@ -554,9 +559,16 @@ func mergeAliases(vs []Vuln) []Vuln {
 }
 
 // sortVulns sorts by score, with unknown ratings last, then by ID.
+// sortVulns orders advisories in the KEV catalog first, then by severity (unknown last), then by
+// EPSS score, then by ID.
 func sortVulns(vs []Vuln) {
 	slices.SortStableFunc(vs, func(a, b Vuln) int {
-		return cmp.Or(cmp.Compare(scoreOf(b), scoreOf(a)), cmp.Compare(a.ID, b.ID))
+		return cmp.Or(
+			KEVFirst(a.KEV, b.KEV),
+			cmp.Compare(scoreOf(b), scoreOf(a)),
+			cmp.Compare(EPSSScore(b.EPSS), EPSSScore(a.EPSS)),
+			cmp.Compare(a.ID, b.ID),
+		)
 	})
 }
 

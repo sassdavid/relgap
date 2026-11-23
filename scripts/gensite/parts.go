@@ -139,6 +139,11 @@ const (
 		"gitlab.com); `CI_JOB_TOKEN` when `CI_SERVER_HOST` does"
 )
 
+// feedHost is the row of a prioritization feed that --<flag> and vulns.<flag> turn on.
+func feedHost(name, what, flag string) host {
+	return host{name, what, "`audit` and `outdated` with `--" + flag + "` or `vulns." + flag + "`", noToken}
+}
+
 // networkHosts returns every host relgap sends requests to. The test checks it against the
 // hosts in the cassettes.
 func networkHosts() ([]host, error) {
@@ -179,6 +184,8 @@ func networkHosts() ([]host, error) {
 			"endoflife.date product", noToken},
 		{httpx.OSVHost, "known vulnerabilities of the pinned and latest versions", "a tool whose registry " +
 			"entry names OSV packages", noToken},
+		feedHost(enrich.KEVHost, "the CISA Known Exploited Vulnerabilities catalog, one file per day", "kev"),
+		feedHost(enrich.EPSSHost, "the EPSS scores of the CVE IDs of the advisories found", "epss"),
 		{
 			remote.TerraformRegistryHost, "provider versions and source repositories", "`tfprovider:` pins and inputs",
 			noToken,

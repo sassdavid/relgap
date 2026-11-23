@@ -57,6 +57,8 @@ exec expect-exit 0 relgap outdated --fail-on vuln --format plain
 stdout '^gh +2\.103\.3 +2\.103\.3 +0 +0 +0 +- +0 '
 exec expect-exit 0 relgap audit --fail-on unchecked --format plain
 stdout '^No known vulnerabilities in 2 checked tool versions\.$'
+# kev counts findings in the KEV catalog; without findings relgap doesn't fetch the catalog.
+exec expect-exit 0 relgap audit --kev --fail-on kev --format plain
 env TEST_NOW=2026-11-12T12:00:00Z
 env TEST_CASSETTE=$CASSETTES/digest/kubectl-1.36.0..1.37.2.yaml,$CASSETTES/digest/helm-3.21.0..3.22.1.yaml
 
@@ -79,6 +81,14 @@ stderr '^relgap: --fail-on drift matched 1 drifted pin: terraform \(1\.14\.2, 1\
 exec expect-exit 0 relgap drift repos --fail-on drift --min-count 2 --format plain
 exec expect-exit 0 relgap drift agree --fail-on drift --format plain
 
+# The KEV catalog lists CVE-2025-55182 of react-server-dom-webpack 19.0.0 and CVE-2025-31125 of
+# vite 6.2.3 (vulnerability-audit criterion 8 recorded the cassette).
+env TEST_NOW=2026-11-23T16:00:00Z
+env TEST_CASSETTE=$CASSETTES/audit/feeds.yaml
+cd kev
+exec expect-exit 3 relgap audit --kev --fail-on kev --format plain
+stderr '^relgap: --fail-on kev matched 2 findings: GHSA-fv66-9v8q-g76r in npm:react-server-dom-webpack 19\.0\.0 \(mise\.toml:3\), GHSA-4r4m-qw57-chr8 in npm:vite 6\.2\.3 \(mise\.toml:2\)$'
+
 -- eol/mise.toml --
 [tools]
 kubectl = "1.34.13"
@@ -89,6 +99,17 @@ kubectl = "1.37.2"
 [tools]
 gh = "2.103.3"
 k9s = "0.50.16"
+-- kev/mise.toml --
+[tools]
+"npm:vite" = "6.2.3"
+"npm:react-server-dom-webpack" = "19.0.0"
+-- kev/.relgap.yaml --
+aliases:
+  npm:vite: npm:vite
+  npm:react-server-dom-webpack: npm:react-server-dom-webpack
+tools:
+  npm:vite: {repo: vitejs/vite}
+  npm:react-server-dom-webpack: {repo: facebook/react}
 -- unchecked/mise.toml --
 [tools]
 node = "lts"

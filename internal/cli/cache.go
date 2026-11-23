@@ -17,6 +17,7 @@ import (
 	"github.com/sassdavid/relgap/internal/buildinfo"
 	"github.com/sassdavid/relgap/internal/complete"
 	"github.com/sassdavid/relgap/internal/config"
+	"github.com/sassdavid/relgap/internal/enrich"
 	"github.com/sassdavid/relgap/internal/github"
 	"github.com/sassdavid/relgap/internal/httpx"
 	"github.com/sassdavid/relgap/internal/registry/remote"
@@ -31,6 +32,8 @@ func ttlSources() map[string]string {
 		"github":    httpx.GitHubAPIHost,
 		"endoflife": "endoflife.date",
 		"osv":       httpx.OSVHost,
+		"kev":       enrich.KEVHost,
+		"epss":      enrich.EPSSHost,
 	}
 }
 
@@ -44,9 +47,9 @@ type, ETag, Last-Modified, Link); request headers and tokens are never stored.
 
 An entry is fresh for a time that depends on the age of the newest release it describes:
 1 hour under 7 days, 1 day under 6 months, 10 days when older. Answers from endoflife.date,
-OSV, the Terraform registry, Artifact Hub, npm and PyPI stay fresh for 1 day, and a 404 for
-1 hour. cache.ttl_override sets a fixed TTL per source
-(github, endoflife, osv) or host. A stale GET is revalidated with If-None-Match, and an
+OSV, the CISA KEV catalog, EPSS, the Terraform registry, Artifact Hub, npm and PyPI stay fresh
+for 1 day, and a 404 for 1 hour. cache.ttl_override sets a fixed TTL per source
+(github, endoflife, osv, kev, epss) or host. A stale GET is revalidated with If-None-Match, and an
 authenticated 304 from GitHub doesn't count against the rate limit.
 
 --offline answers from the cache only, --refresh revalidates everything, --no-cache skips it.`,
@@ -264,15 +267,18 @@ func clearRegistry(d *app.Deps, r *httpx.Removed) error {
 	return nil
 }
 
-// enrichmentTTL is how long endoflife.date, OSV and package registry answers stay fresh unless
-// the config says otherwise. None of them tells relgap how old its data is.
+// enrichmentTTL is how long endoflife.date, OSV, CISA KEV, EPSS and package registry answers
+// stay fresh unless the config says otherwise. None of them tells relgap how old its data is.
 const enrichmentTTL = 24 * time.Hour
 
 // parseTTLOverride turns cache.ttl_override into TTLs by host, on top of the 1-day default for
-// endoflife.date, OSV and the package registries. Keys are source names or hosts.
+// endoflife.date, OSV, CISA KEV, EPSS and the package registries. Keys are source names or hosts.
 func parseTTLOverride(in map[string]string) (map[string]time.Duration, error) {
 	sources := ttlSources()
-	out := map[string]time.Duration{sources["endoflife"]: enrichmentTTL, sources["osv"]: enrichmentTTL}
+	out := map[string]time.Duration{}
+	for _, name := range []string{"endoflife", "osv", "kev", "epss"} {
+		out[sources[name]] = enrichmentTTL
+	}
 	for _, host := range remote.Hosts() {
 		out[host] = enrichmentTTL
 	}

@@ -1,0 +1,989 @@
+{
+  "schema_version": "1",
+  "tool": "relgap",
+  "version": "dev",
+  "generated_at": "2026-11-23T16:00:00Z",
+  "data": {
+    "repos": [
+      "."
+    ],
+    "checked": 2,
+    "findings": [
+      {
+        "tool": "npm:react-server-dom-webpack",
+        "version": "19.0.0",
+        "pins": [
+          {
+            "repo": ".",
+            "file": "mise.toml",
+            "line": 3,
+            "detector": "mise"
+          }
+        ],
+        "id": "GHSA-fv66-9v8q-g76r",
+        "aliases": [
+          "CVE-2025-55182"
+        ],
+        "summary": "React Server Components are Vulnerable to RCE",
+        "package": {
+          "ecosystem": "npm",
+          "name": "react-server-dom-webpack"
+        },
+        "severity": {
+          "score": 10,
+          "rating": "critical",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H"
+        },
+        "fixed_in": "19.0.1",
+        "fix": {
+          "lowest": "19.0.9",
+          "lowest_in_line": "19.0.9",
+          "latest": "19.3.1",
+          "latest_affected": false
+        },
+        "url": "https://osv.dev/vulnerability/GHSA-fv66-9v8q-g76r",
+        "kev": {
+          "cve": "CVE-2025-55182",
+          "date_added": "2025-12-05",
+          "due_date": "2025-12-12",
+          "ransomware": true
+        },
+        "epss": {
+          "cve": "CVE-2025-55182",
+          "score": 0.99731,
+          "percentile": 0.99953,
+          "date": "2026-11-23"
+        }
+      },
+      {
+        "tool": "npm:vite",
+        "version": "6.2.3",
+        "pins": [
+          {
+            "repo": ".",
+            "file": "mise.toml",
+            "line": 2,
+            "detector": "mise"
+          }
+        ],
+        "id": "GHSA-4r4m-qw57-chr8",
+        "aliases": [
+          "CVE-2025-31125"
+        ],
+        "summary": "Vite has a `server.fs.deny` bypassed for `inline` and `raw` with `?import` query",
+        "package": {
+          "ecosystem": "npm",
+          "name": "vite"
+        },
+        "severity": {
+          "score": 5.3,
+          "rating": "medium",
+          "vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:R/S:U/C:H/I:N/A:N"
+        },
+        "fixed_in": "6.2.4",
+        "fix": {
+          "lowest": "6.4.5",
+          "lowest_in_line": "6.4.5",
+          "latest": "8.3.8",
+          "latest_affected": false
+        },
+        "url": "https://osv.dev/vulnerability/GHSA-4r4m-qw57-chr8",
+        "kev": {
+          "cve": "CVE-2025-31125",
+          "date_added": "2026-01-22",
+          "due_date": "2026-02-12",
+          "ransomware": false
+        },
+        "epss": {
+          "cve": "CVE-2025-31125",
+          "score": 0.74939,
+          "percentile": 0.99515,
+          "date": "2026-11-23"
+        }
+      },
+      {
+        "tool": "npm:react-server-dom-webpack",
+        "version": "19.0.0",
+        "pins": [
+          {
+            "repo": ".",
+            "file": "mise.toml",
+            "line": 3,
+            "detector": "mise"
+          }
+        ],
+        "id": "GHSA-xqc2-xf4c-x3h3",
+        "aliases": [
+          "CVE-2026-126187"
+        ],
+        "summary": "React: Unauthenticated Remote Code Execution in React Server Components",
+        "package": {
+          "ecosystem": "npm",
+          "name": "react-server-dom-webpack"
+        },
+        "severity": {
+          "score": 9.5,
+          "rating": "critical",
+          "vector": "CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:N"
+        },
+        "fixed_in": "19.0.9",
+        "fix": {
+          "lowest": "19.0.9",
+          "lowest_in_line": "19.0.9",
+          "latest": "19.3.1",
+          "latest_affected": false
+        },
+        "url": "https://osv.dev/vulnerability/GHSA-xqc2-xf4c-x3h3",
+        "epss": {
+          "cve": "CVE-2026-126187",
+          "score": 0.03154,
+          "percentile": 0.88285,
+          "date": "2026-11-23"
+        }
+      },
+      {
+        "tool": "npm:vite",
+        "version": "6.2.3",
+        "pins": [
+          {
+            "repo": ".",
+            "file": "mise.toml",
+            "line": 2,
+            "detector": "mise"
+          }
+        ],
+        "id": "GHSA-p9ff-h696-f583",
+        "aliases": [
+          "CVE-2026-39363"
+        ],
+        "summary": "Vite Vulnerable to Arbitrary File Read via Vite Dev Server WebSocket",
+        "package": {
+          "ecosystem": "npm",
+          "name": "vite"
+        },
+        "severity": {
+          "score": 8.2,
+          "rating": "high",
+          "vector": "CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:N/VC:H/VI:N/VA:N/SC:N/SI:N/SA:N"
+        },
+        "fixed_in": "6.4.2",
+        "fix": {
+          "lowest": "6.4.5",
+          "lowest_in_line": "6.4.5",
+          "latest": "8.3.8",
+          "latest_affected": false
+        },
+        "url": "https://osv.dev/vulnerability/GHSA-p9ff-h696-f583",
+        "epss": {
+          "cve": "CVE-2026-39363",
+          "score": 0.03396,
+          "percentile": 0.8914,
+          "date": "2026-11-23"
+        }
+      },
+      {
+        "tool": "npm:react-server-dom-webpack",
+        "version": "19.0.0",
+        "pins": [
+          {
+            "repo": ".",
+            "file": "mise.toml",
+            "line": 3,
+            "detector": "mise"
+          }
+        ],
+        "id": "GHSA-2m3v-v2m8-q956",
+        "aliases": [
+          "CVE-2025-55184"
+        ],
+        "summary": "Denial of Service Vulnerability in React Server Components",
+        "package": {
+          "ecosystem": "npm",
+          "name": "react-server-dom-webpack"
+        },
+        "severity": {
+          "score": 7.5,
+          "rating": "high",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+        },
+        "fixed_in": "19.0.2",
+        "fix": {
+          "lowest": "19.0.9",
+          "lowest_in_line": "19.0.9",
+          "latest": "19.3.1",
+          "latest_affected": false
+        },
+        "url": "https://osv.dev/vulnerability/GHSA-2m3v-v2m8-q956",
+        "epss": {
+          "cve": "CVE-2025-55184",
+          "score": 0.64416,
+          "percentile": 0.99254,
+          "date": "2026-11-23"
+        }
+      },
+      {
+        "tool": "npm:react-server-dom-webpack",
+        "version": "19.0.0",
+        "pins": [
+          {
+            "repo": ".",
+            "file": "mise.toml",
+            "line": 3,
+            "detector": "mise"
+          }
+        ],
+        "id": "GHSA-83fc-fqcc-2hmg",
+        "aliases": [
+          "CVE-2026-23864"
+        ],
+        "summary": "React Server Components have multiple Denial of Service Vulnerabilities",
+        "package": {
+          "ecosystem": "npm",
+          "name": "react-server-dom-webpack"
+        },
+        "severity": {
+          "score": 7.5,
+          "rating": "high",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+        },
+        "fixed_in": "19.0.4",
+        "fix": {
+          "lowest": "19.0.9",
+          "lowest_in_line": "19.0.9",
+          "latest": "19.3.1",
+          "latest_affected": false
+        },
+        "url": "https://osv.dev/vulnerability/GHSA-83fc-fqcc-2hmg",
+        "epss": {
+          "cve": "CVE-2026-23864",
+          "score": 0.02581,
+          "percentile": 0.85617,
+          "date": "2026-11-23"
+        }
+      },
+      {
+        "tool": "npm:vite",
+        "version": "6.2.3",
+        "pins": [
+          {
+            "repo": ".",
+            "file": "mise.toml",
+            "line": 2,
+            "detector": "mise"
+          }
+        ],
+        "id": "GHSA-587h-7wmj-h5pm",
+        "aliases": [
+          "CVE-2026-112942"
+        ],
+        "summary": "launch-editor: `fs.existsSync()` existence check can be bypassed on Windows",
+        "package": {
+          "ecosystem": "npm",
+          "name": "vite"
+        },
+        "severity": {
+          "score": 7.5,
+          "rating": "high",
+          "vector": "CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:A/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N"
+        },
+        "fixed_in": "6.4.4",
+        "fix": {
+          "lowest": "6.4.5",
+          "lowest_in_line": "6.4.5",
+          "latest": "8.3.8",
+          "latest_affected": false
+        },
+        "url": "https://osv.dev/vulnerability/GHSA-587h-7wmj-h5pm",
+        "epss": {
+          "cve": "CVE-2026-112942",
+          "score": 0.01694,
+          "percentile": 0.7774,
+          "date": "2026-11-23"
+        }
+      },
+      {
+        "tool": "npm:react-server-dom-webpack",
+        "version": "19.0.0",
+        "pins": [
+          {
+            "repo": ".",
+            "file": "mise.toml",
+            "line": 3,
+            "detector": "mise"
+          }
+        ],
+        "id": "GHSA-479c-33wc-g2pg",
+        "aliases": [
+          "CVE-2026-23869"
+        ],
+        "summary": "React Server Components have a Denial of Service Vulnerability",
+        "package": {
+          "ecosystem": "npm",
+          "name": "react-server-dom-webpack"
+        },
+        "severity": {
+          "score": 7.5,
+          "rating": "high",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+        },
+        "fixed_in": "19.0.5",
+        "fix": {
+          "lowest": "19.0.9",
+          "lowest_in_line": "19.0.9",
+          "latest": "19.3.1",
+          "latest_affected": false
+        },
+        "url": "https://osv.dev/vulnerability/GHSA-479c-33wc-g2pg",
+        "epss": {
+          "cve": "CVE-2026-23869",
+          "score": 0.01575,
+          "percentile": 0.76086,
+          "date": "2026-11-23"
+        }
+      },
+      {
+        "tool": "npm:react-server-dom-webpack",
+        "version": "19.0.0",
+        "pins": [
+          {
+            "repo": ".",
+            "file": "mise.toml",
+            "line": 3,
+            "detector": "mise"
+          }
+        ],
+        "id": "GHSA-rv78-f8rc-xrxh",
+        "aliases": [
+          "CVE-2026-23870"
+        ],
+        "summary": "Facebook React has a Denial of Service Vulnerability in React Server Components",
+        "package": {
+          "ecosystem": "npm",
+          "name": "react-server-dom-webpack"
+        },
+        "severity": {
+          "score": 7.5,
+          "rating": "high",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+        },
+        "fixed_in": "19.0.6",
+        "fix": {
+          "lowest": "19.0.9",
+          "lowest_in_line": "19.0.9",
+          "latest": "19.3.1",
+          "latest_affected": false
+        },
+        "url": "https://osv.dev/vulnerability/GHSA-rv78-f8rc-xrxh",
+        "epss": {
+          "cve": "CVE-2026-23870",
+          "score": 0.01533,
+          "percentile": 0.75463,
+          "date": "2026-11-23"
+        }
+      },
+      {
+        "tool": "npm:react-server-dom-webpack",
+        "version": "19.0.0",
+        "pins": [
+          {
+            "repo": ".",
+            "file": "mise.toml",
+            "line": 3,
+            "detector": "mise"
+          }
+        ],
+        "id": "GHSA-wx67-qw84-cm4g",
+        "aliases": [
+          "CVE-2026-44907"
+        ],
+        "summary": "react-server-dom: Denial of Service in Server Functions",
+        "package": {
+          "ecosystem": "npm",
+          "name": "react-server-dom-webpack"
+        },
+        "severity": {
+          "score": 7.5,
+          "rating": "high",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+        },
+        "fixed_in": "19.0.8",
+        "fix": {
+          "lowest": "19.0.9",
+          "lowest_in_line": "19.0.9",
+          "latest": "19.3.1",
+          "latest_affected": false
+        },
+        "url": "https://osv.dev/vulnerability/GHSA-wx67-qw84-cm4g",
+        "epss": {
+          "cve": "CVE-2026-44907",
+          "score": 0.006,
+          "percentile": 0.49675,
+          "date": "2026-11-23"
+        }
+      },
+      {
+        "tool": "npm:vite",
+        "version": "6.2.3",
+        "pins": [
+          {
+            "repo": ".",
+            "file": "mise.toml",
+            "line": 2,
+            "detector": "mise"
+          }
+        ],
+        "id": "GHSA-fx2h-pf6j-xcff",
+        "aliases": [
+          "CVE-2026-53571"
+        ],
+        "summary": "vite: `server.fs.deny` bypass on Windows alternate paths",
+        "package": {
+          "ecosystem": "npm",
+          "name": "vite"
+        },
+        "severity": {
+          "score": 6.9,
+          "rating": "medium",
+          "vector": "CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:N/VC:L/VI:N/VA:N/SC:H/SI:N/SA:N"
+        },
+        "fixed_in": "6.4.3",
+        "fix": {
+          "lowest": "6.4.5",
+          "lowest_in_line": "6.4.5",
+          "latest": "8.3.8",
+          "latest_affected": false
+        },
+        "url": "https://osv.dev/vulnerability/GHSA-fx2h-pf6j-xcff",
+        "epss": {
+          "cve": "CVE-2026-53571",
+          "score": 0.00577,
+          "percentile": 0.4845,
+          "date": "2026-11-23"
+        }
+      },
+      {
+        "tool": "npm:vite",
+        "version": "6.2.3",
+        "pins": [
+          {
+            "repo": ".",
+            "file": "mise.toml",
+            "line": 2,
+            "detector": "mise"
+          }
+        ],
+        "id": "GHSA-4w7w-66w2-5vf9",
+        "aliases": [
+          "CVE-2026-39365"
+        ],
+        "summary": "Vite Vulnerable to Path Traversal in Optimized Deps `.map` Handling",
+        "package": {
+          "ecosystem": "npm",
+          "name": "vite"
+        },
+        "severity": {
+          "score": 6.3,
+          "rating": "medium",
+          "vector": "CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:N/VC:L/VI:N/VA:N/SC:N/SI:N/SA:N"
+        },
+        "fixed_in": "6.4.2",
+        "fix": {
+          "lowest": "6.4.5",
+          "lowest_in_line": "6.4.5",
+          "latest": "8.3.8",
+          "latest_affected": false
+        },
+        "url": "https://osv.dev/vulnerability/GHSA-4w7w-66w2-5vf9",
+        "epss": {
+          "cve": "CVE-2026-39365",
+          "score": 0.00914,
+          "percentile": 0.6102,
+          "date": "2026-11-23"
+        }
+      },
+      {
+        "tool": "npm:vite",
+        "version": "6.2.3",
+        "pins": [
+          {
+            "repo": ".",
+            "file": "mise.toml",
+            "line": 2,
+            "detector": "mise"
+          }
+        ],
+        "id": "GHSA-rq7h-c2jc-7f22",
+        "aliases": [
+          "CVE-2026-112946"
+        ],
+        "summary": "Vite: Files outside `server.fs.allow` could be served when project paths match system paths on non-Windows machine",
+        "package": {
+          "ecosystem": "npm",
+          "name": "vite"
+        },
+        "severity": {
+          "score": 6.3,
+          "rating": "medium",
+          "vector": "CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:N/VC:L/VI:N/VA:N/SC:N/SI:N/SA:N"
+        },
+        "fixed_in": "6.4.4",
+        "fix": {
+          "lowest": "6.4.5",
+          "lowest_in_line": "6.4.5",
+          "latest": "8.3.8",
+          "latest_affected": false
+        },
+        "url": "https://osv.dev/vulnerability/GHSA-rq7h-c2jc-7f22",
+        "epss": {
+          "cve": "CVE-2026-112946",
+          "score": 0.00852,
+          "percentile": 0.59181,
+          "date": "2026-11-23"
+        }
+      },
+      {
+        "tool": "npm:vite",
+        "version": "6.2.3",
+        "pins": [
+          {
+            "repo": ".",
+            "file": "mise.toml",
+            "line": 2,
+            "detector": "mise"
+          }
+        ],
+        "id": "GHSA-r825-w8mm-5pxw",
+        "aliases": [
+          "CVE-2026-112944"
+        ],
+        "summary": "launch-editor: Editor CLI flag misinterpretation causing arbitrary command execution for some editors",
+        "package": {
+          "ecosystem": "npm",
+          "name": "vite"
+        },
+        "severity": {
+          "score": 6.3,
+          "rating": "medium",
+          "vector": "CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:N/VC:L/VI:L/VA:L/SC:N/SI:N/SA:N"
+        },
+        "fixed_in": "6.4.4",
+        "fix": {
+          "lowest": "6.4.5",
+          "lowest_in_line": "6.4.5",
+          "latest": "8.3.8",
+          "latest_affected": false
+        },
+        "url": "https://osv.dev/vulnerability/GHSA-r825-w8mm-5pxw",
+        "epss": {
+          "cve": "CVE-2026-112944",
+          "score": 0.00705,
+          "percentile": 0.54288,
+          "date": "2026-11-23"
+        }
+      },
+      {
+        "tool": "npm:vite",
+        "version": "6.2.3",
+        "pins": [
+          {
+            "repo": ".",
+            "file": "mise.toml",
+            "line": 2,
+            "detector": "mise"
+          }
+        ],
+        "id": "GHSA-698v-4r3x-3vcv",
+        "aliases": [
+          "CVE-2026-112943"
+        ],
+        "summary": "launch-editor: escapeCmdArgs() omits % escaping on Windows",
+        "package": {
+          "ecosystem": "npm",
+          "name": "vite"
+        },
+        "severity": {
+          "score": 6.3,
+          "rating": "medium",
+          "vector": "CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:N/VC:L/VI:L/VA:L/SC:N/SI:N/SA:N"
+        },
+        "fixed_in": "6.4.4",
+        "fix": {
+          "lowest": "6.4.5",
+          "lowest_in_line": "6.4.5",
+          "latest": "8.3.8",
+          "latest_affected": false
+        },
+        "url": "https://osv.dev/vulnerability/GHSA-698v-4r3x-3vcv",
+        "epss": {
+          "cve": "CVE-2026-112943",
+          "score": 0.00414,
+          "percentile": 0.36491,
+          "date": "2026-11-23"
+        }
+      },
+      {
+        "tool": "npm:vite",
+        "version": "6.2.3",
+        "pins": [
+          {
+            "repo": ".",
+            "file": "mise.toml",
+            "line": 2,
+            "detector": "mise"
+          }
+        ],
+        "id": "GHSA-356w-63v5-8wf4",
+        "aliases": [
+          "CVE-2025-32395"
+        ],
+        "summary": "Vite has an `server.fs.deny` bypass with an invalid `request-target`",
+        "package": {
+          "ecosystem": "npm",
+          "name": "vite"
+        },
+        "severity": {
+          "score": 6,
+          "rating": "medium",
+          "vector": "CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:P/VC:H/VI:N/VA:N/SC:N/SI:N/SA:N"
+        },
+        "fixed_in": "6.2.6",
+        "fix": {
+          "lowest": "6.4.5",
+          "lowest_in_line": "6.4.5",
+          "latest": "8.3.8",
+          "latest_affected": false
+        },
+        "url": "https://osv.dev/vulnerability/GHSA-356w-63v5-8wf4",
+        "epss": {
+          "cve": "CVE-2025-32395",
+          "score": 0.0181,
+          "percentile": 0.79183,
+          "date": "2026-11-23"
+        }
+      },
+      {
+        "tool": "npm:vite",
+        "version": "6.2.3",
+        "pins": [
+          {
+            "repo": ".",
+            "file": "mise.toml",
+            "line": 2,
+            "detector": "mise"
+          }
+        ],
+        "id": "GHSA-859w-5945-r5v3",
+        "aliases": [
+          "CVE-2025-46565"
+        ],
+        "summary": "Vite's server.fs.deny bypassed with /. for files under project root",
+        "package": {
+          "ecosystem": "npm",
+          "name": "vite"
+        },
+        "severity": {
+          "score": 6,
+          "rating": "medium",
+          "vector": "CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:P/VC:H/VI:N/VA:N/SC:N/SI:N/SA:N"
+        },
+        "fixed_in": "6.2.7",
+        "fix": {
+          "lowest": "6.4.5",
+          "lowest_in_line": "6.4.5",
+          "latest": "8.3.8",
+          "latest_affected": false
+        },
+        "url": "https://osv.dev/vulnerability/GHSA-859w-5945-r5v3",
+        "epss": {
+          "cve": "CVE-2025-46565",
+          "score": 0.01243,
+          "percentile": 0.69998,
+          "date": "2026-11-23"
+        }
+      },
+      {
+        "tool": "npm:vite",
+        "version": "6.2.3",
+        "pins": [
+          {
+            "repo": ".",
+            "file": "mise.toml",
+            "line": 2,
+            "detector": "mise"
+          }
+        ],
+        "id": "GHSA-93m4-6634-74q7",
+        "aliases": [
+          "CVE-2025-62522"
+        ],
+        "summary": "vite allows server.fs.deny bypass via backslash on Windows",
+        "package": {
+          "ecosystem": "npm",
+          "name": "vite"
+        },
+        "severity": {
+          "score": 6,
+          "rating": "medium",
+          "vector": "CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:P/VC:H/VI:N/VA:N/SC:N/SI:N/SA:N"
+        },
+        "fixed_in": "6.4.1",
+        "fix": {
+          "lowest": "6.4.5",
+          "lowest_in_line": "6.4.5",
+          "latest": "8.3.8",
+          "latest_affected": false
+        },
+        "url": "https://osv.dev/vulnerability/GHSA-93m4-6634-74q7",
+        "epss": {
+          "cve": "CVE-2025-62522",
+          "score": 0.01045,
+          "percentile": 0.65003,
+          "date": "2026-11-23"
+        }
+      },
+      {
+        "tool": "npm:vite",
+        "version": "6.2.3",
+        "pins": [
+          {
+            "repo": ".",
+            "file": "mise.toml",
+            "line": 2,
+            "detector": "mise"
+          }
+        ],
+        "id": "GHSA-v6wh-96g9-6wx3",
+        "aliases": [
+          "CVE-2026-53632"
+        ],
+        "summary": "launch-editor: NTLMv2 hash disclosure via UNC path handling on Windows",
+        "package": {
+          "ecosystem": "npm",
+          "name": "vite"
+        },
+        "severity": {
+          "score": 5.5,
+          "rating": "medium",
+          "vector": "CVSS:4.0/AV:N/AC:H/AT:N/PR:N/UI:A/VC:N/VI:N/VA:N/SC:H/SI:H/SA:H"
+        },
+        "fixed_in": "6.4.3",
+        "fix": {
+          "lowest": "6.4.5",
+          "lowest_in_line": "6.4.5",
+          "latest": "8.3.8",
+          "latest_affected": false
+        },
+        "url": "https://osv.dev/vulnerability/GHSA-v6wh-96g9-6wx3",
+        "epss": {
+          "cve": "CVE-2026-53632",
+          "score": 0.00464,
+          "percentile": 0.40981,
+          "date": "2026-11-23"
+        }
+      },
+      {
+        "tool": "npm:react-server-dom-webpack",
+        "version": "19.0.0",
+        "pins": [
+          {
+            "repo": ".",
+            "file": "mise.toml",
+            "line": 3,
+            "detector": "mise"
+          }
+        ],
+        "id": "GHSA-925w-6v3x-g4j4",
+        "aliases": [
+          "CVE-2025-55183"
+        ],
+        "summary": "Source Code Exposure Vulnerability in React Server Components",
+        "package": {
+          "ecosystem": "npm",
+          "name": "react-server-dom-webpack"
+        },
+        "severity": {
+          "score": 5.3,
+          "rating": "medium",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N"
+        },
+        "fixed_in": "19.0.2",
+        "fix": {
+          "lowest": "19.0.9",
+          "lowest_in_line": "19.0.9",
+          "latest": "19.3.1",
+          "latest_affected": false
+        },
+        "url": "https://osv.dev/vulnerability/GHSA-925w-6v3x-g4j4",
+        "epss": {
+          "cve": "CVE-2025-55183",
+          "score": 0.63995,
+          "percentile": 0.99244,
+          "date": "2026-11-23"
+        }
+      },
+      {
+        "tool": "npm:vite",
+        "version": "6.2.3",
+        "pins": [
+          {
+            "repo": ".",
+            "file": "mise.toml",
+            "line": 2,
+            "detector": "mise"
+          }
+        ],
+        "id": "GHSA-xcj6-pq6g-qj4x",
+        "aliases": [
+          "CVE-2025-31486"
+        ],
+        "summary": "Vite allows server.fs.deny to be bypassed with .svg or relative paths",
+        "package": {
+          "ecosystem": "npm",
+          "name": "vite"
+        },
+        "severity": {
+          "score": 5.3,
+          "rating": "medium",
+          "vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:R/S:U/C:H/I:N/A:N"
+        },
+        "fixed_in": "6.2.5",
+        "fix": {
+          "lowest": "6.4.5",
+          "lowest_in_line": "6.4.5",
+          "latest": "8.3.8",
+          "latest_affected": false
+        },
+        "url": "https://osv.dev/vulnerability/GHSA-xcj6-pq6g-qj4x",
+        "epss": {
+          "cve": "CVE-2025-31486",
+          "score": 0.40461,
+          "percentile": 0.98679,
+          "date": "2026-11-23"
+        }
+      },
+      {
+        "tool": "npm:vite",
+        "version": "6.2.3",
+        "pins": [
+          {
+            "repo": ".",
+            "file": "mise.toml",
+            "line": 2,
+            "detector": "mise"
+          }
+        ],
+        "id": "GHSA-g4jq-h2w9-997c",
+        "aliases": [
+          "CVE-2025-58751"
+        ],
+        "summary": "Vite middleware may serve files starting with the same name with the public directory",
+        "package": {
+          "ecosystem": "npm",
+          "name": "vite"
+        },
+        "severity": {
+          "score": 2.3,
+          "rating": "low",
+          "vector": "CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:P/VC:L/VI:N/VA:N/SC:N/SI:N/SA:N"
+        },
+        "fixed_in": "6.3.6",
+        "fix": {
+          "lowest": "6.4.5",
+          "lowest_in_line": "6.4.5",
+          "latest": "8.3.8",
+          "latest_affected": false
+        },
+        "url": "https://osv.dev/vulnerability/GHSA-g4jq-h2w9-997c",
+        "epss": {
+          "cve": "CVE-2025-58751",
+          "score": 0.01325,
+          "percentile": 0.71708,
+          "date": "2026-11-23"
+        }
+      },
+      {
+        "tool": "npm:vite",
+        "version": "6.2.3",
+        "pins": [
+          {
+            "repo": ".",
+            "file": "mise.toml",
+            "line": 2,
+            "detector": "mise"
+          }
+        ],
+        "id": "GHSA-jqfw-vq24-v9c3",
+        "aliases": [
+          "CVE-2025-58752"
+        ],
+        "summary": "Vite's `server.fs` settings were not applied to HTML files",
+        "package": {
+          "ecosystem": "npm",
+          "name": "vite"
+        },
+        "severity": {
+          "score": 2.3,
+          "rating": "low",
+          "vector": "CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:P/VC:L/VI:N/VA:N/SC:N/SI:N/SA:N"
+        },
+        "fixed_in": "6.3.6",
+        "fix": {
+          "lowest": "6.4.5",
+          "lowest_in_line": "6.4.5",
+          "latest": "8.3.8",
+          "latest_affected": false
+        },
+        "url": "https://osv.dev/vulnerability/GHSA-jqfw-vq24-v9c3",
+        "epss": {
+          "cve": "CVE-2025-58752",
+          "score": 0.00608,
+          "percentile": 0.50039,
+          "date": "2026-11-23"
+        }
+      },
+      {
+        "tool": "npm:vite",
+        "version": "6.2.3",
+        "pins": [
+          {
+            "repo": ".",
+            "file": "mise.toml",
+            "line": 2,
+            "detector": "mise"
+          }
+        ],
+        "id": "GHSA-9jrq-w75r-8gcw",
+        "aliases": [
+          "CVE-2026-112945"
+        ],
+        "summary": "Vite: Cross origin script execution through Vite custom middleware",
+        "package": {
+          "ecosystem": "npm",
+          "name": "vite"
+        },
+        "severity": {
+          "score": 2.1,
+          "rating": "low",
+          "vector": "CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:A/VC:L/VI:L/VA:N/SC:N/SI:N/SA:N"
+        },
+        "fixed_in": "6.4.4",
+        "fix": {
+          "lowest": "6.4.5",
+          "lowest_in_line": "6.4.5",
+          "latest": "8.3.8",
+          "latest_affected": false
+        },
+        "url": "https://osv.dev/vulnerability/GHSA-9jrq-w75r-8gcw",
+        "epss": {
+          "cve": "CVE-2026-112945",
+          "score": 0.00672,
+          "percentile": 0.53018,
+          "date": "2026-11-23"
+        }
+      }
+    ],
+    "suppressed": [],
+    "unchecked": []
+  },
+  "errors": []
+}
