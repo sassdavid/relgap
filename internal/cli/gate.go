@@ -28,6 +28,7 @@ const (
 func outdatedValues() []string {
 	return []string{
 		report.FailOnBreaking, report.FailOnDeprecation, report.FailOnEOL, report.FailOnVuln, report.FailOnOutdated,
+		report.FailOnKEV,
 	}
 }
 
@@ -87,6 +88,7 @@ func failOnChoices(values []string) []complete.Choice {
 		report.FailOnDrift:       "repositories pin different versions",
 		report.FailOnOutdated:    "a pin further behind than --max-behind",
 		report.FailOnUnchecked:   "a pinned version OSV wasn't asked about",
+		report.FailOnKEV:         "a known vulnerability in the CISA KEV catalog; needs --kev",
 	}
 	out := make([]complete.Choice, len(values))
 	for i, v := range values {

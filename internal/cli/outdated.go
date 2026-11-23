@@ -27,11 +27,7 @@ import (
 
 const flagBinaries = "binaries"
 
-func newOutdatedCmd(d *app.Deps, g *globals) *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "outdated [path]",
-		Short: "Compare every pinned tool version in a project with the latest release",
-		Long: `Scans the project at path (default: the current directory) the way 'relgap pins' does and
+const outdatedLong = `Scans the project at path (default: the current directory) the way 'relgap pins' does and
 compares each pin with the newest stable version on the tool's release line.
 
 CURRENT is the version a pin stands for. An exact pin is itself. A value marked ≈ allows
@@ -77,10 +73,17 @@ Config vulns.ignore and OpenVEX documents in vulns.vex or --vex suppress advisor
 'relgap audit' says: VULNS and --fail-on vuln leave them out, and the "Suppressed" list and
 suppressed in --format json give the reason.
 
+--kev (config vulns.kev) marks the advisories whose CVE is in the CISA Known Exploited
+Vulnerabilities catalog, which relgap fetches from www.cisa.gov once a day: VULNS counts them
+as "1 KEV", and --format json and SARIF have kev with the date CISA added it. --epss (config
+vulns.epss) adds each advisory's FIRST EPSS score, the probability of exploitation in the next
+30 days, from api.first.org, to --format json and SARIF. Advisories in the catalog sort first,
+then by severity and EPSS score. When a feed is down, relgap warns and prints the rest.
+
 --binaries also reads the Go build info of each pinned tool's installed executables (on
 PATH and in mise's installs directory) and lists the OSV vulnerabilities of the Go version
-and main module they were built with. Like govulncheck's binary mode, minus the check that
-the binary calls the vulnerable code.
+and main module they were built with, suppressed and marked the same way. Like govulncheck's
+binary mode, minus the check that the binary calls the vulnerable code.
 
 --format sarif writes a SARIF 2.1.0 log for GitHub code scanning, located at each pin's
 file and line: a result per pin behind latest (outdated), per pin on an EOL cycle (eol), per
@@ -88,19 +91,27 @@ upgrade with breaking changes or deprecations (breaking, deprecation), per advis
 affects a pin (one rule per OSV ID), per pin or file that failed (failed), and per pin not
 checked for vulnerabilities (unchecked, a note). The results don't depend on --fail-on.
 
---fail-on takes breaking, deprecation, eol, vuln and outdated. Each value counts findings:
+--fail-on takes breaking, deprecation, eol, vuln, outdated and kev. Each value counts findings:
 outdated counts the pins further behind than --max-behind (major:N, minor:N, patch:N,
 releases:N or days:N; empty means any pin behind latest), breaking and deprecation count
 the pins whose digest has such an entry, eol counts the pins on an EOL cycle, and vuln
 counts the advisories that affect a pin at or above --vuln-severity or of unknown severity,
-and with --vuln-fixable only those with a fixed version above CURRENT. A value whose count
-reaches --min-count (default 1) exits 3. Otherwise a tool or file that
-failed exits 1, and so does an endoflife.date outage under --fail-on eol or an OSV outage
-under --fail-on vuln, since a pass on partial data proves nothing.`,
+and with --vuln-fixable only those with a fixed version above CURRENT. kev counts the
+advisories in the KEV catalog, whatever their severity, and needs --kev. A value whose count
+reaches --min-count (default 1) exits 3. Otherwise a tool or file that failed exits 1, and so
+does an endoflife.date outage under --fail-on eol, an OSV outage under --fail-on vuln or a KEV
+outage under --fail-on kev, since a pass on partial data proves nothing.`
+
+func newOutdatedCmd(d *app.Deps, g *globals) *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "outdated [path]",
+		Short: "Compare every pinned tool version in a project with the latest release",
+		Long:  outdatedLong,
 		Example: `  relgap outdated
   relgap outdated ~/src/infra --format md
   relgap outdated --fail-on outdated --max-behind minor:2
   relgap outdated --fail-on eol --fail-on vuln --vuln-severity high
+  relgap outdated --kev --epss --fail-on kev
   relgap outdated --fail-on outdated --min-count 5 --format sarif > relgap.sarif
   relgap outdated --binaries --format json | jq '.data.binaries[]'
   relgap outdated --format json | jq '.data.pins[] | select(.status == "outdated")'`,
@@ -114,6 +125,7 @@ under --fail-on vuln, since a pass on partial data proves nothing.`,
 		},
 	}
 	addGateFlags(cmd, outdatedValues())
+	addFeedFlags(cmd)
 	addVEXFlag(cmd)
 	addOutputFlags(cmd, g, outdatedFormats()...)
 	cmd.Flags().Bool(flagBinaries, false,
@@ -133,6 +145,9 @@ func runOutdated(cmd *cobra.Command, d *app.Deps, g *globals, root string) error
 	defer s.close(cmd.Context())
 	gate, err := newGate(cmd, d, outdatedValues())
 	if err != nil {
+		return err
+	}
+	if err = checkKEVGate(d, gate); err != nil {
 		return err
 	}
 	binaries, err := cmd.Flags().GetBool(flagBinaries)
@@ -231,6 +246,7 @@ func (s *session) enrich(ctx context.Context, c *comparison, hc *http.Client, pi
 	en := enrich.NewEnricher(d.Logger, enrich.NewEOLClient(hc, ""), enrich.NewOSVClient(hc, ""),
 		d.Config.Config.GitHub.Concurrency)
 	en.SetSuppressor(rules)
+	en.SetFeeds(s.feeds(hc))
 	results, problems, err := en.Enrich(ctx, c.out.EnrichRequests(resolveFunc(ctx, s), c.digester.Universe))
 	if err != nil {
 		return err //nolint:wrapcheck // only a canceled context
@@ -246,6 +262,12 @@ func (s *session) enrich(ctx context.Context, c *comparison, hc *http.Client, pi
 	if !binaries {
 		return nil
 	}
+	return s.binaries(ctx, c, en, pins)
+}
+
+// binaries adds the installed Go executables of the pinned tools and their vulnerabilities.
+func (s *session) binaries(ctx context.Context, c *comparison, en *enrich.Enricher, pins []scan.Pin) error {
+	d := s.d
 	finder := enrich.BinaryFinder{
 		Lookup: d.Env.Lookup,
 		Which:  misex.New(s.runner).Which,
@@ -270,11 +292,18 @@ func (s *session) enrich(ctx context.Context, c *comparison, hc *http.Client, pi
 			c.out.Binaries = append(c.out.Binaries, b)
 		}
 	}
-	if err = en.BinaryVulns(ctx, c.out.Binaries); err != nil {
+	feedProblems, err := en.BinaryVulns(ctx, c.out.Binaries)
+	if err != nil {
 		if ctx.Err() != nil {
 			return ctx.Err() //nolint:wrapcheck // the caller matches context errors
 		}
 		c.problems = append(c.problems, enrich.Problem{Source: enrich.SourceOSV, Tool: "binaries", Err: err})
+	}
+	for _, p := range feedProblems {
+		// The pins' enrichment already reported a feed that failed for the whole run.
+		if !slices.ContainsFunc(c.problems, func(q enrich.Problem) bool { return q.Source == p.Source }) {
+			c.problems = append(c.problems, p)
+		}
 	}
 	return nil
 }
@@ -379,7 +408,7 @@ func (c *comparison) errors() []render.Error {
 func (c *comparison) sourceErrors() []render.Error {
 	out := make([]render.Error, 0, len(c.problems))
 	for _, p := range c.problems {
-		out = append(out, render.Error{Target: p.Source + ": " + p.Tool, Message: p.Err.Error()})
+		out = append(out, render.Error{Target: problemTarget(p), Message: p.Err.Error()})
 	}
 	return out
 }
@@ -389,8 +418,10 @@ func (c *comparison) warn(cmd *cobra.Command, d *app.Deps) {
 		d.Logger.WarnContext(cmd.Context(), "can't read pins", "repo", p.Repo, "file", p.File, "error", p.Message)
 	}
 	for _, p := range c.problems {
-		d.Logger.WarnContext(cmd.Context(), "enrichment source failed; the report continues without it",
-			"source", p.Source, "tool", p.Tool, "error", p.Err)
+		if !warnFeed(cmd, d, p) {
+			d.Logger.WarnContext(cmd.Context(), "enrichment source failed; the report continues without it",
+				"source", p.Source, "tool", p.Tool, "error", p.Err)
+		}
 	}
 	warnLatestAffected(cmd.Context(), d, c.out.Fixes())
 	warnSuppression(cmd.Context(), d, c.rules, true)
@@ -438,5 +469,5 @@ func (c *comparison) partial(gate report.Gate) error {
 				flagFailOn, need.value, need.source, strings.Join(down, ", "))
 		}
 	}
-	return nil
+	return feedDown(gate, c.problems)
 }

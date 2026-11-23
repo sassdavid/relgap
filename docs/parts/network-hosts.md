@@ -8,6 +8,8 @@
 | a host in `gitlab.hosts` | tags, releases, files and the top directory of projects | `gitlab:<host>/...` pins and inputs | the entry's `token_env`, else as for gitlab.com |
 | `endoflife.date` | release cycles and their end-of-life dates | a tool whose registry entry names an endoflife.date product | no |
 | `api.osv.dev` | known vulnerabilities of the pinned and latest versions | a tool whose registry entry names OSV packages | no |
+| `www.cisa.gov` | the CISA Known Exploited Vulnerabilities catalog, one file per day | `audit` and `outdated` with `--kev` or `vulns.kev` | no |
+| `api.first.org` | the EPSS scores of the CVE IDs of the advisories found | `audit` and `outdated` with `--epss` or `vulns.epss` | no |
 | `registry.terraform.io` | provider versions and source repositories | `tfprovider:` pins and inputs | no |
 | `artifacthub.io` | chart versions and source repositories | `chart:` pins and inputs | no |
 | `registry.npmjs.org` | package repositories | `npm:` inputs | no |

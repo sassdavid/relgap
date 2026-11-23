@@ -19,6 +19,10 @@ doesn't list. A pin on any other host stays unresolved or skipped, and relgap ru
 
 <!--@include: ../parts/network-hosts.md-->
 
+`www.cisa.gov` and `api.first.org` are off by default. With `--kev` relgap downloads the whole KEV
+catalog and matches it locally, so CISA learns nothing about your pins. With `--epss` relgap sends
+the CVE IDs of the advisories it found, which tells FIRST which vulnerabilities your pins have.
+
 Every request goes through one HTTP client with retries, a per-host limit and the on-disk cache.
 Pages of release notes come from GitHub through the API. Web pages come only from these hosts,
 and `relgap registry lint` rejects an entry whose URL points anywhere else:

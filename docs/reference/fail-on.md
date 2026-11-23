@@ -13,6 +13,7 @@ editLink: false
 |---|---|---|
 | [relgap audit](/cli/audit) | `vuln` | a known vulnerability in a pinned version |
 | [relgap audit](/cli/audit) | `unchecked` | a pinned version OSV wasn't asked about |
+| [relgap audit](/cli/audit) | `kev` | a known vulnerability in the CISA KEV catalog; needs --kev |
 | [relgap digest](/cli/digest) | `breaking` | a breaking change in the range |
 | [relgap digest](/cli/digest) | `deprecation` | a deprecation in the range |
 | [relgap drift](/cli/drift) | `drift` | repositories pin different versions |
@@ -21,3 +22,4 @@ editLink: false
 | [relgap outdated](/cli/outdated) | `eol` | a pinned version past its end of life |
 | [relgap outdated](/cli/outdated) | `vuln` | a known vulnerability in a pinned version |
 | [relgap outdated](/cli/outdated) | `outdated` | a pin further behind than --max-behind |
+| [relgap outdated](/cli/outdated) | `kev` | a known vulnerability in the CISA KEV catalog; needs --kev |

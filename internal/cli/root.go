@@ -31,6 +31,8 @@ func flagKeys() map[string]string {
 		flagVulnSeverity:  "policy.vuln_severity",
 		flagVulnFixable:   "policy.vuln_fixable",
 		flagVEX:           keyVulnVEX,
+		flagKEV:           keyVulnKEV,
+		flagEPSS:          keyVulnEPSS,
 	}
 }
 

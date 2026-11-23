@@ -12,7 +12,8 @@ workflow.
 
 | Command | `--fail-on` values |
 |---|---|
-| [`relgap outdated`](/cli/outdated) | `breaking`, `deprecation`, `eol`, `vuln`, `outdated` |
+| [`relgap outdated`](/cli/outdated) | `breaking`, `deprecation`, `eol`, `vuln`, `outdated`, `kev` |
+| [`relgap audit`](/cli/audit) | `vuln` (the default), `unchecked`, `kev` |
 | [`relgap digest`](/cli/digest) | `breaking`, `deprecation` |
 | [`relgap drift`](/cli/drift) | `drift` |
 
@@ -35,6 +36,8 @@ In `relgap outdated`, each value counts findings:
   entry at or above `--min-confidence`.
 - `eol` counts the pins whose release cycle has reached its end of life on endoflife.date.
 - `vuln` counts the OSV advisories that affect a pinned version, at or above `--vuln-severity`.
+- `kev` counts the advisories in the CISA Known Exploited Vulnerabilities catalog, whatever their
+  rating. It needs `--kev` (config `vulns.kev`); without it relgap exits 2 before any request.
 
 `relgap digest` counts a single digest once. With `--from-mise` or `--all` it counts each pin, and
 with `--base` or `--pull-request` each digest. `relgap drift` counts the drifted pins.
@@ -116,7 +119,8 @@ variable ([Configuration](/reference/config#policy)).
 
 Exit 3 wins over exit 1: a match on partial data is still a match, and relgap logs that the report
 is partial. A pass on partial data proves nothing, so it exits 1. That includes an endoflife.date
-outage under `--fail-on eol` and an OSV outage under `--fail-on vuln`.
+outage under `--fail-on eol`, an OSV outage under `--fail-on vuln` and a CISA KEV outage under
+`--fail-on kev`.
 [Exit codes](/reference/exit-codes) has the full table.
 
 ## A workflow

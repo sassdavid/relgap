@@ -20,6 +20,7 @@ const (
 	FailOnDrift       = "drift"
 	FailOnOutdated    = "outdated"
 	FailOnUnchecked   = "unchecked"
+	FailOnKEV         = "kev"
 )
 
 // MaxBehind is a --max-behind threshold such as minor:2. The zero value allows nothing: any
@@ -85,6 +86,7 @@ func (m MaxBehind) Exceeded(b *Behind, now time.Time) (bool, bool) {
 func Values() []string {
 	return []string{
 		FailOnBreaking, FailOnDeprecation, FailOnEOL, FailOnVuln, FailOnDrift, FailOnOutdated, FailOnUnchecked,
+		FailOnKEV,
 	}
 }
 
@@ -120,10 +122,10 @@ func (g Gate) Has(value string) bool { return slices.Contains(g.Values, value) }
 type Finding struct {
 	FailOn    string
 	Pin       *OutdatedPin
-	Vuln      *enrich.Vuln  // the advisory, for vuln in outdated
+	Vuln      *enrich.Vuln  // the advisory, for vuln and kev in outdated
 	Digest    *ToolDigest   // for breaking and deprecation in a single digest
 	Drift     *DriftTool    // the tool of a drifted pin
-	Advisory  *AuditFinding // for vuln in audit
+	Advisory  *AuditFinding // for vuln and kev in audit
 	Unchecked *Unchecked    // for unchecked
 }
 
@@ -136,7 +138,8 @@ type Match struct {
 // Check returns the findings of the gate's values among the pins, and the outdated pins whose lag
 // it couldn't measure. A pin counts for eol when its current version's cycle has reached its end,
 // and for vuln once per unsuppressed advisory that affects its current version at or above
-// VulnSeverity, with a fixed version under VulnFixable. It counts for outdated, breaking and deprecation only when it
+// VulnSeverity, with a fixed version under VulnFixable. It counts for kev once per unsuppressed
+// advisory in the KEV catalog, whatever its rating. It counts for outdated, breaking and deprecation only when it
 // is behind latest.
 func (g Gate) Check(o *Outdated) ([]Finding, []*OutdatedPin) {
 	var (
@@ -148,11 +151,13 @@ func (g Gate) Check(o *Outdated) ([]Finding, []*OutdatedPin) {
 		if g.Has(FailOnEOL) && IsEOL(p) {
 			findings = append(findings, Finding{FailOn: FailOnEOL, Pin: p})
 		}
-		if g.Has(FailOnVuln) {
-			for j := range p.Vulns {
-				if v := &p.Vulns[j]; g.countsVuln(v) {
-					findings = append(findings, Finding{FailOn: FailOnVuln, Pin: p, Vuln: v})
-				}
+		for j := range p.Vulns {
+			v := &p.Vulns[j]
+			if g.Has(FailOnVuln) && g.countsVuln(v) {
+				findings = append(findings, Finding{FailOn: FailOnVuln, Pin: p, Vuln: v})
+			}
+			if g.Has(FailOnKEV) && v.Counts() && v.KEV != nil {
+				findings = append(findings, Finding{FailOn: FailOnKEV, Pin: p, Vuln: v})
 			}
 		}
 		if p.Status != StatusOutdated {
@@ -211,14 +216,17 @@ func (g Gate) atSeverity(s *enrich.Score) bool {
 }
 
 // CheckAudit returns a finding per audit finding at or above VulnSeverity, and with a fixed
-// version under VulnFixable, for vuln, and per unchecked tool version for unchecked.
+// version under VulnFixable, for vuln, per audit finding in the KEV catalog for kev, and per
+// unchecked tool version for unchecked.
 func (g Gate) CheckAudit(a *Audit) []Finding {
 	var findings []Finding
-	if g.Has(FailOnVuln) {
-		for i := range a.Findings {
-			if f := &a.Findings[i]; g.atSeverity(f.Severity) && g.fixable(f.FixedIn) {
-				findings = append(findings, Finding{FailOn: FailOnVuln, Advisory: f})
-			}
+	for i := range a.Findings {
+		f := &a.Findings[i]
+		if g.Has(FailOnVuln) && g.atSeverity(f.Severity) && g.fixable(f.FixedIn) {
+			findings = append(findings, Finding{FailOn: FailOnVuln, Advisory: f})
+		}
+		if g.Has(FailOnKEV) && f.KEV != nil {
+			findings = append(findings, Finding{FailOn: FailOnKEV, Advisory: f})
 		}
 	}
 	if g.Has(FailOnUnchecked) {

@@ -152,6 +152,25 @@ func (r *sarifRun) add(rule, level, msg string, loc scan.Location, tool, subject
 	})
 }
 
+// feedsLast adds the KEV entry and EPSS score of v to the last result's properties, as kev and
+// epss with the JSON fields.
+func (r *sarifRun) feedsLast(v *enrich.Vuln) {
+	if v.KEV == nil && v.EPSS == nil {
+		return
+	}
+	results := r.log.Runs[0].Results
+	last := &results[len(results)-1]
+	if last.Properties == nil {
+		last.Properties = map[string]any{}
+	}
+	if v.KEV != nil {
+		last.Properties["kev"] = v.KEV
+	}
+	if v.EPSS != nil {
+		last.Properties["epss"] = v.EPSS
+	}
+}
+
 // suppressLast marks the last result as suppressed by s.
 func (r *sarifRun) suppressLast(s *enrich.Suppression) {
 	results := r.log.Runs[0].Results
@@ -213,9 +232,11 @@ func (r *sarifRun) pin(p *report.OutdatedPin) {
 		case v.Suppressed != nil:
 			r.add(v.ID, vulnLevel(v), vulnText(p.Tool, p.Current, v, nil)+"; "+suppressionText(v.Suppressed), loc,
 				p.Tool, v.ID)
+			r.feedsLast(v)
 			r.suppressLast(v.Suppressed)
 		default:
 			r.add(v.ID, vulnLevel(v), vulnMessage(p, v), loc, p.Tool, v.ID)
+			r.feedsLast(v)
 		}
 	}
 	if outdated {
@@ -311,6 +332,13 @@ func vulnText(tool, version string, v *enrich.Vuln, f *enrich.Fix) string {
 	}
 	if v.Summary != "" {
 		msg += ": " + v.Summary
+	}
+	if v.KEV != nil {
+		msg += "; known exploited (CISA KEV since " + v.KEV.DateAdded
+		if v.KEV.Ransomware {
+			msg += ", used in ransomware campaigns"
+		}
+		msg += ")"
 	}
 	if v.FixedIn != "" {
 		msg += "; fixed in " + v.FixedIn

@@ -163,3 +163,10 @@ func TestSpec_vulnerability_audit_7(t *testing.T) {
 	t.Parallel()
 	testscript.Run(t, scriptParams(t, filepath.Join(scriptDir, "spec_vulnerability_audit_7.txtar")))
 }
+
+// TestSpec_vulnerability_audit_8: KEV and EPSS fields come from the feeds, --fail-on kev exits 3,
+// and an outage of either feed warns and keeps the report.
+func TestSpec_vulnerability_audit_8(t *testing.T) {
+	t.Parallel()
+	testscript.Run(t, scriptParams(t, filepath.Join(scriptDir, "spec_vulnerability_audit_8.txtar")))
+}

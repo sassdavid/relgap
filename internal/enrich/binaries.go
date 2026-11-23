@@ -18,6 +18,9 @@ import (
 const ReachabilityNote = "matched by Go version and module version only: relgap doesn't check " +
 	"whether the binary calls the vulnerable code"
 
+// goStdlib is the OSV package of the Go standard library.
+const goStdlib = "stdlib"
+
 // Binary is an installed Go executable of a tool and what OSV knows about its Go version and
 // main module.
 type Binary struct {
@@ -147,7 +150,7 @@ func ReadBinary(tool, path string) (*Binary, error) {
 	if strings.HasPrefix(bi.GoVersion, "devel") || !goTag.MatchString(strings.Fields(bi.GoVersion + " ")[0]) {
 		return nil, fmt.Errorf("read go build info of %s: development Go version %q", path, bi.GoVersion)
 	}
-	b.Queries = append(b.Queries, Query{Package: Package{Ecosystem: EcosystemGo, Name: "stdlib"}, Version: b.GoVersion})
+	b.Queries = append(b.Queries, Query{Package: Package{Ecosystem: EcosystemGo, Name: goStdlib}, Version: b.GoVersion})
 	b.Module = bi.Main.Path
 	if v := bi.Main.Version; v != "" && v != "(devel)" {
 		b.ModuleVersion = strings.TrimPrefix(v, "v")
@@ -159,8 +162,10 @@ func ReadBinary(tool, path string) (*Binary, error) {
 	return b, nil
 }
 
-// BinaryVulns queries OSV for every binary's queries in one batch and fills in their vulns.
-func (e *Enricher) BinaryVulns(ctx context.Context, bins []*Binary) error {
+// BinaryVulns queries OSV for every binary's queries in one batch and fills in their vulns,
+// marking the ones the suppressor names and adding the feeds' fields. It returns the feeds
+// that failed as problems, and an error when OSV failed.
+func (e *Enricher) BinaryVulns(ctx context.Context, bins []*Binary) ([]Problem, error) {
 	var (
 		queries []Query
 		owner   []int
@@ -172,15 +177,15 @@ func (e *Enricher) BinaryVulns(ctx context.Context, bins []*Binary) error {
 		}
 	}
 	if len(queries) == 0 {
-		return nil
+		return nil, nil
 	}
 	hits, err := e.osv.QueryBatch(ctx, queries)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	records, err := e.records(ctx, slices.Concat(hits...))
 	if err != nil {
-		return err
+		return nil, err
 	}
 	for qi, q := range queries {
 		b := bins[owner[qi]]
@@ -197,10 +202,32 @@ func (e *Enricher) BinaryVulns(ctx context.Context, bins []*Binary) error {
 		lists[i] = b.Vulns
 	}
 	if err = e.rateFromAliases(ctx, lists, records); err != nil {
-		return err
+		return nil, err
 	}
 	for _, b := range bins {
+		e.suppressBinary(b)
 		sortVulns(b.Vulns)
 	}
-	return nil
+	return e.prioritize(ctx, lists), nil
+}
+
+// suppressBinary marks each advisory of b that the suppressor names, with b's tool and the purl
+// of the advisory's package at the version b was built with.
+func (e *Enricher) suppressBinary(b *Binary) {
+	if e.suppressor == nil {
+		return
+	}
+	for j := range b.Vulns {
+		v := &b.Vulns[j]
+		at := b.ModuleVersion
+		if v.Package.Name == goStdlib {
+			at = b.GoVersion
+		}
+		sub := Subject{Tool: b.Tool, Version: at}
+		pkg := registry.OSVPackage{Ecosystem: v.Package.Ecosystem, Name: v.Package.Name}
+		if p, ok := (Request{}).packagePURLAt(pkg, at, ""); ok {
+			sub.PURLs = append(sub.PURLs, p)
+		}
+		v.Suppressed = e.suppressor.Suppress(sub, v.names())
+	}
 }

@@ -9,11 +9,11 @@ cd project
 
 # Usage errors exit 2 before any request.
 ! exec relgap outdated --fail-on drift
-stderr 'fail-on drift isn''t checked by outdated: relgap outdated checks breaking, deprecation, eol, vuln or outdated'
+stderr 'fail-on drift isn''t checked by outdated: relgap outdated checks breaking, deprecation, eol, vuln, outdated or kev'
 ! exec relgap digest --from-mise --fail-on eol
 stderr 'fail-on eol isn''t checked by digest: relgap digest checks breaking or deprecation'
 ! exec relgap outdated --fail-on unknown
-stderr 'fail-on unknown isn''t checked by outdated: relgap outdated checks breaking, deprecation, eol, vuln or outdated'
+stderr 'fail-on unknown isn''t checked by outdated: relgap outdated checks breaking, deprecation, eol, vuln, outdated or kev'
 ! exec relgap outdated --vuln-severity severe
 stderr 'policy.vuln_severity'
 ! exec relgap outdated --min-count 0

@@ -106,5 +106,7 @@ scan:
 schema_version: 1
 tools: {}
 vulns:
+  epss: false
   ignore: []
+  kev: false
   vex: []

@@ -170,11 +170,12 @@
               "vuln",
               "drift",
               "outdated",
-              "unchecked"
+              "unchecked",
+              "kev"
             ]
           },
           "type": "array",
-          "description": "--fail-on values each command uses when the flag is not given; a command ignores the values it doesn't check. audit always gates vuln, and its values here add to it."
+          "description": "--fail-on values each command uses when the flag is not given; a command ignores the values it doesn't check. audit always gates vuln, and its values here add to it. kev needs vulns.kev."
         },
         "max_behind": {
           "type": "string",
@@ -250,6 +251,14 @@
           },
           "type": "array",
           "description": "OpenVEX v0.2.0 documents whose not_affected and fixed statements suppress advisories, like --vex. A relative path resolves against the directory of the config file that lists it."
+        },
+        "kev": {
+          "type": "boolean",
+          "description": "Mark advisories in the CISA Known Exploited Vulnerabilities catalog, like --kev. relgap then fetches the catalog from www.cisa.gov once a day."
+        },
+        "epss": {
+          "type": "boolean",
+          "description": "Add the FIRST EPSS score of each advisory's CVE, like --epss. relgap then sends the CVE IDs to api.first.org."
         }
       },
       "additionalProperties": false,

@@ -246,9 +246,9 @@ func eolCell(e *enrich.EOL) cell {
 	}
 }
 
-// vulnCell counts the unsuppressed vulnerabilities of the current version, and how many the
-// latest version fixes. It shows ? for a pin OSV wasn't asked about and - when enrichment didn't
-// run.
+// vulnCell counts the unsuppressed vulnerabilities of the current version, how many the latest
+// version fixes and how many are in the KEV catalog. It shows ? for a pin OSV wasn't asked about
+// and - when enrichment didn't run.
 func vulnCell(p *report.OutdatedPin) cell {
 	switch {
 	case p.Unchecked != "":
@@ -257,15 +257,25 @@ func vulnCell(p *report.OutdatedPin) cell {
 		return cell{text: noValue}
 	}
 	vs := slices.DeleteFunc(slices.Clone(p.Vulns), func(v enrich.Vuln) bool { return v.Suppressed != nil })
-	fixed := 0
+	fixed, kev := 0, 0
 	for _, v := range vs {
 		if v.FixedByTarget != nil && *v.FixedByTarget {
 			fixed++
 		}
+		if v.KEV != nil {
+			kev++
+		}
+	}
+	var notes []string
+	if fixed > 0 {
+		notes = append(notes, fmt.Sprintf("%d fixed", fixed))
+	}
+	if kev > 0 {
+		notes = append(notes, fmt.Sprintf("%d KEV", kev))
 	}
 	text := strconv.Itoa(len(vs))
-	if fixed > 0 {
-		text += fmt.Sprintf(" (%d fixed)", fixed)
+	if len(notes) > 0 {
+		text += " (" + strings.Join(notes, ", ") + ")"
 	}
 	c := cell{text: text}
 	if len(vs) > 0 {
@@ -293,7 +303,8 @@ func uncheckedLines(us []report.Unchecked) []string {
 	return out
 }
 
-// binaryLines describes each installed executable and its vulnerabilities.
+// binaryLines describes each installed executable, its unsuppressed vulnerabilities and the
+// suppressed ones with the reason.
 func binaryLines(bins []*enrich.Binary) []string {
 	if len(bins) == 0 {
 		return []string{"no Go executables of the pinned tools found"}
@@ -304,14 +315,25 @@ func binaryLines(bins []*enrich.Binary) []string {
 		if b.ModuleVersion != "" {
 			built += ", " + b.Module + " " + b.ModuleVersion
 		}
-		ids := make([]string, 0, len(b.Vulns))
+		var ids, suppressed []string
 		for _, v := range b.Vulns {
-			ids = append(ids, v.ID)
+			if v.Suppressed != nil {
+				suppressed = append(suppressed, v.ID+" ("+suppressionText(v.Suppressed)+")")
+				continue
+			}
+			id := v.ID
+			if v.KEV != nil {
+				id += " (KEV)"
+			}
+			ids = append(ids, id)
 		}
-		line := fmt.Sprintf("%s %s (%s): %d %s", b.Tool, b.Path, built, len(b.Vulns),
-			pinsWord(len(b.Vulns), "vulnerability", "vulnerabilities"))
+		line := fmt.Sprintf("%s %s (%s): %d %s", b.Tool, b.Path, built, len(ids),
+			pinsWord(len(ids), "vulnerability", "vulnerabilities"))
 		if len(ids) > 0 {
 			line += ": " + strings.Join(ids, ", ")
+		}
+		if len(suppressed) > 0 {
+			line += fmt.Sprintf("; %d suppressed: %s", len(suppressed), strings.Join(suppressed, ", "))
 		}
 		out = append(out, line)
 	}

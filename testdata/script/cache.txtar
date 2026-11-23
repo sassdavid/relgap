@@ -53,7 +53,7 @@ exec expect-exit 2 relgap cache info
 stderr 'cache.ttl_override.github: want a positive Go duration such as 24h, got "soon"'
 cp ttl-unknown.yaml .relgap.yaml
 exec expect-exit 2 relgap cache info
-stderr 'cache.ttl_override.gitlab: unknown source; want one of endoflife, github, osv or a host name'
+stderr 'cache.ttl_override.gitlab: unknown source; want one of endoflife, epss, github, kev, osv or a host name'
 cp ttl-host.yaml .relgap.yaml
 exec relgap cache info
 stdout '^fresh +10$'

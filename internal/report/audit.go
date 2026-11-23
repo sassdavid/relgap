@@ -36,7 +36,19 @@ type Audit struct {
 
 	rows  *Outdated // each pin with the version it stands for; Latest is never looked up
 	fixes []ToolFix
+	feeds Feeds
 }
+
+// Feeds says which prioritization feeds a run asked: CISA KEV and FIRST EPSS.
+type Feeds struct {
+	KEV, EPSS bool
+}
+
+// SetFeeds records which feeds the run asked, so the text formats show their columns.
+func (a *Audit) SetFeeds(f Feeds) { a.feeds = f }
+
+// Feeds returns which prioritization feeds the run asked.
+func (a *Audit) Feeds() Feeds { return a.feeds }
 
 // ToolFix is the fix target of one tool version with findings.
 type ToolFix struct {
@@ -64,6 +76,8 @@ type AuditFinding struct {
 	URL      string          `json:"url"`
 	// Suppressed says why the finding doesn't count; only findings in [Audit.Suppressed] have it.
 	Suppressed *enrich.Suppression `json:"suppressed,omitempty"`
+	KEV        *enrich.KEV         `json:"kev,omitempty"`  // with --kev, when a CVE alias is in the catalog
+	EPSS       *enrich.EPSS        `json:"epss,omitempty"` // with --epss, when EPSS scores a CVE alias
 
 	purl string
 }
@@ -262,7 +276,8 @@ func (a *Audit) EnrichRequests(resolve ResolveFunc, versions VersionsFunc) []enr
 
 // ApplyEnrichment lists the unchecked pins, adding unresolved, the pins that resolve to no tool,
 // and turns each advisory that affects a checked version into a finding, or into a suppressed
-// one. Both lists sort by severity, rated before unrated, then by ID, tool and version.
+// one. Both lists sort KEV entries first, then by severity, rated before unrated, then by EPSS
+// score, then by ID, tool and version.
 func (a *Audit) ApplyEnrichment(results map[string]enrich.Result, unresolved []scan.Pin) {
 	a.rows.ApplyEnrichment(results, unresolved)
 	a.Unchecked = a.rows.Unchecked
@@ -319,7 +334,7 @@ func (a *Audit) collectFindings() []*AuditFinding {
 				f = &AuditFinding{
 					Tool: p.Tool, Version: p.vulnVersion, ID: v.ID, Aliases: v.Aliases, Summary: v.Summary,
 					Package: v.Package, Severity: v.Severity, FixedIn: v.FixedIn, URL: AdvisoryURL + v.ID,
-					Suppressed: v.Suppressed, purl: v.PURL(),
+					Suppressed: v.Suppressed, KEV: v.KEV, EPSS: v.EPSS, purl: v.PURL(),
 				}
 				if v.Suppressed == nil {
 					f.Fix = findingFix(p.Fix, v.ID)
@@ -346,7 +361,9 @@ func findingFix(f *enrich.Fix, id string) FindingFix {
 
 func compareFindings(x, y AuditFinding) int {
 	return cmp.Or(
+		enrich.KEVFirst(x.KEV, y.KEV),
 		cmp.Compare(severityKey(y.Severity), severityKey(x.Severity)),
+		cmp.Compare(enrich.EPSSScore(y.EPSS), enrich.EPSSScore(x.EPSS)),
 		cmp.Compare(x.ID, y.ID),
 		registry.CompareTools(x.Tool, y.Tool),
 		cmp.Compare(x.Version, y.Version),

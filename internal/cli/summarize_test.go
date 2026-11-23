@@ -206,6 +206,9 @@ func TestSummarize_warnings(t *testing.T) {
 		args      []string
 		wantWarn  string
 		wantCalls int
+		// atMost makes wantCalls an upper bound, for a deadline that can pass before the request
+		// is sent.
+		atMost bool
 	}{
 		{
 			name:     "provider error",
@@ -216,11 +219,14 @@ func TestSummarize_warnings(t *testing.T) {
 			wantCalls: 1,
 		},
 		{
+			// The deadline covers building the prompt too, so on a slow runner it can pass before
+			// httpx sends the request. Either way the model is asked at most once.
 			name:      "timeout",
 			config:    openAIConfig + "  timeout: 50ms\n",
 			setup:     func(f *fakeLLM) { f.block = true },
 			wantWarn:  "WRN --summarize: the model didn't answer within llm.timeout (50ms); no summary",
 			wantCalls: 1,
+			atMost:    true,
 		},
 		{
 			name:     "offline",
@@ -251,7 +257,14 @@ func TestSummarize_warnings(t *testing.T) {
 			assert.Equal(t, cli.ExitFindings, code)
 			assert.Contains(t, stderr, tt.wantWarn)
 			assert.Nil(t, decodeDigest(t, out).Summary)
-			assert.Equal(t, tt.wantCalls, s.llm.calls)
+			s.llm.mu.Lock()
+			calls := s.llm.calls
+			s.llm.mu.Unlock()
+			if tt.atMost {
+				assert.LessOrEqual(t, calls, tt.wantCalls)
+			} else {
+				assert.Equal(t, tt.wantCalls, calls)
+			}
 		})
 	}
 }

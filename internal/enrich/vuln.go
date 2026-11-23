@@ -38,6 +38,8 @@ type Vuln struct {
 	FixedByTarget *bool `json:"fixed_by_target,omitempty"`
 	// Suppressed says why the advisory doesn't count; absent when it does.
 	Suppressed *Suppression `json:"suppressed,omitempty"`
+	KEV        *KEV         `json:"kev,omitempty"`  // with --kev, when a CVE alias is in the catalog
+	EPSS       *EPSS        `json:"epss,omitempty"` // with --epss, when EPSS scores a CVE alias
 
 	purl string // the package URL of Package at the current version
 }

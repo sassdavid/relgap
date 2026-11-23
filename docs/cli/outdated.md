@@ -53,10 +53,17 @@ Config vulns.ignore and OpenVEX documents in vulns.vex or --vex suppress advisor
 'relgap audit' says: VULNS and --fail-on vuln leave them out, and the "Suppressed" list and
 suppressed in --format json give the reason.
 
+--kev (config vulns.kev) marks the advisories whose CVE is in the CISA Known Exploited
+Vulnerabilities catalog, which relgap fetches from www.cisa.gov once a day: VULNS counts them
+as "1 KEV", and --format json and SARIF have kev with the date CISA added it. --epss (config
+vulns.epss) adds each advisory's FIRST EPSS score, the probability of exploitation in the next
+30 days, from api.first.org, to --format json and SARIF. Advisories in the catalog sort first,
+then by severity and EPSS score. When a feed is down, relgap warns and prints the rest.
+
 --binaries also reads the Go build info of each pinned tool's installed executables (on
 PATH and in mise's installs directory) and lists the OSV vulnerabilities of the Go version
-and main module they were built with. Like govulncheck's binary mode, minus the check that
-the binary calls the vulnerable code.
+and main module they were built with, suppressed and marked the same way. Like govulncheck's
+binary mode, minus the check that the binary calls the vulnerable code.
 
 --format sarif writes a SARIF 2.1.0 log for GitHub code scanning, located at each pin's
 file and line: a result per pin behind latest (outdated), per pin on an EOL cycle (eol), per
@@ -64,15 +71,16 @@ upgrade with breaking changes or deprecations (breaking, deprecation), per advis
 affects a pin (one rule per OSV ID), per pin or file that failed (failed), and per pin not
 checked for vulnerabilities (unchecked, a note). The results don't depend on --fail-on.
 
---fail-on takes breaking, deprecation, eol, vuln and outdated. Each value counts findings:
+--fail-on takes breaking, deprecation, eol, vuln, outdated and kev. Each value counts findings:
 outdated counts the pins further behind than --max-behind (major:N, minor:N, patch:N,
 releases:N or days:N; empty means any pin behind latest), breaking and deprecation count
 the pins whose digest has such an entry, eol counts the pins on an EOL cycle, and vuln
 counts the advisories that affect a pin at or above --vuln-severity or of unknown severity,
-and with --vuln-fixable only those with a fixed version above CURRENT. A value whose count
-reaches --min-count (default 1) exits 3. Otherwise a tool or file that
-failed exits 1, and so does an endoflife.date outage under --fail-on eol or an OSV outage
-under --fail-on vuln, since a pass on partial data proves nothing.
+and with --vuln-fixable only those with a fixed version above CURRENT. kev counts the
+advisories in the KEV catalog, whatever their severity, and needs --kev. A value whose count
+reaches --min-count (default 1) exits 3. Otherwise a tool or file that failed exits 1, and so
+does an endoflife.date outage under --fail-on eol, an OSV outage under --fail-on vuln or a KEV
+outage under --fail-on kev, since a pass on partial data proves nothing.
 
 ## Usage
 
@@ -91,7 +99,9 @@ relgap outdated [path] [flags]
 | Flag | Description | Type | Default | Values | Config key | Notes |
 |---|---|---|---|---|---|---|
 | `--binaries` | also check the Go version and main module of the pinned tools' installed executables against OSV | bool |  |  |  |  |
-| `--fail-on` | exit 3 when this matches: breaking, deprecation, eol, vuln or outdated; repeatable (config policy.fail\_on) | list, repeatable |  | `breaking`: a breaking change in the range<br>`deprecation`: a deprecation in the range<br>`eol`: a pinned version past its end of life<br>`vuln`: a known vulnerability in a pinned version<br>`outdated`: a pin further behind than --max-behind | [`policy.fail_on`](/reference/config#policy-fail-on) |  |
+| `--epss` | add each advisory's FIRST EPSS score, asking api.first.org about its CVE IDs (config vulns.epss) | bool |  |  | [`vulns.epss`](/reference/config#vulns-epss) |  |
+| `--fail-on` | exit 3 when this matches: breaking, deprecation, eol, vuln, outdated or kev; repeatable (config policy.fail\_on) | list, repeatable |  | `breaking`: a breaking change in the range<br>`deprecation`: a deprecation in the range<br>`eol`: a pinned version past its end of life<br>`vuln`: a known vulnerability in a pinned version<br>`outdated`: a pin further behind than --max-behind<br>`kev`: a known vulnerability in the CISA KEV catalog; needs --kev | [`policy.fail_on`](/reference/config#policy-fail-on) |  |
+| `--kev` | mark advisories in the CISA Known Exploited Vulnerabilities catalog, fetched from www.cisa.gov (config vulns.kev) | bool |  |  | [`vulns.kev`](/reference/config#vulns-kev) |  |
 | `--max-behind` | how far behind --fail-on outdated allows, such as minor:2, releases:10 or days:90 (config policy.max\_behind) | string |  | `major:1`: at most one major version behind<br>`minor:2`: at most two minor versions behind<br>`patch:5`: at most five patch versions behind<br>`releases:10`: at most ten releases behind<br>`days:90`: the first newer release is at most 90 days old | [`policy.max_behind`](/reference/config#policy-max-behind) |  |
 | `--md-max-chars` | cut Markdown output to this many characters at a row or section boundary; 0 means no limit | int | `60000` |  |  |  |
 | `--min-count` | findings a --fail-on value needs before it exits 3 | int | `1` |  |  |  |
@@ -117,6 +127,7 @@ The [global flags](/cli/global-flags) work with every command.
 | `eol` | a pinned version past its end of life |
 | `vuln` | a known vulnerability in a pinned version |
 | `outdated` | a pin further behind than --max-behind |
+| `kev` | a known vulnerability in the CISA KEV catalog; needs --kev |
 
 ## Exit codes
 
@@ -138,6 +149,7 @@ relgap outdated
 relgap outdated ~/src/infra --format md
 relgap outdated --fail-on outdated --max-behind minor:2
 relgap outdated --fail-on eol --fail-on vuln --vuln-severity high
+relgap outdated --kev --epss --fail-on kev
 relgap outdated --fail-on outdated --min-count 5 --format sarif > relgap.sarif
 relgap outdated --binaries --format json | jq '.data.binaries[]'
 relgap outdated --format json | jq '.data.pins[] | select(.status == "outdated")'
