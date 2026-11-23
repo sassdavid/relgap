@@ -26,7 +26,7 @@ type Package struct {
 // Query asks which vulnerabilities affect one version of a package.
 type Query struct {
 	Package Package `json:"package"`
-	Version string  `json:"version"`
+	Version string  `json:"version,omitempty"` // empty asks about every version
 }
 
 // Record is an OSV vulnerability record, reduced to the fields relgap reads.
@@ -160,6 +160,31 @@ func (c *OSVClient) batch(
 		next[j] = r.NextPageToken
 	}
 	return ids, next, nil
+}
+
+// Known reports, for each package, whether OSV has any record of it. It reads one page per
+// package, sent as versionless queries in batches.
+func (c *OSVClient) Known(ctx context.Context, pkgs []Package) ([]bool, error) {
+	qs := make([]Query, len(pkgs))
+	for i, p := range pkgs {
+		qs[i] = Query{Package: p}
+	}
+	out := make([]bool, len(pkgs))
+	for start := 0; start < len(qs); start += maxBatch {
+		end := min(start+maxBatch, len(qs))
+		idx := make([]int, 0, end-start)
+		for i := start; i < end; i++ {
+			idx = append(idx, i)
+		}
+		ids, _, err := c.batch(ctx, qs, idx, nil)
+		if err != nil {
+			return nil, err
+		}
+		for j, i := range idx {
+			out[i] = len(ids[j]) > 0
+		}
+	}
+	return out, nil
 }
 
 // Vuln returns the record of id.

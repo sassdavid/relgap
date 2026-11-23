@@ -101,9 +101,10 @@ EOL](/guides/outdated) says how CURRENT and LATEST are chosen.
 
 ## EOL shows ? or VULNS is empty
 
-EOL and VULNS need a curated registry entry that names an endoflife.date product and OSV
-packages ([Supported tools](/reference/tools)). `?` means endoflife.date doesn't list the
-pin's release cycle. When endoflife.date or OSV is down, relgap warns and prints the rest; under
+EOL needs a curated registry entry that names an endoflife.date product
+([Supported tools](/reference/tools)). `?` means endoflife.date doesn't list the pin's release
+cycle. VULNS is `-` when relgap has no OSV source for the tool, such as a chart or a tool on a
+private host; [EOL and vulnerabilities](/concepts/enrichment#vulnerabilities) lists the sources. When endoflife.date or OSV is down, relgap warns and prints the rest; under
 `--fail-on eol` or `--fail-on vuln` the run exits 1, since the gate can't pass on missing data.
 
 ## Still stuck

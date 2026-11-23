@@ -1,0 +1,765 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 247
+        host: api.osv.dev
+        body: '{"queries":[{"package":{"ecosystem":"Go","name":"helm.sh/helm/v3/cmd/helm"}},{"package":{"ecosystem":"Go","name":"helm.sh/helm/v3/cmd"}},{"package":{"ecosystem":"Go","name":"helm.sh/helm/v3"}},{"package":{"ecosystem":"Go","name":"helm.sh/helm"}}]}'
+        headers:
+            Accept:
+                - application/json
+            Content-Type:
+                - application/json
+        url: https://api.osv.dev/v1/querybatch
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 3326
+        body: '{"results":[{},{},{"vulns":[{"id":"GHSA-4hfp-h4cw-hj8p","modified":"2026-09-10T03:50:23.422045Z"},{"id":"GHSA-53c4-hhmh-vw5q","modified":"2026-09-10T03:49:56.147852Z"},{"id":"GHSA-557j-xg8c-q2mm","modified":"2026-09-10T03:50:25.790911Z"},{"id":"GHSA-56hp-xqp3-w2jf","modified":"2026-09-10T03:49:15.199568Z"},{"id":"GHSA-5xqw-8hwv-wg92","modified":"2026-09-10T03:50:57.093727Z"},{"id":"GHSA-67fx-wx78-jx33","modified":"2026-09-10T03:49:47.242658Z"},{"id":"GHSA-6rx9-889q-vv2r","modified":"2026-09-10T03:49:56.178087Z"},{"id":"GHSA-7hfp-qfw3-5jxh","modified":"2026-09-10T03:49:42.554581Z"},{"id":"GHSA-9h84-qmv7-982p","modified":"2026-09-10T03:50:26.749446Z"},{"id":"GHSA-9vp5-m38w-j776","modified":"2026-07-08T06:28:46.803089Z"},{"id":"GHSA-c38g-469g-cmgx","modified":"2026-07-08T06:27:57.157120Z"},{"id":"GHSA-c52f-pq47-2r9j","modified":"2026-07-08T06:00:54.727183Z"},{"id":"GHSA-cjjc-xp8v-855w","modified":"2026-09-10T03:49:05.755494Z"},{"id":"GHSA-f9f8-9pmf-xv68","modified":"2026-09-10T03:50:26.950698Z"},{"id":"GHSA-hr2v-4r36-88hr","modified":"2026-09-10T03:51:02.108024Z"},{"id":"GHSA-jm56-5h66-w453","modified":"2026-07-08T06:27:39.471417Z"},{"id":"GHSA-m54r-vrmv-hw33","modified":"2026-07-08T06:28:31.540338Z"},{"id":"GHSA-pwcw-6f5g-gxf8","modified":"2026-09-10T03:50:07.877081Z"},{"id":"GHSA-q8q8-93cv-v6h8","modified":"2026-09-10T03:49:14.778452Z"},{"id":"GHSA-qq3j-xp49-j73f","modified":"2026-07-08T06:00:15.958618Z"},{"id":"GHSA-r53h-jv2g-vpx6","modified":"2026-09-10T03:50:09.851138Z"},{"id":"GHSA-v53g-5gjp-272r","modified":"2026-09-10T03:50:09.883919Z"},{"id":"GO-2022-0384","modified":"2026-02-04T04:12:59.421557Z"},{"id":"GO-2022-0962","modified":"2026-02-04T03:12:19.983931Z"},{"id":"GO-2022-1040","modified":"2024-05-20T16:03:47Z"},{"id":"GO-2022-1165","modified":"2026-02-04T04:12:11.328814Z"},{"id":"GO-2022-1166","modified":"2026-02-04T04:39:30.992841Z"},{"id":"GO-2022-1167","modified":"2026-02-04T04:40:15.797220Z"},{"id":"GO-2023-1547","modified":"2026-02-04T04:24:25.402649Z"},{"id":"GO-2024-2554","modified":"2026-02-04T02:33:37.539707Z"},{"id":"GO-2024-2575","modified":"2026-02-04T03:44:38.199685Z"},{"id":"GO-2025-3601","modified":"2026-02-04T03:52:05.842514Z"},{"id":"GO-2025-3602","modified":"2026-02-04T04:18:31.960543Z"},{"id":"GO-2025-3802","modified":"2026-02-04T04:11:16.982399Z"},{"id":"GO-2025-3887","modified":"2026-02-04T03:43:48.268495Z"},{"id":"GO-2025-3888","modified":"2026-02-04T02:19:08.289937Z"},{"id":"GO-2026-5435","modified":"2026-08-21T22:26:53.915469Z"}]},{"vulns":[{"id":"GHSA-9vp5-m38w-j776","modified":"2026-07-08T06:28:46.803089Z"},{"id":"GHSA-c52f-pq47-2r9j","modified":"2026-07-08T06:00:54.727183Z"},{"id":"GHSA-jm56-5h66-w453","modified":"2026-07-08T06:27:39.471417Z"},{"id":"GHSA-m54r-vrmv-hw33","modified":"2026-07-08T06:28:31.540338Z"},{"id":"GHSA-p5pc-m4q7-7qm9","modified":"2024-08-20T20:58:38.061127Z"},{"id":"GHSA-x6r5-vxfg-gq3v","modified":"2024-08-20T20:58:42.250847Z"},{"id":"GHSA-xrxm-mvqm-r553","modified":"2024-08-20T20:58:36.215106Z"},{"id":"GO-2023-1938","modified":"2026-03-03T04:53:59.593249Z"},{"id":"GO-2023-1948","modified":"2026-03-03T04:54:01.882865Z"},{"id":"GO-2023-1993","modified":"2026-03-03T04:54:04.797914Z"},{"id":"GO-2025-3887","modified":"2026-02-04T03:43:48.268495Z"},{"id":"GO-2025-3888","modified":"2026-02-04T02:19:08.289937Z"}]}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "3326"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:43:13 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-b3632895098451e1d2bfb2102742547e-4a345335ce3559fd-00
+            X-Cloud-Trace-Context:
+                - b3632895098451e1d2bfb2102742547e/5346990148153596413
+            X-Envoy-Decorator-Operation:
+                - ingress QueryAffectedBatch
+        status: 200 OK
+        code: 200
+        duration: 865.620209ms
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 88
+        host: api.osv.dev
+        body: '{"queries":[{"package":{"ecosystem":"Go","name":"helm.sh/helm/v3"},"version":"3.14.0"}]}'
+        headers:
+            Accept:
+                - application/json
+            Content-Type:
+                - application/json
+        url: https://api.osv.dev/v1/querybatch
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1089
+        body: '{"results":[{"vulns":[{"id":"GHSA-4hfp-h4cw-hj8p","modified":"2026-09-10T03:50:23.422045Z"},{"id":"GHSA-557j-xg8c-q2mm","modified":"2026-09-10T03:50:25.790911Z"},{"id":"GHSA-5xqw-8hwv-wg92","modified":"2026-09-10T03:50:57.093727Z"},{"id":"GHSA-9h84-qmv7-982p","modified":"2026-09-10T03:50:26.749446Z"},{"id":"GHSA-f9f8-9pmf-xv68","modified":"2026-09-10T03:50:26.950698Z"},{"id":"GHSA-hr2v-4r36-88hr","modified":"2026-09-10T03:51:02.108024Z"},{"id":"GHSA-r53h-jv2g-vpx6","modified":"2026-09-10T03:50:09.851138Z"},{"id":"GHSA-v53g-5gjp-272r","modified":"2026-09-10T03:50:09.883919Z"},{"id":"GO-2024-2554","modified":"2026-02-04T02:33:37.539707Z"},{"id":"GO-2024-2575","modified":"2026-02-04T03:44:38.199685Z"},{"id":"GO-2025-3601","modified":"2026-02-04T03:52:05.842514Z"},{"id":"GO-2025-3602","modified":"2026-02-04T04:18:31.960543Z"},{"id":"GO-2025-3802","modified":"2026-02-04T04:11:16.982399Z"},{"id":"GO-2025-3887","modified":"2026-02-04T03:43:48.268495Z"},{"id":"GO-2025-3888","modified":"2026-02-04T02:19:08.289937Z"},{"id":"GO-2026-5435","modified":"2026-08-21T22:26:53.915469Z"}]}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "1089"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:43:13 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-ccc08b948dbf1daad2bfb2102742515d-912867b0303e5223-00
+            X-Cloud-Trace-Context:
+                - ccc08b948dbf1daad2bfb2102742515d/10459724140989272611
+            X-Envoy-Decorator-Operation:
+                - ingress QueryAffectedBatch
+        status: 200 OK
+        code: 200
+        duration: 293.834291ms
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/GHSA-557j-xg8c-q2mm
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 3107
+        body: '{"id":"GHSA-557j-xg8c-q2mm","summary":"Helm vulnerable to Code Injection through malicious chart.yaml content","details":"A Helm contributor discovered that a specially crafted `Chart.yaml` file along with a specially linked `Chart.lock` file can lead to local code execution when dependencies are updated.\n\n### Impact\n\nFields in a `Chart.yaml` file, that are carried over to a `Chart.lock` file when dependencies are updated and this file is written, can be crafted in a way that can cause execution if that same content were in a file that is executed (e.g., a `bash.rc` file or shell script). If the `Chart.lock` file is symlinked to one of these files updating dependencies will write the lock file content to the symlinked file. This can lead to unwanted execution. Helm warns of the symlinked file but did not stop execution due to symlinking.\n\nThis affects when dependencies are updated. When using the `helm` command this happens when `helm dependency update` is run. `helm dependency build` can write a lock file when one does not exist but this vector requires one to already exist. This affects the Helm SDK when the downloader `Manager` performs an update.\n\n### Patches\n\nThis issue has been resolved in Helm v3.18.4\n\n### Workarounds\n\nEnsure the `Chart.lock` file in a chart is not a symlink prior to updating dependencies.\n\n### For more information\n\nHelm''s security policy is spelled out in detail in our [SECURITY](https://github.com/helm/community/blob/master/SECURITY.md) document.\n\n### Credits\n\nDisclosed by Jakub Ciolek at AlphaSense.","aliases":["BIT-helm-2025-53547","CVE-2025-53547","GO-2025-3802"],"modified":"2026-09-10T03:50:25.790911761Z","published":"2025-07-08T23:20:54Z","database_specific":{"cwe_ids":["CWE-94"],"severity":"HIGH","github_reviewed":true,"github_reviewed_at":"2025-07-08T23:20:54Z","nvd_published_at":"2025-07-08T22:15:27Z"},"references":[{"type":"WEB","url":"https://github.com/helm/helm/security/advisories/GHSA-557j-xg8c-q2mm"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2025-53547"},{"type":"WEB","url":"https://github.com/helm/helm/commit/4b8e61093d8f579f1165cdc6bd4b43fa5455f571"},{"type":"PACKAGE","url":"https://github.com/helm/helm"},{"type":"WEB","url":"https://news.ycombinator.com/item?id=44506696"}],"affected":[{"package":{"name":"helm.sh/helm/v3","ecosystem":"Go","purl":"pkg:golang/helm.sh/helm/v3"},"ranges":[{"type":"SEMVER","events":[{"introduced":"3.18.0-rc.1"},{"fixed":"3.18.4"}]}],"database_specific":{"source":"https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2025/07/GHSA-557j-xg8c-q2mm/GHSA-557j-xg8c-q2mm.json"}},{"package":{"name":"helm.sh/helm/v3","ecosystem":"Go","purl":"pkg:golang/helm.sh/helm/v3"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"3.17.4"}]}],"database_specific":{"source":"https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2025/07/GHSA-557j-xg8c-q2mm/GHSA-557j-xg8c-q2mm.json"}}],"schema_version":"1.9.0","severity":[{"type":"CVSS_V3","score":"CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:C/C:L/I:H/A:H"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "3107"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:43:13 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-19b49c8df49b495bd2bfb21027425429-75851edd6ae4e34d-00
+            X-Cloud-Trace-Context:
+                - 19b49c8df49b495bd2bfb21027425429/8468208610670076749
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 192.635167ms
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/GHSA-4hfp-h4cw-hj8p
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 2189
+        body: '{"id":"GHSA-4hfp-h4cw-hj8p","summary":"Helm Allows A Specially Crafted Chart Archive To Cause Out Of Memory Termination","details":"A Helm contributor discovered that a specially crafted chart archive file can cause Helm to use all available memory and have an out of memory (OOM) termination.\n\n### Impact\nA chart archive file can be crafted in a manner where it expands to be significantly larger uncompressed than compressed (e.g., \u003e800x difference). When Helm loads this specially crafted chart, memory can be exhausted causing the application to terminate.\n\n### Patches\nThis issue has been resolved in Helm v3.17.3.\n\n### Workarounds\nEnsure that any chart archive files being loaded by Helm do not contain files that are large enough to cause the Helm Client or SDK to use up available memory leading to a termination.\n\n### For more information\nHelm''s security policy is spelled out in detail in our [SECURITY](https://github.com/helm/community/blob/master/SECURITY.md) document.\n\n### Credits\nDisclosed by Jakub Ciolek at AlphaSense.","aliases":["BIT-helm-2025-32386","CVE-2025-32386","GO-2025-3601"],"modified":"2026-09-10T03:50:23.422045323Z","published":"2025-04-10T13:48:05Z","database_specific":{"cwe_ids":["CWE-770","CWE-789"],"severity":"MODERATE","github_reviewed":true,"github_reviewed_at":"2025-04-10T13:48:05Z","nvd_published_at":"2025-04-09T23:15:37Z"},"references":[{"type":"WEB","url":"https://github.com/helm/helm/security/advisories/GHSA-4hfp-h4cw-hj8p"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2025-32386"},{"type":"WEB","url":"https://github.com/helm/helm/commit/d8ca55fc669645c10c0681d49723f4bb8c0b1ce7"},{"type":"PACKAGE","url":"https://github.com/helm/helm"}],"affected":[{"package":{"name":"helm.sh/helm/v3","ecosystem":"Go","purl":"pkg:golang/helm.sh/helm/v3"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"3.17.3"}]}],"database_specific":{"source":"https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2025/04/GHSA-4hfp-h4cw-hj8p/GHSA-4hfp-h4cw-hj8p.json"}}],"schema_version":"1.9.0","severity":[{"type":"CVSS_V3","score":"CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:H"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "2189"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:43:13 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-26c540a14e32d84bd2bfb210274252e6-2a4467918b29fafa-00
+            X-Cloud-Trace-Context:
+                - 26c540a14e32d84bd2bfb210274252e6/3045673122812001018
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 200.025667ms
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/GHSA-5xqw-8hwv-wg92
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 2030
+        body: '{"id":"GHSA-5xqw-8hwv-wg92","summary":"Helm Allows A Specially Crafted JSON Schema To Cause A Stack Overflow","details":"A Helm contributor discovered that a specially crafted JSON Schema within a chart can lead to a stack overflow.\n\n### Impact\nA JSON Schema file within a chart can be crafted with a deeply nested chain of references, leading to parser recursion that can exceed the stack size limit and trigger a stack overflow. \n\n### Patches\nThis issue has been resolved in Helm v3.17.3.\n\n### Workarounds\nEnsure that the JSON Schema within any charts loaded by Helm does not have a large number of nested references. These JSON Schema files are larger than 10 MiB.\n\n### For more information\nHelm''s security policy is spelled out in detail in our [SECURITY](https://github.com/helm/community/blob/master/SECURITY.md) document.\n\n### Credits\nDisclosed by Jakub Ciolek at AlphaSense.","aliases":["BIT-helm-2025-32387","CVE-2025-32387","GO-2025-3602"],"modified":"2026-09-10T03:50:57.093727559Z","published":"2025-04-10T13:48:31Z","database_specific":{"github_reviewed_at":"2025-04-10T13:48:31Z","nvd_published_at":"2025-04-09T23:15:37Z","cwe_ids":["CWE-121","CWE-674"],"severity":"MODERATE","github_reviewed":true},"references":[{"type":"WEB","url":"https://github.com/helm/helm/security/advisories/GHSA-5xqw-8hwv-wg92"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2025-32387"},{"type":"WEB","url":"https://github.com/helm/helm/commit/d8ca55fc669645c10c0681d49723f4bb8c0b1ce7"},{"type":"PACKAGE","url":"https://github.com/helm/helm"}],"affected":[{"package":{"name":"helm.sh/helm/v3","ecosystem":"Go","purl":"pkg:golang/helm.sh/helm/v3"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"3.17.3"}]}],"database_specific":{"source":"https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2025/04/GHSA-5xqw-8hwv-wg92/GHSA-5xqw-8hwv-wg92.json"}}],"schema_version":"1.9.0","severity":[{"type":"CVSS_V3","score":"CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:H"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "2030"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:43:13 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-f4e3295f2569c932d2bfb210274251cd-693ea9f2aff2892c-00
+            X-Cloud-Trace-Context:
+                - f4e3295f2569c932d2bfb210274251cd/7583685682337581356
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 191.466ms
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/GHSA-9h84-qmv7-982p
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 2071
+        body: '{"id":"GHSA-9h84-qmv7-982p","summary":"Helm Charts with Specific JSON Schema Values Can Cause Memory Exhaustion","details":"A Helm contributor discovered that it was possible to craft a JSON Schema file in a manner which could cause Helm to use all available memory and have an out of memory (OOM) termination.\n\n### Impact\nA malicious chart can point `$ref` in _values.schema.json_ to a device (e.g. `/dev/*`) or other problem file which could cause Helm to use all available memory and have an out of memory (OOM) termination.\n\n### Patches\nThis issue has been resolved in Helm v3.18.5.\n\n### Workarounds\nMake sure that all Helm charts that are being loaded into Helm doesn''t have any reference of `$ref` pointing to `/dev/zero`.\n\n### References\nHelm''s security policy is spelled out in detail in our [SECURITY](https://github.com/helm/community/blob/master/SECURITY.md) document.\n\n### Credits\nDisclosed by Jakub Ciolek at AlphaSense.","aliases":["BIT-helm-2025-55199","CVE-2025-55199","GO-2025-3887"],"modified":"2026-09-10T03:50:26.749446866Z","published":"2025-08-14T00:01:34Z","database_specific":{"github_reviewed":true,"github_reviewed_at":"2025-08-14T00:01:34Z","nvd_published_at":"2025-08-14T00:15:27Z","cwe_ids":["CWE-770"],"severity":"MODERATE"},"references":[{"type":"WEB","url":"https://github.com/helm/helm/security/advisories/GHSA-9h84-qmv7-982p"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2025-55199"},{"type":"WEB","url":"https://github.com/helm/helm/commit/b78692c18f0fb38fe5ba4571a674de067a4c53a5"},{"type":"PACKAGE","url":"https://github.com/helm/helm"}],"affected":[{"package":{"name":"helm.sh/helm/v3","ecosystem":"Go","purl":"pkg:golang/helm.sh/helm/v3"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"3.18.5"}]}],"database_specific":{"source":"https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2025/08/GHSA-9h84-qmv7-982p/GHSA-9h84-qmv7-982p.json"}}],"schema_version":"1.9.0","severity":[{"type":"CVSS_V3","score":"CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:H"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "2071"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:43:13 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-48ab40084944905cd2bfb210274257b5-df061c656f740283-00
+            X-Cloud-Trace-Context:
+                - 48ab40084944905cd2bfb210274257b5/16070563542305342083
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 207.666291ms
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/GHSA-f9f8-9pmf-xv68
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 2142
+        body: '{"id":"GHSA-f9f8-9pmf-xv68","summary":"Helm May Panic Due To Incorrect YAML Content","details":"A Helm contributor discovered an improper validation of type error when parsing Chart.yaml and index.yaml files that can lead to a panic.\n\n### Impact\n\nThere are two areas of YAML validation that were impacted. First, when a `Chart.yaml` file had a `null` maintainer or the `child` or `parent` of a dependencies `import-values` could be parsed as something other than a string, `helm lint` would panic. Second, when an `index.yaml` had an empty entry in the list of chart versions Helm would panic on interactions with that repository.\n\n### Patches\n\nThis issue has been resolved in Helm v3.18.5.\n\n### Workarounds\n\nEnsure YAML files are formatted as Helm expects prior to processing them with Helm.\n\n### References\n\nHelm''s security policy is spelled out in detail in our [SECURITY](https://github.com/helm/community/blob/master/SECURITY.md) document.\n\n### Credits\n\nDisclosed by Jakub Ciolek at AlphaSense.","aliases":["BIT-helm-2025-55198","CVE-2025-55198","GO-2025-3888"],"modified":"2026-09-10T03:50:26.950698254Z","published":"2025-08-14T00:05:27Z","database_specific":{"cwe_ids":["CWE-908"],"severity":"MODERATE","github_reviewed":true,"github_reviewed_at":"2025-08-14T00:05:27Z","nvd_published_at":"2025-08-14T00:15:26Z"},"references":[{"type":"WEB","url":"https://github.com/helm/helm/security/advisories/GHSA-f9f8-9pmf-xv68"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2025-55198"},{"type":"WEB","url":"https://github.com/helm/helm/commit/ec5f59e2db56533d042a124f5bae54dd87b558e6"},{"type":"PACKAGE","url":"https://github.com/helm/helm"}],"affected":[{"package":{"name":"helm.sh/helm/v3","ecosystem":"Go","purl":"pkg:golang/helm.sh/helm/v3"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"3.18.5"}]}],"database_specific":{"source":"https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2025/08/GHSA-f9f8-9pmf-xv68/GHSA-f9f8-9pmf-xv68.json"}}],"schema_version":"1.9.0","severity":[{"type":"CVSS_V3","score":"CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:H"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "2142"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:43:13 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-9e75f280c5c4cb1fd2bfb21027425997-842400973e0579f6-00
+            X-Cloud-Trace-Context:
+                - 9e75f280c5c4cb1fd2bfb21027425997/9521736161748679158
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 208.972041ms
+    - id: 7
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/GHSA-hr2v-4r36-88hr
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 3305
+        body: '{"id":"GHSA-hr2v-4r36-88hr","summary":"Helm Chart extraction output directory collapse via `Chart.yaml` name dot-segment","details":"Helm is a package manager for Charts for Kubernetes. In Helm versions \u003c=3.20.1 and \u003c=4.1.3, a specially crafted Chart will cause `helm pull --untar  [chart URL | repo/chartname]` to write the Chart''s contents to the immediate output directory (as defaulted to the current working directory; or as given by the `--destination` and `--untardir` flags), rather than the expected output directory suffixed by the chart''s name.\n\n### Impact\n\nThe bug enables writing the Chart''s contents (unpackaged/untar''ed) to the output directory `\u003coutput dir\u003e/`, instead of the expected `\u003coutput dir\u003e/\u003cchart name\u003e/`, potentially overwriting the contents of the targeted directory.\n\nNote: a chart name containing POSIX dot-dot, or dot-dot and slashes (as if to refer to parent directories) do not resolve beyond the output directory as designed.\n\n### Patches\n\nThis issue has been resolved in Helm v3.20.2 and v4.1.3\n\nA Chart with an unexpected name (those specified to be \".\" or \"..\"), or a Chart name which results in a non-unique directory will be rejected.\n\n### Workarounds\n\nEnsure the the name of the Chart does not comprise/contain POSIX pathname special directory references ie. dot-dot (\"..\") or dot (\".\"). In addition, ensuring that the `pull --untar` flag (or equivalent SDK option) refers to a unique/empty output directory prevents chart extraction from inadvertently overwriting existing files within the specified directory.\n\n### Credits\n\nOleh Konko\n@1seal","aliases":["BIT-helm-2026-35206","CVE-2026-35206","GO-2026-5435"],"modified":"2026-09-10T03:51:02.108024621Z","published":"2026-04-10T15:33:09Z","database_specific":{"severity":"MODERATE","github_reviewed":true,"github_reviewed_at":"2026-04-10T15:33:09Z","nvd_published_at":"2026-04-09T21:16:09Z","cwe_ids":["CWE-22"]},"references":[{"type":"WEB","url":"https://github.com/helm/helm/security/advisories/GHSA-hr2v-4r36-88hr"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2026-35206"},{"type":"WEB","url":"https://github.com/helm/helm/commit/4e7994d4467182f535b6797c94b5b0e994a91436"},{"type":"PACKAGE","url":"https://github.com/helm/helm"},{"type":"WEB","url":"https://github.com/helm/helm/releases/tag/v4.1.4"}],"affected":[{"package":{"name":"helm.sh/helm/v4","ecosystem":"Go","purl":"pkg:golang/helm.sh/helm/v4"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"4.1.4"}]}],"database_specific":{"last_known_affected_version_range":"\u003c= 4.1.3","source":"https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2026/04/GHSA-hr2v-4r36-88hr/GHSA-hr2v-4r36-88hr.json"}},{"package":{"name":"helm.sh/helm/v3","ecosystem":"Go","purl":"pkg:golang/helm.sh/helm/v3"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"3.20.2"}]}],"database_specific":{"last_known_affected_version_range":"\u003c= 3.20.1","source":"https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2026/04/GHSA-hr2v-4r36-88hr/GHSA-hr2v-4r36-88hr.json"}}],"schema_version":"1.9.0","severity":[{"type":"CVSS_V4","score":"CVSS:4.0/AV:L/AC:L/AT:N/PR:N/UI:P/VC:N/VI:L/VA:L/SC:N/SI:N/SA:N"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "3305"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:43:13 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-8fc12d2ef65a7becd2bfb2102742519e-1284c5c8d60b75bb-00
+            X-Cloud-Trace-Context:
+                - 8fc12d2ef65a7becd2bfb2102742519e/1334408855983715771
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 203.068625ms
+    - id: 8
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/GHSA-r53h-jv2g-vpx6
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 2518
+        body: '{"id":"GHSA-r53h-jv2g-vpx6","summary":"Helm''s Missing YAML Content Leads To Panic","details":"A Helm contributor discovered uninitialized variable vulnerability when Helm parses index and plugin yaml files missing expected content.\n\n### Impact\n\nWhen either an `index.yaml` file or a plugins `plugin.yaml` file were missing all metadata a panic would occur in Helm.\n\nIn the Helm SDK this is found when using the `LoadIndexFile` or `DownloadIndexFile` functions in the `repo` package or the `LoadDir` function in the `plugin` package. For the Helm client this impacts functions around adding a repository and all Helm functions if a malicious plugin is added as Helm inspects all known plugins on each invocation.\n\n### Patches\n\nThis issue has been resolved in Helm v3.14.2.\n\n### Workarounds\n\nIf a malicious plugin has been added which is causing all Helm client commands to panic, the malicious plugin can be manually removed from the filesystem.\n\nIf using Helm SDK versions prior to 3.14.2, calls to affected functions can use `recover` to catch the panic.\n\n### For more information\n\nHelm''s security policy is spelled out in detail in our [SECURITY](https://github.com/helm/community/blob/master/SECURITY.md) document.\n\n### Credits\n\nDisclosed by Jakub Ciolek at AlphaSense.","aliases":["BIT-helm-2024-26147","CVE-2024-26147","GO-2024-2575"],"modified":"2026-09-10T03:50:09.851138804Z","published":"2024-02-22T19:34:47Z","database_specific":{"github_reviewed_at":"2024-02-22T19:34:47Z","nvd_published_at":"2024-02-21T23:15:08Z","cwe_ids":["CWE-457","CWE-908"],"severity":"HIGH","github_reviewed":true},"references":[{"type":"WEB","url":"https://github.com/helm/helm/security/advisories/GHSA-r53h-jv2g-vpx6"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2024-26147"},{"type":"WEB","url":"https://github.com/helm/helm/commit/bb4cc9125503a923afb7988f3eb478722a8580af"},{"type":"PACKAGE","url":"https://github.com/helm/helm"}],"affected":[{"package":{"name":"helm.sh/helm/v3","ecosystem":"Go","purl":"pkg:golang/helm.sh/helm/v3"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"3.14.2"}]}],"database_specific":{"source":"https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2024/02/GHSA-r53h-jv2g-vpx6/GHSA-r53h-jv2g-vpx6.json"}}],"schema_version":"1.9.0","severity":[{"type":"CVSS_V3","score":"CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"},{"type":"CVSS_V4","score":"CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:N/VI:N/VA:H/SC:N/SI:N/SA:N"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "2518"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:43:14 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-76758bfe1704dcf5d2bfb210274254b5-5485e5cc67d1fe68-00
+            X-Cloud-Trace-Context:
+                - 76758bfe1704dcf5d2bfb210274254b5/6090526737166368360
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 195.308792ms
+    - id: 9
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/GHSA-v53g-5gjp-272r
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 2058
+        body: '{"id":"GHSA-v53g-5gjp-272r","summary":"Helm dependency management path traversal","details":"A Helm contributor discovered a path traversal vulnerability when Helm saves a chart including at download time.\n\n### Impact\n\nWhen either the Helm client or SDK is used to save a chart whose name within the `Chart.yaml` file includes a relative path change, the chart would be saved outside its expected directory based on the changes in the relative path. The validation and linting did not detect the path changes in the name.\n\n### Patches\n\nThis issue has been resolved in Helm v3.14.1.\n\n### Workarounds\n\nCheck all charts used by Helm for path changes in their name as found in the `Chart.yaml` file. This includes dependencies.\n\n### Credits\n\nDisclosed by Dominykas Blyžė at Nearform Ltd.","aliases":["BIT-helm-2024-25620","CVE-2024-25620","GO-2024-2554"],"modified":"2026-09-10T03:50:09.883919745Z","published":"2024-02-15T15:34:40Z","database_specific":{"github_reviewed":true,"github_reviewed_at":"2024-02-15T15:34:40Z","nvd_published_at":"2024-02-15T00:15:45Z","cwe_ids":["CWE-22","CWE-23"],"severity":"MODERATE"},"references":[{"type":"WEB","url":"https://github.com/helm/helm/security/advisories/GHSA-v53g-5gjp-272r"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2024-25620"},{"type":"WEB","url":"https://github.com/helm/helm/commit/0d0f91d1ce277b2c8766cdc4c7aa04dbafbf2503"},{"type":"PACKAGE","url":"https://github.com/helm/helm"},{"type":"WEB","url":"https://github.com/helm/helm/releases/tag/v3.14.1"}],"affected":[{"package":{"name":"helm.sh/helm/v3","ecosystem":"Go","purl":"pkg:golang/helm.sh/helm/v3"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"3.14.1"}]}],"database_specific":{"last_known_affected_version_range":"\u003c= 3.14.0","source":"https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2024/02/GHSA-v53g-5gjp-272r/GHSA-v53g-5gjp-272r.json"}}],"schema_version":"1.9.0","severity":[{"type":"CVSS_V3","score":"CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:L/I:L/A:N"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "2058"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:43:14 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-60d3ed60873c3167d2bfb2102742595a-8469e104780b2da6-00
+            X-Cloud-Trace-Context:
+                - 60d3ed60873c3167d2bfb2102742595a/9541404694871223718
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 187.132791ms
+    - id: 10
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/GO-2024-2554
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1246
+        body: '{"id":"GO-2024-2554","summary":"Path traversal in helm.sh/helm/v3","details":"Path traversal in helm.sh/helm/v3","aliases":["BIT-helm-2024-25620","CVE-2024-25620","GHSA-v53g-5gjp-272r"],"modified":"2026-02-04T02:33:37.539707Z","published":"2024-02-29T17:17:45Z","related":["CGA-xwp5-6j86-c2cw"],"database_specific":{"review_status":"REVIEWED","url":"https://pkg.go.dev/vuln/GO-2024-2554"},"references":[{"type":"ADVISORY","url":"https://github.com/helm/helm/security/advisories/GHSA-v53g-5gjp-272r"},{"type":"FIX","url":"https://github.com/helm/helm/commit/0d0f91d1ce277b2c8766cdc4c7aa04dbafbf2503"}],"affected":[{"package":{"name":"helm.sh/helm/v3","ecosystem":"Go","purl":"pkg:golang/helm.sh/helm/v3"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"3.14.1"}]}],"ecosystem_specific":{"imports":[{"path":"helm.sh/helm/v3/pkg/chart","symbols":["Chart.Validate","Metadata.Validate"]},{"path":"helm.sh/helm/v3/pkg/chartutil","symbols":["CreateFrom","Save","SaveDir","writeTarContents"]},{"path":"helm.sh/helm/v3/pkg/lint/rules","symbols":["Chartfile","Dependencies","Templates","TemplatesWithKubeVersion","validateChartName"]}]},"database_specific":{"source":"https://vuln.go.dev/ID/GO-2024-2554.json"}}],"schema_version":"1.7.3"}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "1246"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:43:14 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-5d48bc6a71f37956d2bfb21027425689-547cfa15db2c23e1-00
+            X-Cloud-Trace-Context:
+                - 5d48bc6a71f37956d2bfb21027425689/6088015768076428257
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 228.912083ms
+    - id: 11
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/GO-2024-2575
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1379
+        body: '{"id":"GO-2024-2575","summary":"Helm''s Missing YAML Content Leads To Panic in helm.sh/helm/v3","details":"Helm''s Missing YAML Content Leads To Panic in helm.sh/helm/v3","aliases":["BIT-helm-2024-26147","CVE-2024-26147","GHSA-r53h-jv2g-vpx6"],"modified":"2026-02-04T03:44:38.199685Z","published":"2024-06-04T15:19:21Z","related":["CGA-5qjm-gjfh-jwcx"],"database_specific":{"review_status":"REVIEWED","url":"https://pkg.go.dev/vuln/GO-2024-2575"},"references":[{"type":"ADVISORY","url":"https://github.com/helm/helm/security/advisories/GHSA-r53h-jv2g-vpx6"},{"type":"FIX","url":"https://github.com/helm/helm/commit/bb4cc9125503a923afb7988f3eb478722a8580af"}],"affected":[{"package":{"name":"helm.sh/helm/v3","ecosystem":"Go","purl":"pkg:golang/helm.sh/helm/v3"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"3.14.2"}]}],"ecosystem_specific":{"imports":[{"path":"helm.sh/helm/v3/pkg/plugin","symbols":["FindPlugins","LoadAll","LoadDir","validatePluginData"]},{"path":"helm.sh/helm/v3/pkg/repo","symbols":["ChartRepository.DownloadIndexFile","ChartRepository.Load","FindChartInAuthAndTLSAndPassRepoURL","FindChartInAuthAndTLSRepoURL","FindChartInAuthRepoURL","FindChartInRepoURL","LoadIndexFile","loadIndex"]}]},"database_specific":{"source":"https://vuln.go.dev/ID/GO-2024-2575.json"}}],"schema_version":"1.7.3","credits":[{"name":"Jakub Ciolek at AlphaSense"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "1379"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:43:14 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-7f99f14f8ef46dc9d2bfb21027425c71-ae61556b13732837-00
+            X-Cloud-Trace-Context:
+                - 7f99f14f8ef46dc9d2bfb21027425c71/12565418353716570167
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 354.880542ms
+    - id: 12
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/GO-2025-3601
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1033
+        body: '{"id":"GO-2025-3601","summary":"Helm Allows A Specially Crafted Chart Archive To Cause Out Of Memory Termination in helm.sh/helm","details":"Helm Allows A Specially Crafted Chart Archive To Cause Out Of Memory Termination in helm.sh/helm","aliases":["BIT-helm-2025-32386","CVE-2025-32386","GHSA-4hfp-h4cw-hj8p"],"modified":"2026-02-04T03:52:05.842514Z","published":"2025-04-10T16:27:06Z","related":["CGA-vj43-8whr-8qgq"],"database_specific":{"review_status":"REVIEWED","url":"https://pkg.go.dev/vuln/GO-2025-3601"},"references":[{"type":"ADVISORY","url":"https://github.com/helm/helm/security/advisories/GHSA-4hfp-h4cw-hj8p"},{"type":"WEB","url":"https://github.com/helm/helm/commit/d8ca55fc669645c10c0681d49723f4bb8c0b1ce7"}],"affected":[{"package":{"name":"helm.sh/helm/v3","ecosystem":"Go","purl":"pkg:golang/helm.sh/helm/v3"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"3.17.3"}]}],"ecosystem_specific":{},"database_specific":{"source":"https://vuln.go.dev/ID/GO-2025-3601.json"}}],"schema_version":"1.7.3"}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "1033"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:43:14 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-8e5ac9e22ea07312d2bfb210274253c6-f5aca991e0c75157-00
+            X-Cloud-Trace-Context:
+                - 8e5ac9e22ea07312d2bfb210274253c6/17702710679293088087
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 230.3875ms
+    - id: 13
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/GO-2025-3602
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1011
+        body: '{"id":"GO-2025-3602","summary":"Helm Allows A Specially Crafted JSON Schema To Cause A Stack Overflow in helm.sh/helm","details":"Helm Allows A Specially Crafted JSON Schema To Cause A Stack Overflow in helm.sh/helm","aliases":["BIT-helm-2025-32387","CVE-2025-32387","GHSA-5xqw-8hwv-wg92"],"modified":"2026-02-04T04:18:31.960543Z","published":"2025-04-10T16:27:06Z","related":["CGA-42hx-875p-8r28"],"database_specific":{"review_status":"REVIEWED","url":"https://pkg.go.dev/vuln/GO-2025-3602"},"references":[{"type":"ADVISORY","url":"https://github.com/helm/helm/security/advisories/GHSA-5xqw-8hwv-wg92"},{"type":"WEB","url":"https://github.com/helm/helm/commit/d8ca55fc669645c10c0681d49723f4bb8c0b1ce7"}],"affected":[{"package":{"name":"helm.sh/helm/v3","ecosystem":"Go","purl":"pkg:golang/helm.sh/helm/v3"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"3.17.3"}]}],"ecosystem_specific":{},"database_specific":{"source":"https://vuln.go.dev/ID/GO-2025-3602.json"}}],"schema_version":"1.7.3"}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "1011"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:43:14 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-0fe07eca2ecb8b87d2bfb210274254be-87bb8e583301c15f-00
+            X-Cloud-Trace-Context:
+                - 0fe07eca2ecb8b87d2bfb210274254be/9780567525229183327
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 217.672875ms
+    - id: 14
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/GO-2025-3802
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1192
+        body: '{"id":"GO-2025-3802","summary":"Helm vulnerable to Code Injection through malicious chart.yaml content in helm.sh/helm","details":"Helm vulnerable to Code Injection through malicious chart.yaml content in helm.sh/helm","aliases":["BIT-helm-2025-53547","CVE-2025-53547","GHSA-557j-xg8c-q2mm"],"modified":"2026-02-04T04:11:16.982399Z","published":"2025-07-21T15:05:07Z","related":["CGA-vvg6-3pcr-q2w3"],"database_specific":{"review_status":"REVIEWED","url":"https://pkg.go.dev/vuln/GO-2025-3802"},"references":[{"type":"ADVISORY","url":"https://github.com/helm/helm/security/advisories/GHSA-557j-xg8c-q2mm"},{"type":"WEB","url":"https://github.com/helm/helm/commit/4b8e61093d8f579f1165cdc6bd4b43fa5455f571"},{"type":"WEB","url":"https://news.ycombinator.com/item?id=44506696"}],"affected":[{"package":{"name":"helm.sh/helm/v3","ecosystem":"Go","purl":"pkg:golang/helm.sh/helm/v3"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"3.18.4"}]}],"ecosystem_specific":{"imports":[{"path":"helm.sh/helm/v3/pkg/downloader","symbols":["Manager.Build","Manager.Update","writeLock"]}]},"database_specific":{"source":"https://vuln.go.dev/ID/GO-2025-3802.json"}}],"schema_version":"1.7.3"}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "1192"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:43:14 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-a2f1b35026cbba2ed2bfb21027425b29-25575675769a8636-00
+            X-Cloud-Trace-Context:
+                - a2f1b35026cbba2ed2bfb21027425b29/2690714364878161462
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 207.458166ms
+    - id: 15
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/GO-2025-3887
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1378
+        body: '{"id":"GO-2025-3887","summary":"Helm Charts with Specific JSON Schema Values Can Cause Memory Exhaustion in helm.sh/helm","details":"Helm Charts with Specific JSON Schema Values Can Cause Memory Exhaustion in helm.sh/helm","aliases":["BIT-helm-2025-55199","CVE-2025-55199","GHSA-9h84-qmv7-982p"],"modified":"2026-02-04T03:43:48.268495Z","published":"2025-08-18T19:03:32Z","related":["CGA-gpwr-gp4r-hx6m"],"database_specific":{"review_status":"REVIEWED","url":"https://pkg.go.dev/vuln/GO-2025-3887"},"references":[{"type":"ADVISORY","url":"https://github.com/helm/helm/security/advisories/GHSA-9h84-qmv7-982p"},{"type":"FIX","url":"https://github.com/helm/helm/commit/b78692c18f0fb38fe5ba4571a674de067a4c53a5"}],"affected":[{"package":{"name":"helm.sh/helm","ecosystem":"Go","purl":"pkg:golang/helm.sh/helm"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"}]}],"ecosystem_specific":{},"database_specific":{"source":"https://vuln.go.dev/ID/GO-2025-3887.json"}},{"package":{"name":"helm.sh/helm/v3","ecosystem":"Go","purl":"pkg:golang/helm.sh/helm/v3"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"3.18.5"}]}],"ecosystem_specific":{"imports":[{"path":"helm.sh/helm/v3/pkg/chartutil","symbols":["ValidateAgainstSchema","ValidateAgainstSingleSchema"]}]},"database_specific":{"source":"https://vuln.go.dev/ID/GO-2025-3887.json"}}],"schema_version":"1.7.3"}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "1378"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:43:14 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-cebc85aef0b83012d2bfb21027425a02-e27f689746791bde-00
+            X-Cloud-Trace-Context:
+                - cebc85aef0b83012d2bfb21027425a02/16320878573545659358
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 226.3505ms
+    - id: 16
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/GO-2025-3888
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1430
+        body: '{"id":"GO-2025-3888","summary":"Helm May Panic Due To Incorrect YAML Content in helm.sh/helm","details":"Helm May Panic Due To Incorrect YAML Content in helm.sh/helm","aliases":["BIT-helm-2025-55198","CVE-2025-55198","GHSA-f9f8-9pmf-xv68"],"modified":"2026-02-04T02:19:08.289937Z","published":"2025-08-18T19:03:35Z","related":["CGA-gh4w-vw29-v29x"],"database_specific":{"url":"https://pkg.go.dev/vuln/GO-2025-3888","review_status":"REVIEWED"},"references":[{"type":"ADVISORY","url":"https://github.com/helm/helm/security/advisories/GHSA-f9f8-9pmf-xv68"},{"type":"FIX","url":"https://github.com/helm/helm/commit/ec5f59e2db56533d042a124f5bae54dd87b558e6"}],"affected":[{"package":{"name":"helm.sh/helm","ecosystem":"Go","purl":"pkg:golang/helm.sh/helm"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"}]}],"ecosystem_specific":{},"database_specific":{"source":"https://vuln.go.dev/ID/GO-2025-3888.json"}},{"package":{"name":"helm.sh/helm/v3","ecosystem":"Go","purl":"pkg:golang/helm.sh/helm/v3"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"3.18.5"}]}],"ecosystem_specific":{"imports":[{"path":"helm.sh/helm/v3/pkg/chartutil","symbols":["processImportValues"]},{"symbols":["validateChartMaintainer"],"path":"helm.sh/helm/v3/pkg/lint/rules"},{"path":"helm.sh/helm/v3/pkg/repo","symbols":["loadIndex"]}]},"database_specific":{"source":"https://vuln.go.dev/ID/GO-2025-3888.json"}}],"schema_version":"1.7.3"}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "1430"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:43:14 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-bb703d11b58f645ed2bfb21027425723-b039631a2d2be982-00
+            X-Cloud-Trace-Context:
+                - bb703d11b58f645ed2bfb21027425723/12698289588425976194
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 218.280625ms
+    - id: 17
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/GO-2026-5435
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1192
+        body: '{"id":"GO-2026-5435","summary":"Helm Chart extraction output directory collapse via Chart.yaml name dot-segment in helm.sh/helm","details":"Helm Chart extraction output directory collapse via Chart.yaml name dot-segment in helm.sh/helm","aliases":["BIT-helm-2026-35206","CVE-2026-35206","GHSA-hr2v-4r36-88hr"],"modified":"2026-08-21T22:26:53.915469951Z","published":"2026-07-24T18:35:55Z","related":["CGA-2fmw-fc3p-8vp3"],"database_specific":{"url":"https://pkg.go.dev/vuln/GO-2026-5435","review_status":"REVIEWED"},"references":[{"type":"ADVISORY","url":"https://github.com/helm/helm/security/advisories/GHSA-hr2v-4r36-88hr"},{"type":"FIX","url":"https://github.com/helm/helm/commit/4e7994d4467182f535b6797c94b5b0e994a91436"},{"type":"WEB","url":"https://github.com/helm/helm/releases/tag/v4.1.4"}],"affected":[{"package":{"name":"helm.sh/helm/v3","ecosystem":"Go","purl":"pkg:golang/helm.sh/helm/v3"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"3.20.2"}]}],"ecosystem_specific":{"imports":[{"symbols":["Expand","ExpandFile"],"path":"helm.sh/helm/v3/pkg/chartutil"}]},"database_specific":{"source":"https://vuln.go.dev/ID/GO-2026-5435.json"}}],"schema_version":"1.7.5"}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "1192"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:43:15 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-5b79cbabff7dd92ad2bfb21027425be4-2b75a32b7cefdc85-00
+            X-Cloud-Trace-Context:
+                - 5b79cbabff7dd92ad2bfb21027425be4/3131588523081063557
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 197.13375ms

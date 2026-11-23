@@ -92,7 +92,7 @@ stderr '^relgap: --fail-on breaking matched 1 pin: k9s 0.50.16 \(mise.toml:3\)$'
 -- outdated.txt --
 TOOL  CURRENT  LATEST   BEHIND  BREAKING  DEPRECATION  EOL  VULNS  PIN
 gh    2.103.3  2.103.3  0       0         0            -    0      mise.toml:2
-k9s   0.50.16  0.51.0   3       1         0            -    -      mise.toml:3
+k9s   0.50.16  0.51.0   3       1         0            -    0      mise.toml:3
 
 1 of 2 compared pins are behind latest.
 -- project/mise.toml --

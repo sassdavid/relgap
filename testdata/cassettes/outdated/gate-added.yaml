@@ -270,3 +270,50 @@ interactions:
         status: 200 OK
         code: 200
         duration: 331.189542ms
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 273
+        host: api.osv.dev
+        body: '{"queries":[{"package":{"ecosystem":"Go","name":"github.com/cli/cli/v2"},"version":"2.103.3"},{"package":{"ecosystem":"Go","name":"github.com/derailed/k9s"},"version":"0.50.16"},{"package":{"ecosystem":"GIT","name":"https://github.com/derailed/k9s"},"version":"v0.50.16"}]}'
+        headers:
+            Accept:
+                - application/json
+            Content-Type:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.osv.dev/v1/querybatch
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 22
+        body: '{"results":[{},{},{}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "22"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:45:56 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-2a13910557eb741cd501716719109805-00d7c1951b4fbfcb-00
+            X-Cloud-Trace-Context:
+                - 2a13910557eb741cd501716719109805/60729966145290187
+            X-Envoy-Decorator-Operation:
+                - ingress QueryAffectedBatch
+        status: 200 OK
+        code: 200
+        duration: 318.307208ms

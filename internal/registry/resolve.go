@@ -336,6 +336,7 @@ func (r *Resolver) Resolve(ctx context.Context, input string, opts ResolveOption
 		return nil, err
 	}
 	b := newBuilder()
+	b.spec.Backend = packageBackend(input)
 	r.merge(b, id.name, id.pkg)
 	repoLayer, foundName := LayerExplicit, ""
 	if id.found != nil {
@@ -387,6 +388,14 @@ func (r *Resolver) Resolve(ctx context.Context, input string, opts ResolveOption
 		}
 	}
 	return res, nil
+}
+
+// packageBackend returns input when it names a package registry's package (npm:, pypi:).
+func packageBackend(input string) string {
+	if kind, _, _ := strings.Cut(input, ":"); kind == KindNPM || kind == KindPyPI {
+		return input
+	}
+	return ""
 }
 
 // identify finds what input names, and the tag prefix of a github:, bitbucket: or gitlab: name.
@@ -885,6 +894,9 @@ func (r *Resolver) merge(b *builder, name string, pkg *AquaEntry) {
 	}
 	if m != nil {
 		b.addAliases(append([]string{m.Short}, m.Aliases...), LayerMise)
+		if b.spec.Backend == "" && len(m.Backends) > 0 {
+			b.spec.Backend = m.Backends[0]
+		}
 		if repo, layer := r.miseRepo(m); repo != "" {
 			b.setString("repo", &b.spec.Repo, repo, layer)
 		}

@@ -1,0 +1,1140 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 182
+        host: api.osv.dev
+        body: '{"queries":[{"package":{"ecosystem":"Go","name":"github.com/cli/cli/v2"},"version":"2.40.0"},{"package":{"ecosystem":"GIT","name":"https://github.com/cli/cli"},"version":"v2.40.0"}]}'
+        headers:
+            Accept:
+                - application/json
+            Content-Type:
+                - application/json
+        url: https://api.osv.dev/v1/querybatch
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1751
+        body: '{"results":[{"vulns":[{"id":"GHSA-2m9h-r57g-45pj","modified":"2026-09-10T03:50:56.033873Z"},{"id":"GHSA-4fjg-2h4q-fwg3","modified":"2026-10-19T21:40:57.702450Z"},{"id":"GHSA-8xvp-7hj6-mcj9","modified":"2026-06-25T19:56:27.911801Z"},{"id":"GHSA-cg6r-mpgc-h9mm","modified":"2026-10-19T21:41:21.449388Z"},{"id":"GHSA-crc3-h8v6-qh57","modified":"2026-06-25T19:56:33.425534Z"},{"id":"GHSA-jwcm-9g39-pmcw","modified":"2026-09-10T03:50:20.798741Z"},{"id":"GHSA-mm27-mwq9-fr5g","modified":"2026-10-19T21:41:04.715150Z"},{"id":"GHSA-p2h2-3vg9-4p87","modified":"2026-09-10T03:50:20.953491Z"},{"id":"GO-2024-3269","modified":"2026-02-04T04:11:55.504706Z"},{"id":"GO-2024-3296","modified":"2026-02-04T03:49:15.865719Z"},{"id":"GO-2024-3310","modified":"2026-02-04T02:55:32.842111Z"},{"id":"GO-2026-5271","modified":"2026-06-25T19:45:24.910991Z"},{"id":"GO-2026-5335","modified":"2026-06-25T19:45:31.832172Z"},{"id":"GO-2026-6765","modified":"2026-10-19T21:31:53.420127Z"},{"id":"GO-2026-6766","modified":"2026-10-19T21:31:37.813588Z"},{"id":"GO-2026-6767","modified":"2026-10-19T21:31:49.979387Z"}]},{"vulns":[{"id":"CVE-2024-52308","modified":"2026-10-28T02:30:31.944052Z"},{"id":"CVE-2024-53858","modified":"2026-10-28T02:31:07.469557Z"},{"id":"CVE-2024-54132","modified":"2026-10-28T02:31:10.242883Z"},{"id":"CVE-2026-45803","modified":"2026-11-13T02:30:28.903783Z"},{"id":"CVE-2026-48501","modified":"2026-10-28T02:31:12.003075Z"},{"id":"CVE-2026-59831","modified":"2026-10-28T02:30:46.442664Z"},{"id":"CVE-2026-64652","modified":"2026-11-18T17:27:27.595191Z"},{"id":"CVE-2026-64653","modified":"2026-11-18T17:27:26.327083Z"},{"id":"CVE-2026-64654","modified":"2026-10-28T02:30:29.347415Z"},{"id":"CVE-2026-64655","modified":"2026-11-18T17:27:27.563183Z"}]}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "1751"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:43:12 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-ea0d4c3e516e6d3dd2bfb21027425e96-08213d10ed908f2a-00
+            X-Cloud-Trace-Context:
+                - ea0d4c3e516e6d3dd2bfb21027425e96/585816569449320234
+            X-Envoy-Decorator-Operation:
+                - ingress QueryAffectedBatch
+        status: 200 OK
+        code: 200
+        duration: 425.888792ms
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/CVE-2024-53858
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 4351
+        body: '{"id":"CVE-2024-53858","summary":"Recursive repository cloning can leak authentication tokens to non-GitHub submodule hosts in the gh cli","details":"The gh cli is GitHub’s official command line tool. A security vulnerability has been identified in the GitHub CLI that could leak authentication tokens when cloning repositories containing `git` submodules hosted outside of GitHub.com and ghe.com. This vulnerability stems from several `gh` commands used to clone a repository with submodules from a non-GitHub host including `gh repo clone`, `gh repo fork`, and `gh pr checkout`. These GitHub CLI commands invoke git with instructions to retrieve authentication tokens using the `credential.helper` configuration variable for any host encountered. Prior to version `2.63.0`, hosts other than GitHub.com and ghe.com are treated as GitHub Enterprise Server hosts and have tokens sourced from the following environment variables before falling back to host-specific tokens stored within system-specific secured storage: 1. `GITHUB_ENTERPRISE_TOKEN`, 2. `GH_ENTERPRISE_TOKEN` and 3. `GITHUB_TOKEN` when the `CODESPACES` environment variable is set. The result being `git` sending authentication tokens when cloning submodules. In version `2.63.0`, these GitHub CLI commands will limit the hosts for which `gh` acts as a credential helper to source authentication tokens. Additionally, `GITHUB_TOKEN` will only be used for GitHub.com and ghe.com. Users are advised to upgrade. Additionally users are advised to revoke authentication tokens used with the GitHub CLI and to review their personal security log and any relevant audit logs for actions associated with their account or enterprise","aliases":["GHSA-jwcm-9g39-pmcw","GO-2024-3296"],"modified":"2026-10-28T02:31:07.469557200Z","published":"2024-11-27T21:25:14.071Z","related":["openSUSE-SU-2024:14567-1"],"database_specific":{"cwe_ids":["CWE-200"],"osv_generated_from":"https://github.com/CVEProject/cvelistV5/tree/main/cves/2024/53xxx/CVE-2024-53858.json","cna_assigner":"GitHub_M"},"references":[{"type":"WEB","url":"https://git-scm.com/docs/gitcredentials"},{"type":"ADVISORY","url":"https://github.com/CVEProject/cvelistV5/tree/main/cves/2024/53xxx/CVE-2024-53858.json"},{"type":"ADVISORY","url":"https://github.com/cli/cli/security/advisories/GHSA-jwcm-9g39-pmcw"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2024-53858"}],"affected":[{"ranges":[{"type":"GIT","repo":"https://github.com/cli/cli","events":[{"introduced":"0"},{"fixed":"1fe14c956d057e6abda50a76d8820a6e668ba70a"}],"database_specific":{"extracted_events":[{"range":[{"introduced":"0"},{"fixed":"2.63.0"}],"source":"AFFECTED_FIELD","strategy":"StringRangeExpression"}]}}],"versions":["v2.62.0","v2.61.0","v2.60.1","v2.60.0","v2.59.0","v2.58.0","v2.57.0","v2.56.0","v2.55.0","v2.54.0","v2.53.0","v2.52.0","v2.51.0","v2.50.0","v2.49.2","v2.49.1","v2.49.0","v2.48.0","v2.47.0","v2.46.0","v2.45.0","v2.44.1","v2.44.0","v2.43.1","v2.43.0","v2.42.1","v2.42.0","v2.41.0","v2.40.1","v2.40.0","v2.39.2","v2.39.1","v2.39.0","v2.38.0","v2.37.0","v2.36.0","v2.35.0","v2.34.0","v2.33.0","v2.32.1","v2.32.0","v2.31.0","v2.30.0","v2.27.0","v2.26.1","v2.26.0","v2.25.1","v2.25.0","v2.24.3","v2.24.2","v2.24.1","v2.24.0","v2.23.0","v2.22.1","v2.22.0","v2.21.2","v2.21.1","v2.21.0","v2.20.2","v2.20.1","v2.20.0","v2.19.0","v2.18.1","v2.18.0","v2.17.0","v2.16.1","v2.16.0","v2.15.0","v2.14.7","v2.14.6","v2.14.5","v2.14.4","v2.14.3","v2.14.2","v2.14.1","v2.14.0","v2.13.0","v2.12.1","v2.12.0","v2.11.3","v2.11.2","v2.11.1","v2.11.0","v2.10.1","v2.10.0","v2.9.0","v2.8.0","v2.7.0","v2.6.0","v2.5.2","v2.4.0","v2.5.1","v2.5.0","v2.3.0","v2.2.0","v2.1.0","v2.0.0","v1.14.0","v1.12.1","v1.13.0","v1.12.0","v1.11.0","v1.10.3","v1.10.2","v1.10.1","v1.10.0","v1.9.2","v1.9.1","v1.9.0","v1.8.1","v1.8.0","v1.7.0","v1.6.1","v1.6.2","v1.6.0","v1.5.0","v1.4.0","v1.3.0","v1.2.1","v1.2.0","v1.1.0","v1.0.0","v0.12.0","v0.11.1","v0.11.0","v0.10.1","v0.10.0","v0.9.0","v0.8.0","v0.7.0","v0.6.4","v0.6.3","v0.6.2","v0.6.1","v0.6.0","v0.5.7","v0.5.6","v0.5.5","v0.5.4","v0.5.3","v0.5.2","v0.5.1","v0.5.0","v0.4.0"],"database_specific":{"source":"https://storage.googleapis.com/cve-osv-conversion/osv-output/CVE-2024-53858.json"}}],"schema_version":"1.9.2","severity":[{"type":"CVSS_V3","score":"CVSS:3.1/AV:L/AC:H/PR:N/UI:R/S:U/C:H/I:H/A:L"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "4351"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:43:12 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-af5ae502b088509ad2bfb21027425e67-22051b12561f4dcd-00
+            X-Cloud-Trace-Context:
+                - af5ae502b088509ad2bfb21027425e67/2451395337741356493
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 196.55525ms
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/CVE-2024-52308
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 4819
+        body: '{"id":"CVE-2024-52308","summary":"Connecting to a malicious Codespaces via GH CLI could allow command execution on the user''s computer","details":"The GitHub CLI version 2.6.1 and earlier are vulnerable to remote code execution through a malicious codespace SSH server when using `gh codespace ssh` or `gh codespace logs` commands. This has been patched in the cli v2.62.0.\n\nDevelopers connect to remote codespaces through an SSH server running within the devcontainer, which is generally provided through the [default devcontainer image]( https://docs.github.com/en/codespaces/setting-up-your-project-for-codespaces/adding-a-dev-container-... https://docs.github.com/en/codespaces/setting-up-your-project-for-codespaces/adding-a-dev-container-configuration/introduction-to-dev-containers#using-the-default-dev-container-configuration) . GitHub CLI [retrieves SSH connection details]( https://github.com/cli/cli/blob/30066b0042d0c5928d959e288144300cb28196c9/internal/codespaces/rpc/inv... https://github.com/cli/cli/blob/30066b0042d0c5928d959e288144300cb28196c9/internal/codespaces/rpc/invoker.go#L230-L244 ), such as remote username, which is used in [executing `ssh` commands]( https://github.com/cli/cli/blob/e356c69a6f0125cfaac782c35acf77314f18908d/pkg/cmd/codespace/ssh.go#L2... https://github.com/cli/cli/blob/e356c69a6f0125cfaac782c35acf77314f18908d/pkg/cmd/codespace/ssh.go#L263 ) for `gh codespace ssh` or `gh codespace logs` commands.\n\nThis exploit occurs when a malicious third-party devcontainer contains a modified SSH server that injects `ssh` arguments within the SSH connection details. `gh codespace ssh` and `gh codespace logs` commands could execute arbitrary code on the user''s workstation if the remote username contains something like `-oProxyCommand=\"echo hacked\" #`.  The `-oProxyCommand` flag causes `ssh` to execute the provided command while `#` shell comment causes any other `ssh` arguments to be ignored.\n\nIn `2.62.0`, the remote username information is being validated before being used.","aliases":["GHSA-p2h2-3vg9-4p87","GO-2024-3269"],"modified":"2026-10-28T02:30:31.944052640Z","published":"2024-11-14T22:55:38.693Z","related":["openSUSE-SU-2024:14509-1","openSUSE-SU-2024:14513-1","openSUSE-SU-2025:0021-1","openSUSE-SU-2026:21310-1"],"database_specific":{"cna_assigner":"GitHub_M","cwe_ids":["CWE-77"],"osv_generated_from":"https://github.com/CVEProject/cvelistV5/tree/main/cves/2024/52xxx/CVE-2024-52308.json"},"references":[{"type":"ADVISORY","url":"https://github.com/CVEProject/cvelistV5/tree/main/cves/2024/52xxx/CVE-2024-52308.json"},{"type":"ADVISORY","url":"https://github.com/cli/cli/security/advisories/GHSA-p2h2-3vg9-4p87"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2024-52308"}],"affected":[{"ranges":[{"type":"GIT","repo":"https://github.com/cli/cli","events":[{"introduced":"0"},{"fixed":"cd3f2ad064fbeca17d330e321fef0591eaa0fea5"}],"database_specific":{"extracted_events":[{"strategy":"StringRangeExpression","range":[{"introduced":"0"},{"last_affected":"2.61.0"}],"source":"AFFECTED_FIELD"},{"source":"CPE_RANGE","cpe":"cpe:2.3:a:github:cli:*:*:*:*:*:*:*:*","range":[{"introduced":"0"},{"fixed":"2.62.0"}]}]}}],"versions":["v2.61.0","v2.60.1","v2.60.0","v2.59.0","v2.58.0","v2.57.0","v2.56.0","v2.55.0","v2.54.0","v2.53.0","v2.52.0","v2.51.0","v2.50.0","v2.49.2","v2.49.1","v2.49.0","v2.48.0","v2.47.0","v2.46.0","v2.45.0","v2.44.1","v2.44.0","v2.43.1","v2.43.0","v2.42.1","v2.42.0","v2.41.0","v2.40.1","v2.40.0","v2.39.2","v2.39.1","v2.39.0","v2.38.0","v2.37.0","v2.36.0","v2.35.0","v2.34.0","v2.33.0","v2.32.1","v2.32.0","v2.31.0","v2.30.0","v2.27.0","v2.26.1","v2.26.0","v2.25.1","v2.25.0","v2.24.3","v2.24.2","v2.24.1","v2.24.0","v2.23.0","v2.22.1","v2.22.0","v2.21.2","v2.21.1","v2.21.0","v2.20.2","v2.20.1","v2.20.0","v2.19.0","v2.18.1","v2.18.0","v2.17.0","v2.16.1","v2.16.0","v2.15.0","v2.14.7","v2.14.6","v2.14.5","v2.14.4","v2.14.3","v2.14.2","v2.14.1","v2.14.0","v2.13.0","v2.12.1","v2.12.0","v2.11.3","v2.11.2","v2.11.1","v2.11.0","v2.10.1","v2.10.0","v2.9.0","v2.8.0","v2.7.0","v2.6.0","v2.5.2","v2.4.0","v2.5.1","v2.5.0","v2.3.0","v2.2.0","v2.1.0","v2.0.0","v1.14.0","v1.12.1","v1.13.0","v1.12.0","v1.11.0","v1.10.3","v1.10.2","v1.10.1","v1.10.0","v1.9.2","v1.9.1","v1.9.0","v1.8.1","v1.8.0","v1.7.0","v1.6.1","v1.6.2","v1.6.0","v1.5.0","v1.4.0","v1.3.0","v1.2.1","v1.2.0","v1.1.0","v1.0.0","v0.12.0","v0.11.1","v0.11.0","v0.10.1","v0.10.0","v0.9.0","v0.8.0","v0.7.0","v0.6.4","v0.6.3","v0.6.2","v0.6.1","v0.6.0","v0.5.7","v0.5.6","v0.5.5","v0.5.4","v0.5.3","v0.5.2","v0.5.1","v0.5.0","v0.4.0"],"database_specific":{"source":"https://storage.googleapis.com/cve-osv-conversion/osv-output/CVE-2024-52308.json"}}],"schema_version":"1.9.2","severity":[{"type":"CVSS_V3","score":"CVSS:3.1/AV:N/AC:H/PR:L/UI:R/S:C/C:H/I:H/A:H"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "4819"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:43:12 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-af7a4b045c2d2c38d2bfb21027425faa-652f040c33bf943d-00
+            X-Cloud-Trace-Context:
+                - af7a4b045c2d2c38d2bfb21027425faa/7291050772190434365
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 227.529458ms
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/CVE-2024-54132
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 3718
+        body: '{"id":"CVE-2024-54132","summary":"GitHub CLI allows downloading malicious GitHub Actions workflow artifact to result in path traversal vulnerability","details":"The GitHub CLI is GitHub’s official command line tool. A security vulnerability has been identified in GitHub CLI that could create or overwrite files in unintended directories when users download a malicious GitHub Actions workflow artifact through gh run download. This vulnerability stems from a GitHub Actions workflow artifact named .. when downloaded using gh run download. The artifact name and --dir flag are used to determine the artifact’s download path. When the artifact is named .., the resulting files within the artifact are extracted exactly 1 directory higher than the specified --dir flag value. This vulnerability is fixed in 2.63.1.","aliases":["GHSA-2m9h-r57g-45pj","GO-2024-3310"],"modified":"2026-10-28T02:31:10.242883583Z","published":"2024-12-04T15:29:07.426Z","related":["openSUSE-SU-2024:14567-1"],"database_specific":{"osv_generated_from":"https://github.com/CVEProject/cvelistV5/tree/main/cves/2024/54xxx/CVE-2024-54132.json","cna_assigner":"GitHub_M","cwe_ids":["CWE-22"]},"references":[{"type":"ADVISORY","url":"https://github.com/CVEProject/cvelistV5/tree/main/cves/2024/54xxx/CVE-2024-54132.json"},{"type":"ADVISORY","url":"https://github.com/cli/cli/security/advisories/GHSA-2m9h-r57g-45pj"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2024-54132"},{"type":"FIX","url":"https://github.com/cli/cli/commit/1136764c369aaf0cae4ec2ee09dc35d871076932"}],"affected":[{"ranges":[{"type":"GIT","repo":"https://github.com/cli/cli","events":[{"introduced":"0"},{"fixed":"1136764c369aaf0cae4ec2ee09dc35d871076932"}],"database_specific":{"extracted_events":[{"source":"AFFECTED_FIELD","strategy":"StringRangeExpression","range":[{"introduced":"0"},{"fixed":"2.63.1"}]},{"range":[{"fixed":"1136764c369aaf0cae4ec2ee09dc35d871076932"}],"source":"REFERENCES_COMMIT"},{"range":[{"introduced":"0"},{"fixed":"2.63.1"}],"source":"DESCRIPTION"}]}}],"versions":["v2.63.0","v2.62.0","v2.61.0","v2.60.1","v2.60.0","v2.59.0","v2.58.0","v2.57.0","v2.56.0","v2.55.0","v2.54.0","v2.53.0","v2.52.0","v2.51.0","v2.50.0","v2.49.2","v2.49.1","v2.49.0","v2.48.0","v2.47.0","v2.46.0","v2.45.0","v2.44.1","v2.44.0","v2.43.1","v2.43.0","v2.42.1","v2.42.0","v2.41.0","v2.40.1","v2.40.0","v2.39.2","v2.39.1","v2.39.0","v2.38.0","v2.37.0","v2.36.0","v2.35.0","v2.34.0","v2.33.0","v2.32.1","v2.32.0","v2.31.0","v2.30.0","v2.27.0","v2.26.1","v2.26.0","v2.25.1","v2.25.0","v2.24.3","v2.24.2","v2.24.1","v2.24.0","v2.23.0","v2.22.1","v2.22.0","v2.21.2","v2.21.1","v2.21.0","v2.20.2","v2.20.1","v2.20.0","v2.19.0","v2.18.1","v2.18.0","v2.17.0","v2.16.1","v2.16.0","v2.15.0","v2.14.7","v2.14.6","v2.14.5","v2.14.4","v2.14.3","v2.14.2","v2.14.1","v2.14.0","v2.13.0","v2.12.1","v2.12.0","v2.11.3","v2.11.2","v2.11.1","v2.11.0","v2.10.1","v2.10.0","v2.9.0","v2.8.0","v2.7.0","v2.6.0","v2.5.2","v2.4.0","v2.5.1","v2.5.0","v2.3.0","v2.2.0","v2.1.0","v2.0.0","v1.14.0","v1.12.1","v1.13.0","v1.12.0","v1.11.0","v1.10.3","v1.10.2","v1.10.1","v1.10.0","v1.9.2","v1.9.1","v1.9.0","v1.8.1","v1.8.0","v1.7.0","v1.6.1","v1.6.2","v1.6.0","v1.5.0","v1.4.0","v1.3.0","v1.2.1","v1.2.0","v1.1.0","v1.0.0","v0.12.0","v0.11.1","v0.11.0","v0.10.1","v0.10.0","v0.9.0","v0.8.0","v0.7.0","v0.6.4","v0.6.3","v0.6.2","v0.6.1","v0.6.0","v0.5.7","v0.5.6","v0.5.5","v0.5.4","v0.5.3","v0.5.2","v0.5.1","v0.5.0","v0.4.0"],"database_specific":{"source":"https://storage.googleapis.com/cve-osv-conversion/osv-output/CVE-2024-54132.json"}}],"schema_version":"1.9.2","severity":[{"type":"CVSS_V4","score":"CVSS:4.0/AV:N/AC:H/AT:N/PR:N/UI:N/VC:N/VI:L/VA:N/SC:N/SI:N/SA:N/U:Green"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "3718"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:43:12 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-13ec57c944e6d4c1d2bfb21027425ac8-30aff486df5a4b41-00
+            X-Cloud-Trace-Context:
+                - 13ec57c944e6d4c1d2bfb21027425ac8/3508291494854937409
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 203.694167ms
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/CVE-2026-45803
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 4068
+        body: '{"id":"CVE-2026-45803","summary":"gh: GitHub Actions log output in `gh run view` allows terminal escape sequence injection","details":"`gh` is GitHub’s official command line tool. From 1.6.0 to before 2.92.0, a security vulnerability has been identified in GitHub CLI that could allow terminal escape sequence injection when users view GitHub Actions workflow logs using gh run view --log or gh run view --log-failed. The vulnerability stems from the way GitHub CLI handles raw Actions log output. The gh run view --log and gh run view --log-failed commands stream workflow log lines to stdout or the configured pager without sanitizing terminal control sequences. An attacker who can influence GitHub Actions log content, for example via a PR triggered workflow, can embed escape sequences that are replayed in the user''s terminal when they inspect the run. Depending on the victim''s terminal emulator, injected sequences could change the window title, manipulate on screen content, or in some terminal emulators (such as screen) potentially execute arbitrary commands. This vulnerability is fixed in 2.92.0.","aliases":["GHSA-crc3-h8v6-qh57","GO-2026-5335"],"modified":"2026-11-13T02:30:28.903783754Z","published":"2026-05-15T15:26:56.675Z","related":["openSUSE-SU-2026:21483-1"],"database_specific":{"cna_assigner":"GitHub_M","cwe_ids":["CWE-150"],"osv_generated_from":"https://github.com/CVEProject/cvelistV5/tree/main/cves/2026/45xxx/CVE-2026-45803.json"},"references":[{"type":"ADVISORY","url":"https://github.com/CVEProject/cvelistV5/tree/main/cves/2026/45xxx/CVE-2026-45803.json"},{"type":"ADVISORY","url":"https://github.com/cli/cli/security/advisories/GHSA-crc3-h8v6-qh57"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2026-45803"}],"affected":[{"ranges":[{"type":"GIT","repo":"https://github.com/cli/cli","events":[{"introduced":"2f563babbf07dda4f9dc80114753f86753487873"},{"fixed":"6c470f60803784e1558b626022677c53dccb6016"}],"database_specific":{"extracted_events":[{"strategy":"StringRangeExpression","range":[{"introduced":"1.6.0"},{"fixed":"2.92.0"}],"source":"AFFECTED_FIELD"},{"source":"CPE_RANGE","cpe":"cpe:2.3:a:github:cli:*:*:*:*:*:*:*:*","range":[{"introduced":"1.6.0"},{"fixed":"2.92.0"}]}]}}],"versions":["v2.91.0","v2.90.0","v2.89.0","v2.88.1","v2.88.0","v2.87.3","v2.87.2","v2.87.1","v2.87.0","v2.85.0","v2.86.0","v2.83.2","v2.83.1","v2.83.0","v2.82.1","v2.82.0","v2.81.0","v2.80.0","v2.79.0","v2.78.0","v2.77.0","v2.76.2","v2.76.1","v2.76.0","v2.75.1","v2.75.0","v2.74.2","v2.74.1","v2.74.0","v2.73.0","v2.72.0","v2.71.2","v2.71.1","v2.71.0","v2.70.0","v2.69.0","v2.68.1","v2.68.0","v2.67.0","v2.66.1","v2.66.0","v2.65.0","v2.64.0","v2.63.2","v2.63.1","v2.63.0","v2.62.0","v2.61.0","v2.60.1","v2.60.0","v2.59.0","v2.58.0","v2.57.0","v2.56.0","v2.55.0","v2.54.0","v2.53.0","v2.52.0","v2.51.0","v2.50.0","v2.49.2","v2.49.1","v2.49.0","v2.48.0","v2.47.0","v2.46.0","v2.45.0","v2.44.1","v2.44.0","v2.43.1","v2.43.0","v2.42.1","v2.42.0","v2.41.0","v2.40.1","v2.40.0","v2.39.2","v2.39.1","v2.39.0","v2.38.0","v2.37.0","v2.36.0","v2.35.0","v2.34.0","v2.33.0","v2.32.1","v2.32.0","v2.31.0","v2.30.0","v2.27.0","v2.26.1","v2.26.0","v2.25.1","v2.25.0","v2.24.3","v2.24.2","v2.24.1","v2.24.0","v2.23.0","v2.22.1","v2.22.0","v2.21.2","v2.21.1","v2.21.0","v2.20.2","v2.20.1","v2.20.0","v2.19.0","v2.18.1","v2.18.0","v2.17.0","v2.16.1","v2.16.0","v2.15.0","v2.14.7","v2.14.6","v2.14.5","v2.14.4","v2.14.3","v2.14.2","v2.14.1","v2.14.0","v2.13.0","v2.12.1","v2.12.0","v2.11.3","v2.11.2","v2.11.1","v2.11.0","v2.10.1","v2.10.0","v2.9.0","v2.8.0","v2.7.0","v2.6.0","v2.5.2","v2.4.0","v2.5.1","v2.5.0","v2.3.0","v2.2.0","v2.1.0","v2.0.0","v1.14.0","v1.12.1","v1.13.0","v1.12.0","v1.11.0","v1.10.3","v1.10.2","v1.10.1","v1.10.0","v1.9.2","v1.9.1","v1.9.0","v1.8.1","v1.8.0","v1.7.0","v1.6.1","v1.6.2","v1.6.0"],"database_specific":{"source":"https://storage.googleapis.com/cve-osv-conversion/osv-output/CVE-2026-45803.json"}}],"schema_version":"1.9.2","severity":[{"type":"CVSS_V3","score":"CVSS:3.1/AV:N/AC:L/PR:L/UI:R/S:U/C:N/I:L/A:N"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "4068"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:43:13 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-bb5d39b54043f32bd2bfb21027425f06-53d51e6d14f47eb3-00
+            X-Cloud-Trace-Context:
+                - bb5d39b54043f32bd2bfb21027425f06/6040767929039224499
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 218.123041ms
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/CVE-2026-48501
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 4580
+        body: '{"id":"CVE-2026-48501","summary":"GitHub CLI tokens leak via `gh attestation` commands","details":"GitHub CLI (gh) is GitHub’s official command line tool. Prior to 2.93.0, GitHub CLI incorrectly includes authorization header in API requests to TUF repository mirrors via gh attestation, gh release verify, and gh release verify-asset commands. The CLI uses a shared HTTP client with an authentication layer that automatically attaches tokens to outgoing requests. This layer lacks accurate host detection and can incorrectly attribute the target host, providing it with a token it should never receive. Specifically, the host normalization logic collapses any *.github.com subdomain to github.com, so a request to tuf-repo.github.com (a GitHub Pages site, not a GitHub API endpoint) is treated as a request to github.com and receives the user''s github.com token. For hosts that don''t match github.com or a known GHES instance at all, the resolver falls back to GH_ENTERPRISE_TOKEN if set. The gh attestation, gh release verify and gh release verify-asset commands fetch data from several external hosts as part of their normal operation (TUF metadata from tuf-repo.github.com and tuf-repo-cdn.sigstore.dev, artifact bundles from Azure Blob Storage). Because these requests go through the same authenticated HTTP client, the token is sent to all of them. This vulnerability is fixed in 2.93.0.","aliases":["GHSA-8xvp-7hj6-mcj9","GO-2026-5271"],"modified":"2026-10-28T02:31:12.003075408Z","published":"2026-05-29T15:14:54.975Z","related":["openSUSE-SU-2026:21483-1"],"database_specific":{"osv_generated_from":"https://github.com/CVEProject/cvelistV5/tree/main/cves/2026/48xxx/CVE-2026-48501.json","cna_assigner":"GitHub_M","cwe_ids":["CWE-863"]},"references":[{"type":"ADVISORY","url":"https://github.com/CVEProject/cvelistV5/tree/main/cves/2026/48xxx/CVE-2026-48501.json"},{"type":"ADVISORY","url":"https://github.com/cli/cli/security/advisories/GHSA-8xvp-7hj6-mcj9"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2026-48501"}],"affected":[{"ranges":[{"type":"GIT","repo":"https://github.com/cli/cli","events":[{"introduced":"0"},{"fixed":"f96972ce1c11fdb8eaa556257fde962a363dffde"}],"database_specific":{"extracted_events":[{"strategy":"StringRangeExpression","range":[{"introduced":"0"},{"fixed":"2.93.0"}],"source":"AFFECTED_FIELD"},{"source":"CPE_RANGE","cpe":"cpe:2.3:a:github:cli:*:*:*:*:*:*:*:*","range":[{"introduced":"0"},{"fixed":"2.93.0"}]}]}}],"versions":["v2.92.0","v2.91.0","v2.90.0","v2.89.0","v2.88.1","v2.88.0","v2.87.3","v2.87.2","v2.87.1","v2.87.0","v2.85.0","v2.86.0","v2.83.2","v2.83.1","v2.83.0","v2.82.1","v2.82.0","v2.81.0","v2.80.0","v2.79.0","v2.78.0","v2.77.0","v2.76.2","v2.76.1","v2.76.0","v2.75.1","v2.75.0","v2.74.2","v2.74.1","v2.74.0","v2.73.0","v2.72.0","v2.71.2","v2.71.1","v2.71.0","v2.70.0","v2.69.0","v2.68.1","v2.68.0","v2.67.0","v2.66.1","v2.66.0","v2.65.0","v2.64.0","v2.63.2","v2.63.1","v2.63.0","v2.62.0","v2.61.0","v2.60.1","v2.60.0","v2.59.0","v2.58.0","v2.57.0","v2.56.0","v2.55.0","v2.54.0","v2.53.0","v2.52.0","v2.51.0","v2.50.0","v2.49.2","v2.49.1","v2.49.0","v2.48.0","v2.47.0","v2.46.0","v2.45.0","v2.44.1","v2.44.0","v2.43.1","v2.43.0","v2.42.1","v2.42.0","v2.41.0","v2.40.1","v2.40.0","v2.39.2","v2.39.1","v2.39.0","v2.38.0","v2.37.0","v2.36.0","v2.35.0","v2.34.0","v2.33.0","v2.32.1","v2.32.0","v2.31.0","v2.30.0","v2.27.0","v2.26.1","v2.26.0","v2.25.1","v2.25.0","v2.24.3","v2.24.2","v2.24.1","v2.24.0","v2.23.0","v2.22.1","v2.22.0","v2.21.2","v2.21.1","v2.21.0","v2.20.2","v2.20.1","v2.20.0","v2.19.0","v2.18.1","v2.18.0","v2.17.0","v2.16.1","v2.16.0","v2.15.0","v2.14.7","v2.14.6","v2.14.5","v2.14.4","v2.14.3","v2.14.2","v2.14.1","v2.14.0","v2.13.0","v2.12.1","v2.12.0","v2.11.3","v2.11.2","v2.11.1","v2.11.0","v2.10.1","v2.10.0","v2.9.0","v2.8.0","v2.7.0","v2.6.0","v2.5.2","v2.4.0","v2.5.1","v2.5.0","v2.3.0","v2.2.0","v2.1.0","v2.0.0","v1.14.0","v1.12.1","v1.13.0","v1.12.0","v1.11.0","v1.10.3","v1.10.2","v1.10.1","v1.10.0","v1.9.2","v1.9.1","v1.9.0","v1.8.1","v1.8.0","v1.7.0","v1.6.1","v1.6.2","v1.6.0","v1.5.0","v1.4.0","v1.3.0","v1.2.1","v1.2.0","v1.1.0","v1.0.0","v0.12.0","v0.11.1","v0.11.0","v0.10.1","v0.10.0","v0.9.0","v0.8.0","v0.7.0","v0.6.4","v0.6.3","v0.6.2","v0.6.1","v0.6.0","v0.5.7","v0.5.6","v0.5.5","v0.5.4","v0.5.3","v0.5.2","v0.5.1","v0.5.0","v0.4.0"],"database_specific":{"source":"https://storage.googleapis.com/cve-osv-conversion/osv-output/CVE-2026-48501.json"}}],"schema_version":"1.9.2","severity":[{"type":"CVSS_V3","score":"CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:N"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "4580"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:43:13 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-2b467c28b9768450d2bfb21027425bdc-d14b22916093d796-00
+            X-Cloud-Trace-Context:
+                - 2b467c28b9768450d2bfb21027425bdc/15081185784966141846
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 185.954792ms
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/CVE-2026-59831
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 3589
+        body: '{"id":"CVE-2026-59831","summary":"GitHub CLI `gh codespace jupyter` could allow remote code execution when connecting to a malicious Codespace","details":"GitHub CLI (gh) is GitHub’s official command line tool. From 2.10.0 through 2.95.0, connecting to a malicious Codespace with gh codespace jupyter can allow command execution because the command opens a JupyterLab URL supplied by a process inside the Codespace without validating that it is a loopback HTTP or HTTPS address, allowing a crafted vscode:// or vscode-insiders:// URL to be handed to VS Code. This issue is fixed in version 2.96.0.","aliases":["GHSA-8cg3-r6g9-fpg2"],"modified":"2026-10-28T02:30:46.442664953Z","published":"2026-07-09T22:11:05.418Z","related":["openSUSE-SU-2026:12163-1","openSUSE-SU-2026:22134-1"],"database_specific":{"osv_generated_from":"https://github.com/CVEProject/cvelistV5/tree/main/cves/2026/59xxx/CVE-2026-59831.json","cna_assigner":"GitHub_M","cwe_ids":["CWE-829"]},"references":[{"type":"WEB","url":"https://github.com/cli/cli/releases/tag/v2.96.0"},{"type":"ADVISORY","url":"https://github.com/CVEProject/cvelistV5/tree/main/cves/2026/59xxx/CVE-2026-59831.json"},{"type":"ADVISORY","url":"https://github.com/cli/cli/security/advisories/GHSA-8cg3-r6g9-fpg2"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2026-59831"},{"type":"FIX","url":"https://github.com/cli/cli/commit/b300f2ec7ec9dc9addc39b2ad88c54097ded7ca0"}],"affected":[{"ranges":[{"type":"GIT","repo":"https://github.com/cli/cli","events":[{"introduced":"06153770a921a2df2b9dba6735f6ae7f7f6a1160"},{"fixed":"b300f2ec7ec9dc9addc39b2ad88c54097ded7ca0"}],"database_specific":{"extracted_events":[{"strategy":"StringRangeExpression","range":[{"introduced":"2.10.0"},{"fixed":"2.96.0"}],"source":"AFFECTED_FIELD"},{"source":"REFERENCES_COMMIT","range":[{"fixed":"b300f2ec7ec9dc9addc39b2ad88c54097ded7ca0"}]},{"original_tag":"v2.96.0","range":[{"fixed":"b300f2ec7ec9dc9addc39b2ad88c54097ded7ca0"}],"source":"REFERENCES_TAG"}]}}],"versions":["v2.95.0","v2.94.0","v2.93.0","v2.92.0","v2.91.0","v2.90.0","v2.89.0","v2.88.1","v2.88.0","v2.87.3","v2.87.2","v2.87.1","v2.87.0","v2.85.0","v2.86.0","v2.83.2","v2.83.1","v2.83.0","v2.82.1","v2.82.0","v2.81.0","v2.80.0","v2.79.0","v2.78.0","v2.77.0","v2.76.2","v2.76.1","v2.76.0","v2.75.1","v2.75.0","v2.74.2","v2.74.1","v2.74.0","v2.73.0","v2.72.0","v2.71.2","v2.71.1","v2.71.0","v2.70.0","v2.69.0","v2.68.1","v2.68.0","v2.67.0","v2.66.1","v2.66.0","v2.65.0","v2.64.0","v2.63.2","v2.63.1","v2.63.0","v2.62.0","v2.61.0","v2.60.1","v2.60.0","v2.59.0","v2.58.0","v2.57.0","v2.56.0","v2.55.0","v2.54.0","v2.53.0","v2.52.0","v2.51.0","v2.50.0","v2.49.2","v2.49.1","v2.49.0","v2.48.0","v2.47.0","v2.46.0","v2.45.0","v2.44.1","v2.44.0","v2.43.1","v2.43.0","v2.42.1","v2.42.0","v2.41.0","v2.40.1","v2.40.0","v2.39.2","v2.39.1","v2.39.0","v2.38.0","v2.37.0","v2.36.0","v2.35.0","v2.34.0","v2.33.0","v2.32.1","v2.32.0","v2.31.0","v2.30.0","v2.27.0","v2.26.1","v2.26.0","v2.25.1","v2.25.0","v2.24.3","v2.24.2","v2.24.1","v2.24.0","v2.23.0","v2.22.1","v2.22.0","v2.21.2","v2.21.1","v2.21.0","v2.20.2","v2.20.1","v2.20.0","v2.19.0","v2.18.1","v2.18.0","v2.17.0","v2.16.1","v2.16.0","v2.15.0","v2.14.7","v2.14.6","v2.14.5","v2.14.4","v2.14.3","v2.14.2","v2.14.1","v2.14.0","v2.13.0","v2.12.1","v2.12.0","v2.11.3","v2.11.2","v2.11.1","v2.11.0","v2.10.1","v2.10.0"],"database_specific":{"source":"https://storage.googleapis.com/cve-osv-conversion/osv-output/CVE-2026-59831.json"}}],"schema_version":"1.9.2","severity":[{"type":"CVSS_V3","score":"CVSS:3.1/AV:N/AC:H/PR:L/UI:R/S:C/C:L/I:L/A:N"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "3589"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:43:13 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-7df79b56b61190d8d2bfb210274254bf-b81fc37bd8dce71d-00
+            X-Cloud-Trace-Context:
+                - 7df79b56b61190d8d2bfb210274254bf/13267537963943520029
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 214.21125ms
+    - id: 7
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/CVE-2026-64652
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 4566
+        body: '{"id":"CVE-2026-64652","summary":"GitHub CLI: Partial token disclosure in `gh auth status` output","details":"GitHub CLI (gh) is GitHub''s official command line tool. Prior to version 2.97.0, gh auth status masked only the characters after the last underscore in certain fine-grained personal access tokens and GitHub App tokens. As a result, part of an affected token could appear in terminal or CI output that is captured or shared. Authenticated users are affected if they ran gh auth status (without the --show-token flag) with a token type whose format contains an underscore after the prefix. This includes fine-grained personal access tokens (github_pat_*) and GitHub App installation and user access tokens (ghs_*, ghu_*; for example, ghs_\u003cAPPID\u003e_\u003cJWT\u003e), as well as the Actions GITHUB_TOKEN. Classic tokens such as gho_* and ghp_* have an underscore-free body and are not affected. This issue is fixed in version 2.97.0.","aliases":["GHSA-cg6r-mpgc-h9mm","GO-2026-6766"],"modified":"2026-11-18T17:27:27.595191491Z","published":"2026-08-06T17:45:35.729Z","related":["SUSE-SU-2026:24730-1","openSUSE-SU-2026:11530-1","openSUSE-SU-2026:21663-1","openSUSE-SU-2026:22336-1"],"database_specific":{"cna_assigner":"GitHub_M","cwe_ids":["CWE-201"],"osv_generated_from":"https://github.com/CVEProject/cvelistV5/tree/main/cves/2026/64xxx/CVE-2026-64652.json"},"references":[{"type":"WEB","url":"https://github.com/cli/cli/releases/tag/v2.97.0"},{"type":"ADVISORY","url":"https://github.com/CVEProject/cvelistV5/tree/main/cves/2026/64xxx/CVE-2026-64652.json"},{"type":"ADVISORY","url":"https://github.com/cli/cli/security/advisories/GHSA-cg6r-mpgc-h9mm"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2026-64652"},{"type":"FIX","url":"https://github.com/cli/cli/commit/3f6a16a9f8c7fe9676aa8d8f47b399310dd231c3"}],"affected":[{"ranges":[{"type":"GIT","repo":"https://github.com/cli/cli","events":[{"introduced":"0"},{"fixed":"55dbb4dc6b7edb10b48e3d7fc5bccd32318d1b55"},{"fixed":"3f6a16a9f8c7fe9676aa8d8f47b399310dd231c3"}],"database_specific":{"extracted_events":[{"source":"AFFECTED_FIELD","strategy":"StringRangeExpression","range":[{"introduced":"0"},{"fixed":"2.97.0"}]},{"source":"REFERENCES_COMMIT","range":[{"fixed":"3f6a16a9f8c7fe9676aa8d8f47b399310dd231c3"}]},{"original_tag":"v2.97.0","range":[{"fixed":"55dbb4dc6b7edb10b48e3d7fc5bccd32318d1b55"}],"source":"REFERENCES_TAG"}]}}],"versions":["v2.96.0","v2.95.0","v2.94.0","v2.93.0","v2.92.0","v2.91.0","v2.90.0","v2.89.0","v2.88.1","v2.88.0","v2.87.3","v2.87.2","v2.87.1","v2.87.0","v2.85.0","v2.86.0","v2.83.2","v2.83.1","v2.83.0","v2.82.1","v2.82.0","v2.81.0","v2.80.0","v2.79.0","v2.78.0","v2.77.0","v2.76.2","v2.76.1","v2.76.0","v2.75.1","v2.75.0","v2.74.2","v2.74.1","v2.74.0","v2.73.0","v2.72.0","v2.71.2","v2.71.1","v2.71.0","v2.70.0","v2.69.0","v2.68.1","v2.68.0","v2.67.0","v2.66.1","v2.66.0","v2.65.0","v2.64.0","v2.63.2","v2.63.1","v2.63.0","v2.62.0","v2.61.0","v2.60.1","v2.60.0","v2.59.0","v2.58.0","v2.57.0","v2.56.0","v2.55.0","v2.54.0","v2.53.0","v2.52.0","v2.51.0","v2.50.0","v2.49.2","v2.49.1","v2.49.0","v2.48.0","v2.47.0","v2.46.0","v2.45.0","v2.44.1","v2.44.0","v2.43.1","v2.43.0","v2.42.1","v2.42.0","v2.41.0","v2.40.1","v2.40.0","v2.39.2","v2.39.1","v2.39.0","v2.38.0","v2.37.0","v2.36.0","v2.35.0","v2.34.0","v2.33.0","v2.32.1","v2.32.0","v2.31.0","v2.30.0","v2.27.0","v2.26.1","v2.26.0","v2.25.1","v2.25.0","v2.24.3","v2.24.2","v2.24.1","v2.24.0","v2.23.0","v2.22.1","v2.22.0","v2.21.2","v2.21.1","v2.21.0","v2.20.2","v2.20.1","v2.20.0","v2.19.0","v2.18.1","v2.18.0","v2.17.0","v2.16.1","v2.16.0","v2.15.0","v2.14.7","v2.14.6","v2.14.5","v2.14.4","v2.14.3","v2.14.2","v2.14.1","v2.14.0","v2.13.0","v2.12.1","v2.12.0","v2.11.3","v2.11.2","v2.11.1","v2.11.0","v2.10.1","v2.10.0","v2.9.0","v2.8.0","v2.7.0","v2.6.0","v2.5.2","v2.4.0","v2.5.1","v2.5.0","v2.3.0","v2.2.0","v2.1.0","v2.0.0","v1.14.0","v1.12.1","v1.13.0","v1.12.0","v1.11.0","v1.10.3","v1.10.2","v1.10.1","v1.10.0","v1.9.2","v1.9.1","v1.9.0","v1.8.1","v1.8.0","v1.7.0","v1.6.1","v1.6.2","v1.6.0","v1.5.0","v1.4.0","v1.3.0","v1.2.1","v1.2.0","v1.1.0","v1.0.0","v0.12.0","v0.11.1","v0.11.0","v0.10.1","v0.10.0","v0.9.0","v0.8.0","v0.7.0","v0.6.4","v0.6.3","v0.6.2","v0.6.1","v0.6.0","v0.5.7","v0.5.6","v0.5.5","v0.5.4","v0.5.3","v0.5.2","v0.5.1","v0.5.0","v0.4.0"],"database_specific":{"source":"https://storage.googleapis.com/cve-osv-conversion/osv-output/CVE-2026-64652.json"}}],"schema_version":"1.9.2","severity":[{"type":"CVSS_V3","score":"CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:L/I:N/A:N"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "4566"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:43:13 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-1dec09c349699a76d2bfb21027425255-16e80b86935a6012-00
+            X-Cloud-Trace-Context:
+                - 1dec09c349699a76d2bfb21027425255/1650581936056983570
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 207.041875ms
+    - id: 8
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/CVE-2026-64653
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 4133
+        body: '{"id":"CVE-2026-64653","summary":"GitHub CLI: Unescaped variable components in request URLs could allow path traversal","details":"GitHub CLI (gh) is GitHub’s official command line tool. Prior to 2.97.0, some HTTP request URLs interpolate variable path components without percent encoding, allowing URL path metacharacters in attacker-controlled repository or resource values to make gh address a different API endpoint or resource than the user intended. This issue is fixed in version 2.97.0.","aliases":["GHSA-4fjg-2h4q-fwg3","GO-2026-6765"],"modified":"2026-11-18T17:27:26.327083043Z","published":"2026-08-06T17:51:54.344Z","related":["SUSE-SU-2026:24730-1","openSUSE-SU-2026:11530-1","openSUSE-SU-2026:21663-1","openSUSE-SU-2026:22336-1"],"database_specific":{"cwe_ids":["CWE-22"],"osv_generated_from":"https://github.com/CVEProject/cvelistV5/tree/main/cves/2026/64xxx/CVE-2026-64653.json","cna_assigner":"GitHub_M"},"references":[{"type":"WEB","url":"https://github.com/cli/cli/releases/tag/v2.97.0"},{"type":"ADVISORY","url":"https://github.com/CVEProject/cvelistV5/tree/main/cves/2026/64xxx/CVE-2026-64653.json"},{"type":"ADVISORY","url":"https://github.com/cli/cli/security/advisories/GHSA-4fjg-2h4q-fwg3"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2026-64653"},{"type":"FIX","url":"https://github.com/cli/cli/commit/0c2eea6338a2323cfff000160b9b5a56a38d2a06"}],"affected":[{"ranges":[{"type":"GIT","repo":"https://github.com/cli/cli","events":[{"introduced":"0"},{"fixed":"55dbb4dc6b7edb10b48e3d7fc5bccd32318d1b55"},{"fixed":"0c2eea6338a2323cfff000160b9b5a56a38d2a06"}],"database_specific":{"extracted_events":[{"range":[{"introduced":"0"},{"fixed":"2.97.0"}],"source":"AFFECTED_FIELD","strategy":"StringRangeExpression"},{"range":[{"fixed":"0c2eea6338a2323cfff000160b9b5a56a38d2a06"}],"source":"REFERENCES_COMMIT"},{"original_tag":"v2.97.0","range":[{"fixed":"55dbb4dc6b7edb10b48e3d7fc5bccd32318d1b55"}],"source":"REFERENCES_TAG"}]}}],"versions":["v2.96.0","v2.95.0","v2.94.0","v2.93.0","v2.92.0","v2.91.0","v2.90.0","v2.89.0","v2.88.1","v2.88.0","v2.87.3","v2.87.2","v2.87.1","v2.87.0","v2.85.0","v2.86.0","v2.83.2","v2.83.1","v2.83.0","v2.82.1","v2.82.0","v2.81.0","v2.80.0","v2.79.0","v2.78.0","v2.77.0","v2.76.2","v2.76.1","v2.76.0","v2.75.1","v2.75.0","v2.74.2","v2.74.1","v2.74.0","v2.73.0","v2.72.0","v2.71.2","v2.71.1","v2.71.0","v2.70.0","v2.69.0","v2.68.1","v2.68.0","v2.67.0","v2.66.1","v2.66.0","v2.65.0","v2.64.0","v2.63.2","v2.63.1","v2.63.0","v2.62.0","v2.61.0","v2.60.1","v2.60.0","v2.59.0","v2.58.0","v2.57.0","v2.56.0","v2.55.0","v2.54.0","v2.53.0","v2.52.0","v2.51.0","v2.50.0","v2.49.2","v2.49.1","v2.49.0","v2.48.0","v2.47.0","v2.46.0","v2.45.0","v2.44.1","v2.44.0","v2.43.1","v2.43.0","v2.42.1","v2.42.0","v2.41.0","v2.40.1","v2.40.0","v2.39.2","v2.39.1","v2.39.0","v2.38.0","v2.37.0","v2.36.0","v2.35.0","v2.34.0","v2.33.0","v2.32.1","v2.32.0","v2.31.0","v2.30.0","v2.27.0","v2.26.1","v2.26.0","v2.25.1","v2.25.0","v2.24.3","v2.24.2","v2.24.1","v2.24.0","v2.23.0","v2.22.1","v2.22.0","v2.21.2","v2.21.1","v2.21.0","v2.20.2","v2.20.1","v2.20.0","v2.19.0","v2.18.1","v2.18.0","v2.17.0","v2.16.1","v2.16.0","v2.15.0","v2.14.7","v2.14.6","v2.14.5","v2.14.4","v2.14.3","v2.14.2","v2.14.1","v2.14.0","v2.13.0","v2.12.1","v2.12.0","v2.11.3","v2.11.2","v2.11.1","v2.11.0","v2.10.1","v2.10.0","v2.9.0","v2.8.0","v2.7.0","v2.6.0","v2.5.2","v2.4.0","v2.5.1","v2.5.0","v2.3.0","v2.2.0","v2.1.0","v2.0.0","v1.14.0","v1.12.1","v1.13.0","v1.12.0","v1.11.0","v1.10.3","v1.10.2","v1.10.1","v1.10.0","v1.9.2","v1.9.1","v1.9.0","v1.8.1","v1.8.0","v1.7.0","v1.6.1","v1.6.2","v1.6.0","v1.5.0","v1.4.0","v1.3.0","v1.2.1","v1.2.0","v1.1.0","v1.0.0","v0.12.0","v0.11.1","v0.11.0","v0.10.1","v0.10.0","v0.9.0","v0.8.0","v0.7.0","v0.6.4","v0.6.3","v0.6.2","v0.6.1","v0.6.0","v0.5.7","v0.5.6","v0.5.5","v0.5.4","v0.5.3","v0.5.2","v0.5.1","v0.5.0","v0.4.0"],"database_specific":{"source":"https://storage.googleapis.com/cve-osv-conversion/osv-output/CVE-2026-64653.json"}}],"schema_version":"1.9.2","severity":[{"type":"CVSS_V4","score":"CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:A/VC:N/VI:N/VA:N/SC:L/SI:L/SA:N"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "4133"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:43:13 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-0c86c9043176e8b2d2bfb210274251fc-4d8375e1a14ae641-00
+            X-Cloud-Trace-Context:
+                - 0c86c9043176e8b2d2bfb210274251fc/5585437574803678785
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 227.720958ms
+    - id: 9
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/CVE-2026-64654
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 4406
+        body: '{"id":"CVE-2026-64654","summary":"GitHub CLI: Terminal escape sequence injection in multiple `gh` commands","details":"GitHub CLI (gh) is GitHub''s official command line tool. Prior to version 2.97.0, multiple GitHub CLI commands printed externally controlled gist, API, pull request, release, codespace, skill, or agent-task content without neutralizing terminal escape sequences. An attacker who can influence that content can embed escape sequences that are interpreted by the terminal of a user who runs an affected command, with impact ranging from cosmetic manipulation of the title or on-screen content to, on some terminal emulators, command execution. This extends the same class of issue as CVE-2026-45803—which addressed only gh run view --log—to the other affected command paths. This issue is fixed in version 2.97.0.","aliases":["GHSA-3m3g-3wcr-px46"],"modified":"2026-10-28T02:30:29.347415310Z","published":"2026-08-06T18:27:38.491Z","related":["openSUSE-SU-2026:11530-1","openSUSE-SU-2026:21663-1"],"database_specific":{"cna_assigner":"GitHub_M","cwe_ids":["CWE-150"],"osv_generated_from":"https://github.com/CVEProject/cvelistV5/tree/main/cves/2026/64xxx/CVE-2026-64654.json"},"references":[{"type":"WEB","url":"https://github.com/cli/cli/releases/tag/v2.97.0"},{"type":"ADVISORY","url":"https://github.com/CVEProject/cvelistV5/tree/main/cves/2026/64xxx/CVE-2026-64654.json"},{"type":"ADVISORY","url":"https://github.com/cli/cli/security/advisories/GHSA-3m3g-3wcr-px46"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2026-64654"},{"type":"FIX","url":"https://github.com/cli/cli/commit/2a1409fe88d416cc85fc96fb5bc473f83ed5a054"}],"affected":[{"ranges":[{"type":"GIT","repo":"https://github.com/cli/cli","events":[{"introduced":"0"},{"fixed":"55dbb4dc6b7edb10b48e3d7fc5bccd32318d1b55"},{"fixed":"2a1409fe88d416cc85fc96fb5bc473f83ed5a054"}],"database_specific":{"extracted_events":[{"source":"AFFECTED_FIELD","strategy":"StringRangeExpression","range":[{"introduced":"0"},{"fixed":"2.97.0"}]},{"range":[{"fixed":"2a1409fe88d416cc85fc96fb5bc473f83ed5a054"}],"source":"REFERENCES_COMMIT"},{"source":"REFERENCES_TAG","original_tag":"v2.97.0","range":[{"fixed":"55dbb4dc6b7edb10b48e3d7fc5bccd32318d1b55"}]}]}}],"versions":["v2.96.0","v2.95.0","v2.94.0","v2.93.0","v2.92.0","v2.91.0","v2.90.0","v2.89.0","v2.88.1","v2.88.0","v2.87.3","v2.87.2","v2.87.1","v2.87.0","v2.85.0","v2.86.0","v2.83.2","v2.83.1","v2.83.0","v2.82.1","v2.82.0","v2.81.0","v2.80.0","v2.79.0","v2.78.0","v2.77.0","v2.76.2","v2.76.1","v2.76.0","v2.75.1","v2.75.0","v2.74.2","v2.74.1","v2.74.0","v2.73.0","v2.72.0","v2.71.2","v2.71.1","v2.71.0","v2.70.0","v2.69.0","v2.68.1","v2.68.0","v2.67.0","v2.66.1","v2.66.0","v2.65.0","v2.64.0","v2.63.2","v2.63.1","v2.63.0","v2.62.0","v2.61.0","v2.60.1","v2.60.0","v2.59.0","v2.58.0","v2.57.0","v2.56.0","v2.55.0","v2.54.0","v2.53.0","v2.52.0","v2.51.0","v2.50.0","v2.49.2","v2.49.1","v2.49.0","v2.48.0","v2.47.0","v2.46.0","v2.45.0","v2.44.1","v2.44.0","v2.43.1","v2.43.0","v2.42.1","v2.42.0","v2.41.0","v2.40.1","v2.40.0","v2.39.2","v2.39.1","v2.39.0","v2.38.0","v2.37.0","v2.36.0","v2.35.0","v2.34.0","v2.33.0","v2.32.1","v2.32.0","v2.31.0","v2.30.0","v2.27.0","v2.26.1","v2.26.0","v2.25.1","v2.25.0","v2.24.3","v2.24.2","v2.24.1","v2.24.0","v2.23.0","v2.22.1","v2.22.0","v2.21.2","v2.21.1","v2.21.0","v2.20.2","v2.20.1","v2.20.0","v2.19.0","v2.18.1","v2.18.0","v2.17.0","v2.16.1","v2.16.0","v2.15.0","v2.14.7","v2.14.6","v2.14.5","v2.14.4","v2.14.3","v2.14.2","v2.14.1","v2.14.0","v2.13.0","v2.12.1","v2.12.0","v2.11.3","v2.11.2","v2.11.1","v2.11.0","v2.10.1","v2.10.0","v2.9.0","v2.8.0","v2.7.0","v2.6.0","v2.5.2","v2.4.0","v2.5.1","v2.5.0","v2.3.0","v2.2.0","v2.1.0","v2.0.0","v1.14.0","v1.12.1","v1.13.0","v1.12.0","v1.11.0","v1.10.3","v1.10.2","v1.10.1","v1.10.0","v1.9.2","v1.9.1","v1.9.0","v1.8.1","v1.8.0","v1.7.0","v1.6.1","v1.6.2","v1.6.0","v1.5.0","v1.4.0","v1.3.0","v1.2.1","v1.2.0","v1.1.0","v1.0.0","v0.12.0","v0.11.1","v0.11.0","v0.10.1","v0.10.0","v0.9.0","v0.8.0","v0.7.0","v0.6.4","v0.6.3","v0.6.2","v0.6.1","v0.6.0","v0.5.7","v0.5.6","v0.5.5","v0.5.4","v0.5.3","v0.5.2","v0.5.1","v0.5.0","v0.4.0"],"database_specific":{"source":"https://storage.googleapis.com/cve-osv-conversion/osv-output/CVE-2026-64654.json"}}],"schema_version":"1.9.2","severity":[{"type":"CVSS_V4","score":"CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:P/VC:N/VI:N/VA:N/SC:L/SI:L/SA:N"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "4406"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:43:13 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-e849fc13468b2953d2bfb21027425007-4c317499e6d0bcf1-00
+            X-Cloud-Trace-Context:
+                - e849fc13468b2953d2bfb21027425007/5490297625092603121
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 232.463417ms
+    - id: 10
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/CVE-2026-64655
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 4848
+        body: '{"id":"CVE-2026-64655","summary":"GitHub CLI: Attestation Verification Bypass via Unescaped Regex Metacharacters in SAN Matching","details":"GitHub CLI (gh) is GitHub’s official command line tool. Prior to 2.97.0, gh attestation verify  builds the certificate Subject Alternative Name matcher from the --signer-repo and --signer-workflow  flag values without escaping regex metacharacters, so a user-supplied repository or workflow name is treated as a regular expression rather than a literal string. Because GitHub permits characters such as  `.`  in organization, repository, and workflow path names and  `.`  is a regex wildcard, an attacker can register a lookalike name (for example github/artifact.attestations-workflows) that satisfies a matcher intended for a different trusted signer (github/artifact-attestations-workflows), bypassing the intended Sigstore attestation verification. Exploitation requires the attacker to create a plausible lookalike repository and produce valid attestations from it, which could undermine supply chain verification for CI/CD pipelines or policy gates that pin trust to a specific signing workflow. This issue is fixed in version 2.97.0.","aliases":["GHSA-mm27-mwq9-fr5g","GO-2026-6767"],"modified":"2026-11-18T17:27:27.563183011Z","published":"2026-08-06T18:41:54.628Z","related":["SUSE-SU-2026:24730-1","openSUSE-SU-2026:11530-1","openSUSE-SU-2026:21663-1","openSUSE-SU-2026:22336-1"],"database_specific":{"cna_assigner":"GitHub_M","cwe_ids":["CWE-185"],"osv_generated_from":"https://github.com/CVEProject/cvelistV5/tree/main/cves/2026/64xxx/CVE-2026-64655.json"},"references":[{"type":"WEB","url":"https://github.com/cli/cli/releases/tag/v2.97.0"},{"type":"ADVISORY","url":"https://github.com/CVEProject/cvelistV5/tree/main/cves/2026/64xxx/CVE-2026-64655.json"},{"type":"ADVISORY","url":"https://github.com/cli/cli/security/advisories/GHSA-mm27-mwq9-fr5g"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2026-64655"},{"type":"FIX","url":"https://github.com/cli/cli/commit/55dbb4dc6b7edb10b48e3d7fc5bccd32318d1b55"}],"affected":[{"ranges":[{"type":"GIT","repo":"https://github.com/cli/cli","events":[{"introduced":"0"},{"fixed":"55dbb4dc6b7edb10b48e3d7fc5bccd32318d1b55"}],"database_specific":{"extracted_events":[{"strategy":"StringRangeExpression","range":[{"introduced":"0"},{"fixed":"2.97.0"}],"source":"AFFECTED_FIELD"},{"range":[{"fixed":"55dbb4dc6b7edb10b48e3d7fc5bccd32318d1b55"}],"source":"REFERENCES_COMMIT"},{"range":[{"fixed":"55dbb4dc6b7edb10b48e3d7fc5bccd32318d1b55"}],"source":"REFERENCES_TAG","original_tag":"v2.97.0"},{"source":"DESCRIPTION","range":[{"introduced":"0"},{"fixed":"2.97.0"}]}]}}],"versions":["v2.96.0","v2.95.0","v2.94.0","v2.93.0","v2.92.0","v2.91.0","v2.90.0","v2.89.0","v2.88.1","v2.88.0","v2.87.3","v2.87.2","v2.87.1","v2.87.0","v2.85.0","v2.86.0","v2.83.2","v2.83.1","v2.83.0","v2.82.1","v2.82.0","v2.81.0","v2.80.0","v2.79.0","v2.78.0","v2.77.0","v2.76.2","v2.76.1","v2.76.0","v2.75.1","v2.75.0","v2.74.2","v2.74.1","v2.74.0","v2.73.0","v2.72.0","v2.71.2","v2.71.1","v2.71.0","v2.70.0","v2.69.0","v2.68.1","v2.68.0","v2.67.0","v2.66.1","v2.66.0","v2.65.0","v2.64.0","v2.63.2","v2.63.1","v2.63.0","v2.62.0","v2.61.0","v2.60.1","v2.60.0","v2.59.0","v2.58.0","v2.57.0","v2.56.0","v2.55.0","v2.54.0","v2.53.0","v2.52.0","v2.51.0","v2.50.0","v2.49.2","v2.49.1","v2.49.0","v2.48.0","v2.47.0","v2.46.0","v2.45.0","v2.44.1","v2.44.0","v2.43.1","v2.43.0","v2.42.1","v2.42.0","v2.41.0","v2.40.1","v2.40.0","v2.39.2","v2.39.1","v2.39.0","v2.38.0","v2.37.0","v2.36.0","v2.35.0","v2.34.0","v2.33.0","v2.32.1","v2.32.0","v2.31.0","v2.30.0","v2.27.0","v2.26.1","v2.26.0","v2.25.1","v2.25.0","v2.24.3","v2.24.2","v2.24.1","v2.24.0","v2.23.0","v2.22.1","v2.22.0","v2.21.2","v2.21.1","v2.21.0","v2.20.2","v2.20.1","v2.20.0","v2.19.0","v2.18.1","v2.18.0","v2.17.0","v2.16.1","v2.16.0","v2.15.0","v2.14.7","v2.14.6","v2.14.5","v2.14.4","v2.14.3","v2.14.2","v2.14.1","v2.14.0","v2.13.0","v2.12.1","v2.12.0","v2.11.3","v2.11.2","v2.11.1","v2.11.0","v2.10.1","v2.10.0","v2.9.0","v2.8.0","v2.7.0","v2.6.0","v2.5.2","v2.4.0","v2.5.1","v2.5.0","v2.3.0","v2.2.0","v2.1.0","v2.0.0","v1.14.0","v1.12.1","v1.13.0","v1.12.0","v1.11.0","v1.10.3","v1.10.2","v1.10.1","v1.10.0","v1.9.2","v1.9.1","v1.9.0","v1.8.1","v1.8.0","v1.7.0","v1.6.1","v1.6.2","v1.6.0","v1.5.0","v1.4.0","v1.3.0","v1.2.1","v1.2.0","v1.1.0","v1.0.0","v0.12.0","v0.11.1","v0.11.0","v0.10.1","v0.10.0","v0.9.0","v0.8.0","v0.7.0","v0.6.4","v0.6.3","v0.6.2","v0.6.1","v0.6.0","v0.5.7","v0.5.6","v0.5.5","v0.5.4","v0.5.3","v0.5.2","v0.5.1","v0.5.0","v0.4.0"],"database_specific":{"source":"https://storage.googleapis.com/cve-osv-conversion/osv-output/CVE-2026-64655.json"}}],"schema_version":"1.9.2","severity":[{"type":"CVSS_V4","score":"CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:A/VC:N/VI:N/VA:N/SC:N/SI:L/SA:N"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "4848"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:43:13 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-e052d73addb1ffbbd2bfb21027425b09-d5d3d986e4010e64-00
+            X-Cloud-Trace-Context:
+                - e052d73addb1ffbbd2bfb21027425b09/15407897923538718308
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 190.2025ms
+    - id: 11
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/GHSA-2m9h-r57g-45pj
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 2801
+        body: '{"id":"GHSA-2m9h-r57g-45pj","summary":"Downloading malicious GitHub Actions workflow artifact results in path traversal vulnerability","details":"### Summary\n\nA security vulnerability has been identified in GitHub CLI that could create or overwrite files in unintended directories when users download a malicious GitHub Actions workflow artifact through `gh run download`. \n\n### Details\n\nThis vulnerability stems from a GitHub Actions workflow artifact named `..` when downloaded using `gh run download`.  The artifact name and `--dir` flag are used to determine the artifact’s download path.  When the artifact is named `..`, the resulting files within the artifact are extracted exactly 1 directory higher than the specified `--dir` flag value.\n\nIn `2.63.1`, `gh run download` will not download artifacts named `..` and `.` and instead exit with the following error message:\n\n```\nerror downloading ..: would result in path traversal\n```\n\n### Impact\n\nSuccessful exploitation heightens the risk of local path traversal attack vectors exactly 1 directory higher than intended.\n\n### Remediation and Mitigation\n\n1. Upgrade `gh` to `2.63.1`\n2. Implement additional validation to ensure artifact filenames do not contain potentially dangerous patterns, such as `..`, to prevent path traversal risks.","aliases":["CVE-2024-54132","GO-2024-3310"],"modified":"2026-09-10T03:50:56.033873628Z","published":"2024-12-04T15:32:45Z","database_specific":{"github_reviewed":true,"github_reviewed_at":"2024-12-04T15:32:45Z","nvd_published_at":"2024-12-04T16:15:26Z","cwe_ids":["CWE-22"],"severity":"MODERATE"},"references":[{"type":"WEB","url":"https://github.com/cli/cli/security/advisories/GHSA-2m9h-r57g-45pj"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2024-54132"},{"type":"WEB","url":"https://github.com/cli/cli/commit/1136764c369aaf0cae4ec2ee09dc35d871076932"},{"type":"PACKAGE","url":"https://github.com/cli/cli"}],"affected":[{"package":{"name":"github.com/cli/cli/v2","ecosystem":"Go","purl":"pkg:golang/github.com/cli/cli/v2"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"2.63.1"}]}],"database_specific":{"source":"https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2024/12/GHSA-2m9h-r57g-45pj/GHSA-2m9h-r57g-45pj.json"}},{"package":{"name":"github.com/cli/cli","ecosystem":"Go","purl":"pkg:golang/github.com/cli/cli"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"last_affected":"1.14.0"}]}],"database_specific":{"source":"https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2024/12/GHSA-2m9h-r57g-45pj/GHSA-2m9h-r57g-45pj.json"}}],"schema_version":"1.9.0","severity":[{"type":"CVSS_V4","score":"CVSS:4.0/AV:N/AC:H/AT:N/PR:N/UI:N/VC:N/VI:L/VA:N/SC:N/SI:N/SA:N/U:Green"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "2801"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:43:13 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-4a1d0302a9176882d2bfb21027425c76-debaa348b2f9a1cc-00
+            X-Cloud-Trace-Context:
+                - 4a1d0302a9176882d2bfb21027425c76/16049319754723860940
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 197.73375ms
+    - id: 12
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/GHSA-4fjg-2h4q-fwg3
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 2547
+        body: '{"id":"GHSA-4fjg-2h4q-fwg3","summary":"GitHub CLI allows path traversal through unescaped request URL components","details":"### Summary\n\nA path traversal vulnerability has been identified in the GitHub CLI where some HTTP request URLs, REST API calls in particular, were built without properly escaping their variable path components. A value containing URL path metacharacters can alter the request path and cause `gh` to address a different resource than intended.\n\n### Details\n\nNot all request URLs in the codebase were built with proper escaping of their variable path components. When a component is interpolated into the path without percent encoding, and that component contains URL path metacharacters, it breaks out of its intended segment and changes the effective request path.\n\nIn `2.97.0`, request URLs are constructed in a safe manner, so a variable component can no longer escape its intended segment.\n\n### Impact\n\nAn attacker who can control a value that flows into a request path can cause `gh` to send the request to a different API endpoint than intended. This can lead the CLI to read or act on a resource other than the one the user meant to target.\n\n### Remediation and Mitigation\n\n1. Upgrade `gh` to `2.97.0`.\n2. Be cautious when running `gh` against untrusted repositories or inputs whose names you do not control.","aliases":["CVE-2026-64653","GO-2026-6765"],"modified":"2026-10-19T21:40:57.702450779Z","published":"2026-10-15T18:07:14Z","database_specific":{"nvd_published_at":"2026-08-06T22:18:13Z","cwe_ids":["CWE-22"],"severity":"LOW","github_reviewed":true,"github_reviewed_at":"2026-10-15T18:07:14Z"},"references":[{"type":"WEB","url":"https://github.com/cli/cli/security/advisories/GHSA-4fjg-2h4q-fwg3"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2026-64653"},{"type":"WEB","url":"https://github.com/cli/cli/commit/0c2eea6338a2323cfff000160b9b5a56a38d2a06"},{"type":"PACKAGE","url":"https://github.com/cli/cli"},{"type":"WEB","url":"https://github.com/cli/cli/releases/tag/v2.97.0"}],"affected":[{"package":{"name":"github.com/cli/cli/v2","ecosystem":"Go","purl":"pkg:golang/github.com/cli/cli/v2"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"2.97.0"}]}],"database_specific":{"source":"https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2026/10/GHSA-4fjg-2h4q-fwg3/GHSA-4fjg-2h4q-fwg3.json"}}],"schema_version":"1.9.0","severity":[{"type":"CVSS_V4","score":"CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:A/VC:N/VI:N/VA:N/SC:L/SI:N/SA:N"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "2547"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:43:13 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-d62824b35247ddc1d2bfb210274259fe-9e0c3ef88807f8d4-00
+            X-Cloud-Trace-Context:
+                - d62824b35247ddc1d2bfb210274259fe/11388546794868177108
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 207.744542ms
+    - id: 13
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/GHSA-8xvp-7hj6-mcj9
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 4660
+        body: '{"id":"GHSA-8xvp-7hj6-mcj9","summary":"GitHub CLI has an incorrect authorization header in API requests to TUF repository mirrors via `gh attestation`, `gh release verify`, and `gh release verify-asset` commands","details":"### Summary\n\nGitHub CLI incorrectly includes an authorization header in API requests to TUF repository mirrors via `gh attestation`, `gh release verify`, and `gh release verify-asset` commands.\n\n **Affected users:**\n\n  - Authenticated `github.com` users who previously ran `gh attestation` commands, `gh release verify`, or `gh release verify-asset`: the `github.com` token was included in requests to `tuf-repo.github.com`, a GitHub Pages domain that is not a GitHub API endpoint. All authentication types are affected.\n  - Users with `GH_ENTERPRISE_TOKEN` or `GITHUB_ENTERPRISE_TOKEN` set who previously ran `gh attestation` commands, `gh release verify`, or `gh release verify-asset`: the enterprise token was included in requests to external hosts `tuf-repo-cdn.sigstore.dev` and `tmaproduction.blob.core.windows.net`. These hosts are not operated by GitHub.\n\n### Details\n\nThe CLI uses a shared HTTP client with an authentication layer that automatically attaches tokens to outgoing requests. This layer lacks accurate host detection and can incorrectly attribute the target host, providing it with a token it should never receive.\n\nSpecifically, the host normalization logic collapses any `*.github.com` subdomain to `github.com`, so a request to `tuf-repo.github.com` (a GitHub Pages site, not a GitHub API endpoint) is treated as a request to `github.com` and receives the user''s github.com token. For hosts that don''t match `github.com` or a known GHES instance at all, the resolver falls back to `GH_ENTERPRISE_TOKEN` if set.\n\nThe `gh attestation`, `gh release verify` and `gh release verify-asset` commands fetch data from several external hosts as part of their normal operation (TUF metadata from `tuf-repo.github.com` and `tuf-repo-cdn.sigstore.dev`, artifact bundles from Azure Blob Storage). Because these requests go through the same authenticated HTTP client, the token is sent to all of them.\n\n### Impact\n\nTokens were transmitted in HTTP headers to the listed hosts during normal `gh attestation`, `gh release verify`, and `gh release verify-asset` operations. There is no evidence that tokens were logged, retained, or accessed by unauthorized parties. If a token were captured, it would grant the same access as the token holder, potentially including private repositories, organization resources, or enterprise administration depending on token type and permissions.\n\n### Remediation and mitigation\n\n1. Revoke authentication tokens used with the GitHub CLI: \n    - [Personal access tokens](https://docs.github.com/en/enterprise-cloud@latest/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens)\n    - [GitHub CLI OAuth app](https://docs.github.com/en/apps/using-github-apps/reviewing-and-revoking-authorization-of-github-apps#reviewing-your-authorized-github-apps)\n2. Upgrade `gh` to `2.93.0`.\n3. Review personal [security logs](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/reviewing-your-security-log) and any relevant [audit logs](https://docs.github.com/en/enterprise-cloud@latest/admin/monitoring-activity-in-your-enterprise/reviewing-audit-logs-for-your-enterprise/identifying-audit-log-events-performed-by-an-access-token) for actions associated with personal or enterprise accounts.","aliases":["CVE-2026-48501","GO-2026-5271"],"modified":"2026-06-25T19:56:27.911801050Z","published":"2026-05-29T15:30:13Z","database_specific":{"github_reviewed_at":"2026-05-29T15:30:13Z","nvd_published_at":"2026-05-29T16:16:31Z","cwe_ids":["CWE-863"],"severity":"HIGH","github_reviewed":true},"references":[{"type":"WEB","url":"https://github.com/cli/cli/security/advisories/GHSA-8xvp-7hj6-mcj9"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2026-48501"},{"type":"PACKAGE","url":"https://github.com/cli/cli"},{"type":"WEB","url":"https://github.com/cli/cli/releases/tag/v2.93.0"}],"affected":[{"package":{"name":"github.com/cli/cli/v2","ecosystem":"Go","purl":"pkg:golang/github.com/cli/cli/v2"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"2.93.0"}]}],"database_specific":{"last_known_affected_version_range":"\u003c= 2.92.0","source":"https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2026/05/GHSA-8xvp-7hj6-mcj9/GHSA-8xvp-7hj6-mcj9.json"}}],"schema_version":"1.9.0","severity":[{"type":"CVSS_V3","score":"CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:N"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "4660"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:43:14 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-e27a91e571a811b5d2bfb21027425870-9d0930859dc708e4-00
+            X-Cloud-Trace-Context:
+                - e27a91e571a811b5d2bfb21027425870/11315628889180932324
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 189.36475ms
+    - id: 14
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/GHSA-cg6r-mpgc-h9mm
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 5432
+        body: '{"id":"GHSA-cg6r-mpgc-h9mm","summary":"GitHub CLI partially discloses authentication tokens in `gh auth status` output","details":"### Summary\n\nA security vulnerability has been identified in GitHub CLI where `gh auth status` could potentially print a portion of the authentication token in plaintext, depending on the lexical structure of the token.\n\nAffected users:\n- Authenticated users who ran `gh auth status` (without the `--show-token` flag) with a token type whose format contains an underscore after the prefix. This includes fine-grained personal access tokens (`github_pat_*`) and GitHub App installation/user access tokens (`ghs_*`, `ghu_*`, e.g., `ghs_\u003cAPPID\u003e_\u003cJWT\u003e`), including the Actions `GITHUB_TOKEN`. Classic tokens such as `gho_*` and `ghp_*` have an underscore-free body and are not affected.\n\n### Details\n\nThe vulnerability stems from the way GitHub CLI masks the authentication token when reporting authentication state:\n\n1. A user runs `gh auth status` without `--show-token`, expecting the token to be fully masked.\n2. The masking logic redacts only the characters that follow the last underscore in the token, instead of redacting everything after the token prefix.\n3. The partially masked token is written to the command output, where it can be captured or shared.\n\nBecause `gh auth status` is a diagnostic command commonly run interactively and inside automated environments, the leaked token characters can end up in CI/CD job logs, terminal scrollback, screen recordings, screenshots, or pasted output shared in bug reports and support requests.\n\nIn `v2.97.0`, GitHub CLI fully masks the token in `gh auth status` output, preserving only the known token prefix and redacting the remainder unless `--show-token` is explicitly provided.\n\n### Impact\n\nRunning `gh auth status` in a context where the output is captured, logged, or shared could leak a portion of an affected token. The affected token types are fine-grained personal access tokens (`github_pat_*`) and GitHub App installation/user access tokens (`ghs_*`, `ghu_*`, e.g., `ghs_\u003cAPPID\u003e_\u003cJWT\u003e`), including the Actions `GITHUB_TOKEN`. Installation and Actions tokens are short-lived, which narrows the window in which a recovered token could be reused. See [GitHub credential types](https://docs.github.com/en/organizations/managing-programmatic-access-to-your-organization/github-credential-types#credential-types-overview).\n\n### Remediation and Mitigation\n\n1. Upgrade `gh` to `v2.97.0`.\n2. Rotate any affected token whose masked `gh auth status` output may have been captured or shared:\n   - **Fine-grained personal access tokens (`github_pat_*`):** regenerate the token from your account settings. See [Managing your personal access tokens](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens).\n   - **GitHub App installation/user access tokens (`ghs_*`, `ghu_*`, e.g., `ghs_\u003cAPPID\u003e_\u003cJWT\u003e`):** these are short-lived and rotate automatically (See [GitHub credential types](https://docs.github.com/en/organizations/managing-programmatic-access-to-your-organization/github-credential-types#credential-types-overview)). If you believe a token was captured while still valid, you can revoke it immediately using the [Revoke an installation access token](https://docs.github.com/en/rest/apps/installations#revoke-an-installation-access-token) REST endpoint (`DELETE /installation/token`). To cut off a third-party app''s access more broadly, suspend or uninstall the app from the web UI. See [Reviewing and modifying installed GitHub Apps](https://docs.github.com/en/apps/using-github-apps/reviewing-and-modifying-installed-github-apps).\n   - **Actions `GITHUB_TOKEN`:** this token is automatically invalidated when the job finishes, so no manual revocation is normally required. See [GitHub credential types](https://docs.github.com/en/organizations/managing-programmatic-access-to-your-organization/github-credential-types#credential-types-overview).\n3. Until you can upgrade, avoid running `gh auth status` in contexts where the output is captured or shared, and manually redact the token line before sharing any output.","aliases":["CVE-2026-64652","GO-2026-6766"],"modified":"2026-10-19T21:41:21.449388177Z","published":"2026-10-15T18:05:19Z","database_specific":{"severity":"LOW","github_reviewed":true,"github_reviewed_at":"2026-10-15T18:05:19Z","nvd_published_at":"2026-08-06T22:18:13Z","cwe_ids":["CWE-201"]},"references":[{"type":"WEB","url":"https://github.com/cli/cli/security/advisories/GHSA-cg6r-mpgc-h9mm"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2026-64652"},{"type":"WEB","url":"https://github.com/cli/cli/commit/3f6a16a9f8c7fe9676aa8d8f47b399310dd231c3"},{"type":"PACKAGE","url":"https://github.com/cli/cli"},{"type":"WEB","url":"https://github.com/cli/cli/releases/tag/v2.97.0"}],"affected":[{"package":{"name":"github.com/cli/cli/v2","ecosystem":"Go","purl":"pkg:golang/github.com/cli/cli/v2"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"2.97.0"}]}],"database_specific":{"source":"https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2026/10/GHSA-cg6r-mpgc-h9mm/GHSA-cg6r-mpgc-h9mm.json"}}],"schema_version":"1.9.0","severity":[{"type":"CVSS_V3","score":"CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:L/I:N/A:N"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "5432"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:43:14 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-9fc8c427a0effae7d2bfb21027425153-8b282cf47662f3c9-00
+            X-Cloud-Trace-Context:
+                - 9fc8c427a0effae7d2bfb21027425153/10027313998810248137
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 188.557208ms
+    - id: 15
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/GHSA-crc3-h8v6-qh57
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 4107
+        body: '{"id":"GHSA-crc3-h8v6-qh57","summary":"GitHub CLI: GitHub Actions log output in `gh run view` allows terminal escape sequence injection","details":"### Summary\n\nA security vulnerability has been identified in GitHub CLI that could allow terminal escape sequence injection when users view GitHub Actions workflow logs using `gh run view --log` or `gh run view --log-failed`.\n\n### Details\n\nThe vulnerability stems from the way GitHub CLI handles raw Actions log output. The `gh run view --log` and `gh run view --log-failed` commands stream workflow log lines to stdout or the configured pager without sanitizing terminal control sequences. An attacker who can influence GitHub Actions log content, for example via a PR triggered workflow, can embed escape sequences that are replayed in the user''s terminal when they inspect the run.\n\nDepending on the victim''s terminal emulator, injected sequences could change the window title, manipulate on screen content, or in some terminal emulators (such as `screen`) potentially execute arbitrary commands.\n\nIn `2.92.0`, GitHub CLI sanitizes terminal control sequences in Actions log output before writing to the terminal.\n\n### PoC\n\nCreate a workflow that emits terminal escape sequences in its log output:\n\n```yaml\nname: Escape Sequence PoC\n\non:\n  workflow_dispatch:\n\njobs:\n  emit-escape-sequences:\n    runs-on: ubuntu-latest\n    steps:\n      - name: Emit terminal escape sequences\n        run: |\n          # OSC title set\n          printf ''ESCAPE_MARKER_START \\033]0;HIJACKED_TITLE\\007 ESCAPE_MARKER_END\\n''\n          # CSI color\n          printf ''ESCAPE_MARKER_START \\033[31mRED_TEXT\\033[0m ESCAPE_MARKER_END\\n''\n          # Screen title set (enables command execution in screen terminal)\n          printf ''ESCAPE_MARKER_START \\033k;malicious command;\\033\\\\ ESCAPE_MARKER_END\\n''\n```\n\nThen trigger the workflow and view its logs:\n\n```bash\ngh workflow run ''Escape Sequence PoC''\ngh run view \u003crun_id\u003e --log\n```\n\nOn vulnerable versions, the raw ESC bytes (0x1b) are passed through to the terminal unsanitized. On `2.92.0` and later, escape sequences are stripped and only the safe visible text is displayed.\n\n### Impact\n\nAn attacker who can control GitHub Actions workflow output can inject terminal escape sequences into a maintainer''s terminal session when they inspect the run with `gh run view --log` or `gh run view --log-failed`. The practical impact depends on the victim''s terminal emulator.\n\n### Remediation and Mitigation\n\n1. Upgrade `gh` to `2.92.0`\n2. Pipe log output through a sanitizer (e.g., `gh run view --log | cat -v`) as a workaround on older versions\n3. Exercise caution when viewing logs from untrusted workflow runs","aliases":["CVE-2026-45803","GO-2026-5335"],"modified":"2026-06-25T19:56:33.425534712Z","published":"2026-05-19T19:37:01Z","database_specific":{"cwe_ids":["CWE-150"],"severity":"LOW","github_reviewed":true,"github_reviewed_at":"2026-05-19T19:37:01Z","nvd_published_at":"2026-05-15T16:16:15Z"},"references":[{"type":"WEB","url":"https://github.com/cli/cli/security/advisories/GHSA-crc3-h8v6-qh57"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2026-45803"},{"type":"PACKAGE","url":"https://github.com/cli/cli"}],"affected":[{"package":{"name":"github.com/cli/cli/v2","ecosystem":"Go","purl":"pkg:golang/github.com/cli/cli/v2"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"2.92.0"}]}],"database_specific":{"source":"https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2026/05/GHSA-crc3-h8v6-qh57/GHSA-crc3-h8v6-qh57.json"}},{"package":{"name":"github.com/cli/cli","ecosystem":"Go","purl":"pkg:golang/github.com/cli/cli"},"ranges":[{"type":"SEMVER","events":[{"introduced":"1.6.0"},{"last_affected":"1.14.0"}]}],"database_specific":{"source":"https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2026/05/GHSA-crc3-h8v6-qh57/GHSA-crc3-h8v6-qh57.json"}}],"schema_version":"1.9.0","severity":[{"type":"CVSS_V3","score":"CVSS:3.1/AV:N/AC:L/PR:L/UI:R/S:U/C:N/I:L/A:N"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "4107"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:43:14 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-afd38e41c507a7cfd2bfb21027425825-b94d2b3bf3a91f3d-00
+            X-Cloud-Trace-Context:
+                - afd38e41c507a7cfd2bfb21027425825/13352376006714400573
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 218.73475ms
+    - id: 16
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/GHSA-jwcm-9g39-pmcw
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 3602
+        body: '{"id":"GHSA-jwcm-9g39-pmcw","summary":"Recursive repository cloning can leak authentication tokens to non-GitHub submodule hosts","details":"### Summary\n\nA security vulnerability has been identified in the GitHub CLI that could leak authentication tokens when cloning repositories containing `git` submodules hosted outside of GitHub.com and ghe.com.\n\n### Details\n\nThis vulnerability stems from several `gh` commands used to clone a repository with submodules from a non-GitHub host including `gh repo clone`, `gh repo fork`, `gh pr checkout`. These GitHub CLI commands invoke `git` with instructions to retrieve authentication tokens using the [`credential.helper`](https://git-scm.com/docs/gitcredentials) configuration variable for any host encountered.\n\nPrior to `2.63.0`, hosts other than GitHub.com and ghe.com are treated as GitHub Enterprise Server hosts and have tokens sourced from the following environment variables before falling back to host-specific tokens stored within system-specific secured storage:\n\n- `GITHUB_ENTERPRISE_TOKEN`\n- `GH_ENTERPRISE_TOKEN`\n- `GITHUB_TOKEN` _when `CODESPACES` environment variable is set_\n\nThe result being `git` sending authentication tokens when cloning submodules.\n\nIn `2.63.0`, these GitHub CLI commands will limit the hosts for which `gh` acts as a credential helper to source authentication tokens. Additionally, `GITHUB_TOKEN` will only be used for GitHub.com and ghe.com.\n\n### Impact\n\nSuccessful exploitation could lead to a third-party using leaked authentication tokens to access privileged resources.\n\n### Remediation and mitigation\n\n1. Upgrade `gh` to `2.63.0`\n2. Revoke authentication tokens used with the GitHub CLI: \n    - [Personal access tokens](https://docs.github.com/en/enterprise-cloud@latest/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens)\n    - [GitHub CLI OAuth app](https://docs.github.com/en/apps/using-github-apps/reviewing-and-revoking-authorization-of-github-apps#reviewing-your-authorized-github-apps)\n3. Review your personal [security log](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/reviewing-your-security-log) and any relevant [audit logs](https://docs.github.com/en/enterprise-cloud@latest/admin/monitoring-activity-in-your-enterprise/reviewing-audit-logs-for-your-enterprise/identifying-audit-log-events-performed-by-an-access-token) for actions associated with your account or enterprise","aliases":["CVE-2024-53858","GO-2024-3296"],"modified":"2026-09-10T03:50:20.798741003Z","published":"2024-11-27T21:43:05Z","database_specific":{"github_reviewed":true,"github_reviewed_at":"2024-11-27T21:43:05Z","nvd_published_at":"2024-11-27T22:15:05Z","cwe_ids":["CWE-200"],"severity":"MODERATE"},"references":[{"type":"WEB","url":"https://github.com/cli/cli/security/advisories/GHSA-jwcm-9g39-pmcw"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2024-53858"},{"type":"WEB","url":"https://git-scm.com/docs/gitcredentials"},{"type":"PACKAGE","url":"https://github.com/cli/cli"}],"affected":[{"package":{"name":"github.com/cli/cli/v2","ecosystem":"Go","purl":"pkg:golang/github.com/cli/cli/v2"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"2.63.0"}]}],"database_specific":{"source":"https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2024/11/GHSA-jwcm-9g39-pmcw/GHSA-jwcm-9g39-pmcw.json","last_known_affected_version_range":"\u003c= 2.62.0"}}],"schema_version":"1.9.0","severity":[{"type":"CVSS_V3","score":"CVSS:3.1/AV:L/AC:H/PR:N/UI:R/S:U/C:H/I:H/A:L"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "3602"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:43:14 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-0db078675d2b107fd2bfb21027425108-b075f950d549a831-00
+            X-Cloud-Trace-Context:
+                - 0db078675d2b107fd2bfb21027425108/12715343248521537585
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 198.644125ms
+    - id: 17
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/GHSA-mm27-mwq9-fr5g
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 3935
+        body: '{"id":"GHSA-mm27-mwq9-fr5g","summary":"GitHub CLI allows attestation verification bypass through unescaped regex metacharacters","details":"### Summary\n\nA security vulnerability has been identified in GitHub CLI that could allow attestation verification bypass when using `gh attestation verify` with `--signer-repo` or `--signer-workflow` flags. GitHub CLI builds the certificate matcher from these flag values without escaping regex metacharacters, so a repository or workflow name is treated as a regular expression rather than a literal string. GitHub permits characters such as  `.`  in organization, repository, and workflow path names, and  `.`  is a regex wildcard, so a malicious actor can create a lookalike name that satisfies a matcher intended for a different, trusted signer.\n\n### Details\n\nGitHub CLI constructs a regular expression from the  `--signer-repo`  and  `--signer-workflow`  values and matches it against the signing certificate''s SAN (Subject Alternative Name) during Sigstore attestation verification. The user-supplied value is interpolated into the pattern without escaping regex metacharacters, so any metacharacter permitted in a GitHub path is interpreted as regex syntax instead of a literal character.\n\nThe most practical case is  `.` , which GitHub allows in org/repo names and is a regex wildcard meaning \"any single character.\" For example, an attacker-controlled repository named:\n\n`github/artifact.attestations-workflows`\n\nmatches a verifier configured for the trusted signer:\n\n`github/artifact-attestations-workflows`\n\nbecause the unescaped  `.`  in the constructed pattern matches the  `-`  in the attacker''s name (and any other single character at that position). This affected the `--signer-repo` and `--signer-workflow` flags but did not affect the `--repo` and `--owner` flags which include an exact string comparison.\n\nIn `v2.97.0`, the GitHub CLI escapes the user-supplied signer values before they are incorporated into the SAN matcher, so they are matched as literal strings.\n\n### Impact\n\nThe practical impact is limited, exploitation requires the attacker to create a plausible lookalike repository name and produce valid Sigstore attestations from it. This could undermine supply chain verification for CI/CD pipelines or policy gates that use these flags to pin trust to a specific signing workflow. \n\n### Remediation and Mitigation\n\n1. Upgrade `gh` to `v2.97.0` or later, which escapes signer values before matching.\n2. As a workaround, use `--repo` or `--owner` flags instead of `--signer-repo` or `--signer-workflow` where applicable.\n3. Manually inspect the signing certificate SAN in attestation output to confirm the signing workflow origin.","aliases":["CVE-2026-64655","GO-2026-6767"],"modified":"2026-10-19T21:41:04.715150068Z","published":"2026-10-15T18:08:20Z","database_specific":{"cwe_ids":["CWE-185"],"severity":"LOW","github_reviewed":true,"github_reviewed_at":"2026-10-15T18:08:20Z","nvd_published_at":"2026-08-06T22:18:13Z"},"references":[{"type":"WEB","url":"https://github.com/cli/cli/security/advisories/GHSA-mm27-mwq9-fr5g"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2026-64655"},{"type":"WEB","url":"https://github.com/cli/cli/commit/55dbb4dc6b7edb10b48e3d7fc5bccd32318d1b55"},{"type":"PACKAGE","url":"https://github.com/cli/cli"},{"type":"WEB","url":"https://github.com/cli/cli/releases/tag/v2.97.0"}],"affected":[{"package":{"name":"github.com/cli/cli/v2","ecosystem":"Go","purl":"pkg:golang/github.com/cli/cli/v2"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"2.97.0"}]}],"database_specific":{"source":"https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2026/10/GHSA-mm27-mwq9-fr5g/GHSA-mm27-mwq9-fr5g.json"}}],"schema_version":"1.9.0","severity":[{"type":"CVSS_V4","score":"CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:A/VC:N/VI:N/VA:N/SC:N/SI:L/SA:N"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "3935"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:43:14 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-74374750ac85d115d2bfb2102742541f-c442c34e54719354-00
+            X-Cloud-Trace-Context:
+                - 74374750ac85d115d2bfb2102742541f/14142080521088373588
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 184.768834ms
+    - id: 18
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/GHSA-p2h2-3vg9-4p87
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 3654
+        body: '{"id":"GHSA-p2h2-3vg9-4p87","summary":"Connecting to a malicious Codespaces via GH CLI could allow command execution on the user''s computer","details":"### Summary\n\nA security vulnerability has been identified in GitHub CLI that could allow remote code execution (RCE) when users connect to a malicious Codespace SSH server and use the `gh codespace ssh` or `gh codespace logs` commands.\n\n### Details\n\nThe vulnerability stems from the way GitHub CLI handles SSH connection details when executing commands. When developers connect to remote Codespaces, they typically use a SSH server running within a devcontainer, often provided through the [default devcontainer image](https://docs.github.com/en/codespaces/setting-up-your-project-for-codespaces/adding-a-dev-container-configuration/introduction-to-dev-containers#using-the-default-dev-container-configuration).  GitHub CLI [retrieves SSH connection details](https://github.com/cli/cli/blob/30066b0042d0c5928d959e288144300cb28196c9/internal/codespaces/rpc/invoker.go#L230-L244), such as remote username, which is used in [executing `ssh` commands](https://github.com/cli/cli/blob/e356c69a6f0125cfaac782c35acf77314f18908d/pkg/cmd/codespace/ssh.go#L263) for `gh codespace ssh` or `gh codespace logs` commands.\n\nThis exploit occurs when a malicious third-party devcontainer contains a modified SSH server that injects `ssh` arguments within the SSH connection details. `gh codespace ssh` and `gh codespace logs` commands could execute arbitrary code on the user''s workstation if the remote username contains something like `-oProxyCommand=\"echo hacked\" #`.  The `-oProxyCommand` flag causes `ssh` to execute the provided command while `#` shell comment causes any other `ssh` arguments to be ignored.\n\nIn `2.62.0`, the remote username information is being validated before being used.\n\n### Impact\n\nSuccessful exploitation could lead to arbitrary code execution on the user''s workstation, potentially compromising the user''s data and system.\n\n### Remediation and Mitigation\n\n1. Upgrade `gh` to `2.62.0`\n2. Exercise caution when using custom devcontainer images, prefer default or pre-built devcontainers from trusted sources.","aliases":["CVE-2024-52308","GO-2024-3269"],"modified":"2026-09-10T03:50:20.953491755Z","published":"2024-11-14T17:39:01Z","database_specific":{"github_reviewed_at":"2024-11-14T17:39:01Z","nvd_published_at":"2024-11-14T23:15:05Z","cwe_ids":["CWE-77"],"severity":"HIGH","github_reviewed":true},"references":[{"type":"WEB","url":"https://github.com/cli/cli/security/advisories/GHSA-p2h2-3vg9-4p87"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2024-52308"},{"type":"PACKAGE","url":"https://github.com/cli/cli"},{"type":"WEB","url":"https://pkg.go.dev/vuln/GO-2024-3269"}],"affected":[{"package":{"name":"github.com/cli/cli/v2","ecosystem":"Go","purl":"pkg:golang/github.com/cli/cli/v2"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"2.62.0"}]}],"database_specific":{"last_known_affected_version_range":"\u003c= 2.61.0","source":"https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2024/11/GHSA-p2h2-3vg9-4p87/GHSA-p2h2-3vg9-4p87.json"}},{"package":{"name":"github.com/cli/cli","ecosystem":"Go","purl":"pkg:golang/github.com/cli/cli"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"2.62.0"}]}],"database_specific":{"source":"https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2024/11/GHSA-p2h2-3vg9-4p87/GHSA-p2h2-3vg9-4p87.json"}}],"schema_version":"1.9.0","severity":[{"type":"CVSS_V3","score":"CVSS:3.1/AV:N/AC:H/PR:L/UI:R/S:C/C:H/I:H/A:H"}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "3654"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:43:14 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-ecea543f63ace9a0d2bfb21027425ae3-2e4039e449110e5e-00
+            X-Cloud-Trace-Context:
+                - ecea543f63ace9a0d2bfb21027425ae3/3332727376895348318
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 216.736625ms
+    - id: 19
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/GO-2024-3269
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1306
+        body: '{"id":"GO-2024-3269","summary":"Connecting to a malicious Codespaces via GH CLI could allow command execution on the user''s computer in github.com/cli/cli","details":"Connecting to a malicious Codespaces via GH CLI could allow command execution on the user''s computer in github.com/cli/cli","aliases":["CVE-2024-52308","GHSA-p2h2-3vg9-4p87"],"modified":"2026-02-04T04:11:55.504706Z","published":"2024-11-19T17:20:31Z","related":["CGA-qhx9-vc73-x5fp"],"database_specific":{"url":"https://pkg.go.dev/vuln/GO-2024-3269","review_status":"UNREVIEWED"},"references":[{"type":"ADVISORY","url":"https://github.com/cli/cli/security/advisories/GHSA-p2h2-3vg9-4p87"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2024-52308"}],"affected":[{"package":{"name":"github.com/cli/cli","ecosystem":"Go","purl":"pkg:golang/github.com/cli/cli"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"}]}],"ecosystem_specific":{},"database_specific":{"source":"https://vuln.go.dev/ID/GO-2024-3269.json"}},{"package":{"name":"github.com/cli/cli/v2","ecosystem":"Go","purl":"pkg:golang/github.com/cli/cli/v2"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"2.62.0"}]}],"ecosystem_specific":{},"database_specific":{"source":"https://vuln.go.dev/ID/GO-2024-3269.json"}}],"schema_version":"1.7.3"}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "1306"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:43:14 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-5631d74fa29e7db6d2bfb21027425812-43a27da6d1633d70-00
+            X-Cloud-Trace-Context:
+                - 5631d74fa29e7db6d2bfb21027425812/4873595902199283056
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 206.457708ms
+    - id: 20
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/GO-2024-3296
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1347
+        body: '{"id":"GO-2024-3296","summary":"Recursive repository cloning can leak authentication tokens to non-GitHub submodule hosts in github.com/cli/cli","details":"Recursive repository cloning can leak authentication tokens to non-GitHub submodule hosts in github.com/cli/cli","aliases":["CVE-2024-53858","GHSA-jwcm-9g39-pmcw"],"modified":"2026-02-04T03:49:15.865719Z","published":"2024-12-02T20:06:38Z","related":["CGA-6rx8-c78f-g4vc"],"database_specific":{"review_status":"UNREVIEWED","url":"https://pkg.go.dev/vuln/GO-2024-3296"},"references":[{"type":"ADVISORY","url":"https://github.com/cli/cli/security/advisories/GHSA-jwcm-9g39-pmcw"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2024-53858"},{"type":"WEB","url":"https://git-scm.com/docs/gitcredentials"}],"affected":[{"package":{"name":"github.com/cli/cli","ecosystem":"Go","purl":"pkg:golang/github.com/cli/cli"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"}]}],"ecosystem_specific":{},"database_specific":{"source":"https://vuln.go.dev/ID/GO-2024-3296.json"}},{"package":{"name":"github.com/cli/cli/v2","ecosystem":"Go","purl":"pkg:golang/github.com/cli/cli/v2"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"2.63.0"}]}],"ecosystem_specific":{},"database_specific":{"source":"https://vuln.go.dev/ID/GO-2024-3296.json"}}],"schema_version":"1.7.3"}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "1347"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:43:14 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-ee8d443b0dbfa76fd2bfb21027425b82-e42e63ab0bf0cec4-00
+            X-Cloud-Trace-Context:
+                - ee8d443b0dbfa76fd2bfb21027425b82/16442188875867147972
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 230.760334ms
+    - id: 21
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/GO-2024-3310
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1316
+        body: '{"id":"GO-2024-3310","summary":"Downloading malicious GitHub Actions workflow artifact results in path traversal vulnerability in github.com/cli/cli","details":"Downloading malicious GitHub Actions workflow artifact results in path traversal vulnerability in github.com/cli/cli","aliases":["CVE-2024-54132","GHSA-2m9h-r57g-45pj"],"modified":"2026-02-04T02:55:32.842111Z","published":"2024-12-04T16:25:24Z","related":["CGA-4w72-pp6p-7cq7"],"database_specific":{"review_status":"UNREVIEWED","url":"https://pkg.go.dev/vuln/GO-2024-3310"},"references":[{"type":"ADVISORY","url":"https://github.com/cli/cli/security/advisories/GHSA-2m9h-r57g-45pj"},{"type":"FIX","url":"https://github.com/cli/cli/commit/1136764c369aaf0cae4ec2ee09dc35d871076932"}],"affected":[{"package":{"name":"github.com/cli/cli","ecosystem":"Go","purl":"pkg:golang/github.com/cli/cli"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"}]}],"ecosystem_specific":{},"database_specific":{"source":"https://vuln.go.dev/ID/GO-2024-3310.json"}},{"package":{"name":"github.com/cli/cli/v2","ecosystem":"Go","purl":"pkg:golang/github.com/cli/cli/v2"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"2.63.1"}]}],"ecosystem_specific":{},"database_specific":{"source":"https://vuln.go.dev/ID/GO-2024-3310.json"}}],"schema_version":"1.7.3"}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "1316"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:43:14 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-064a543f64026d66d2bfb21027425c7a-ccd808097b09dd48-00
+            X-Cloud-Trace-Context:
+                - 064a543f64026d66d2bfb21027425c7a/14760556615518772552
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 230.957167ms
+    - id: 22
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/GO-2026-5271
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1491
+        body: '{"id":"GO-2026-5271","summary":"GitHub CLI has an incorrect authorization header in API requests to TUF repository mirrors via `gh attestation`, `gh release verify`, and `gh release verify-asset` commands in github.com/cli/cli","details":"GitHub CLI has an incorrect authorization header in API requests to TUF repository mirrors via `gh attestation`, `gh release verify`, and `gh release verify-asset` commands in github.com/cli/cli","aliases":["CVE-2026-48501","GHSA-8xvp-7hj6-mcj9"],"modified":"2026-06-25T19:45:24.910991791Z","published":"2026-06-25T18:43:15Z","database_specific":{"url":"https://pkg.go.dev/vuln/GO-2026-5271","review_status":"UNREVIEWED"},"references":[{"type":"ADVISORY","url":"https://github.com/cli/cli/security/advisories/GHSA-8xvp-7hj6-mcj9"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2026-48501"},{"type":"WEB","url":"https://github.com/cli/cli/releases/tag/v2.93.0"}],"affected":[{"package":{"name":"github.com/cli/cli","ecosystem":"Go","purl":"pkg:golang/github.com/cli/cli"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"}]}],"ecosystem_specific":{},"database_specific":{"source":"https://vuln.go.dev/ID/GO-2026-5271.json"}},{"package":{"name":"github.com/cli/cli/v2","ecosystem":"Go","purl":"pkg:golang/github.com/cli/cli/v2"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"2.93.0"}]}],"ecosystem_specific":{},"database_specific":{"source":"https://vuln.go.dev/ID/GO-2026-5271.json"}}],"schema_version":"1.7.5"}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "1491"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:43:14 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-3e62600154f269aad2bfb21027425715-90df73f6b4edd654-00
+            X-Cloud-Trace-Context:
+                - 3e62600154f269aad2bfb21027425715/10439189964702733908
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 195.112083ms
+    - id: 23
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/GO-2026-5335
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1272
+        body: '{"id":"GO-2026-5335","summary":"GitHub CLI: GitHub Actions log output in `gh run view` allows terminal escape sequence injection in github.com/cli/cli","details":"GitHub CLI: GitHub Actions log output in `gh run view` allows terminal escape sequence injection in github.com/cli/cli","aliases":["CVE-2026-45803","GHSA-crc3-h8v6-qh57"],"modified":"2026-06-25T19:45:31.832172877Z","published":"2026-06-25T18:43:19Z","database_specific":{"url":"https://pkg.go.dev/vuln/GO-2026-5335","review_status":"UNREVIEWED"},"references":[{"type":"ADVISORY","url":"https://github.com/cli/cli/security/advisories/GHSA-crc3-h8v6-qh57"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2026-45803"}],"affected":[{"package":{"name":"github.com/cli/cli","ecosystem":"Go","purl":"pkg:golang/github.com/cli/cli"},"ranges":[{"type":"SEMVER","events":[{"introduced":"1.6.0"}]}],"ecosystem_specific":{},"database_specific":{"source":"https://vuln.go.dev/ID/GO-2026-5335.json"}},{"package":{"name":"github.com/cli/cli/v2","ecosystem":"Go","purl":"pkg:golang/github.com/cli/cli/v2"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"2.92.0"}]}],"ecosystem_specific":{},"database_specific":{"source":"https://vuln.go.dev/ID/GO-2026-5335.json"}}],"schema_version":"1.7.5"}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "1272"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:43:15 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-d7cd545b7f8184bad2bfb2102742580d-baebce5285e7abac-00
+            X-Cloud-Trace-Context:
+                - d7cd545b7f8184bad2bfb2102742580d/13469085964410792876
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 199.758333ms
+    - id: 24
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/GO-2026-6765
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1391
+        body: '{"id":"GO-2026-6765","summary":"GitHub CLI allows path traversal through unescaped request URL components in github.com/cli/cli","details":"GitHub CLI allows path traversal through unescaped request URL components in github.com/cli/cli","aliases":["CVE-2026-64653","GHSA-4fjg-2h4q-fwg3"],"modified":"2026-10-19T21:31:53.420127909Z","published":"2026-10-19T21:08:35Z","database_specific":{"url":"https://pkg.go.dev/vuln/GO-2026-6765","review_status":"UNREVIEWED"},"references":[{"type":"ADVISORY","url":"https://github.com/cli/cli/security/advisories/GHSA-4fjg-2h4q-fwg3"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2026-64653"},{"type":"FIX","url":"https://github.com/cli/cli/commit/0c2eea6338a2323cfff000160b9b5a56a38d2a06"},{"type":"WEB","url":"https://github.com/cli/cli/releases/tag/v2.97.0"}],"affected":[{"package":{"name":"github.com/cli/cli","ecosystem":"Go","purl":"pkg:golang/github.com/cli/cli"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"}]}],"ecosystem_specific":{},"database_specific":{"source":"https://vuln.go.dev/ID/GO-2026-6765.json"}},{"package":{"name":"github.com/cli/cli/v2","ecosystem":"Go","purl":"pkg:golang/github.com/cli/cli/v2"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"2.97.0"}]}],"ecosystem_specific":{},"database_specific":{"source":"https://vuln.go.dev/ID/GO-2026-6765.json"}}],"schema_version":"1.9.0"}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "1391"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:43:15 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-fbbcf53a842d3416d2bfb21027425aa1-214d623413924ce8-00
+            X-Cloud-Trace-Context:
+                - fbbcf53a842d3416d2bfb21027425aa1/2399682152264518888
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 222.337084ms
+    - id: 25
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/GO-2026-6766
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1403
+        body: '{"id":"GO-2026-6766","summary":"GitHub CLI partially discloses authentication tokens in `gh auth status` output in github.com/cli/cli","details":"GitHub CLI partially discloses authentication tokens in `gh auth status` output in github.com/cli/cli","aliases":["CVE-2026-64652","GHSA-cg6r-mpgc-h9mm"],"modified":"2026-10-19T21:31:37.813588835Z","published":"2026-10-19T21:08:35Z","database_specific":{"url":"https://pkg.go.dev/vuln/GO-2026-6766","review_status":"UNREVIEWED"},"references":[{"type":"ADVISORY","url":"https://github.com/cli/cli/security/advisories/GHSA-cg6r-mpgc-h9mm"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2026-64652"},{"type":"FIX","url":"https://github.com/cli/cli/commit/3f6a16a9f8c7fe9676aa8d8f47b399310dd231c3"},{"type":"WEB","url":"https://github.com/cli/cli/releases/tag/v2.97.0"}],"affected":[{"package":{"name":"github.com/cli/cli","ecosystem":"Go","purl":"pkg:golang/github.com/cli/cli"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"}]}],"ecosystem_specific":{},"database_specific":{"source":"https://vuln.go.dev/ID/GO-2026-6766.json"}},{"package":{"name":"github.com/cli/cli/v2","ecosystem":"Go","purl":"pkg:golang/github.com/cli/cli/v2"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"2.97.0"}]}],"ecosystem_specific":{},"database_specific":{"source":"https://vuln.go.dev/ID/GO-2026-6766.json"}}],"schema_version":"1.9.0"}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "1403"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:43:15 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-575147d3b8a8e14ad2bfb21027425618-8bbe71738b336349-00
+            X-Cloud-Trace-Context:
+                - 575147d3b8a8e14ad2bfb21027425618/10069610557917586249
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 185.852625ms
+    - id: 26
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: api.osv.dev
+        headers:
+            Accept:
+                - application/json
+        url: https://api.osv.dev/v1/vulns/GO-2026-6767
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1421
+        body: '{"id":"GO-2026-6767","summary":"GitHub CLI allows attestation verification bypass through unescaped regex metacharacters in github.com/cli/cli","details":"GitHub CLI allows attestation verification bypass through unescaped regex metacharacters in github.com/cli/cli","aliases":["CVE-2026-64655","GHSA-mm27-mwq9-fr5g"],"modified":"2026-10-19T21:31:49.979387869Z","published":"2026-10-19T21:08:35Z","database_specific":{"url":"https://pkg.go.dev/vuln/GO-2026-6767","review_status":"UNREVIEWED"},"references":[{"type":"ADVISORY","url":"https://github.com/cli/cli/security/advisories/GHSA-mm27-mwq9-fr5g"},{"type":"ADVISORY","url":"https://nvd.nist.gov/vuln/detail/CVE-2026-64655"},{"type":"FIX","url":"https://github.com/cli/cli/commit/55dbb4dc6b7edb10b48e3d7fc5bccd32318d1b55"},{"type":"WEB","url":"https://github.com/cli/cli/releases/tag/v2.97.0"}],"affected":[{"package":{"name":"github.com/cli/cli","ecosystem":"Go","purl":"pkg:golang/github.com/cli/cli"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"}]}],"ecosystem_specific":{},"database_specific":{"source":"https://vuln.go.dev/ID/GO-2026-6767.json"}},{"package":{"name":"github.com/cli/cli/v2","ecosystem":"Go","purl":"pkg:golang/github.com/cli/cli/v2"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"2.97.0"}]}],"ecosystem_specific":{},"database_specific":{"source":"https://vuln.go.dev/ID/GO-2026-6767.json"}}],"schema_version":"1.9.0"}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "1421"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:43:15 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-a4dbe95e3ccfe1bed2bfb21027425d51-682b83845d2eb0cb-00
+            X-Cloud-Trace-Context:
+                - a4dbe95e3ccfe1bed2bfb21027425d51/7506237808465326283
+            X-Envoy-Decorator-Operation:
+                - ingress GetVulnById
+        status: 200 OK
+        code: 200
+        duration: 184.924583ms

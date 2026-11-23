@@ -127,6 +127,48 @@
               }
             },
             {
+              "id": "GO-2026-6601",
+              "shortDescription": {
+                "text": "Checksum bypass for golang.org/fips140 in cmd/go"
+              },
+              "fullDescription": {
+                "text": "Checksum bypass for golang.org/fips140 in cmd/go (BIT-golang-2026-94444, CVE-2026-94444)"
+              },
+              "help": {
+                "text": "Upgrade past the affected versions. Details: https://osv.dev/vulnerability/GO-2026-6601"
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "vulnerability"
+                ]
+              }
+            },
+            {
+              "id": "GO-2026-6602",
+              "shortDescription": {
+                "text": "Checksum database bypass for golang.org/toolchain in cmd/go"
+              },
+              "fullDescription": {
+                "text": "Checksum database bypass for golang.org/toolchain in cmd/go (BIT-golang-2026-94447, CVE-2026-94447)"
+              },
+              "help": {
+                "text": "Upgrade past the affected versions. Details: https://osv.dev/vulnerability/GO-2026-6602"
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "vulnerability"
+                ]
+              }
+            },
+            {
               "id": "GO-2026-6603",
               "shortDescription": {
                 "text": "HTTP/2 server memory exhaustion due to Trailer headers in net/http"
@@ -379,6 +421,237 @@
               }
             },
             {
+              "id": "GO-2026-6848",
+              "shortDescription": {
+                "text": "Unexpected code execution via escaped quotes in //go:cgo_ldflag in cmd/go and cmd/compile"
+              },
+              "fullDescription": {
+                "text": "Unexpected code execution via escaped quotes in //go:cgo_ldflag in cmd/go and cmd/compile (CVE-2026-97043)"
+              },
+              "help": {
+                "text": "Upgrade past the affected versions. Details: https://osv.dev/vulnerability/GO-2026-6848"
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "vulnerability"
+                ]
+              }
+            },
+            {
+              "id": "GO-2026-6849",
+              "shortDescription": {
+                "text": "Linker flag injection via cgo_import_dynamic and PE DLL names in cmd/cgo, cmd/compile, and cmd/link"
+              },
+              "fullDescription": {
+                "text": "Linker flag injection via cgo_import_dynamic and PE DLL names in cmd/cgo, cmd/compile, and cmd/link (CVE-2026-97042)"
+              },
+              "help": {
+                "text": "Upgrade past the affected versions. Details: https://osv.dev/vulnerability/GO-2026-6849"
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "vulnerability"
+                ]
+              }
+            },
+            {
+              "id": "GO-2026-6850",
+              "shortDescription": {
+                "text": "Host linker flag injection via //go:cgo_* directives in cmd/compile and cmd/link"
+              },
+              "fullDescription": {
+                "text": "Host linker flag injection via //go:cgo_* directives in cmd/compile and cmd/link (CVE-2026-97041)"
+              },
+              "help": {
+                "text": "Upgrade past the affected versions. Details: https://osv.dev/vulnerability/GO-2026-6850"
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "vulnerability"
+                ]
+              }
+            },
+            {
+              "id": "GO-2026-6851",
+              "shortDescription": {
+                "text": "Cgo directive injection via .syso files disguised as Go object files in cmd/go and cmd/link"
+              },
+              "fullDescription": {
+                "text": "Cgo directive injection via .syso files disguised as Go object files in cmd/go and cmd/link (CVE-2026-97040)"
+              },
+              "help": {
+                "text": "Upgrade past the affected versions. Details: https://osv.dev/vulnerability/GO-2026-6851"
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "vulnerability"
+                ]
+              }
+            },
+            {
+              "id": "GO-2026-6852",
+              "shortDescription": {
+                "text": "Flag sanitization bypass via \"#cgo pkg-config:\" directives in cmd/go"
+              },
+              "fullDescription": {
+                "text": "Flag sanitization bypass via \"#cgo pkg-config:\" directives in cmd/go (CVE-2026-97039)"
+              },
+              "help": {
+                "text": "Upgrade past the affected versions. Details: https://osv.dev/vulnerability/GO-2026-6852"
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "vulnerability"
+                ]
+              }
+            },
+            {
+              "id": "GO-2026-6853",
+              "shortDescription": {
+                "text": "Arbitrary code execution via crafted .syso files and cgo linker input files in cmd/go"
+              },
+              "fullDescription": {
+                "text": "Arbitrary code execution via crafted .syso files and cgo linker input files in cmd/go (CVE-2026-97038)"
+              },
+              "help": {
+                "text": "Upgrade past the affected versions. Details: https://osv.dev/vulnerability/GO-2026-6853"
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "vulnerability"
+                ]
+              }
+            },
+            {
+              "id": "GO-2026-6854",
+              "shortDescription": {
+                "text": "Linker script injection via split -Wl, flags and Darwin or symbol linker flags in cgo in cmd/go"
+              },
+              "fullDescription": {
+                "text": "Linker script injection via split -Wl, flags and Darwin or symbol linker flags in cgo in cmd/go (CVE-2026-97037)"
+              },
+              "help": {
+                "text": "Upgrade past the affected versions. Details: https://osv.dev/vulnerability/GO-2026-6854"
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "vulnerability"
+                ]
+              }
+            },
+            {
+              "id": "GO-2026-6855",
+              "shortDescription": {
+                "text": "Arbitrary code execution during build on darwin via \"-l to_library\" in cgo in cmd/go"
+              },
+              "fullDescription": {
+                "text": "Arbitrary code execution during build on darwin via \"-l to_library\" in cgo in cmd/go (CVE-2026-97036)"
+              },
+              "help": {
+                "text": "Upgrade past the affected versions. Details: https://osv.dev/vulnerability/GO-2026-6855"
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "vulnerability"
+                ]
+              }
+            },
+            {
+              "id": "GO-2026-6856",
+              "shortDescription": {
+                "text": "Unexpected code execution and arbitrary file write via Clang -gen-* and GCC -gnat* flags in cgo in cmd/go"
+              },
+              "fullDescription": {
+                "text": "Unexpected code execution and arbitrary file write via Clang -gen-* and GCC -gnat* flags in cgo in cmd/go (CVE-2026-97035)"
+              },
+              "help": {
+                "text": "Upgrade past the affected versions. Details: https://osv.dev/vulnerability/GO-2026-6856"
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "vulnerability"
+                ]
+              }
+            },
+            {
+              "id": "GO-2026-6857",
+              "shortDescription": {
+                "text": "Arbitrary command execution via GCC spec files in cgo linker search directories in cmd/go"
+              },
+              "fullDescription": {
+                "text": "Arbitrary command execution via GCC spec files in cgo linker search directories in cmd/go (CVE-2026-97034)"
+              },
+              "help": {
+                "text": "Upgrade past the affected versions. Details: https://osv.dev/vulnerability/GO-2026-6857"
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "vulnerability"
+                ]
+              }
+            },
+            {
+              "id": "GO-2026-6858",
+              "shortDescription": {
+                "text": "Unexpected code execution via --sysroot, -target, -isysroot, -Wl,-syslibroot, and -x cgo flags in cmd/go"
+              },
+              "fullDescription": {
+                "text": "Unexpected code execution via --sysroot, -target, -isysroot, -Wl,-syslibroot, and -x cgo flags in cmd/go (CVE-2026-97033)"
+              },
+              "help": {
+                "text": "Upgrade past the affected versions. Details: https://osv.dev/vulnerability/GO-2026-6858"
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "vulnerability"
+                ]
+              }
+            },
+            {
               "id": "GO-2026-6859",
               "shortDescription": {
                 "text": "HTTP/1 server crash due to MaxBytesReader header race in net/http"
@@ -473,8 +746,54 @@
           }
         },
         {
-          "ruleId": "GO-2026-6603",
+          "ruleId": "GO-2026-6601",
           "ruleIndex": 7,
+          "level": "note",
+          "message": {
+            "text": "go 1.25.14 is affected by GO-2026-6601 (BIT-golang-2026-94444, CVE-2026-94444): Checksum bypass for golang.org/fips140 in cmd/go; fixed in 1.26.9"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/ci.yml"
+                },
+                "region": {
+                  "startLine": 9
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GO-2026-6601|go|.github/workflows/ci.yml|GO-2026-6601"
+          }
+        },
+        {
+          "ruleId": "GO-2026-6602",
+          "ruleIndex": 8,
+          "level": "note",
+          "message": {
+            "text": "go 1.25.14 is affected by GO-2026-6602 (BIT-golang-2026-94447, CVE-2026-94447): Checksum database bypass for golang.org/toolchain in cmd/go; fixed in 1.26.9"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/ci.yml"
+                },
+                "region": {
+                  "startLine": 9
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GO-2026-6602|go|.github/workflows/ci.yml|GO-2026-6602"
+          }
+        },
+        {
+          "ruleId": "GO-2026-6603",
+          "ruleIndex": 9,
           "level": "note",
           "message": {
             "text": "go 1.25.14 is affected by GO-2026-6603 (BIT-golang-2026-78659, CVE-2026-78659): HTTP/2 server memory exhaustion due to Trailer headers in net/http; fixed in 1.26.9"
@@ -497,7 +816,7 @@
         },
         {
           "ruleId": "GO-2026-6604",
-          "ruleIndex": 8,
+          "ruleIndex": 10,
           "level": "note",
           "message": {
             "text": "go 1.25.14 is affected by GO-2026-6604 (BIT-golang-2026-56857, CVE-2026-56857): Root.Mkdir(All) can follow junctions out of the root on Windows in os; fixed in 1.26.9"
@@ -520,7 +839,7 @@
         },
         {
           "ruleId": "GO-2026-6605",
-          "ruleIndex": 9,
+          "ruleIndex": 11,
           "level": "note",
           "message": {
             "text": "go 1.25.14 is affected by GO-2026-6605 (BIT-golang-2026-56866, CVE-2026-56866): HTTP/1 client connection desynchronization after CONNECT rejection in net/http; fixed in 1.26.9"
@@ -543,7 +862,7 @@
         },
         {
           "ruleId": "GO-2026-6607",
-          "ruleIndex": 10,
+          "ruleIndex": 12,
           "level": "note",
           "message": {
             "text": "go 1.25.14 is affected by GO-2026-6607 (BIT-golang-2026-97031, CVE-2026-97031): Reject malformed ECH outer extension references in crypto/tls; fixed in 1.26.9"
@@ -566,7 +885,7 @@
         },
         {
           "ruleId": "GO-2026-6608",
-          "ruleIndex": 11,
+          "ruleIndex": 13,
           "level": "note",
           "message": {
             "text": "go 1.25.14 is affected by GO-2026-6608 (BIT-golang-2026-94440, CVE-2026-94440): Memory limit bypass when parsing MIME headers in net/textproto, mime/multipart; fixed in 1.26.9"
@@ -589,7 +908,7 @@
         },
         {
           "ruleId": "GO-2026-6609",
-          "ruleIndex": 12,
+          "ruleIndex": 14,
           "level": "note",
           "message": {
             "text": "go 1.25.14 is affected by GO-2026-6609 (BIT-golang-2026-78667, CVE-2026-78667): Lack of limit on size of parsed Range headers in net/http; fixed in 1.26.9"
@@ -612,7 +931,7 @@
         },
         {
           "ruleId": "GO-2026-6610",
-          "ruleIndex": 13,
+          "ruleIndex": 15,
           "level": "note",
           "message": {
             "text": "go 1.25.14 is affected by GO-2026-6610 (BIT-golang-2026-78660, CVE-2026-78660): HTTP/2 transport accepts malformed framing-related headers in net/http; fixed in 1.26.9"
@@ -635,7 +954,7 @@
         },
         {
           "ruleId": "GO-2026-6611",
-          "ruleIndex": 14,
+          "ruleIndex": 16,
           "level": "note",
           "message": {
             "text": "go 1.25.14 is affected by GO-2026-6611 (BIT-golang-2026-78669, CVE-2026-78669): Excessive CPU consumption from repeated initial window changes in net/http; fixed in 1.26.9"
@@ -658,7 +977,7 @@
         },
         {
           "ruleId": "GO-2026-6612",
-          "ruleIndex": 15,
+          "ruleIndex": 17,
           "level": "note",
           "message": {
             "text": "go 1.25.14 is affected by GO-2026-6612 (BIT-golang-2026-78663, CVE-2026-78663): Double flow control refund on HTTP/2 server streams in net/http; fixed in 1.26.9"
@@ -681,7 +1000,7 @@
         },
         {
           "ruleId": "GO-2026-6613",
-          "ruleIndex": 16,
+          "ruleIndex": 18,
           "level": "note",
           "message": {
             "text": "go 1.25.14 is affected by GO-2026-6613 (BIT-golang-2026-94439, CVE-2026-94439): HTTP/1 server connection desynchronization after 2xx CONNECT response in net/http; fixed in 1.26.9"
@@ -704,7 +1023,7 @@
         },
         {
           "ruleId": "GO-2026-6617",
-          "ruleIndex": 17,
+          "ruleIndex": 19,
           "level": "note",
           "message": {
             "text": "go 1.25.14 is affected by GO-2026-6617 (BIT-golang-2026-97032, CVE-2026-97032): HTTP/2 server crash due to HPACK encoder race in net/http; fixed in 1.26.9"
@@ -727,7 +1046,7 @@
         },
         {
           "ruleId": "GO-2026-6809",
-          "ruleIndex": 18,
+          "ruleIndex": 20,
           "level": "note",
           "message": {
             "text": "go 1.25.14 is affected by GO-2026-6809 (BIT-golang-2026-111943, CVE-2026-111943, RUSTSEC-2026-0381, RUSTSEC-2026-0382, RUSTSEC-2026-0383): Distrust compromised intermediate certificates in crypto/x509; fixed in 1.26.10"
@@ -749,8 +1068,261 @@
           }
         },
         {
+          "ruleId": "GO-2026-6848",
+          "ruleIndex": 21,
+          "level": "note",
+          "message": {
+            "text": "go 1.25.14 is affected by GO-2026-6848 (CVE-2026-97043): Unexpected code execution via escaped quotes in //go:cgo_ldflag in cmd/go and cmd/compile; fixed in 1.26.11"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/ci.yml"
+                },
+                "region": {
+                  "startLine": 9
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GO-2026-6848|go|.github/workflows/ci.yml|GO-2026-6848"
+          }
+        },
+        {
+          "ruleId": "GO-2026-6849",
+          "ruleIndex": 22,
+          "level": "note",
+          "message": {
+            "text": "go 1.25.14 is affected by GO-2026-6849 (CVE-2026-97042): Linker flag injection via cgo_import_dynamic and PE DLL names in cmd/cgo, cmd/compile, and cmd/link; fixed in 1.26.11"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/ci.yml"
+                },
+                "region": {
+                  "startLine": 9
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GO-2026-6849|go|.github/workflows/ci.yml|GO-2026-6849"
+          }
+        },
+        {
+          "ruleId": "GO-2026-6850",
+          "ruleIndex": 23,
+          "level": "note",
+          "message": {
+            "text": "go 1.25.14 is affected by GO-2026-6850 (CVE-2026-97041): Host linker flag injection via //go:cgo_* directives in cmd/compile and cmd/link; fixed in 1.26.11"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/ci.yml"
+                },
+                "region": {
+                  "startLine": 9
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GO-2026-6850|go|.github/workflows/ci.yml|GO-2026-6850"
+          }
+        },
+        {
+          "ruleId": "GO-2026-6851",
+          "ruleIndex": 24,
+          "level": "note",
+          "message": {
+            "text": "go 1.25.14 is affected by GO-2026-6851 (CVE-2026-97040): Cgo directive injection via .syso files disguised as Go object files in cmd/go and cmd/link; fixed in 1.26.11"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/ci.yml"
+                },
+                "region": {
+                  "startLine": 9
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GO-2026-6851|go|.github/workflows/ci.yml|GO-2026-6851"
+          }
+        },
+        {
+          "ruleId": "GO-2026-6852",
+          "ruleIndex": 25,
+          "level": "note",
+          "message": {
+            "text": "go 1.25.14 is affected by GO-2026-6852 (CVE-2026-97039): Flag sanitization bypass via \"#cgo pkg-config:\" directives in cmd/go; fixed in 1.26.11"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/ci.yml"
+                },
+                "region": {
+                  "startLine": 9
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GO-2026-6852|go|.github/workflows/ci.yml|GO-2026-6852"
+          }
+        },
+        {
+          "ruleId": "GO-2026-6853",
+          "ruleIndex": 26,
+          "level": "note",
+          "message": {
+            "text": "go 1.25.14 is affected by GO-2026-6853 (CVE-2026-97038): Arbitrary code execution via crafted .syso files and cgo linker input files in cmd/go; fixed in 1.26.11"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/ci.yml"
+                },
+                "region": {
+                  "startLine": 9
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GO-2026-6853|go|.github/workflows/ci.yml|GO-2026-6853"
+          }
+        },
+        {
+          "ruleId": "GO-2026-6854",
+          "ruleIndex": 27,
+          "level": "note",
+          "message": {
+            "text": "go 1.25.14 is affected by GO-2026-6854 (CVE-2026-97037): Linker script injection via split -Wl, flags and Darwin or symbol linker flags in cgo in cmd/go; fixed in 1.26.11"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/ci.yml"
+                },
+                "region": {
+                  "startLine": 9
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GO-2026-6854|go|.github/workflows/ci.yml|GO-2026-6854"
+          }
+        },
+        {
+          "ruleId": "GO-2026-6855",
+          "ruleIndex": 28,
+          "level": "note",
+          "message": {
+            "text": "go 1.25.14 is affected by GO-2026-6855 (CVE-2026-97036): Arbitrary code execution during build on darwin via \"-l to_library\" in cgo in cmd/go; fixed in 1.26.11"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/ci.yml"
+                },
+                "region": {
+                  "startLine": 9
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GO-2026-6855|go|.github/workflows/ci.yml|GO-2026-6855"
+          }
+        },
+        {
+          "ruleId": "GO-2026-6856",
+          "ruleIndex": 29,
+          "level": "note",
+          "message": {
+            "text": "go 1.25.14 is affected by GO-2026-6856 (CVE-2026-97035): Unexpected code execution and arbitrary file write via Clang -gen-* and GCC -gnat* flags in cgo in cmd/go; fixed in 1.26.11"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/ci.yml"
+                },
+                "region": {
+                  "startLine": 9
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GO-2026-6856|go|.github/workflows/ci.yml|GO-2026-6856"
+          }
+        },
+        {
+          "ruleId": "GO-2026-6857",
+          "ruleIndex": 30,
+          "level": "note",
+          "message": {
+            "text": "go 1.25.14 is affected by GO-2026-6857 (CVE-2026-97034): Arbitrary command execution via GCC spec files in cgo linker search directories in cmd/go; fixed in 1.26.11"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/ci.yml"
+                },
+                "region": {
+                  "startLine": 9
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GO-2026-6857|go|.github/workflows/ci.yml|GO-2026-6857"
+          }
+        },
+        {
+          "ruleId": "GO-2026-6858",
+          "ruleIndex": 31,
+          "level": "note",
+          "message": {
+            "text": "go 1.25.14 is affected by GO-2026-6858 (CVE-2026-97033): Unexpected code execution via --sysroot, -target, -isysroot, -Wl,-syslibroot, and -x cgo flags in cmd/go; fixed in 1.26.11"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github/workflows/ci.yml"
+                },
+                "region": {
+                  "startLine": 9
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "relgapFinding/v1": "GO-2026-6858|go|.github/workflows/ci.yml|GO-2026-6858"
+          }
+        },
+        {
           "ruleId": "GO-2026-6859",
-          "ruleIndex": 19,
+          "ruleIndex": 32,
           "level": "note",
           "message": {
             "text": "go 1.25.14 is affected by GO-2026-6859 (CVE-2026-97054): HTTP/1 server crash due to MaxBytesReader header race in net/http; fixed in 1.26.11"

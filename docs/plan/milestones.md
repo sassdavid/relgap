@@ -631,9 +631,9 @@ Scope: OSV checks for every pin, not only the 14 curated tools; a `relgap audit`
 lists what it couldn't check; and the suppression, prioritisation and CI outputs other audit tools
 have. Found on 2026-11-23 from mise's `mise audit` (jdx/mise#15942). Decisions:
 [ADR-0020](adr/0020-vulnerability-audit.md), accepted on 2026-11-23 with the owner's answers;
-settle its open details before coding. The boxes are in build order, and each ships on its own. If
+its open details were settled on 2026-11-23. The boxes are in build order, and each ships on its own. If
 one session can't finish, the open boxes carry over to a follow-up session.
-- [ ] Pins without a curated `osv` list get OSV packages from their backend, `go` also queries
+- [x] Pins without a curated `osv` list get OSV packages from their backend, `go` also queries
   `toolchain`, and private sources are never sent. (vulnerability-audit criterion 1)
 - [ ] Unchecked pins are listed with a reason in every format of `audit` and `outdated`, and
   VULNS shows `?` for them. (vulnerability-audit criterion 2)

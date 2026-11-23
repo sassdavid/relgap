@@ -1,0 +1,50 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 121
+        host: api.osv.dev
+        body: '{"queries":[{"package":{"ecosystem":"GIT","name":"https://gitlab.com/example-group/platform/tf-dns"},"version":"1.2.0"}]}'
+        headers:
+            Accept:
+                - application/json
+            Content-Type:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.osv.dev/v1/querybatch
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 16
+        body: '{"results":[{}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "16"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 08:45:33 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-b10df502c3b46131f1594f4150616ab8-a06e115d792111a2-00
+            X-Cloud-Trace-Context:
+                - b10df502c3b46131f1594f4150616ab8/11560196386668482978
+            X-Envoy-Decorator-Operation:
+                - ingress QueryAffectedBatch
+        status: 200 OK
+        code: 200
+        duration: 353.435834ms

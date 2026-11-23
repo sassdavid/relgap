@@ -27,7 +27,7 @@ Any tool whose name mise's or aqua's registry knows, any GitHub repository throu
 `tfprovider:`, `chart:`, `npm:` and `pypi:`. For those, relgap finds the release notes on its own.
 The tools on [Supported tools](/reference/tools) have a curated entry that names the exact
 sources, the version rules, the endoflife.date product and the OSV packages. Without an entry,
-a tool has no EOL or vulnerability data.
+a tool has no EOL data, and its OSV packages come from its backend or repository.
 
 ## Why is a breaking change classified as a feature, or the other way round?
 
