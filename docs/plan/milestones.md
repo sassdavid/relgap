@@ -625,3 +625,31 @@ Found on 2026-11-20 with relgap 0.10.0 on a Terraform module repository. Decisio
   repository. (non-github-sources criterion 4)
 - [x] `pins --unresolved` no longer lists these sources, and the network page names every new
   host and token. (non-github-sources criterion 5)
+
+### M29: Vulnerability audit (relgap only) ([vulnerability-audit](specs/vulnerability-audit.md))
+Scope: OSV checks for every pin, not only the 14 curated tools; a `relgap audit` command that
+lists what it couldn't check; and the suppression, prioritisation and CI outputs other audit tools
+have. Found on 2026-11-23 from mise's `mise audit` (jdx/mise#15942). Decisions:
+[ADR-0020](adr/0020-vulnerability-audit.md), accepted on 2026-11-23 with the owner's answers;
+settle its open details before coding. The boxes are in build order, and each ships on its own. If
+one session can't finish, the open boxes carry over to a follow-up session.
+- [ ] Pins without a curated `osv` list get OSV packages from their backend, `go` also queries
+  `toolchain`, and private sources are never sent. (vulnerability-audit criterion 1)
+- [ ] Unchecked pins are listed with a reason in every format of `audit` and `outdated`, and
+  VULNS shows `?` for them. (vulnerability-audit criterion 2)
+- [ ] `relgap audit [roots...]` with its formats, `--tool`, the default `vuln` gate and
+  `--fail-on unchecked`. (vulnerability-audit criterion 3)
+- [ ] Unrated records take their GHSA alias's rating and otherwise count at every threshold,
+  withdrawn records are dropped, and records are cached by `modified`. (vulnerability-audit
+  criterion 4)
+- [ ] Each finding has a fix target, and an affected latest version warns. (vulnerability-audit
+  criterion 5)
+- [ ] Action pins are checked against the GitHub Actions ecosystem. (vulnerability-audit
+  criterion 6)
+- [ ] `vulns.ignore` with reason and expiry, OpenVEX input and `--format openvex`.
+  (vulnerability-audit criterion 7)
+- [ ] Opt-in KEV and EPSS annotations and `--fail-on kev`. (vulnerability-audit criterion 8)
+- [ ] The MCP `audit` tool, `notify` kind `audit`, and relgap-action `command: audit`.
+  (vulnerability-audit criterion 9)
+- [ ] The audit guide, the network page and the generated reference. (vulnerability-audit
+  criterion 10)
