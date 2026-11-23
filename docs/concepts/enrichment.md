@@ -99,14 +99,24 @@ SARIF has a note-level [`unchecked`](/reference/sarif-rules) result per pin.
 
 Each advisory gets the highest base score among its CVSS vectors (v2, v3.0, v3.1 or v4.0), the
 way osv-scanner reads it. Without a vector, relgap takes the database's own rating, such as
-GitHub's MODERATE or HIGH. Records with neither, which includes the Go vulnerability database,
-have no rating.
+GitHub's MODERATE or HIGH. Go vulnerability database records have neither, but list their GitHub
+advisory as an alias: GO-2024-2687 names GHSA-4v7x-pqxf-cx7m. relgap fetches each `GHSA-` alias
+once and takes its highest score, and `severity.from` in JSON names that alias. A record still
+without a rating has severity `unknown`, shown as `unknown` in the table.
 
 The rating follows the CVSS bounds: low from 0.1, medium from 4.0, high from 7.0, critical from
 9.0. `--vuln-severity` (config `policy.vuln_severity`) sets the lowest rating that
-`--fail-on vuln` counts. Empty counts every advisory; with a value set, an advisory without a
-rating doesn't count. The [SARIF output](/reference/sarif-rules#vulnerabilities) turns the rating
-into the alert level.
+`--fail-on vuln` counts. Empty counts every advisory. An advisory of unknown severity counts at
+every threshold, in `audit` and in `outdated`. The
+[SARIF output](/reference/sarif-rules#vulnerabilities) turns the rating into the alert level, and
+gives unknown severity level `warning`.
+
+## Records
+
+relgap drops a record marked `withdrawn` and logs it at debug level. OSV's batch query returns
+each record's `modified` time, and relgap caches the record under that time: a record whose
+`modified` didn't change stays cached for 7 days, and a changed one is fetched again. A `GHSA-`
+alias, fetched without a batch answer, is cached for a day like the other OSV answers.
 
 ## When a source is down
 

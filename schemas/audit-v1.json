@@ -28,7 +28,7 @@
           "minimum": 0
         },
         "findings": {
-          "description": "One entry per advisory and tool version, sorted by severity (unrated last), then by ID, tool and version.",
+          "description": "One entry per advisory and tool version, sorted by severity (unknown last), then by ID, tool and version.",
           "type": "array",
           "items": {
             "$ref": "#/$defs/finding"

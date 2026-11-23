@@ -25,7 +25,7 @@ pin's file and line.
 
 outdated and audit add one rule per OSV advisory that affects a pinned version, with the OSV ID as
 the rule ID. Its level comes from the advisory's CVSS rating: error for high and critical, warning for
-medium, and note for low or no rating. The rule carries the score as `security-severity`, which
+medium and for unknown severity, and note for low. The rule carries the score as `security-severity`, which
 code scanning shows as the alert's severity, and its help links to the advisory on osv.dev.
 
 ## Fingerprints

@@ -22,7 +22,8 @@ A pin with a curated osv list in its registry entry queries those packages. Othe
 the package their backend names (npm:, pypi:, cargo:, gem:, go:, dotnet:), or the Go module
 and git repository of a github.com tool. A finding is one advisory that affects one tool
 version, with every pin of that version, its severity, the lowest fixed version and its
-osv.dev page. Findings sort by severity, unrated last, then by ID.
+osv.dev page. A record without a rating takes the rating of its GHSA alias, else its severity
+is unknown. Findings sort by severity, unknown last, then by ID.
 
 A pin OSV wasn't asked about is listed with the reason, and never counts as clean:
 no-advisory-source, private-source, not-exact, unresolved, offline or failed.
@@ -31,12 +32,13 @@ no-advisory-source, private-source, not-exact, unresolved, offline or failed.
 pin's file and line (one rule per OSV ID), a note per unchecked pin (unchecked), and a result
 per file or version lookup that failed (failed). The results don't depend on --fail-on.
 
---fail-on takes vuln and unchecked. vuln counts the findings at or above --vuln-severity, and
-unchecked counts the unchecked tool versions. audit gates vuln by default. Values in config
-policy.fail\_on that audit checks add to vuln, and --fail-on replaces the whole set:
---fail-on unchecked gates only unchecked, and --fail-on= gates nothing. A value whose count
-reaches --min-count (default 1) exits 3. Otherwise a file or lookup that failed exits 1, and so
-does an OSV outage under --fail-on vuln, since a pass on partial data proves nothing.
+--fail-on takes vuln and unchecked. vuln counts the findings at or above --vuln-severity and
+those of unknown severity, and unchecked counts the unchecked tool versions. audit gates vuln
+by default. Values in config policy.fail\_on that audit checks add to vuln, and --fail-on
+replaces the whole set: --fail-on unchecked gates only unchecked, and --fail-on= gates
+nothing. A value whose count reaches --min-count (default 1) exits 3. Otherwise a file or
+lookup that failed exits 1, and so does an OSV outage under --fail-on vuln, since a pass on
+partial data proves nothing.
 
 --offline answers from the HTTP cache. Pins without a cached answer are unchecked with reason
 offline, and --format json has oldest\_answer, when the oldest OSV answer was stored.
@@ -65,7 +67,7 @@ relgap audit [roots...] [flags]
 | `--out` | also write the report to a file as format=path (repeatable); format is one of plain, md, json, sarif or github | string, repeatable |  | `plain`: table without color<br>`md`: Markdown<br>`json`: JSON envelope for scripts<br>`sarif`: SARIF 2.1.0 for code scanning<br>`github`: GitHub Actions annotations |  |  |
 | `--submodules` | scan checked-out git submodules as repositories | bool |  |  |  |  |
 | `--tool` | audit only this tool; repeatable | list, repeatable |  |  |  |  |
-| `--vuln-severity` | lowest rating --fail-on vuln counts: low, medium, high or critical; empty counts all (config policy.vuln\_severity) | string |  | `low`: CVSS 0.1 to 3.9<br>`medium`: CVSS 4.0 to 6.9<br>`high`: CVSS 7.0 to 8.9<br>`critical`: CVSS 9.0 to 10.0 | [`policy.vuln_severity`](/reference/config#policy-vuln-severity) |  |
+| `--vuln-severity` | lowest rating --fail-on vuln counts: low, medium, high or critical; an unknown rating always counts, and empty counts all (config policy.vuln\_severity) | string |  | `low`: CVSS 0.1 to 3.9<br>`medium`: CVSS 4.0 to 6.9<br>`high`: CVSS 7.0 to 8.9<br>`critical`: CVSS 9.0 to 10.0 | [`policy.vuln_severity`](/reference/config#policy-vuln-severity) |  |
 
 The [global flags](/cli/global-flags) work with every command.
 

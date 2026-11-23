@@ -247,6 +247,9 @@ func (c *Cache) keep(ctx context.Context, req *http.Request, key string, resp *h
 		return resp, nil
 	}
 	m := newMeta(req, resp, now)
+	if v, ok := variantOf(req.Context()); ok {
+		m.TTL = v.ttl
+	}
 	if c.opts.Age != nil {
 		if t := c.opts.Age(req, body); t.After(m.Newest) {
 			m.Newest = t
@@ -308,6 +311,9 @@ func (c *Cache) ttl(m meta, now time.Time) time.Duration {
 	if m.Status == http.StatusNotFound {
 		return missTTL
 	}
+	if m.TTL > 0 {
+		return m.TTL
+	}
 	if d, ok := c.opts.TTLOverride[m.Host]; ok {
 		return d
 	}
@@ -360,9 +366,9 @@ func bodyFuncs(b []byte) (io.ReadCloser, func() (io.ReadCloser, error)) {
 	return rc, get
 }
 
-// cacheKey hashes what selects a response: method, URL, Accept, the request body and whether a
-// token was sent. Only the presence of a token goes into the key, never its value. A request
-// marked with [WithAnonymousToken] counts as sent without one.
+// cacheKey hashes what selects a response: method, URL, Accept, the request body, whether a
+// token was sent and the variant of [WithVariant]. Only the presence of a token goes into the
+// key, never its value. A request marked with [WithAnonymousToken] counts as sent without one.
 func cacheKey(req *http.Request, body []byte) string {
 	h := sha256.New()
 	authed := !anonymousToken(req.Context()) && slices.ContainsFunc(CredentialHeaders(), func(k string) bool {
@@ -370,6 +376,9 @@ func cacheKey(req *http.Request, body []byte) string {
 	})
 	_, _ = fmt.Fprintf(h, "%s\n%s\n%s\n%t\n", req.Method, req.URL.String(), req.Header.Get("Accept"), authed)
 	_, _ = h.Write(body)
+	if v, ok := variantOf(req.Context()); ok {
+		_, _ = fmt.Fprintf(h, "\nvariant %s", v.key)
+	}
 	return hex.EncodeToString(h.Sum(nil))
 }
 
@@ -406,4 +415,23 @@ func WithAnonymousToken(ctx context.Context) context.Context {
 func anonymousToken(ctx context.Context) bool {
 	v, _ := ctx.Value(anonymousKey{}).(bool)
 	return v
+}
+
+type variantKey struct{}
+
+type variant struct {
+	key string
+	ttl time.Duration
+}
+
+// WithVariant makes requests sent with ctx cache under a key that also holds key, and stay
+// fresh for ttl. A caller that knows a resource's version, such as an OSV record's modified
+// time, passes it as key: a new version misses the cache instead of reading the old entry.
+func WithVariant(ctx context.Context, key string, ttl time.Duration) context.Context {
+	return context.WithValue(ctx, variantKey{}, variant{key: key, ttl: ttl})
+}
+
+func variantOf(ctx context.Context) (variant, bool) {
+	v, ok := ctx.Value(variantKey{}).(variant)
+	return v, ok
 }

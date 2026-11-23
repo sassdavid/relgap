@@ -1,23 +1,23 @@
 | TOOL | VERSION | ADVISORY | SEVERITY | FIXED IN | PINS |
 | --- | --- | --- | --- | --- | --- |
 | terragrunt | 0.93.13 | GHSA-8394-6f8r-whxg | medium 6.9 | 1.0.4 | tree/team-0/repo-03/mise.toml:3 |
+| kubectl | 1.33.5 | GO-2025-3521 | medium 6.5 | - | tree/team-0/repo-01/mise.toml:2 (+9) |
+| kubectl | 1.34.2 | GO-2025-3521 | medium 6.5 | - | tree/team-0/repo-00/mise.toml:2 (+9) |
 | terraform | 1.5.0 | GHSA-h626-pv66-hhm7 | medium 6.3 | 1.5.7 | tree/team-0/repo-00/.terraform-version:1 (+19) |
 | kubectl | 1.33.5 | GHSA-r6j8-c6r2-37rr | medium 5.8 | 1.33.6 | tree/team-0/repo-01/mise.toml:2 (+9) |
 | helm | 3.19.0 | GHSA-hr2v-4r36-88hr | medium 4.8 | 3.20.2 | tree/team-0/repo-01/mise.toml:3 (+4) |
 | terragrunt | 0.93.13 | GHSA-wv6g-x823-wx9m | medium 4.4 | 1.1.1 | tree/team-0/repo-03/mise.toml:3 |
-| kubectl | 1.33.5 | GO-2025-3521 | - | - | tree/team-0/repo-01/mise.toml:2 (+9) |
-| kubectl | 1.34.2 | GO-2025-3521 | - | - | tree/team-0/repo-00/mise.toml:2 (+9) |
-| kubectl | 1.33.5 | GO-2025-3547 | - | - | tree/team-0/repo-01/mise.toml:2 (+9) |
-| kubectl | 1.34.2 | GO-2025-3547 | - | - | tree/team-0/repo-00/mise.toml:2 (+9) |
+| kubectl | 1.33.5 | GO-2025-3547 | low 3.1 | - | tree/team-0/repo-01/mise.toml:2 (+9) |
+| kubectl | 1.34.2 | GO-2025-3547 | low 3.1 | - | tree/team-0/repo-00/mise.toml:2 (+9) |
 
 Advisories:
 
 - GHSA-8394-6f8r-whxg (CVE-2026-45099, GO-2026-6241): Terragrunt: Arbitrary File Deletion via Malicious Module Manifest https://osv.dev/vulnerability/GHSA-8394-6f8r-whxg
+- GO-2025-3521 (CVE-2025-1767, GHSA-3wgm-2gw2-vh5m): Kubernetes GitRepo Volume Inadvertent Local Repository Access in k8s.io/kubernetes https://osv.dev/vulnerability/GO-2025-3521
 - GHSA-h626-pv66-hhm7 (CVE-2023-4782, GO-2023-2055): Terraform allows arbitrary file write during the `init` operation https://osv.dev/vulnerability/GHSA-h626-pv66-hhm7
 - GHSA-r6j8-c6r2-37rr (CVE-2025-13281, GO-2025-4240): kube-controller-manager is vulnerable to half-blind Server Side Request Forgery through in-tree Portworx StorageClass https://osv.dev/vulnerability/GHSA-r6j8-c6r2-37rr
 - GHSA-hr2v-4r36-88hr (BIT-helm-2026-35206, CVE-2026-35206, GO-2026-5435): Helm Chart extraction output directory collapse via `Chart.yaml` name dot-segment https://osv.dev/vulnerability/GHSA-hr2v-4r36-88hr
 - GHSA-wv6g-x823-wx9m (CVE-2026-64672, GO-2026-6768): Terragrunt catalog predictable temp symlink clobber https://osv.dev/vulnerability/GHSA-wv6g-x823-wx9m
-- GO-2025-3521 (CVE-2025-1767, GHSA-3wgm-2gw2-vh5m): Kubernetes GitRepo Volume Inadvertent Local Repository Access in k8s.io/kubernetes https://osv.dev/vulnerability/GO-2025-3521
 - GO-2025-3547 (CVE-2024-7598, GHSA-r56h-j38w-hrqq): Kubernetes kube-apiserver Vulnerable to Race Condition in k8s.io/kubernetes https://osv.dev/vulnerability/GO-2025-3547
 
 Not checked for vulnerabilities:

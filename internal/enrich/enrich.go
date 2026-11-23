@@ -6,7 +6,9 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
+	"maps"
 	"slices"
+	"strings"
 	"sync"
 
 	"golang.org/x/sync/errgroup"
@@ -187,24 +189,32 @@ func (e *Enricher) osvResults(
 		}
 		return map[string][]Vuln{}, failed, append(problems, problemsFor(reqs, refs, err)...)
 	}
-	ids, err := e.osv.QueryBatch(ctx, queries)
+	hits, err := e.osv.QueryBatch(ctx, queries)
 	if err != nil {
 		return fail(err)
 	}
-	records, err := e.records(ctx, ids)
+	records, err := e.records(ctx, slices.Concat(hits...))
 	if err != nil {
 		return fail(err)
 	}
 	for qi, ref := range refs {
 		r := reqs[ref.req]
-		for _, id := range ids[qi] {
-			if rec := records[id]; rec != nil {
+		for _, h := range hits[qi] {
+			if rec := records[h.ID]; rec != nil {
 				out[r.Key] = append(out[r.Key], vulnOf(rec, ref.pkg, queries[qi], r))
 			}
 		}
 	}
+	lists := make([][]Vuln, 0, len(out))
 	for k, vs := range out {
 		out[k] = mergeAliases(vs)
+		lists = append(lists, out[k])
+	}
+	if err = e.rateFromAliases(ctx, lists, records); err != nil {
+		return fail(err)
+	}
+	for _, vs := range out {
+		sortVulns(vs)
 	}
 	return out, failed, problems
 }
@@ -351,26 +361,36 @@ func problemsFor(reqs []Request, refs []queryRef, err error) []Problem {
 	return out
 }
 
-// records fetches each distinct record once.
-func (e *Enricher) records(ctx context.Context, ids [][]string) (map[string]*Record, error) {
-	var unique []string
-	for _, list := range ids {
-		unique = append(unique, list...)
-	}
-	slices.Sort(unique)
-	unique = slices.Compact(unique)
-	out := make(map[string]*Record, len(unique))
+// records fetches each distinct record once. A withdrawn record maps to nil, so callers skip it
+// and know it was fetched.
+func (e *Enricher) records(ctx context.Context, hits []Hit) (map[string]*Record, error) {
+	return e.fetch(ctx, hits, false)
+}
+
+// fetch fetches each distinct record of hits once, keyed by its modified time when the hit has
+// one. With missingOK, an ID OSV has no record of maps to nil instead of failing.
+func (e *Enricher) fetch(ctx context.Context, hits []Hit, missingOK bool) (map[string]*Record, error) {
+	slices.SortFunc(hits, func(a, b Hit) int { return cmp.Compare(a.ID, b.ID) })
+	hits = slices.CompactFunc(hits, func(a, b Hit) bool { return a.ID == b.ID })
+	out := make(map[string]*Record, len(hits))
 	var mu sync.Mutex
 	g, gctx := errgroup.WithContext(ctx)
 	g.SetLimit(e.concurrency)
-	for _, id := range unique {
+	for _, h := range hits {
 		g.Go(func() error {
-			rec, err := e.osv.Vuln(gctx, id)
-			if err != nil {
-				return fmt.Errorf("fetch %s: %w", id, err)
+			rec, err := e.osv.Vuln(gctx, h.ID, h.Modified)
+			switch {
+			case missingOK && errors.Is(err, errNotFound):
+				e.logger.DebugContext(gctx, "osv has no record of alias", "id", h.ID)
+				rec = nil
+			case err != nil:
+				return fmt.Errorf("fetch %s: %w", h.ID, err)
+			case !rec.Withdrawn.IsZero():
+				e.logger.DebugContext(gctx, "dropped withdrawn osv record", "id", h.ID, "withdrawn", rec.Withdrawn)
+				rec = nil
 			}
 			mu.Lock()
-			out[id] = rec
+			out[h.ID] = rec
 			mu.Unlock()
 			return nil
 		})
@@ -381,9 +401,71 @@ func (e *Enricher) records(ctx context.Context, ids [][]string) (map[string]*Rec
 	return out, nil
 }
 
+// ghsaPrefix starts the IDs of GitHub advisories, which carry a rating when Go vulnerability
+// database records don't.
+const ghsaPrefix = "GHSA-"
+
+// rateFromAliases gives each unrated vulnerability in lists the highest score of its GHSA
+// aliases, fetching each alias records doesn't hold once, and rates the rest unknown.
+func (e *Enricher) rateFromAliases(ctx context.Context, lists [][]Vuln, records map[string]*Record) error {
+	if missing := missingAliases(lists, records); len(missing) > 0 {
+		aliases, err := e.fetch(ctx, missing, true)
+		if err != nil {
+			return err
+		}
+		records = maps.Clone(records)
+		maps.Copy(records, aliases)
+	}
+	for _, vs := range lists {
+		for i := range vs {
+			if vs[i].Severity == nil {
+				vs[i].Severity = aliasRating(vs[i].Aliases, records)
+			}
+		}
+	}
+	return nil
+}
+
+// missingAliases lists the GHSA aliases of the unrated vulnerabilities in lists that records
+// doesn't hold.
+func missingAliases(lists [][]Vuln, records map[string]*Record) []Hit {
+	var out []Hit
+	for _, vs := range lists {
+		for _, v := range vs {
+			if v.Severity != nil {
+				continue
+			}
+			for _, a := range v.Aliases {
+				if _, ok := records[a]; !ok && strings.HasPrefix(a, ghsaPrefix) {
+					out = append(out, Hit{ID: a})
+				}
+			}
+		}
+	}
+	return out
+}
+
+// aliasRating returns the highest score among the GHSA aliases in records, or the rating
+// unknown.
+func aliasRating(aliases []string, records map[string]*Record) *Score {
+	var best *Score
+	for _, a := range aliases {
+		rec := records[a]
+		if rec == nil || !strings.HasPrefix(a, ghsaPrefix) {
+			continue
+		}
+		if s := rec.aliasScore(); s != nil && (best == nil || s.Score > best.Score) {
+			best = s
+		}
+	}
+	if best == nil {
+		return &Score{Rating: RatingUnknown}
+	}
+	return best
+}
+
 // mergeAliases keeps one entry per vulnerability when several databases describe it (GO-2023-2055
-// and GHSA-h626-pv66-hhm7). It keeps the entry with a severity, else the first ID, and sorts
-// by score, then ID.
+// and GHSA-h626-pv66-hhm7). It keeps the entry with a severity, else the first ID.
 func mergeAliases(vs []Vuln) []Vuln {
 	out := []Vuln{}
 	index := map[string]int{}
@@ -405,10 +487,14 @@ func mergeAliases(vs []Vuln) []Vuln {
 			index[name] = at
 		}
 	}
-	slices.SortStableFunc(out, func(a, b Vuln) int {
+	return out
+}
+
+// sortVulns sorts by score, with unknown ratings last, then by ID.
+func sortVulns(vs []Vuln) {
+	slices.SortStableFunc(vs, func(a, b Vuln) int {
 		return cmp.Or(cmp.Compare(scoreOf(b), scoreOf(a)), cmp.Compare(a.ID, b.ID))
 	})
-	return out
 }
 
 func mergeVuln(a, b Vuln) Vuln {
@@ -436,7 +522,7 @@ func mergeVuln(a, b Vuln) Vuln {
 }
 
 func scoreOf(v Vuln) float64 {
-	if v.Severity == nil {
+	if v.Severity.Unknown() {
 		return -1
 	}
 	return v.Severity.Score

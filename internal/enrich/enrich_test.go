@@ -254,7 +254,9 @@ func TestSpec_enrichment_4(t *testing.T) {
 				require.NotNil(t, v.FixedByTarget, v.ID)
 				assert.True(t, v.AffectsCurrent, v.ID)
 				names := append([]string{v.ID}, v.Aliases...)
-				osvSaysFixed := !slices.ContainsFunc(names, func(n string) bool { return slices.Contains(still[0], n) })
+				osvSaysFixed := !slices.ContainsFunc(still[0], func(h enrich.Hit) bool {
+					return slices.Contains(names, h.ID)
+				})
 				assert.Equal(t, osvSaysFixed, *v.FixedByTarget, "%s: fixed_by_target", v.ID)
 				if *v.FixedByTarget {
 					assert.NotEmpty(t, v.FixedIn, "%s: a fixed vuln names its fix", v.ID)

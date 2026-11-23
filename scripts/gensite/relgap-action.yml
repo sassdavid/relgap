@@ -1,4 +1,4 @@
-# sassdavid/relgap-action action.yml at 28d7a84b3070faa38338522a5e83e427eeae80b5 (v1.1.0). Written by go run ./scripts/gensite -fetch-action; don't edit.
+# sassdavid/relgap-action action.yml at 518ce61cef05d84d2bd980c553bd24fdca9ed0c7 (v1.2.0). Written by go run ./scripts/gensite -fetch-action; don't edit.
 name: relgap
 description: Install a verified relgap release, report to code scanning, or keep one pull request comment.
 author: sassdavid

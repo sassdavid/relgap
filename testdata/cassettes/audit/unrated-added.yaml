@@ -1,0 +1,131 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 485
+        host: api.github.com
+        body: |
+            {"query":"query($first:Int!$n0:String!$n1:String!$o0:String!$o1:String!){r0: repository(owner: $o0, name: $n0){refs(refPrefix: \"refs/tags/\", first: $first, orderBy: {field: TAG_COMMIT_DATE, direction: DESC}){nodes{name}}},r1: repository(owner: $o1, name: $n1){releases(first: $first, orderBy: {field: CREATED_AT, direction: DESC}){nodes{tagName,isDraft,isPrerelease,publishedAt,url}}}}","variables":{"first":30,"n0":"kubernetes","n1":"kanister","o0":"kubernetes","o1":"kanisterio"}}
+        headers:
+            Content-Type:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.github.com/graphql
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"data":{"r0":{"refs":{"nodes":[{"name":"v1.38.0-beta.0"},{"name":"v1.38.0-alpha.3"},{"name":"v1.37.2"},{"name":"v1.36.6"},{"name":"v1.35.10"},{"name":"v1.34.13"},{"name":"v1.38.0-alpha.2"},{"name":"v1.38.0-alpha.1"},{"name":"v1.37.1"},{"name":"v1.36.5"},{"name":"v1.35.9"},{"name":"v1.34.12"},{"name":"v1.37.0"},{"name":"v1.36.4"},{"name":"v1.35.8"},{"name":"v1.34.11"},{"name":"v1.37.0-rc.1"},{"name":"v1.38.0-alpha.0"},{"name":"v1.37.0-rc.0"},{"name":"v1.36.3"},{"name":"v1.35.7"},{"name":"v1.34.10"},{"name":"v1.37.0-beta.0"},{"name":"v1.37.0-alpha.3"},{"name":"v1.37.0-alpha.2"},{"name":"v1.36.2"},{"name":"v1.35.6"},{"name":"v1.34.9"},{"name":"v1.33.13"},{"name":"v1.37.0-alpha.1"}]}},"r1":{"releases":{"nodes":[{"tagName":"0.120.0","isDraft":false,"isPrerelease":false,"publishedAt":"2026-10-23T19:22:28Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.120.0"},{"tagName":"0.119.0","isDraft":false,"isPrerelease":false,"publishedAt":"2026-05-13T07:55:34Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.119.0"},{"tagName":"0.118.0","isDraft":false,"isPrerelease":false,"publishedAt":"2026-02-03T18:37:47Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.118.0"},{"tagName":"0.117.0","isDraft":false,"isPrerelease":false,"publishedAt":"2025-12-09T05:18:38Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.117.0"},{"tagName":"0.116.0","isDraft":false,"isPrerelease":false,"publishedAt":"2025-09-12T04:44:49Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.116.0"},{"tagName":"0.115.0","isDraft":false,"isPrerelease":false,"publishedAt":"2025-08-25T18:29:26Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.115.0"},{"tagName":"0.114.0","isDraft":false,"isPrerelease":false,"publishedAt":"2025-07-03T20:58:26Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.114.0"},{"tagName":"0.113.0","isDraft":false,"isPrerelease":false,"publishedAt":"2025-02-07T20:34:38Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.113.0"},{"tagName":"0.112.0","isDraft":false,"isPrerelease":false,"publishedAt":"2024-10-19T06:43:57Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.112.0"},{"tagName":"0.111.0","isDraft":false,"isPrerelease":false,"publishedAt":"2024-09-20T02:28:28Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.111.0"},{"tagName":"0.110.0","isDraft":false,"isPrerelease":false,"publishedAt":"2024-08-02T16:58:35Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.110.0"},{"tagName":"0.109.0","isDraft":false,"isPrerelease":false,"publishedAt":"2024-05-23T02:49:55Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.109.0"},{"tagName":"0.108.0","isDraft":false,"isPrerelease":false,"publishedAt":"2024-05-16T18:56:29Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.108.0"},{"tagName":"0.107.0","isDraft":false,"isPrerelease":false,"publishedAt":"2024-04-05T01:45:13Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.107.0"},{"tagName":"0.106.0","isDraft":false,"isPrerelease":false,"publishedAt":"2024-03-07T04:05:11Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.106.0"},{"tagName":"0.105.0","isDraft":false,"isPrerelease":false,"publishedAt":"2024-01-26T06:44:42Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.105.0"},{"tagName":"0.104.0","isDraft":false,"isPrerelease":false,"publishedAt":"2024-01-11T01:23:31Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.104.0"},{"tagName":"0.103.0","isDraft":false,"isPrerelease":false,"publishedAt":"2023-12-15T22:05:33Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.103.0"},{"tagName":"0.102.0","isDraft":false,"isPrerelease":false,"publishedAt":"2023-12-15T17:18:40Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.102.0"},{"tagName":"0.101.0","isDraft":false,"isPrerelease":false,"publishedAt":"2023-12-13T19:57:13Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.101.0"},{"tagName":"0.100.0","isDraft":false,"isPrerelease":false,"publishedAt":"2023-11-24T16:05:18Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.100.0"},{"tagName":"0.99.0","isDraft":false,"isPrerelease":false,"publishedAt":"2023-11-02T15:43:45Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.99.0"},{"tagName":"0.98.0","isDraft":false,"isPrerelease":false,"publishedAt":"2023-10-20T19:17:52Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.98.0"},{"tagName":"0.97.0","isDraft":false,"isPrerelease":false,"publishedAt":"2023-10-06T11:07:57Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.97.0"},{"tagName":"0.96.0","isDraft":false,"isPrerelease":false,"publishedAt":"2023-09-21T09:13:05Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.96.0"},{"tagName":"0.95.0","isDraft":false,"isPrerelease":false,"publishedAt":"2023-09-08T13:02:55Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.95.0"},{"tagName":"0.94.0","isDraft":false,"isPrerelease":false,"publishedAt":"2023-08-11T10:08:09Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.94.0"},{"tagName":"0.93.0","isDraft":false,"isPrerelease":false,"publishedAt":"2023-06-30T00:15:27Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.93.0"},{"tagName":"0.92.0","isDraft":false,"isPrerelease":false,"publishedAt":"2023-06-02T00:46:45Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.92.0"},{"tagName":"0.91.0","isDraft":false,"isPrerelease":false,"publishedAt":"2023-04-20T21:19:16Z","url":"https://github.com/kanisterio/kanister/releases/tag/0.91.0"}]}}}}'
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/json; charset=utf-8
+            Date:
+                - Mon, 23 Nov 2026 11:56:47 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept-Encoding, Accept, X-Requested-With
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.v4; format=json
+            X-Ratelimit-Limit:
+                - "5000"
+            X-Ratelimit-Remaining:
+                - "4867"
+            X-Ratelimit-Reset:
+                - "1795435584"
+            X-Ratelimit-Resource:
+                - graphql
+            X-Ratelimit-Used:
+                - "133"
+            X-Xss-Protection:
+                - "0"
+        status: 200 OK
+        code: 200
+        duration: 654.159ms
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: endoflife.date
+        headers:
+            Accept:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://endoflife.date/api/v1/products/kubernetes
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: |
+            {"schema_version":"1.2.1","generated_at":"2026-11-23T09:40:24+00:00","last_modified":"2026-10-29T00:09:07+00:00","result":{"name":"kubernetes","aliases":["k8s"],"label":"Kubernetes","category":"server-app","tags":["linux-foundation","server-app"],"versionCommand":"kubectl version","identifiers":[{"type":"purl","id":"pkg:github/kubernetes/kubernetes"},{"type":"repology","id":"kubernetes"},{"type":"cpe","id":"cpe:2.3:a:kubernetes:kubernetes"}],"labels":{"eoas":"Active Support","discontinued":null,"eol":"Maintenance Support","eoes":null},"links":{"icon":"https://cdn.jsdelivr.net/npm/simple-icons/icons/kubernetes.svg","html":"https://endoflife.date/kubernetes","releasePolicy":"https://kubernetes.io/releases/patch-releases/"},"releases":[{"name":"1.37","codename":null,"label":"1.37","releaseDate":"2026-08-26","isLts":false,"ltsFrom":null,"isEoas":false,"eoasFrom":"2027-08-28","isEol":false,"eolFrom":"2027-10-28","isMaintained":true,"latest":{"name":"1.37.2","date":"2026-10-27","link":"https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.37.md"},"custom":null},{"name":"1.36","codename":null,"label":"1.36","releaseDate":"2026-04-22","isLts":false,"ltsFrom":null,"isEoas":false,"eoasFrom":"2027-04-28","isEol":false,"eolFrom":"2027-06-28","isMaintained":true,"latest":{"name":"1.36.6","date":"2026-10-27","link":"https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.36.md"},"custom":null},{"name":"1.35","codename":null,"label":"1.35","releaseDate":"2025-12-17","isLts":false,"ltsFrom":null,"isEoas":false,"eoasFrom":"2026-12-28","isEol":false,"eolFrom":"2027-02-28","isMaintained":true,"latest":{"name":"1.35.10","date":"2026-10-27","link":"https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.35.md"},"custom":null},{"name":"1.34","codename":null,"label":"1.34","releaseDate":"2025-08-27","isLts":false,"ltsFrom":null,"isEoas":true,"eoasFrom":"2026-08-27","isEol":true,"eolFrom":"2026-10-27","isMaintained":false,"latest":{"name":"1.34.13","date":"2026-10-27","link":"https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.34.md"},"custom":null},{"name":"1.33","codename":null,"label":"1.33","releaseDate":"2025-04-23","isLts":false,"ltsFrom":null,"isEoas":true,"eoasFrom":"2026-04-28","isEol":true,"eolFrom":"2026-06-28","isMaintained":false,"latest":{"name":"1.33.13","date":"2026-06-11","link":"https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.33.md"},"custom":null},{"name":"1.32","codename":null,"label":"1.32","releaseDate":"2024-12-11","isLts":false,"ltsFrom":null,"isEoas":true,"eoasFrom":"2025-12-28","isEol":true,"eolFrom":"2026-02-28","isMaintained":false,"latest":{"name":"1.32.13","date":"2026-02-26","link":"https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.32.md"},"custom":null},{"name":"1.31","codename":null,"label":"1.31","releaseDate":"2024-08-13","isLts":false,"ltsFrom":null,"isEoas":true,"eoasFrom":"2025-08-28","isEol":true,"eolFrom":"2025-11-11","isMaintained":false,"latest":{"name":"1.31.14","date":"2025-11-11","link":"https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.31.md"},"custom":null},{"name":"1.30","codename":null,"label":"1.30","releaseDate":"2024-04-17","isLts":false,"ltsFrom":null,"isEoas":true,"eoasFrom":"2025-04-28","isEol":true,"eolFrom":"2025-07-15","isMaintained":false,"latest":{"name":"1.30.14","date":"2025-06-17","link":"https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.30.md"},"custom":null},{"name":"1.29","codename":null,"label":"1.29","releaseDate":"2023-12-13","isLts":false,"ltsFrom":null,"isEoas":true,"eoasFrom":"2024-12-28","isEol":true,"eolFrom":"2025-02-28","isMaintained":false,"latest":{"name":"1.29.15","date":"2025-03-11","link":"https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.29.md"},"custom":null},{"name":"1.28","codename":null,"label":"1.28","releaseDate":"2023-08-15","isLts":false,"ltsFrom":null,"isEoas":true,"eoasFrom":"2024-08-28","isEol":true,"eolFrom":"2024-10-28","isMaintained":false,"latest":{"name":"1.28.15","date":"2024-10-22","link":"https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.28.md"},"custom":null},{"name":"1.27","codename":null,"label":"1.27","releaseDate":"2023-04-11","isLts":false,"ltsFrom":null,"isEoas":true,"eoasFrom":"2024-04-28","isEol":true,"eolFrom":"2024-06-28","isMaintained":false,"latest":{"name":"1.27.16","date":"2024-07-17","link":"https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.27.md"},"custom":null},{"name":"1.26","codename":null,"label":"1.26","releaseDate":"2022-12-08","isLts":false,"ltsFrom":null,"isEoas":true,"eoasFrom":"2023-12-28","isEol":true,"eolFrom":"2024-02-28","isMaintained":false,"latest":{"name":"1.26.15","date":"2024-03-14","link":"https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.26.md"},"custom":null},{"name":"1.25","codename":null,"label":"1.25","releaseDate":"2022-08-23","isLts":false,"ltsFrom":null,"isEoas":true,"eoasFrom":"2023-08-27","isEol":true,"eolFrom":"2023-10-27","isMaintained":false,"latest":{"name":"1.25.16","date":"2023-11-15","link":"https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.25.md"},"custom":null},{"name":"1.24","codename":null,"label":"1.24","releaseDate":"2022-05-03","isLts":false,"ltsFrom":null,"isEoas":true,"eoasFrom":"2023-05-28","isEol":true,"eolFrom":"2023-07-28","isMaintained":false,"latest":{"name":"1.24.17","date":"2023-08-23","link":"https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.24.md"},"custom":null},{"name":"1.23","codename":null,"label":"1.23","releaseDate":"2021-12-07","isLts":false,"ltsFrom":null,"isEoas":true,"eoasFrom":"2022-12-28","isEol":true,"eolFrom":"2023-02-28","isMaintained":false,"latest":{"name":"1.23.17","date":"2023-02-22","link":"https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.23.md"},"custom":null},{"name":"1.22","codename":null,"label":"1.22","releaseDate":"2021-08-04","isLts":false,"ltsFrom":null,"isEoas":true,"eoasFrom":"2022-08-28","isEol":true,"eolFrom":"2022-10-28","isMaintained":false,"latest":{"name":"1.22.17","date":"2022-12-08","link":"https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.22.md"},"custom":null},{"name":"1.21","codename":null,"label":"1.21","releaseDate":"2021-04-08","isLts":false,"ltsFrom":null,"isEoas":true,"eoasFrom":"2022-04-28","isEol":true,"eolFrom":"2022-06-28","isMaintained":false,"latest":{"name":"1.21.14","date":"2022-06-15","link":"https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.21.md"},"custom":null},{"name":"1.20","codename":null,"label":"1.20","releaseDate":"2020-12-08","isLts":false,"ltsFrom":null,"isEoas":true,"eoasFrom":"2021-12-28","isEol":true,"eolFrom":"2022-02-28","isMaintained":false,"latest":{"name":"1.20.15","date":"2022-01-19","link":"https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.20.md"},"custom":null},{"name":"1.19","codename":null,"label":"1.19","releaseDate":"2020-08-26","isLts":false,"ltsFrom":null,"isEoas":true,"eoasFrom":"2021-08-28","isEol":true,"eolFrom":"2021-10-28","isMaintained":false,"latest":{"name":"1.19.16","date":"2021-10-27","link":"https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.19.md"},"custom":null},{"name":"1.18","codename":null,"label":"1.18","releaseDate":"2020-03-25","isLts":false,"ltsFrom":null,"isEoas":true,"eoasFrom":"2021-04-28","isEol":true,"eolFrom":"2021-06-18","isMaintained":false,"latest":{"name":"1.18.20","date":"2021-06-16","link":"https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.18.md"},"custom":null},{"name":"1.17","codename":null,"label":"1.17","releaseDate":"2019-12-07","isLts":false,"ltsFrom":null,"isEoas":true,"eoasFrom":null,"isEol":true,"eolFrom":"2020-12-25","isMaintained":false,"latest":{"name":"1.17.17","date":"2021-01-13","link":"https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.17.md"},"custom":null},{"name":"1.16","codename":null,"label":"1.16","releaseDate":"2019-09-18","isLts":false,"ltsFrom":null,"isEoas":true,"eoasFrom":null,"isEol":true,"eolFrom":"2020-08-04","isMaintained":false,"latest":{"name":"1.16.15","date":"2020-09-02","link":"https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.16.md"},"custom":null}]}}
+        headers:
+            Accept-Ranges:
+                - bytes
+            Access-Control-Allow-Methods:
+                - GET
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Max-Age:
+                - "86400"
+            Age:
+                - "7327"
+            Cache-Control:
+                - public,max-age=0,must-revalidate
+            Cache-Status:
+                - '"Netlify Edge"; hit; ttl=31528673'
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 11:56:48 GMT
+            Etag:
+                - W/"1d2a83eac049bfe1c8f3f3a7cd9e0c13-ssl"
+            Permissions-Policy:
+                - accelerometer=(), ambient-light-sensor=(), autoplay=(), battery=(), camera=(), cross-origin-isolated=(), display-capture=(), document-domain=(), encrypted-media=(), execution-while-not-rendered=(), execution-while-out-of-viewport=(), fullscreen=(), geolocation=(), gyroscope=(), keyboard-map=(), magnetometer=(), microphone=(), midi=(), navigation-override=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), sync-xhr=(), usb=(), web-share=(), xr-spatial-tracking=(), clipboard-read=(), clipboard-write=(), gamepad=(), speaker-selection=(), conversion-measurement=(), focus-without-user-activation=(), hid=(), idle-detection=(), interest-cohort=(), serial=(), sync-script=(), trust-token-redemption=(), unload=(), window-placement=(), vertical-scroll=()
+            Referrer-Policy:
+                - strict-origin
+            Server:
+                - Netlify
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubDomains; preload
+            Vary:
+                - Accept-Encoding
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - DENY
+            X-Nf-Request-Id:
+                - 01M844844AYJ0XVPPB8KMER3ZK
+            X-Xss-Protection:
+                - 1; mode=block
+        status: 200 OK
+        code: 200
+        duration: 94.080625ms

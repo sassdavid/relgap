@@ -109,10 +109,10 @@ func auditRows(a *report.Audit) [][]cell {
 	return rows
 }
 
-// severityCell shows the rating and score, such as "high 7.5", or - without a rating.
+// severityCell shows the rating and score, such as "high 7.5", or unknown without a rating.
 func severityCell(s *enrich.Score) cell {
-	if s == nil || s.Rating == "" {
-		return cell{text: noValue}
+	if s.Unknown() || s.Rating == "" {
+		return cell{text: enrich.RatingUnknown}
 	}
 	text := s.Rating
 	if s.Score > 0 {

@@ -194,12 +194,13 @@ func (g Gate) countsVuln(v *enrich.Vuln) bool {
 	return v.AffectsCurrent && g.atSeverity(v.Severity)
 }
 
-// atSeverity reports whether an advisory rated s reaches VulnSeverity.
+// atSeverity reports whether an advisory rated s reaches VulnSeverity. An advisory without a
+// rating reaches every threshold, since nothing says it is below one (ADR-0020).
 func (g Gate) atSeverity(s *enrich.Score) bool {
-	if g.VulnSeverity == "" {
+	if g.VulnSeverity == "" || s.Unknown() {
 		return true
 	}
-	return s != nil && severityRank(s.Rating) >= severityRank(g.VulnSeverity)
+	return severityRank(s.Rating) >= severityRank(g.VulnSeverity)
 }
 
 // CheckAudit returns a finding per audit finding at or above VulnSeverity for vuln, and per

@@ -1,0 +1,11 @@
+TOOL                        VERSION  ADVISORY      SEVERITY    FIXED IN  PINS
+kubectl                     1.37.2   GO-2025-3521  medium 6.5  -         mise.toml:2
+kubectl                     1.37.2   GO-2025-3547  low 3.1     -         mise.toml:2
+github:kanisterio/kanister  0.120.0  GO-2024-3080  unknown     -         mise.toml:3
+
+Advisories:
+  GO-2025-3521 (CVE-2025-1767, GHSA-3wgm-2gw2-vh5m): Kubernetes GitRepo Volume Inadvertent Local Repository Access in k8s.io/kubernetes https://osv.dev/vulnerability/GO-2025-3521
+  GO-2025-3547 (CVE-2024-7598, GHSA-r56h-j38w-hrqq): Kubernetes kube-apiserver Vulnerable to Race Condition in k8s.io/kubernetes https://osv.dev/vulnerability/GO-2025-3547
+  GO-2024-3080 (CVE-2024-43403, GHSA-h27c-6xm3-mcqp): Kanister vulnerable to cluster-level privilege escalation in github.com/kanisterio/kanister https://osv.dev/vulnerability/GO-2024-3080
+
+3 findings in 2 of 2 checked tool versions.

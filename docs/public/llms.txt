@@ -46,7 +46,7 @@
 - [MCP tools and prompts](https://relgap.sasskovacs.dev/reference/mcp): The tools and prompts that relgap mcp serves, with their input schemas.
 - [Notify targets](https://relgap.sasskovacs.dev/reference/notify): The targets relgap notify publishes saved reports to, what each needs from the environment, and how a comment is found and updated again.
 - [Output formats](https://relgap.sasskovacs.dev/reference/output): The output formats relgap writes, which ones each command accepts, the JSON envelope every --format json report shares, and how --out writes several formats from one run.
-- [SARIF rules](https://relgap.sasskovacs.dev/reference/sarif-rules): The SARIF rules relgap outdated and drift report to code scanning, with their levels and help text.
+- [SARIF rules](https://relgap.sasskovacs.dev/reference/sarif-rules): The SARIF rules relgap outdated, drift and audit report to code scanning, with their levels and help text.
 - [Supported tools](https://relgap.sasskovacs.dev/reference/tools): The tools relgap's curated registry describes: aliases, repository, release-note sources, EOL product and OSV packages.
 - [Registry entry schema](https://relgap.sasskovacs.dev/reference/registry-schema): Every key of a relgap registry entry, its type, allowed values and the keys each source kind needs.
 - [Registry snapshots](https://relgap.sasskovacs.dev/reference/snapshots): The mise and aqua registry copies embedded in relgap: source commit, date and entry count.
@@ -56,6 +56,7 @@
 
 - [relgap](https://relgap.sasskovacs.dev/cli/): Release-notes digests and toolchain drift for the tools you pin
 - [Global flags](https://relgap.sasskovacs.dev/cli/global-flags): Flags that every relgap command accepts.
+- [relgap audit](https://relgap.sasskovacs.dev/cli/audit): List the known vulnerabilities of every pinned tool version, and the pins OSV can't check
 - [relgap cache](https://relgap.sasskovacs.dev/cli/cache/): Inspect or clear the HTTP cache
 - [relgap cache clear](https://relgap.sasskovacs.dev/cli/cache/clear): Delete every cache entry
 - [relgap cache info](https://relgap.sasskovacs.dev/cli/cache/info): Show the cache directory, entry count, size and freshness

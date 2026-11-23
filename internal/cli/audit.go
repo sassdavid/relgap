@@ -47,7 +47,8 @@ A pin with a curated osv list in its registry entry queries those packages. Othe
 the package their backend names (npm:, pypi:, cargo:, gem:, go:, dotnet:), or the Go module
 and git repository of a github.com tool. A finding is one advisory that affects one tool
 version, with every pin of that version, its severity, the lowest fixed version and its
-osv.dev page. Findings sort by severity, unrated last, then by ID.
+osv.dev page. A record without a rating takes the rating of its GHSA alias, else its severity
+is unknown. Findings sort by severity, unknown last, then by ID.
 
 A pin OSV wasn't asked about is listed with the reason, and never counts as clean:
 no-advisory-source, private-source, not-exact, unresolved, offline or failed.
@@ -56,12 +57,13 @@ no-advisory-source, private-source, not-exact, unresolved, offline or failed.
 pin's file and line (one rule per OSV ID), a note per unchecked pin (unchecked), and a result
 per file or version lookup that failed (failed). The results don't depend on --fail-on.
 
---fail-on takes vuln and unchecked. vuln counts the findings at or above --vuln-severity, and
-unchecked counts the unchecked tool versions. audit gates vuln by default. Values in config
-policy.fail_on that audit checks add to vuln, and --fail-on replaces the whole set:
---fail-on unchecked gates only unchecked, and --fail-on= gates nothing. A value whose count
-reaches --min-count (default 1) exits 3. Otherwise a file or lookup that failed exits 1, and so
-does an OSV outage under --fail-on vuln, since a pass on partial data proves nothing.
+--fail-on takes vuln and unchecked. vuln counts the findings at or above --vuln-severity and
+those of unknown severity, and unchecked counts the unchecked tool versions. audit gates vuln
+by default. Values in config policy.fail_on that audit checks add to vuln, and --fail-on
+replaces the whole set: --fail-on unchecked gates only unchecked, and --fail-on= gates
+nothing. A value whose count reaches --min-count (default 1) exits 3. Otherwise a file or
+lookup that failed exits 1, and so does an OSV outage under --fail-on vuln, since a pass on
+partial data proves nothing.
 
 --offline answers from the HTTP cache. Pins without a cached answer are unchecked with reason
 offline, and --format json has oldest_answer, when the oldest OSV answer was stored.

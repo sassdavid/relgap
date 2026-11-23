@@ -196,7 +196,7 @@
             "high",
             "critical"
           ],
-          "description": "Lowest OSV rating --fail-on vuln counts; empty counts every advisory."
+          "description": "Lowest OSV rating --fail-on vuln counts; an advisory without a rating always counts, and empty counts every advisory."
         }
       },
       "additionalProperties": false,

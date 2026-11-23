@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -12,6 +13,8 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/sassdavid/relgap/internal/httpx"
 )
 
 // OSVURL is the OSV API base URL.
@@ -19,6 +22,13 @@ const OSVURL = "https://api.osv.dev"
 
 // maxBatch is the most queries OSV accepts in one querybatch request.
 const maxBatch = 1000
+
+// recordTTL is how long a record fetched for a querybatch hit stays cached. Its modified time
+// is part of the cache key, so a changed record is fetched again before then.
+const recordTTL = 7 * 24 * time.Hour
+
+// errNotFound is OSV's answer for an ID it has no record of.
+var errNotFound = errors.New("not found")
 
 // Package is a package in an OSV ecosystem.
 type Package struct {
@@ -43,6 +53,13 @@ type Record struct {
 	DatabaseSpecific struct {
 		Severity string `json:"severity"`
 	} `json:"database_specific"`
+	Withdrawn time.Time `json:"withdrawn,omitzero"` // set when the record no longer applies
+}
+
+// Hit is a record a query returned, with the time OSV last changed it.
+type Hit struct {
+	ID       string `json:"id"`
+	Modified string `json:"modified"` // RFC 3339, as querybatch returns it
 }
 
 // Severity is one severity score of a record, such as a CVSS vector.
@@ -96,10 +113,10 @@ func NewOSVClient(hc *http.Client, base string) *OSVClient {
 	return &OSVClient{hc: hc, base: strings.TrimSuffix(base, "/")}
 }
 
-// QueryBatch returns the vulnerability IDs of each query, in query order. It follows each
-// result's next_page_token.
-func (c *OSVClient) QueryBatch(ctx context.Context, qs []Query) ([][]string, error) {
-	out := make([][]string, len(qs))
+// QueryBatch returns the records of each query, in query order. It follows each result's
+// next_page_token.
+func (c *OSVClient) QueryBatch(ctx context.Context, qs []Query) ([][]Hit, error) {
+	out := make([][]Hit, len(qs))
 	for start := 0; start < len(qs); start += maxBatch {
 		end := min(start+maxBatch, len(qs))
 		pending := make([]int, 0, end-start)
@@ -108,13 +125,13 @@ func (c *OSVClient) QueryBatch(ctx context.Context, qs []Query) ([][]string, err
 			pending = append(pending, i)
 		}
 		for len(pending) > 0 {
-			ids, next, err := c.batch(ctx, qs, pending, tokens)
+			hits, next, err := c.batch(ctx, qs, pending, tokens)
 			if err != nil {
 				return nil, err
 			}
 			var again []int
 			for j, i := range pending {
-				out[i] = append(out[i], ids[j]...)
+				out[i] = append(out[i], hits[j]...)
 				if next[j] != "" {
 					tokens[i] = next[j]
 					again = append(again, i)
@@ -137,7 +154,7 @@ func (c *OSVClient) batch(
 	qs []Query,
 	idx []int,
 	tokens map[int]string,
-) ([][]string, []string, error) {
+) ([][]Hit, []string, error) {
 	req := struct {
 		Queries []batchQuery `json:"queries"`
 	}{Queries: make([]batchQuery, len(idx))}
@@ -146,27 +163,23 @@ func (c *OSVClient) batch(
 	}
 	var resp struct {
 		Results []struct {
-			Vulns []struct {
-				ID string `json:"id"`
-			} `json:"vulns"`
+			Vulns         []Hit  `json:"vulns"`
 			NextPageToken string `json:"next_page_token"`
 		} `json:"results"`
 	}
-	if err := c.do(ctx, http.MethodPost, "/v1/querybatch", req, &resp); err != nil {
+	if err := c.do(ctx, http.MethodPost, "/v1/querybatch", req, &resp, true); err != nil {
 		return nil, nil, err
 	}
 	if len(resp.Results) != len(idx) {
 		return nil, nil, fmt.Errorf("osv querybatch: %d results for %d queries", len(resp.Results), len(idx))
 	}
-	ids := make([][]string, len(idx))
+	hits := make([][]Hit, len(idx))
 	next := make([]string, len(idx))
 	for j, r := range resp.Results {
-		for _, v := range r.Vulns {
-			ids[j] = append(ids[j], v.ID)
-		}
+		hits[j] = r.Vulns
 		next[j] = r.NextPageToken
 	}
-	return ids, next, nil
+	return hits, next, nil
 }
 
 // Known reports, for each package, whether OSV has any record of it. It reads one page per
@@ -212,16 +225,23 @@ func (c *OSVClient) recordAge(h http.Header) {
 	c.oldest, c.aged = max(c.oldest, time.Duration(secs)*time.Second), true
 }
 
-// Vuln returns the record of id.
-func (c *OSVClient) Vuln(ctx context.Context, id string) (*Record, error) {
+// Vuln returns the record of id. A modified time from a querybatch hit keeps the record cached
+// for 7 days while it is unchanged; such an answer is current, so its Age doesn't count for
+// [OSVClient.OldestAge]. Empty modified caches the record like any other OSV answer.
+func (c *OSVClient) Vuln(ctx context.Context, id, modified string) (*Record, error) {
+	if modified != "" {
+		ctx = httpx.WithVariant(ctx, "modified "+modified, recordTTL)
+	}
 	var r Record
-	if err := c.do(ctx, http.MethodGet, "/v1/vulns/"+url.PathEscape(id), nil, &r); err != nil {
+	if err := c.do(ctx, http.MethodGet, "/v1/vulns/"+url.PathEscape(id), nil, &r, modified == ""); err != nil {
 		return nil, err
 	}
 	return &r, nil
 }
 
-func (c *OSVClient) do(ctx context.Context, method, path string, in, out any) error {
+// do sends one request and decodes the answer into out. aged says whether the answer's Age
+// counts for [OSVClient.OldestAge].
+func (c *OSVClient) do(ctx context.Context, method, path string, in, out any, aged bool) error {
 	var body io.Reader
 	if in != nil {
 		b, err := json.Marshal(in)
@@ -243,10 +263,15 @@ func (c *OSVClient) do(ctx context.Context, method, path string, in, out any) er
 		return fmt.Errorf("osv %s: %w", path, err)
 	}
 	defer resp.Body.Close()
+	if resp.StatusCode == http.StatusNotFound && method == http.MethodGet {
+		return fmt.Errorf("osv %s: %w", path, errNotFound)
+	}
 	if resp.StatusCode != http.StatusOK {
 		return fmt.Errorf("osv %s: HTTP %d", path, resp.StatusCode)
 	}
-	c.recordAge(resp.Header)
+	if aged {
+		c.recordAge(resp.Header)
+	}
 	if err = json.NewDecoder(io.LimitReader(resp.Body, maxJSONBytes)).Decode(out); err != nil {
 		return fmt.Errorf("osv %s: decode: %w", path, err)
 	}

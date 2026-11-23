@@ -639,7 +639,7 @@ one session can't finish, the open boxes carry over to a follow-up session.
   for them. `audit`'s formats list them with box 3. (vulnerability-audit criterion 2)
 - [x] `relgap audit [roots...]` with its formats, `--tool`, the default `vuln` gate and
   `--fail-on unchecked`. (vulnerability-audit criterion 3)
-- [ ] Unrated records take their GHSA alias's rating and otherwise count at every threshold,
+- [x] Unrated records take their GHSA alias's rating and otherwise count at every threshold,
   withdrawn records are dropped, and records are cached by `modified`. (vulnerability-audit
   criterion 4)
 - [ ] Each finding has a fix target, and an affected latest version warns. (vulnerability-audit

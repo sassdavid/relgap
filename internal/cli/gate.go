@@ -64,7 +64,8 @@ func addGateFlags(cmd *cobra.Command, values []string) {
 	}
 	if slices.Contains(values, report.FailOnVuln) {
 		fl.String(flagVulnSeverity, def.VulnSeverity, complete.Usage(
-			"lowest rating --fail-on vuln counts: {values}; empty counts all (config policy.vuln_severity)",
+			"lowest rating --fail-on vuln counts: {values}; an unknown rating always counts, and empty counts all "+
+				"(config policy.vuln_severity)",
 			vulnSeverityChoices()))
 		_ = cmd.RegisterFlagCompletionFunc(flagVulnSeverity, complete.Enum(vulnSeverityChoices()))
 	}

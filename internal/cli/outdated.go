@@ -80,10 +80,10 @@ checked for vulnerabilities (unchecked, a note). The results don't depend on --f
 outdated counts the pins further behind than --max-behind (major:N, minor:N, patch:N,
 releases:N or days:N; empty means any pin behind latest), breaking and deprecation count
 the pins whose digest has such an entry, eol counts the pins on an EOL cycle, and vuln
-counts the advisories that affect a pin at or above --vuln-severity. A value whose count
-reaches --min-count (default 1) exits 3. Otherwise a tool or file that failed exits 1, and
-so does an endoflife.date outage under --fail-on eol or an OSV outage under --fail-on vuln,
-since a pass on partial data proves nothing.`,
+counts the advisories that affect a pin at or above --vuln-severity or of unknown severity.
+A value whose count reaches --min-count (default 1) exits 3. Otherwise a tool or file that
+failed exits 1, and so does an endoflife.date outage under --fail-on eol or an OSV outage
+under --fail-on vuln, since a pass on partial data proves nothing.`,
 		Example: `  relgap outdated
   relgap outdated ~/src/infra --format md
   relgap outdated --fail-on outdated --max-behind minor:2
