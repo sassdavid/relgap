@@ -11,12 +11,12 @@ Scans each root for repositories the way 'relgap drift' does and asks OSV about 
 of every pin: one query per tool, version and OSV package, however many repositories pin it.
 --tool limits the run to the named tools. Ignore rules in the config drop matching pins.
 
-An exact pin is checked at its own version and needs no lookup. A value marked ≈ is checked at
-the version it stands for, the CURRENT of 'relgap outdated': a constraint (~&gt; 1.15) takes the
-highest exact pin of the tool in the same repository that satisfies it, otherwise the lowest
-version that does; a prefix (26) takes the highest stable version that starts with it; the
-latest channel takes the latest version. Only these pins need the tool's versions from GitHub
-or another host.
+An exact pin is checked at its own version and needs no lookup for it. A value marked ≈ is
+checked at the version it stands for, the CURRENT of 'relgap outdated': a constraint (~&gt; 1.15)
+takes the highest exact pin of the tool in the same repository that satisfies it, otherwise
+the lowest version that does; a prefix (26) takes the highest stable version that starts with
+it; the latest channel takes the latest version. To find the version, only these pins need
+the tool's versions from GitHub or another host.
 
 A pin with a curated osv list in its registry entry queries those packages. Other pins query
 the package their backend names (npm:, pypi:, cargo:, gem:, go:, dotnet:), or the Go module
@@ -24,6 +24,14 @@ and git repository of a github.com tool. A finding is one advisory that affects 
 version, with every pin of that version, its severity, the lowest fixed version and its
 osv.dev page. A record without a rating takes the rating of its GHSA alias, else its severity
 is unknown. Findings sort by severity, unknown last, then by ID.
+
+Each finding has a fix target, listed under "Fix targets" and as fix in --format json: the
+lowest stable release above the version that every advisory with a fix has left behind, and
+the same within the version's line. Candidates are checked against the advisories' ranges,
+then OSV is asked about them and the latest release; a candidate with an advisory of its own
+moves the target on. An advisory the latest release still has is one no release fixes (fix is
+null), and relgap warns when the latest release has any. Only a tool version with findings
+lists its tool's versions for this.
 
 A pin OSV wasn't asked about is listed with the reason, and never counts as clean:
 no-advisory-source, private-source, not-exact, unresolved, offline or failed.
@@ -33,12 +41,12 @@ pin's file and line (one rule per OSV ID), a note per unchecked pin (unchecked),
 per file or version lookup that failed (failed). The results don't depend on --fail-on.
 
 --fail-on takes vuln and unchecked. vuln counts the findings at or above --vuln-severity and
-those of unknown severity, and unchecked counts the unchecked tool versions. audit gates vuln
-by default. Values in config policy.fail\_on that audit checks add to vuln, and --fail-on
-replaces the whole set: --fail-on unchecked gates only unchecked, and --fail-on= gates
-nothing. A value whose count reaches --min-count (default 1) exits 3. Otherwise a file or
-lookup that failed exits 1, and so does an OSV outage under --fail-on vuln, since a pass on
-partial data proves nothing.
+those of unknown severity, and with --vuln-fixable only those with a fixed version above the
+pinned one. unchecked counts the unchecked tool versions. audit gates vuln by default. Values
+in config policy.fail\_on that audit checks add to vuln, and --fail-on replaces the whole set:
+--fail-on unchecked gates only unchecked, and --fail-on= gates nothing. A value whose count
+reaches --min-count (default 1) exits 3. Otherwise a file or lookup that failed exits 1, and
+so does an OSV outage under --fail-on vuln, since a pass on partial data proves nothing.
 
 --offline answers from the HTTP cache. Pins without a cached answer are unchecked with reason
 offline, and --format json has oldest\_answer, when the oldest OSV answer was stored.
@@ -67,6 +75,7 @@ relgap audit [roots...] [flags]
 | `--out` | also write the report to a file as format=path (repeatable); format is one of plain, md, json, sarif or github | string, repeatable |  | `plain`: table without color<br>`md`: Markdown<br>`json`: JSON envelope for scripts<br>`sarif`: SARIF 2.1.0 for code scanning<br>`github`: GitHub Actions annotations |  |  |
 | `--submodules` | scan checked-out git submodules as repositories | bool |  |  |  |  |
 | `--tool` | audit only this tool; repeatable | list, repeatable |  |  |  |  |
+| `--vuln-fixable` | --fail-on vuln counts only advisories with a fixed version above the pinned one (config policy.vuln\_fixable) | bool |  |  | [`policy.vuln_fixable`](/reference/config#policy-vuln-fixable) |  |
 | `--vuln-severity` | lowest rating --fail-on vuln counts: low, medium, high or critical; an unknown rating always counts, and empty counts all (config policy.vuln\_severity) | string |  | `low`: CVSS 0.1 to 3.9<br>`medium`: CVSS 4.0 to 6.9<br>`high`: CVSS 7.0 to 8.9<br>`critical`: CVSS 9.0 to 10.0 | [`policy.vuln_severity`](/reference/config#policy-vuln-severity) |  |
 
 The [global flags](/cli/global-flags) work with every command.
@@ -105,6 +114,7 @@ relgap audit ~/src/infra ~/src/apps --format md
 relgap audit --tool terraform --tool node
 relgap audit --vuln-severity high --format sarif > audit.sarif
 relgap audit --fail-on vuln --fail-on unchecked
+relgap audit --vuln-fixable --vuln-severity high
 relgap audit --format json | jq '.data.findings[] | {tool, version, id}'
 ```
 

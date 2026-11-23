@@ -78,27 +78,45 @@ func cmdGenAuditTree(ts *testscript.TestScript, neg bool, args []string) {
 
 var osvQueriesField = regexp.MustCompile(` osv_versioned_queries=(\d+)$`)
 
-// cmdOSVQueries sums the versioned queries of the OSV querybatch requests relgap logged to
-// $TEST_REQUESTS since the last `requests reset`:
+// cmdOSVQueries counts the versioned queries of the OSV querybatch requests relgap logged to
+// $TEST_REQUESTS since the last `requests reset`. The first querybatch with a versioned query asks
+// about the pins; the later ones ask about fix target candidates.
 //
-//	osvqueries 8  fail unless exactly 8 queries asked about a version
+//	osvqueries 8        fail unless the pins took exactly 8 queries and no candidate was asked about
+//	osvqueries 8 fix 3  the same, with exactly 3 candidate queries
 func cmdOSVQueries(ts *testscript.TestScript, neg bool, args []string) {
-	if neg || len(args) != 1 {
-		ts.Fatalf("usage: osvqueries <n>")
+	want := "0"
+	switch {
+	case neg || (len(args) != 1 && len(args) != 3) || (len(args) == 3 && args[1] != "fix"):
+		ts.Fatalf("usage: osvqueries <n> [fix <m>]")
+	case len(args) == 3:
+		want = args[2]
 	}
 	data, err := os.ReadFile(ts.Getenv(envRequests))
 	if err != nil && !os.IsNotExist(err) {
 		ts.Fatalf("read request log: %v", err)
 	}
-	n := 0
+	pins, candidates, batches := 0, 0, 0
 	for line := range strings.Lines(string(data)) {
-		if m := osvQueriesField.FindStringSubmatch(strings.TrimSpace(line)); m != nil {
-			k, _ := strconv.Atoi(m[1])
-			n += k
+		m := osvQueriesField.FindStringSubmatch(strings.TrimSpace(line))
+		if m == nil {
+			continue
+		}
+		k, _ := strconv.Atoi(m[1])
+		switch {
+		case k == 0:
+		case batches == 0:
+			pins = k
+			batches++
+		default:
+			candidates += k
 		}
 	}
-	if got := strconv.Itoa(n); got != args[0] {
-		ts.Fatalf("relgap sent %s versioned OSV queries, want %s:\n%s", got, args[0], data)
+	if got := strconv.Itoa(pins); got != args[0] {
+		ts.Fatalf("relgap sent %s versioned OSV queries for the pins, want %s:\n%s", got, args[0], data)
+	}
+	if got := strconv.Itoa(candidates); got != want {
+		ts.Fatalf("relgap sent %s OSV queries for fix target candidates, want %s:\n%s", got, want, data)
 	}
 }
 

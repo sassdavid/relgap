@@ -197,6 +197,10 @@
             "critical"
           ],
           "description": "Lowest OSV rating --fail-on vuln counts; an advisory without a rating always counts, and empty counts every advisory."
+        },
+        "vuln_fixable": {
+          "type": "boolean",
+          "description": "--fail-on vuln counts only advisories with a fixed version above the pinned one. Advisories without one still show in the report."
         }
       },
       "additionalProperties": false,

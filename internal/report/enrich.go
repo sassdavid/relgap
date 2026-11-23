@@ -2,6 +2,7 @@ package report
 
 import (
 	"cmp"
+	"context"
 	"slices"
 	"strings"
 
@@ -20,10 +21,14 @@ type Unchecked struct {
 	Pins    []scan.Location `json:"pins"`
 }
 
+// VersionsFunc lists a tool's released versions; [Digester.Universe] is one.
+type VersionsFunc func(ctx context.Context, t registry.ToolSpec) (*version.Universe, error)
+
 // EnrichRequests returns one request per tool and version among the pins, with the latest
-// version as the target. A pin is checked at Current, or at its own version when it is exact and
-// its lookup failed. A pin without such a version gets its unchecked reason here.
-func (o *Outdated) EnrichRequests(resolve ResolveFunc) []enrich.Request {
+// version as the target and versions for the fix target (nil skips it). A pin is checked at
+// Current, or at its own version when it is exact and its lookup failed. A pin without such a
+// version gets its unchecked reason here.
+func (o *Outdated) EnrichRequests(resolve ResolveFunc, versions VersionsFunc) []enrich.Request {
 	var out []enrich.Request
 	seen := map[string]bool{}
 	for i := range o.Pins {
@@ -43,6 +48,9 @@ func (o *Outdated) EnrichRequests(resolve ResolveFunc) []enrich.Request {
 		}
 		seen[key] = true
 		req := enrich.Request{Key: key, Name: p.Tool, Tool: spec, Current: v}
+		if versions != nil {
+			req.Versions = func(ctx context.Context) (*version.Universe, error) { return versions(ctx, spec) }
+		}
 		if p.Latest != "" && p.Latest != p.vulnVersion {
 			if rules, err := spec.Version.Rules(); err == nil {
 				if latest, latestErr := rules.Scheme.Parse(p.Latest); latestErr == nil {
@@ -89,7 +97,8 @@ func resolvable(pin scan.Pin) bool {
 	return pin.Match != scan.MatchChannel || strings.EqualFold(strings.TrimSpace(pin.Value), "latest")
 }
 
-// ApplyEnrichment sets the EOL state, vulnerabilities and unchecked reason of each pin, and
+// ApplyEnrichment sets the EOL state, vulnerabilities, fix target and unchecked reason of each
+// pin, and
 // lists the unchecked pins, adding unresolved, the pins that resolve to no tool.
 func (o *Outdated) ApplyEnrichment(results map[string]enrich.Result, unresolved []scan.Pin) {
 	for i := range o.Pins {
@@ -98,7 +107,7 @@ func (o *Outdated) ApplyEnrichment(results map[string]enrich.Result, unresolved 
 			continue
 		}
 		if r, ok := results[enrichKey(p)]; ok {
-			p.EOL, p.Vulns, p.Unchecked = r.EOL, r.Vulns, r.Unchecked
+			p.EOL, p.Vulns, p.Unchecked, p.Fix = r.EOL, r.Vulns, r.Unchecked, r.Fix
 		}
 	}
 	o.Unchecked = uncheckedList(o.Pins, unresolved)
@@ -130,6 +139,21 @@ func uncheckedList(pins []OutdatedPin, unresolved []scan.Pin) []Unchecked {
 	})
 	for _, p := range unresolved {
 		add(p.RawName, p.Value, enrich.ReasonUnresolved, p.Location)
+	}
+	return out
+}
+
+// Fixes returns the fix target of each pinned tool version that has one, once, in pin order.
+func (o *Outdated) Fixes() []ToolFix {
+	var out []ToolFix
+	seen := map[string]bool{}
+	for i := range o.Pins {
+		p := &o.Pins[i]
+		if p.Fix == nil || seen[enrichKey(p)] {
+			continue
+		}
+		seen[enrichKey(p)] = true
+		out = append(out, ToolFix{Tool: p.Tool, Version: p.vulnVersion, Fix: p.Fix})
 	}
 	return out
 }

@@ -41,6 +41,12 @@ func OutdatedText(w io.Writer, o *report.Outdated, color bool) error {
 			b.WriteString("  " + n + "\n")
 		}
 	}
+	if lines := fixLines(o.Fixes()); len(lines) > 0 {
+		b.WriteString("\n" + FixTitle + ":\n")
+		for _, line := range lines {
+			b.WriteString("  " + line + "\n")
+		}
+	}
 	if len(o.Unchecked) > 0 {
 		b.WriteString("\n" + UncheckedTitle + ":\n")
 		for _, line := range uncheckedLines(o.Unchecked) {
@@ -93,6 +99,12 @@ func OutdatedMarkdown(w io.Writer, o *report.Outdated) error {
 		b.WriteString("\n")
 		for _, n := range notes {
 			b.WriteString("- " + mdCell(n) + "\n")
+		}
+	}
+	if lines := fixLines(o.Fixes()); len(lines) > 0 {
+		b.WriteString("\n" + FixTitle + ":\n\n")
+		for _, line := range lines {
+			b.WriteString("- " + mdCell(line) + "\n")
 		}
 	}
 	if len(o.Unchecked) > 0 {

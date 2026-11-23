@@ -642,7 +642,7 @@ one session can't finish, the open boxes carry over to a follow-up session.
 - [x] Unrated records take their GHSA alias's rating and otherwise count at every threshold,
   withdrawn records are dropped, and records are cached by `modified`. (vulnerability-audit
   criterion 4)
-- [ ] Each finding has a fix target, and an affected latest version warns. (vulnerability-audit
+- [x] Each finding has a fix target, and an affected latest version warns. (vulnerability-audit
   criterion 5)
 - [ ] Action pins are checked against the GitHub Actions ecosystem. (vulnerability-audit
   criterion 6)

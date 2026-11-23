@@ -104,7 +104,22 @@
           "type": "array",
           "items": { "$ref": "#/$defs/vuln" }
         },
-        "unchecked": { "$ref": "#/$defs/reason" }
+        "unchecked": { "$ref": "#/$defs/reason" },
+        "fix": { "$ref": "#/$defs/fix" }
+      }
+    },
+    "fix": {
+      "description": "The release the version can move to: the lowest stable release above it that every advisory with a fix has left behind and that has no fixable advisory of its own. Absent without a vulnerability, or when the version list or OSV failed.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["latest", "latest_affected"],
+      "properties": {
+        "lowest": { "description": "Absent when no release qualifies.", "type": "string", "minLength": 1 },
+        "lowest_in_line": { "description": "The same within the current version's line: its major, or major.minor for tools with version.line minor.", "type": "string", "minLength": 1 },
+        "latest": { "description": "The newest stable release.", "type": "string", "minLength": 1 },
+        "latest_affected": { "description": "Whether OSV lists an advisory for latest.", "type": "boolean" },
+        "latest_affected_by": { "description": "The advisories OSV lists for latest.", "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "unfixed": { "description": "Advisories of the current version that latest still has: no release fixes them.", "type": "array", "items": { "type": "string", "minLength": 1 } }
       }
     },
     "reason": {

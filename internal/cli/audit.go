@@ -36,12 +36,12 @@ func newAuditCmd(d *app.Deps, g *globals) *cobra.Command {
 of every pin: one query per tool, version and OSV package, however many repositories pin it.
 --tool limits the run to the named tools. Ignore rules in the config drop matching pins.
 
-An exact pin is checked at its own version and needs no lookup. A value marked ≈ is checked at
-the version it stands for, the CURRENT of 'relgap outdated': a constraint (~> 1.15) takes the
-highest exact pin of the tool in the same repository that satisfies it, otherwise the lowest
-version that does; a prefix (26) takes the highest stable version that starts with it; the
-latest channel takes the latest version. Only these pins need the tool's versions from GitHub
-or another host.
+An exact pin is checked at its own version and needs no lookup for it. A value marked ≈ is
+checked at the version it stands for, the CURRENT of 'relgap outdated': a constraint (~> 1.15)
+takes the highest exact pin of the tool in the same repository that satisfies it, otherwise
+the lowest version that does; a prefix (26) takes the highest stable version that starts with
+it; the latest channel takes the latest version. To find the version, only these pins need
+the tool's versions from GitHub or another host.
 
 A pin with a curated osv list in its registry entry queries those packages. Other pins query
 the package their backend names (npm:, pypi:, cargo:, gem:, go:, dotnet:), or the Go module
@@ -49,6 +49,14 @@ and git repository of a github.com tool. A finding is one advisory that affects 
 version, with every pin of that version, its severity, the lowest fixed version and its
 osv.dev page. A record without a rating takes the rating of its GHSA alias, else its severity
 is unknown. Findings sort by severity, unknown last, then by ID.
+
+Each finding has a fix target, listed under "Fix targets" and as fix in --format json: the
+lowest stable release above the version that every advisory with a fix has left behind, and
+the same within the version's line. Candidates are checked against the advisories' ranges,
+then OSV is asked about them and the latest release; a candidate with an advisory of its own
+moves the target on. An advisory the latest release still has is one no release fixes (fix is
+null), and relgap warns when the latest release has any. Only a tool version with findings
+lists its tool's versions for this.
 
 A pin OSV wasn't asked about is listed with the reason, and never counts as clean:
 no-advisory-source, private-source, not-exact, unresolved, offline or failed.
@@ -58,12 +66,12 @@ pin's file and line (one rule per OSV ID), a note per unchecked pin (unchecked),
 per file or version lookup that failed (failed). The results don't depend on --fail-on.
 
 --fail-on takes vuln and unchecked. vuln counts the findings at or above --vuln-severity and
-those of unknown severity, and unchecked counts the unchecked tool versions. audit gates vuln
-by default. Values in config policy.fail_on that audit checks add to vuln, and --fail-on
-replaces the whole set: --fail-on unchecked gates only unchecked, and --fail-on= gates
-nothing. A value whose count reaches --min-count (default 1) exits 3. Otherwise a file or
-lookup that failed exits 1, and so does an OSV outage under --fail-on vuln, since a pass on
-partial data proves nothing.
+those of unknown severity, and with --vuln-fixable only those with a fixed version above the
+pinned one. unchecked counts the unchecked tool versions. audit gates vuln by default. Values
+in config policy.fail_on that audit checks add to vuln, and --fail-on replaces the whole set:
+--fail-on unchecked gates only unchecked, and --fail-on= gates nothing. A value whose count
+reaches --min-count (default 1) exits 3. Otherwise a file or lookup that failed exits 1, and
+so does an OSV outage under --fail-on vuln, since a pass on partial data proves nothing.
 
 --offline answers from the HTTP cache. Pins without a cached answer are unchecked with reason
 offline, and --format json has oldest_answer, when the oldest OSV answer was stored.
@@ -74,6 +82,7 @@ Roots default to scan.roots, then the current directory.`,
   relgap audit --tool terraform --tool node
   relgap audit --vuln-severity high --format sarif > audit.sarif
   relgap audit --fail-on vuln --fail-on unchecked
+  relgap audit --vuln-fixable --vuln-severity high
   relgap audit --format json | jq '.data.findings[] | {tool, version, id}'`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return runAudit(cmd, d, g, f, args)
@@ -172,7 +181,8 @@ func (s *session) audit(ctx context.Context, a auditArgs) (*auditRun, error) {
 	if err != nil {
 		return nil, err
 	}
-	out, err := report.NewAuditor(s.digester(gh, hc), gh).Audit(ctx, report.AuditRequest{
+	dg := s.digester(gh, hc)
+	out, err := report.NewAuditor(dg, gh).Audit(ctx, report.AuditRequest{
 		Repos:       res.Repos,
 		Pins:        pins,
 		Resolve:     resolveFunc(ctx, s),
@@ -183,7 +193,7 @@ func (s *session) audit(ctx context.Context, a auditArgs) (*auditRun, error) {
 	}
 	osv := enrich.NewOSVClient(hc, "")
 	en := enrich.NewEnricher(d.Logger, nil, osv, d.Config.Config.GitHub.Concurrency)
-	results, problems, err := en.Enrich(ctx, out.EnrichRequests(resolveFunc(ctx, s)))
+	results, problems, err := en.Enrich(ctx, out.EnrichRequests(resolveFunc(ctx, s), dg.Universe))
 	if err != nil {
 		return nil, err //nolint:wrapcheck // only a canceled context
 	}
@@ -265,6 +275,7 @@ func (r *auditRun) warn(cmd *cobra.Command, d *app.Deps) {
 	for _, p := range r.problems {
 		d.Logger.WarnContext(ctx, "OSV failed; those pins are unchecked", "tool", p.Tool, "error", p.Err)
 	}
+	warnLatestAffected(ctx, d, r.out.Fixes())
 	for _, t := range r.tools {
 		if !slices.ContainsFunc(r.scan.Pins, func(p scan.Pin) bool { return p.Tool == t }) {
 			d.Logger.WarnContext(ctx, "no repository pins this tool", "tool", t)
@@ -276,6 +287,17 @@ func (r *auditRun) warn(cmd *cobra.Command, d *app.Deps) {
 	if n := countUnresolved(r.scan.Pins, r.ignore); n > 0 {
 		_, _ = fmt.Fprintf(d.Stderr, "%s: %d %s no known tool; list them with 'relgap pins --unresolved'\n",
 			config.AppName, n, plural(n, "pin has", "pins have"))
+	}
+}
+
+// warnLatestAffected warns about each fix target whose latest release still has advisories, the
+// way mise upgrade --vulnerable warns about a target that is still affected.
+func warnLatestAffected(ctx context.Context, d *app.Deps, fixes []report.ToolFix) {
+	for _, t := range fixes {
+		if t.Fix.LatestAffected {
+			d.Logger.WarnContext(ctx, "the latest release still has known vulnerabilities", "tool", t.Tool,
+				"version", t.Version, "latest", t.Fix.Latest, "advisories", strings.Join(t.Fix.LatestAffectedBy, ","))
+		}
 	}
 }
 

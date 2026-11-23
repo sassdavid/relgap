@@ -19,14 +19,22 @@ const AuditUncheckedTitle = "Not checked for vulnerabilities"
 // AuditRules returns the IDs of the fixed rules in audit's SARIF, in their order there.
 func AuditRules() []string { return []string{RuleFailed, RuleUnchecked} }
 
-// AuditText writes the findings as an aligned table, then the advisories, the unchecked tool
-// versions and a summary. With color it marks high and critical ratings red (the tty format).
+// AuditText writes the findings as an aligned table, then the advisories, the fix targets, the
+// unchecked tool versions and a summary. With color it marks high and critical ratings red (the
+// tty format).
 func AuditText(w io.Writer, a *report.Audit, color bool) error {
 	var b strings.Builder
 	if len(a.Findings) > 0 {
 		writeAligned(&b, auditRows(a), color)
 		b.WriteString("\nAdvisories:\n")
 		for _, line := range advisoryLines(a) {
+			b.WriteString("  " + line + "\n")
+		}
+		b.WriteString("\n")
+	}
+	if lines := fixLines(a.Fixes()); len(lines) > 0 {
+		b.WriteString(FixTitle + ":\n")
+		for _, line := range lines {
 			b.WriteString("  " + line + "\n")
 		}
 		b.WriteString("\n")
@@ -60,6 +68,13 @@ func AuditMarkdown(w io.Writer, a *report.Audit) error {
 		writeMarkdownTable(&b, auditRows(a), "| --- | --- | --- | --- | --- | --- |")
 		b.WriteString("\nAdvisories:\n\n")
 		for _, line := range advisoryLines(a) {
+			b.WriteString("- " + mdCell(line) + "\n")
+		}
+		b.WriteString("\n")
+	}
+	if lines := fixLines(a.Fixes()); len(lines) > 0 {
+		b.WriteString(FixTitle + ":\n\n")
+		for _, line := range lines {
 			b.WriteString("- " + mdCell(line) + "\n")
 		}
 		b.WriteString("\n")
@@ -212,7 +227,7 @@ func AuditSARIF(a *report.Audit, problems []scan.Problem, version string) *sarif
 	for i := range a.Findings {
 		f := &a.Findings[i]
 		v := &enrich.Vuln{ID: f.ID, Aliases: f.Aliases, Summary: f.Summary, Severity: f.Severity, FixedIn: f.FixedIn}
-		msg := vulnText(f.Tool, f.Version, v)
+		msg := vulnText(f.Tool, f.Version, v, auditFix(a, f.Tool, f.Version))
 		for _, loc := range f.Pins {
 			r.add(f.ID, vulnLevel(v), msg, loc, f.Tool, f.ID)
 		}

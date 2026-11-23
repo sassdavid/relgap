@@ -594,7 +594,13 @@
             "affects_current": true,
             "fixed_by_target": true
           }
-        ]
+        ],
+        "fix": {
+          "lowest": "1.26.11",
+          "lowest_in_line": "1.26.11",
+          "latest": "1.27.4",
+          "latest_affected": false
+        }
       },
       {
         "tool": "helm",

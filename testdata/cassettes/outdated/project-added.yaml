@@ -10230,3 +10230,50 @@ interactions:
         status: 200 OK
         code: 200
         duration: 186.47975ms
+    - id: 38
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 285
+        host: api.osv.dev
+        body: '{"queries":[{"package":{"ecosystem":"Go","name":"stdlib"},"version":"1.27.4"},{"package":{"ecosystem":"Go","name":"toolchain"},"version":"1.27.4"},{"package":{"ecosystem":"Go","name":"stdlib"},"version":"1.26.11"},{"package":{"ecosystem":"Go","name":"toolchain"},"version":"1.26.11"}]}'
+        headers:
+            Accept:
+                - application/json
+            Content-Type:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.osv.dev/v1/querybatch
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 25
+        body: '{"results":[{},{},{},{}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "25"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 13:29:44 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-56b713d98a829fb7b6bd72b65f37778d-a4f519d814ac97c9-00
+            X-Cloud-Trace-Context:
+                - 56b713d98a829fb7b6bd72b65f37778d/11886435207364777929
+            X-Envoy-Decorator-Operation:
+                - ingress QueryAffectedBatch
+        status: 200 OK
+        code: 200
+        duration: 382.39925ms

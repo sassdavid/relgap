@@ -338,7 +338,12 @@ func TestGateCheck(t *testing.T) {
 			Tool: "d", Status: report.StatusCurrent, Behind: &report.Behind{},
 			EOL: &enrich.EOL{Current: &enrich.EOLStatus{Cycle: "1.0", IsEOL: &yes}},
 			Vulns: []enrich.Vuln{
-				{ID: "V-1", AffectsCurrent: true, Severity: &enrich.Score{Score: 9.8, Rating: "critical"}},
+				{
+					ID:             "V-1",
+					AffectsCurrent: true,
+					Severity:       &enrich.Score{Score: 9.8, Rating: "critical"},
+					FixedIn:        "1.0.1",
+				},
 				{ID: "V-2", AffectsCurrent: true, Severity: &enrich.Score{Score: 5, Rating: "medium"}},
 				{ID: "V-3", AffectsCurrent: true, Severity: &enrich.Score{Rating: enrich.RatingUnknown}},
 				{ID: "V-4", AffectsCurrent: false, Severity: &enrich.Score{Score: 9.8, Rating: "critical"}},
@@ -368,6 +373,11 @@ func TestGateCheck(t *testing.T) {
 	assert.Contains(t, ids(findings), "vuln:d:V-1")
 	assert.NotContains(t, ids(findings), "vuln:d:V-2")
 	assert.Contains(t, ids(findings), "vuln:d:V-3", "an advisory without a rating counts at every threshold")
+
+	gate.VulnSeverity, gate.VulnFixable = "", true
+	findings, _ = gate.Check(o)
+	assert.Contains(t, ids(findings), "vuln:d:V-1")
+	assert.NotContains(t, ids(findings), "vuln:d:V-2", "--vuln-fixable skips an advisory without a fixed version")
 
 	findings, unmeasured = report.Gate{
 		Values: []string{report.FailOnOutdated}, MaxBehind: report.MaxBehind{Unit: "days", N: 1},

@@ -65,6 +65,11 @@ no-advisory-source, private-source, not-exact, unresolved, offline or failed. --
 lists them in unchecked. Both sources are cached for a day. When one is down, relgap warns
 and prints the rest.
 
+A pin with a vulnerability gets a fix target, listed under "Fix targets" and as fix in
+--format json: the lowest stable release above CURRENT that every advisory with a fix has
+left behind, checked against OSV, and the same within CURRENT's line. An advisory the latest
+release still has is one no release fixes, and relgap warns when the latest release has any.
+
 --binaries also reads the Go build info of each pinned tool's installed executables (on
 PATH and in mise's installs directory) and lists the OSV vulnerabilities of the Go version
 and main module they were built with. Like govulncheck's binary mode, minus the check that
@@ -80,8 +85,9 @@ checked for vulnerabilities (unchecked, a note). The results don't depend on --f
 outdated counts the pins further behind than --max-behind (major:N, minor:N, patch:N,
 releases:N or days:N; empty means any pin behind latest), breaking and deprecation count
 the pins whose digest has such an entry, eol counts the pins on an EOL cycle, and vuln
-counts the advisories that affect a pin at or above --vuln-severity or of unknown severity.
-A value whose count reaches --min-count (default 1) exits 3. Otherwise a tool or file that
+counts the advisories that affect a pin at or above --vuln-severity or of unknown severity,
+and with --vuln-fixable only those with a fixed version above CURRENT. A value whose count
+reaches --min-count (default 1) exits 3. Otherwise a tool or file that
 failed exits 1, and so does an endoflife.date outage under --fail-on eol or an OSV outage
 under --fail-on vuln, since a pass on partial data proves nothing.`,
 		Example: `  relgap outdated
@@ -144,6 +150,7 @@ type comparison struct {
 	ignore   []scan.Ignore
 	out      *report.Outdated
 	problems []enrich.Problem
+	digester *report.Digester // lists versions for the fix targets, reusing the comparison's lists
 }
 
 // compareOptions says what a comparison adds to the pins.
@@ -182,7 +189,8 @@ func (s *session) compare(
 	if err != nil {
 		return nil, err
 	}
-	out, err := report.NewOutdater(s.digester(gh, hc), gh).
+	dg := s.digester(gh, hc)
+	out, err := report.NewOutdater(dg, gh).
 		Outdated(ctx, report.OutdatedRequest{
 			Repos:         res.Repos,
 			Pins:          pins,
@@ -193,7 +201,7 @@ func (s *session) compare(
 	if err != nil {
 		return nil, digestError(err)
 	}
-	run := &comparison{scan: res, ignore: ignore, out: out}
+	run := &comparison{scan: res, ignore: ignore, out: out, digester: dg}
 	if with.enrich {
 		if err = s.enrich(ctx, run, hc, pins, with.binaries); err != nil {
 			return nil, err
@@ -208,7 +216,7 @@ func (s *session) enrich(ctx context.Context, c *comparison, hc *http.Client, pi
 	d := s.d
 	en := enrich.NewEnricher(d.Logger, enrich.NewEOLClient(hc, ""), enrich.NewOSVClient(hc, ""),
 		d.Config.Config.GitHub.Concurrency)
-	results, problems, err := en.Enrich(ctx, c.out.EnrichRequests(resolveFunc(ctx, s)))
+	results, problems, err := en.Enrich(ctx, c.out.EnrichRequests(resolveFunc(ctx, s), c.digester.Universe))
 	if err != nil {
 		return err //nolint:wrapcheck // only a canceled context
 	}
@@ -364,6 +372,7 @@ func (c *comparison) warn(cmd *cobra.Command, d *app.Deps) {
 		d.Logger.WarnContext(cmd.Context(), "enrichment source failed; the report continues without it",
 			"source", p.Source, "tool", p.Tool, "error", p.Err)
 	}
+	warnLatestAffected(cmd.Context(), d, c.out.Fixes())
 	if n := countUnresolved(c.scan.Pins, c.ignore); n > 0 {
 		_, _ = fmt.Fprintf(d.Stderr, "%s: %d %s no known tool; list them with 'relgap pins --unresolved'\n",
 			config.AppName, n, plural(n, "pin has", "pins have"))

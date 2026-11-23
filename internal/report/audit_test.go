@@ -1,6 +1,7 @@
 package report_test
 
 import (
+	"encoding/json"
 	"log/slog"
 	"testing"
 
@@ -35,7 +36,7 @@ func TestAuditVersions(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	reqs := got.EnrichRequests(resolve)
+	reqs := got.EnrichRequests(resolve, nil)
 	versions := make([]string, len(reqs))
 	for i, r := range reqs {
 		versions[i] = r.Name + "@" + r.Current.String()
@@ -77,12 +78,16 @@ func TestAuditFindings(t *testing.T) {
 		Repos: []string{"x", "y"}, Pins: pins, Resolve: resolve, Concurrency: 2,
 	})
 	require.NoError(t, err)
-	reqs := got.EnrichRequests(resolve)
+	reqs := got.EnrichRequests(resolve, nil)
 	require.Len(t, reqs, 3)
 	high := &enrich.Score{Score: 7.5, Rating: "high"}
 	low := &enrich.Score{Score: 3.1, Rating: "low"}
+	fix := &enrich.Fix{
+		Lowest: "1.2.0", Latest: "1.3.0", LatestAffected: true, LatestAffectedBy: []string{"GO-2"},
+		Unfixed: []string{"GO-2"},
+	}
 	got.ApplyEnrichment(map[string]enrich.Result{
-		reqs[0].Key: {Vulns: []enrich.Vuln{
+		reqs[0].Key: {Fix: fix, Vulns: []enrich.Vuln{
 			{ID: "GO-2", AffectsCurrent: true, Severity: &enrich.Score{Rating: enrich.RatingUnknown}},
 			{ID: "GHSA-low", Severity: low, AffectsCurrent: true},
 			{ID: "GHSA-gone", Severity: high, AffectsCurrent: false},
@@ -129,4 +134,27 @@ func TestAuditFindings(t *testing.T) {
 	assert.Equal(t, 1, unchecked)
 	assert.Equal(t, []string{report.FailOnVuln, report.FailOnUnchecked},
 		[]string{gate.Matches(findings)[0].FailOn, gate.Matches(findings)[1].FailOn})
+
+	gate = report.Gate{Values: []string{report.FailOnVuln}, VulnFixable: true}
+	vulns = nil
+	for _, f := range gate.CheckAudit(got) {
+		vulns = append(vulns, f.Advisory.ID)
+	}
+	assert.Equal(t, []string{"GHSA-high"}, vulns, "--vuln-fixable counts only the advisory with a fixed version")
+
+	// a's fix target is on each of its findings, null on the advisory no release fixes; b has none.
+	fixes := map[string]string{}
+	for _, f := range got.Findings {
+		b, marshalErr := json.Marshal(f)
+		require.NoError(t, marshalErr)
+		var m map[string]json.RawMessage
+		require.NoError(t, json.Unmarshal(b, &m))
+		fixes[f.ID] = string(m["fix"])
+	}
+	assert.Equal(t, map[string]string{
+		"GHSA-high": "",
+		"GHSA-low":  `{"lowest":"1.2.0","latest":"1.3.0","latest_affected":true,"latest_affected_by":["GO-2"],"unfixed":["GO-2"]}`,
+		"GO-2":      "null",
+	}, fixes)
+	assert.Equal(t, []report.ToolFix{{Tool: "a", Version: "1.0.0", Fix: fix}}, got.Fixes())
 }

@@ -33,6 +33,7 @@ schema_version: 1
 #   max_behind: ""                # for example minor:2, releases:10 or days:90; empty allows any lag
 #   min_confidence: 0.5           # hide entries below this confidence, 0 to 1
 #   vuln_severity: ""             # low, medium, high or critical; empty counts every advisory
+#   vuln_fixable: false           # count only advisories with a fixed version above the pin
 #
 # llm:                            # only for 'relgap digest --summarize'
 #   provider: ""                  # empty is off; openai-compatible, anthropic, bedrock or bedrock-mantle
