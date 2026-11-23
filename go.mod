@@ -38,7 +38,7 @@ require (
 	github.com/yuin/goldmark/v2 v2.1.16
 	github.com/zclconf/go-cty v1.20.0
 	go.yaml.in/yaml/v4 v4.0.0
-	golang.org/x/net v0.62.0
+	golang.org/x/net v0.63.0
 	golang.org/x/sync v0.25.0
 	golang.org/x/sys v0.50.0
 	golang.org/x/time v0.16.0
