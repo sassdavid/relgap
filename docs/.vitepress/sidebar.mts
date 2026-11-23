@@ -38,6 +38,7 @@ export const sidebar: DefaultTheme.SidebarItem[] = [
       { text: "Read the changes between two versions", link: "/guides/digest" },
       { text: "Find pins behind latest or past EOL", link: "/guides/outdated" },
       { text: "Find version drift across repos", link: "/guides/drift" },
+      { text: "Audit pinned versions for vulnerabilities", link: "/guides/audit" },
       { text: "Gate CI on breaking changes, EOL and vulnerabilities", link: "/guides/ci-gate" },
       { text: "Comment upgrade notes on Renovate pull requests", link: "/guides/renovate-pr" },
       { text: "Use relgap-action", link: "/guides/action" },

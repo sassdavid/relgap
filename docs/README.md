@@ -66,7 +66,7 @@ code a file comes from, then run `mise run docs`. Don't edit the file.
 |---|---|---|
 | `cli/**`, `cli/commands.json` | `scripts/gendocs` | the cobra tree, flags, annotations |
 | `reference/` config, environment, exit codes, fail-on, schemas, MCP | `scripts/gendocs` | the config schema and defaults, `run.go`, `schemas/`, the MCP server |
-| `reference/` tools, snapshots, registry schema, SARIF rules; `parts/*.md` | `scripts/gensite` | the registry, the embedded snapshots, the classifier and the detectors |
+| `reference/` tools, snapshots, registry schema, SARIF rules; `parts/*.md` | `scripts/gensite` | the registry, the embedded snapshots, the classifier, the detectors and `enrich.SentToOSV` |
 | `parts/relgap-action.md` | `scripts/gensite` | relgap-action's `action.yml` at the pinned commit |
 | `.vitepress/theme/data/*.json` | `scripts/gensite` | the kubectl digest golden and `summarize.SentToModel` |
 | `public/schemas/*.json` | `scripts/gendocs` | `schemas/` |

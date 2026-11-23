@@ -133,8 +133,8 @@ func newAuditCmd(d *app.Deps, g *globals) *cobra.Command {
 	_ = cmd.RegisterFlagCompletionFunc("tool", completeToolList(d, g))
 	cmd.ValidArgsFunction = complete.Dirs()
 	setExitCodes(cmd, ExitFindings, ExitAuth)
-	setRelated(cmd, "concepts/enrichment", "guides/ci-gate", "guides/sarif", "reference/fail-on",
-		"reference/sarif-rules")
+	setRelated(cmd, "guides/audit", "concepts/enrichment", "guides/ci-gate", "guides/sarif",
+		"reference/fail-on", "reference/sarif-rules")
 	return cmd
 }
 

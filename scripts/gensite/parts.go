@@ -40,7 +40,17 @@ func partsFiles(_ string, files map[string][]byte) error {
 		return err
 	}
 	files[partsDir+"network-hosts.md"] = part(networkHostsTable(hosts))
+	files[partsDir+"osv-sent.md"] = part(osvSentTable())
 	return nil
+}
+
+// osvSentTable lists what relgap's OSV requests carry, from [enrich.SentToOSV].
+func osvSentTable() string {
+	t := &table{head: []string{"Request", "Field", "What it holds"}}
+	for _, f := range enrich.SentToOSV() {
+		t.add(code(f.Request), code(f.Name), prose(f.Description))
+	}
+	return t.String()
 }
 
 func detectorsTable() string {
@@ -182,8 +192,9 @@ func networkHosts() ([]host, error) {
 		},
 		{eol.Host, "release cycles and their end-of-life dates", "a tool whose registry entry names an " +
 			"endoflife.date product", noToken},
-		{httpx.OSVHost, "known vulnerabilities of the pinned and latest versions", "a tool whose registry " +
-			"entry names OSV packages", noToken},
+		{httpx.OSVHost, "known vulnerabilities of the pinned versions, their fix target candidates and the " +
+			"latest versions ([what OSV receives](#what-osv-receives))", "`audit`, and `outdated` for every pin " +
+			"it checks", noToken},
 		feedHost(enrich.KEVHost, "the CISA Known Exploited Vulnerabilities catalog, one file per day", "kev"),
 		feedHost(enrich.EPSSHost, "the EPSS scores of the CVE IDs of the advisories found", "epss"),
 		{

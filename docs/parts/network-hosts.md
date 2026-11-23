@@ -7,7 +7,7 @@
 | `gitlab.com` | tags, releases, files and the top directory of projects | `gitlab:` pins and inputs, from Terraform module sources on gitlab.com | `GITLAB_TOKEN`, then `GITLAB_ACCESS_TOKEN`, when `GITLAB_HOST` names this host (default gitlab.com); `CI_JOB_TOKEN` when `CI_SERVER_HOST` does |
 | a host in `gitlab.hosts` | tags, releases, files and the top directory of projects | `gitlab:<host>/...` pins and inputs | the entry's `token_env`, else as for gitlab.com |
 | `endoflife.date` | release cycles and their end-of-life dates | a tool whose registry entry names an endoflife.date product | no |
-| `api.osv.dev` | known vulnerabilities of the pinned and latest versions | a tool whose registry entry names OSV packages | no |
+| `api.osv.dev` | known vulnerabilities of the pinned versions, their fix target candidates and the latest versions ([what OSV receives](#what-osv-receives)) | `audit`, and `outdated` for every pin it checks | no |
 | `www.cisa.gov` | the CISA Known Exploited Vulnerabilities catalog, one file per day | `audit` and `outdated` with `--kev` or `vulns.kev` | no |
 | `api.first.org` | the EPSS scores of the CVE IDs of the advisories found | `audit` and `outdated` with `--epss` or `vulns.epss` | no |
 | `registry.terraform.io` | provider versions and source repositories | `tfprovider:` pins and inputs | no |

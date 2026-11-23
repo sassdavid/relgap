@@ -198,7 +198,8 @@ func TestActionPart(t *testing.T) {
 
 func TestTranscriptProblems(t *testing.T) {
 	t.Parallel()
-	scripts := "\nexec relgap pins --format plain\ngolden stdout pins/project.txt\n"
+	scripts := "\nexec relgap pins --format plain\ngolden stdout pins/project.txt\n" +
+		"exec expect-exit 3 relgap audit tree --format md\ngolden stdout audit/tree.md\n"
 	tests := map[string]struct {
 		page string
 		want int
@@ -210,6 +211,7 @@ func TestTranscriptProblems(t *testing.T) {
 		},
 		"other flags": {"```sh\nrelgap pins\n```\n<<< @/../testdata/golden/pins/project.txt\n", 1},
 		"no command":  {"<<< @/../testdata/golden/pins/project.txt\n", 1},
+		"expect-exit": {"```sh\nrelgap audit tree --format md\n```\n<<< @/../testdata/golden/audit/tree.md\n", 0},
 		"command reused": {
 			"```sh\nrelgap pins --format plain\n```\n<<< @/../testdata/golden/pins/project.txt\n<<< @/../testdata/golden/pins/project.txt\n",
 			1,
