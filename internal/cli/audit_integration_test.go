@@ -67,7 +67,7 @@ func testAuditMCP(t *testing.T) {
 
 		msg := mcptest.ErrorText(t, c.Call(t, "audit", map[string]any{"vuln_severity": "severe"}))
 		assert.Contains(t, msg, `invalid --vuln-severity "severe"`)
-		msg = mcptest.ErrorText(t, c.Call(t, "audit", map[string]any{"roots": []string{"/"}}))
+		msg = mcptest.ErrorText(t, c.Call(t, "audit", map[string]any{"roots": []string{filepath.Dir(f.dir)}}))
 		assert.Contains(t, msg, "outside the server's roots")
 	})
 
