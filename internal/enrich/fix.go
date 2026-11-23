@@ -45,6 +45,9 @@ type advisory struct {
 	names   []string // the ID and every alias
 	sources []evidence
 	own     bool // found at a candidate, not at the current version
+	// suppressed says a vulns.ignore entry or VEX statement suppresses it, so it neither blocks a
+	// candidate nor makes latest affected.
+	suppressed bool
 }
 
 // fixSearch is the fix target search of one tool version.
@@ -61,6 +64,9 @@ type fixSearch struct {
 	settled  map[string]bool  // versions the local records were matched to
 	latestOK bool             // OSV answered for latest
 	failed   bool
+	// covers reports whether a rule suppresses the advisory named names at version v; nil
+	// suppresses nothing.
+	covers func(names []string, v version.V) bool
 }
 
 // fixRef ties a candidate query to its search and version.
@@ -74,13 +80,18 @@ type fixRef struct {
 func (e *Enricher) fixTargets(ctx context.Context, reqs []Request, ans osvAnswer) map[string]*Fix {
 	var searches []*fixSearch
 	for i, r := range reqs {
-		affected := slices.ContainsFunc(ans.vulns[r.Key], func(v Vuln) bool { return v.AffectsCurrent })
-		if r.Versions == nil || !affected {
+		if r.Versions == nil || !slices.ContainsFunc(ans.vulns[r.Key], Vuln.Counts) {
 			continue
 		}
-		searches = append(searches, &fixSearch{
+		s := &fixSearch{
 			req: r, modules: ans.modules, advs: advisoriesOf(ans.vulns[r.Key], ans.sources[i]), local: ans.local[i],
-		})
+		}
+		if e.suppressor != nil {
+			s.covers = func(names []string, v version.V) bool {
+				return e.suppressor.Covers(r.subjectAt(v, ans.modules), names)
+			}
+		}
+		searches = append(searches, s)
 	}
 	out := map[string]*Fix{}
 	if len(searches) == 0 {
@@ -110,7 +121,7 @@ func advisoriesOf(vs []Vuln, srcs []evidence) []*advisory {
 		if !v.AffectsCurrent {
 			continue
 		}
-		a := &advisory{id: v.ID, names: append([]string{v.ID}, v.Aliases...)}
+		a := &advisory{id: v.ID, names: v.names(), suppressed: v.Suppressed != nil}
 		for _, s := range srcs {
 			if slices.Contains(a.names, s.rec.ID) {
 				a.sources = append(a.sources, s)
@@ -335,7 +346,9 @@ func (s *fixSearch) observe(v version.V, rec *Record, p registry.OSVPackage) {
 	})
 	if at < 0 {
 		at = len(s.advs)
-		s.advs = append(s.advs, &advisory{id: rec.ID, names: names, own: true})
+		s.advs = append(s.advs, &advisory{
+			id: rec.ID, names: names, own: true, suppressed: s.covers != nil && s.covers(names, v),
+		})
 	}
 	a := s.advs[at]
 	if !slices.ContainsFunc(a.sources, func(src evidence) bool { return src.rec.ID == rec.ID && src.pkg == p }) {
@@ -376,7 +389,7 @@ func (s *fixSearch) pending() []version.V {
 // one, moving to another release fixes nothing.
 func (s *fixSearch) fixable() bool {
 	for i, a := range s.advs {
-		if !a.own && !s.unfixed(i) {
+		if !a.own && !a.suppressed && !s.unfixed(i) {
 			return true
 		}
 	}
@@ -412,10 +425,10 @@ func (s *fixSearch) pick(inLine bool) version.V {
 // counts as clean until OSV answers for c.
 func (s *fixSearch) clean(c version.V) bool {
 	if hit, ok := s.observed[c.String()]; ok {
-		return !slices.ContainsFunc(hit, func(a int) bool { return !s.unfixed(a) })
+		return !slices.ContainsFunc(hit, func(a int) bool { return !s.advs[a].suppressed && !s.unfixed(a) })
 	}
 	for i, a := range s.advs {
-		if s.unfixed(i) {
+		if a.suppressed || s.unfixed(i) {
 			continue
 		}
 		if affected, known := s.affects(a, c); affected && known {
@@ -448,7 +461,7 @@ func (s *fixSearch) fix() *Fix {
 	}
 	if len(s.cands) == 0 {
 		// The current version is the newest release, so nothing fixes its advisories yet.
-		ids := s.ids(func(a *advisory) bool { return !a.own })
+		ids := s.ids(func(a *advisory) bool { return !a.own && !a.suppressed })
 		return &Fix{Latest: s.req.Current.String(), LatestAffected: true, LatestAffectedBy: ids, Unfixed: ids}
 	}
 	if !s.latestOK {
@@ -465,10 +478,12 @@ func (s *fixSearch) fix() *Fix {
 	if s.fixable() {
 		f.Lowest, f.LowestInLine = confirmed(s.pick(false)), confirmed(s.pick(true))
 	}
-	f.LatestAffectedBy = s.ids(func(a *advisory) bool { return slices.Contains(atLatest, slices.Index(s.advs, a)) })
+	f.LatestAffectedBy = s.ids(func(a *advisory) bool {
+		return !a.suppressed && slices.Contains(atLatest, slices.Index(s.advs, a))
+	})
 	f.LatestAffected = len(f.LatestAffectedBy) > 0
 	f.Unfixed = s.ids(func(a *advisory) bool {
-		return !a.own && slices.Contains(atLatest, slices.Index(s.advs, a))
+		return !a.own && !a.suppressed && slices.Contains(atLatest, slices.Index(s.advs, a))
 	})
 	return f
 }

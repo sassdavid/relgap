@@ -152,6 +152,13 @@ func (r *sarifRun) add(rule, level, msg string, loc scan.Location, tool, subject
 	})
 }
 
+// suppressLast marks the last result as suppressed by s.
+func (r *sarifRun) suppressLast(s *enrich.Suppression) {
+	results := r.log.Runs[0].Results
+	last := &results[len(results)-1]
+	last.Suppressions = append(last.Suppressions, sarifSuppression(s))
+}
+
 // OutdatedSARIF returns a SARIF log with a result per pin behind latest, per pin on an EOL cycle,
 // per pin whose upgrade has breaking changes or deprecations, per advisory that affects a pin,
 // per pin or file that failed, and per pin OSV wasn't asked about. Results don't depend on
@@ -200,7 +207,14 @@ func (r *sarifRun) pin(p *report.OutdatedPin) {
 		r.add(RuleEOL, sarif.LevelError, eolMessage(p), loc, p.Tool, p.EOL.Current.Cycle)
 	}
 	for j := range p.Vulns {
-		if v := &p.Vulns[j]; v.AffectsCurrent {
+		v := &p.Vulns[j]
+		switch {
+		case !v.AffectsCurrent:
+		case v.Suppressed != nil:
+			r.add(v.ID, vulnLevel(v), vulnText(p.Tool, p.Current, v, nil)+"; "+suppressionText(v.Suppressed), loc,
+				p.Tool, v.ID)
+			r.suppressLast(v.Suppressed)
+		default:
 			r.add(v.ID, vulnLevel(v), vulnMessage(p, v), loc, p.Tool, v.ID)
 		}
 	}

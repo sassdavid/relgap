@@ -189,7 +189,22 @@
         },
         "fixed_in": { "description": "Lowest fixed version above the current one.", "type": "string", "minLength": 1 },
         "affects_current": { "type": "boolean" },
-        "fixed_by_target": { "description": "Whether the latest version is outside every affected range. Absent without a target or when the ranges can't be compared locally.", "type": "boolean" }
+        "fixed_by_target": { "description": "Whether the latest version is outside every affected range. Absent without a target or when the ranges can't be compared locally.", "type": "boolean" },
+        "suppressed": { "$ref": "#/$defs/suppression" }
+      }
+    },
+    "suppression": {
+      "description": "Why an advisory doesn't count: a vulns.ignore entry (kind ignore) or an OpenVEX statement (kind vex). Absent when it counts.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "reason"],
+      "properties": {
+        "kind": { "enum": ["ignore", "vex"] },
+        "reason": { "description": "The ignore entry's reason, or the statement's impact_statement, else its justification.", "type": "string", "minLength": 1 },
+        "until": { "description": "The ignore entry's last day.", "type": "string", "format": "date" },
+        "source": { "description": "The VEX document's path.", "type": "string", "minLength": 1 },
+        "status": { "description": "The VEX status.", "enum": ["not_affected", "fixed"] },
+        "justification": { "description": "The VEX justification label.", "type": "string", "minLength": 1 }
       }
     },
     "binary": {

@@ -3,6 +3,7 @@ package config
 import (
 	"encoding/json"
 	"fmt"
+	"path/filepath"
 )
 
 // SchemaVersion is the config schema_version this binary reads.
@@ -19,6 +20,7 @@ type Config struct {
 	Aliases       map[string]string       `json:"aliases"                            jsonschema_description:"Maps a raw pin name (e.g. TG_VERSION) to a tool name."`
 	Ignore        []IgnoreRule            `json:"ignore"                             jsonschema_description:"Pins that are never reported: by tool, by raw name or by path, alone or together."`
 	Policy        Policy                  `json:"policy"`
+	Vulns         Vulns                   `json:"vulns"`
 	LLM           LLM                     `json:"llm"`
 	GitLab        GitLab                  `json:"gitlab"`
 	Images        Images                  `json:"images"`
@@ -88,6 +90,20 @@ type Policy struct {
 	VulnFixable   bool     `json:"vuln_fixable"                                                                                                          jsonschema_description:"--fail-on vuln counts only advisories with a fixed version above the pinned one. Advisories without one still show in the report."`
 }
 
+// Vulns configures which advisories audit and outdated suppress.
+type Vulns struct {
+	Ignore []VulnIgnore `json:"ignore" jsonschema_description:"Advisories to suppress, by ID or any alias. A suppressed advisory stays in the report with its reason and doesn't count for --fail-on."`
+	VEX    []string     `json:"vex"    jsonschema_description:"OpenVEX v0.2.0 documents whose not_affected and fixed statements suppress advisories, like --vex. A relative path resolves against the directory of the config file that lists it."`
+}
+
+// VulnIgnore suppresses one advisory, for every tool or for the tools that match.
+type VulnIgnore struct {
+	ID     string   `json:"id"              jsonschema:"required,minLength=1" jsonschema_description:"Advisory ID or any of its aliases, such as GHSA-cxww-7g56-2vh6, GO-2024-3080 or CVE-2024-42471."`
+	Reason string   `json:"reason"          jsonschema:"required,minLength=1" jsonschema_description:"Why the advisory is accepted. Reports show it next to the advisory."`
+	Until  string   `json:"until,omitempty" jsonschema:"format=date"          jsonschema_description:"Last day (YYYY-MM-DD, UTC) the entry applies. After it the entry suppresses nothing and relgap warns."`
+	Tools  []string `json:"tools,omitempty"                                   jsonschema_description:"Tool names as pins show them, where * matches any characters: kubectl, npm:*, action:actions/*. Empty means every tool."`
+}
+
 // LLM configures the optional, off-by-default summarizer.
 type LLM struct {
 	Provider       string `json:"provider"         jsonschema:"enum=,enum=openai-compatible,enum=anthropic,enum=bedrock,enum=bedrock-mantle" jsonschema_description:"Empty disables the summarizer."`
@@ -132,7 +148,8 @@ func Default() Config {
 			VulnSeverity:  "",
 			VulnFixable:   false,
 		},
-		LLM: LLM{MaxInputTokens: defaultMaxInputTokens, Timeout: defaultLLMTimeout},
+		Vulns: Vulns{Ignore: []VulnIgnore{}, VEX: []string{}},
+		LLM:   LLM{MaxInputTokens: defaultMaxInputTokens, Timeout: defaultLLMTimeout},
 	}
 }
 
@@ -146,4 +163,19 @@ func toMap(c Config) (map[string]any, error) {
 		return nil, fmt.Errorf("unmarshal config: %w", err)
 	}
 	return m, nil
+}
+
+// FilePaths returns paths, the value of key, with each relative path joined to the directory of
+// the config file that set key. Paths from env vars, flags and defaults stay relative to the
+// working directory.
+func (r *Result) FilePaths(key string, paths []string) []string {
+	src := r.Source(key)
+	out := make([]string, len(paths))
+	for i, p := range paths {
+		out[i] = p
+		if (src.Kind == SourceUser || src.Kind == SourceProject) && src.Name != "" && !filepath.IsAbs(p) {
+			out[i] = filepath.Join(filepath.Dir(src.Name), p)
+		}
+	}
+	return out
 }

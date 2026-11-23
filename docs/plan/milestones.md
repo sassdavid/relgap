@@ -646,7 +646,7 @@ one session can't finish, the open boxes carry over to a follow-up session.
   criterion 5)
 - [x] Action pins are checked against the GitHub Actions ecosystem. (vulnerability-audit
   criterion 6)
-- [ ] `vulns.ignore` with reason and expiry, OpenVEX input and `--format openvex`.
+- [x] `vulns.ignore` with reason and expiry, OpenVEX input and `--format openvex`.
   (vulnerability-audit criterion 7)
 - [ ] Opt-in KEV and EPSS annotations and `--fail-on kev`. (vulnerability-audit criterion 8)
 - [ ] The MCP `audit` tool, `notify` kind `audit`, and relgap-action `command: audit`.

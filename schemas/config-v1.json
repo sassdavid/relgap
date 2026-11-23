@@ -206,6 +206,55 @@
       "additionalProperties": false,
       "type": "object"
     },
+    "vulns": {
+      "properties": {
+        "ignore": {
+          "items": {
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Advisory ID or any of its aliases, such as GHSA-cxww-7g56-2vh6, GO-2024-3080 or CVE-2024-42471."
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Why the advisory is accepted. Reports show it next to the advisory."
+              },
+              "until": {
+                "type": "string",
+                "format": "date",
+                "description": "Last day (YYYY-MM-DD, UTC) the entry applies. After it the entry suppresses nothing and relgap warns."
+              },
+              "tools": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array",
+                "description": "Tool names as pins show them, where * matches any characters: kubectl, npm:*, action:actions/*. Empty means every tool."
+              }
+            },
+            "additionalProperties": false,
+            "type": "object",
+            "required": [
+              "id",
+              "reason"
+            ]
+          },
+          "type": "array",
+          "description": "Advisories to suppress, by ID or any alias. A suppressed advisory stays in the report with its reason and doesn't count for --fail-on."
+        },
+        "vex": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "description": "OpenVEX v0.2.0 documents whose not_affected and fixed statements suppress advisories, like --vex. A relative path resolves against the directory of the config file that lists it."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
     "llm": {
       "properties": {
         "provider": {

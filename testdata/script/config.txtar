@@ -105,3 +105,6 @@ scan:
   roots: []
 schema_version: 1
 tools: {}
+vulns:
+  ignore: []
+  vex: []

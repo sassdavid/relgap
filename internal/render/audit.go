@@ -20,7 +20,7 @@ const AuditUncheckedTitle = "Not checked for vulnerabilities"
 func AuditRules() []string { return []string{RuleFailed, RuleUnchecked} }
 
 // AuditText writes the findings as an aligned table, then the advisories, the fix targets, the
-// unchecked tool versions and a summary. With color it marks high and critical ratings red (the
+// suppressed findings, the unchecked tool versions and a summary. With color it marks high and critical ratings red (the
 // tty format).
 func AuditText(w io.Writer, a *report.Audit, color bool) error {
 	var b strings.Builder
@@ -34,6 +34,13 @@ func AuditText(w io.Writer, a *report.Audit, color bool) error {
 	}
 	if lines := fixLines(a.Fixes()); len(lines) > 0 {
 		b.WriteString(FixTitle + ":\n")
+		for _, line := range lines {
+			b.WriteString("  " + line + "\n")
+		}
+		b.WriteString("\n")
+	}
+	if lines := auditSuppressedLines(a); len(lines) > 0 {
+		b.WriteString(SuppressedTitle + ":\n")
 		for _, line := range lines {
 			b.WriteString("  " + line + "\n")
 		}
@@ -74,6 +81,13 @@ func AuditMarkdown(w io.Writer, a *report.Audit) error {
 	}
 	if lines := fixLines(a.Fixes()); len(lines) > 0 {
 		b.WriteString(FixTitle + ":\n\n")
+		for _, line := range lines {
+			b.WriteString("- " + mdCell(line) + "\n")
+		}
+		b.WriteString("\n")
+	}
+	if lines := auditSuppressedLines(a); len(lines) > 0 {
+		b.WriteString(SuppressedTitle + ":\n\n")
 		for _, line := range lines {
 			b.WriteString("- " + mdCell(line) + "\n")
 		}
@@ -199,22 +213,26 @@ func auditSummary(a *report.Audit) string {
 		s = fmt.Sprintf("%d %s in %d of %d checked %s.", len(a.Findings),
 			pinsWord(len(a.Findings), "finding", "findings"), len(affected), a.Checked, versions(a.Checked))
 	}
+	if n := len(a.Suppressed); n > 0 {
+		s += fmt.Sprintf(" %d suppressed.", n)
+	}
 	if n := len(a.Unchecked); n > 0 {
 		s += fmt.Sprintf(" %d not checked.", n)
 	}
 	return s
 }
 
-// AuditSARIF returns a SARIF log with a result per finding and pin location, per tool version
-// OSV wasn't asked about and pin location, per pin whose version lookup failed and per file that
-// didn't parse. Results don't depend on --fail-on. Rules are failed and unchecked, then one rule
-// per OSV ID.
+// AuditSARIF returns a SARIF log with a result per finding and pin location, the suppressed ones
+// marked with a suppression, per tool version OSV wasn't asked about and pin location, per pin
+// whose version lookup failed and per file that didn't parse. Results don't depend on --fail-on.
+// Rules are failed and unchecked, then one rule per OSV ID.
 func AuditSARIF(a *report.Audit, problems []scan.Problem, version string) *sarif.Log {
 	r := newSARIFRun(version, AuditRules()...)
-	ids := make([]string, 0, len(a.Findings))
+	all := slices.Concat(a.Findings, a.Suppressed)
+	ids := make([]string, 0, len(all))
 	byID := map[string]*report.AuditFinding{}
-	for i := range a.Findings {
-		if f := &a.Findings[i]; byID[f.ID] == nil {
+	for i := range all {
+		if f := &all[i]; byID[f.ID] == nil {
 			byID[f.ID] = f
 			ids = append(ids, f.ID)
 		}
@@ -224,12 +242,20 @@ func AuditSARIF(a *report.Audit, problems []scan.Problem, version string) *sarif
 		f := byID[id]
 		r.addRule(vulnRule(id, f.Summary, f.Aliases, f.Severity))
 	}
-	for i := range a.Findings {
-		f := &a.Findings[i]
+	for i := range all {
+		f := &all[i]
 		v := &enrich.Vuln{ID: f.ID, Aliases: f.Aliases, Summary: f.Summary, Severity: f.Severity, FixedIn: f.FixedIn}
-		msg := vulnText(f.Tool, f.Version, v, auditFix(a, f.Tool, f.Version))
+		var msg string
+		if f.Suppressed != nil {
+			msg = vulnText(f.Tool, f.Version, v, nil) + "; " + suppressionText(f.Suppressed)
+		} else {
+			msg = vulnText(f.Tool, f.Version, v, auditFix(a, f.Tool, f.Version))
+		}
 		for _, loc := range f.Pins {
 			r.add(f.ID, vulnLevel(v), msg, loc, f.Tool, f.ID)
+			if f.Suppressed != nil {
+				r.suppressLast(f.Suppressed)
+			}
 		}
 	}
 	for _, p := range a.Failed() {

@@ -36,6 +36,10 @@ type Vuln struct {
 	// FixedByTarget says whether the target version is outside every affected range. It is
 	// absent without a target or when the record's ranges can't be compared locally.
 	FixedByTarget *bool `json:"fixed_by_target,omitempty"`
+	// Suppressed says why the advisory doesn't count; absent when it does.
+	Suppressed *Suppression `json:"suppressed,omitempty"`
+
+	purl string // the package URL of Package at the current version
 }
 
 // compare orders two versions of a range; the second result is false when either doesn't parse.

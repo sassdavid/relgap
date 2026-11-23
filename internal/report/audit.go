@@ -24,10 +24,13 @@ const AdvisoryURL = "https://osv.dev/vulnerability/"
 
 // Audit is the data of `relgap audit --format json`.
 type Audit struct {
-	Repos     []string       `json:"repos"`
-	Checked   int            `json:"checked"` // tool versions OSV answered for
-	Findings  []AuditFinding `json:"findings"`
-	Unchecked []Unchecked    `json:"unchecked"`
+	Repos    []string       `json:"repos"`
+	Checked  int            `json:"checked"` // tool versions OSV answered for
+	Findings []AuditFinding `json:"findings"`
+	// Suppressed are the findings a vulns.ignore entry or an OpenVEX statement suppresses. They
+	// don't count for --fail-on.
+	Suppressed []AuditFinding `json:"suppressed"`
+	Unchecked  []Unchecked    `json:"unchecked"`
 	// OldestAnswer is when the oldest OSV answer of an --offline run was stored in the cache.
 	OldestAnswer *time.Time `json:"oldest_answer,omitempty"`
 
@@ -59,7 +62,15 @@ type AuditFinding struct {
 	FixedIn  string          `json:"fixed_in,omitempty"` // lowest fixed version above Version
 	Fix      FindingFix      `json:"fix,omitzero"`
 	URL      string          `json:"url"`
+	// Suppressed says why the finding doesn't count; only findings in [Audit.Suppressed] have it.
+	Suppressed *enrich.Suppression `json:"suppressed,omitempty"`
+
+	purl string
 }
+
+// PURL returns the package URL of the finding's package at its version, or "" when the
+// ecosystem has no purl type.
+func (f *AuditFinding) PURL() string { return f.purl }
 
 // FindingFix is a finding's fix target: the tool version's [enrich.Fix], null when no release
 // fixes the advisory, and absent when relgap couldn't work it out.
@@ -150,10 +161,11 @@ func (a *Auditor) Audit(ctx context.Context, req AuditRequest) (*Audit, error) {
 		return cmp.Or(registry.CompareTools(x.Tool, y.Tool), compareLocations(x.Pin.Location, y.Pin.Location))
 	})
 	return &Audit{
-		Repos:     append([]string{}, req.Repos...),
-		Findings:  []AuditFinding{},
-		Unchecked: []Unchecked{},
-		rows:      &Outdated{Repos: req.Repos, Pins: rows},
+		Repos:      append([]string{}, req.Repos...),
+		Findings:   []AuditFinding{},
+		Suppressed: []AuditFinding{},
+		Unchecked:  []Unchecked{},
+		rows:       &Outdated{Repos: req.Repos, Pins: rows},
 	}, nil
 }
 
@@ -249,42 +261,30 @@ func (a *Audit) EnrichRequests(resolve ResolveFunc, versions VersionsFunc) []enr
 }
 
 // ApplyEnrichment lists the unchecked pins, adding unresolved, the pins that resolve to no tool,
-// and turns each advisory that affects a checked version into a finding. Findings sort by
-// severity, rated before unrated, then by ID, tool and version.
+// and turns each advisory that affects a checked version into a finding, or into a suppressed
+// one. Both lists sort by severity, rated before unrated, then by ID, tool and version.
 func (a *Audit) ApplyEnrichment(results map[string]enrich.Result, unresolved []scan.Pin) {
 	a.rows.ApplyEnrichment(results, unresolved)
 	a.Unchecked = a.rows.Unchecked
 	checked := map[string]bool{}
 	fixes := map[string]*enrich.Fix{}
-	index := map[string]int{}
-	findings := []AuditFinding{}
 	for i := range a.rows.Pins {
-		p := &a.rows.Pins[i]
-		if p.Unchecked != "" || p.Vulns == nil {
-			continue
+		if p := &a.rows.Pins[i]; p.Unchecked == "" && p.Vulns != nil {
+			checked[enrichKey(p)] = true
+			fixes[enrichKey(p)] = p.Fix
 		}
-		checked[enrichKey(p)] = true
-		fixes[enrichKey(p)] = p.Fix
-		for _, v := range p.Vulns {
-			if !v.AffectsCurrent {
-				continue
-			}
-			key := enrichKey(p) + "\x00" + v.ID
-			at, ok := index[key]
-			if !ok {
-				at = len(findings)
-				index[key] = at
-				findings = append(findings, AuditFinding{
-					Tool: p.Tool, Version: p.vulnVersion, ID: v.ID, Aliases: v.Aliases, Summary: v.Summary,
-					Package: v.Package, Severity: v.Severity, FixedIn: v.FixedIn, Fix: findingFix(p.Fix, v.ID),
-					URL: AdvisoryURL + v.ID,
-				})
-			}
-			findings[at].Pins = append(findings[at].Pins, p.Pin.Location)
+	}
+	findings, suppressed := []AuditFinding{}, []AuditFinding{}
+	for _, f := range a.collectFindings() {
+		if f.Suppressed != nil {
+			suppressed = append(suppressed, *f)
+		} else {
+			findings = append(findings, *f)
 		}
 	}
 	slices.SortStableFunc(findings, compareFindings)
-	a.Findings, a.Checked = findings, len(checked)
+	slices.SortStableFunc(suppressed, compareFindings)
+	a.Findings, a.Suppressed, a.Checked = findings, suppressed, len(checked)
 	a.fixes = nil
 	seen := map[string]bool{}
 	for _, f := range findings {
@@ -297,6 +297,40 @@ func (a *Audit) ApplyEnrichment(results map[string]enrich.Result, unresolved []s
 			a.fixes = append(a.fixes, ToolFix{Tool: f.Tool, Version: f.Version, Fix: fix})
 		}
 	}
+}
+
+// collectFindings turns each advisory that affects a checked version into a finding with every
+// pin of that version, in the order of the pins.
+func (a *Audit) collectFindings() []*AuditFinding {
+	index := map[string]*AuditFinding{}
+	var all []*AuditFinding
+	for i := range a.rows.Pins {
+		p := &a.rows.Pins[i]
+		if p.Unchecked != "" {
+			continue
+		}
+		for _, v := range p.Vulns {
+			if !v.AffectsCurrent {
+				continue
+			}
+			key := enrichKey(p) + "\x00" + v.ID
+			f, ok := index[key]
+			if !ok {
+				f = &AuditFinding{
+					Tool: p.Tool, Version: p.vulnVersion, ID: v.ID, Aliases: v.Aliases, Summary: v.Summary,
+					Package: v.Package, Severity: v.Severity, FixedIn: v.FixedIn, URL: AdvisoryURL + v.ID,
+					Suppressed: v.Suppressed, purl: v.PURL(),
+				}
+				if v.Suppressed == nil {
+					f.Fix = findingFix(p.Fix, v.ID)
+				}
+				index[key] = f
+				all = append(all, f)
+			}
+			f.Pins = append(f.Pins, p.Pin.Location)
+		}
+	}
+	return all
 }
 
 // findingFix is the fix target of advisory id: f, or null when f says no release fixes id.

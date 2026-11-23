@@ -30,6 +30,7 @@ func flagKeys() map[string]string {
 		flagMaxBehind:     "policy.max_behind",
 		flagVulnSeverity:  "policy.vuln_severity",
 		flagVulnFixable:   "policy.vuln_fixable",
+		flagVEX:           keyVulnVEX,
 	}
 }
 
@@ -242,6 +243,7 @@ func formatChoices() []complete.Choice {
 		{Value: string(render.FormatJSON), Desc: "JSON envelope for scripts"},
 		{Value: string(render.FormatSARIF), Desc: "SARIF 2.1.0 for code scanning"},
 		{Value: string(render.FormatGitHub), Desc: "GitHub Actions annotations"},
+		{Value: string(render.FormatOpenVEX), Desc: "OpenVEX v0.2.0 document"},
 	}
 }
 

@@ -20,6 +20,7 @@ import (
 	"github.com/sassdavid/relgap/internal/report"
 	"github.com/sassdavid/relgap/internal/sarif"
 	"github.com/sassdavid/relgap/internal/scan"
+	"github.com/sassdavid/relgap/internal/vex"
 )
 
 type auditFlags struct {
@@ -65,6 +66,21 @@ lists its tool's versions for this.
 A pin OSV wasn't asked about is listed with the reason, and never counts as clean:
 no-advisory-source, private-source, not-exact, unresolved, offline or failed.
 
+Config vulns.ignore suppresses an advisory by its ID or any alias, with a required reason, an
+optional until date and optional tools globs (kubectl, npm:*, action:actions/*). --vex
+(config vulns.vex) reads OpenVEX v0.2.0 documents: the latest statement about an advisory
+whose product or subcomponent purl names the pin suppresses it when it says not_affected or
+fixed. A suppressed advisory is listed under "Suppressed" with its reason (suppressed in
+--format json), doesn't count for --fail-on and doesn't hold back the fix target. relgap
+warns about an entry past its until date, which suppresses nothing, and, without --tool,
+about an entry that suppressed nothing.
+
+--format openvex writes an OpenVEX v0.2.0 document: one statement per advisory and tool
+version, affected with the fix target as the action statement, and not_affected (or the VEX
+status that suppressed it) with the reason. Products are the purls of the advisories'
+packages, such as pkg:golang/stdlib@v1.22.0, pkg:npm/lodash@4.17.20 or
+pkg:githubactions/actions/checkout@v4.1.2.
+
 --format sarif writes a SARIF 2.1.0 log for GitHub code scanning: a result per finding at each
 pin's file and line (one rule per OSV ID), a note per unchecked pin (unchecked), and a result
 per file or version lookup that failed (failed). The results don't depend on --fail-on.
@@ -87,6 +103,7 @@ Roots default to scan.roots, then the current directory.`,
   relgap audit --vuln-severity high --format sarif > audit.sarif
   relgap audit --fail-on vuln --fail-on unchecked
   relgap audit --vuln-fixable --vuln-severity high
+  relgap audit --vex vex/platform.json --format openvex > audit.vex.json
   relgap audit --format json | jq '.data.findings[] | {tool, version, id}'`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return runAudit(cmd, d, g, f, args)
@@ -96,6 +113,7 @@ Roots default to scan.roots, then the current directory.`,
 	fl.StringSliceVar(&f.tools, "tool", nil, "audit only this tool; repeatable")
 	fl.BoolVar(&f.submodules, "submodules", false, "scan checked-out git submodules as repositories")
 	addGateFlags(cmd, auditValues())
+	addVEXFlag(cmd)
 	addOutputFlags(cmd, g, auditFormats()...)
 	_ = cmd.RegisterFlagCompletionFunc("tool", completeToolList(d, g))
 	cmd.ValidArgsFunction = complete.Dirs()
@@ -153,6 +171,7 @@ type auditRun struct {
 	tools    []string
 	out      *report.Audit
 	problems []enrich.Problem
+	rules    *vex.Rules
 }
 
 // audit scans the roots, finds the version of each pin and asks OSV about every distinct tool
@@ -195,8 +214,12 @@ func (s *session) audit(ctx context.Context, a auditArgs) (*auditRun, error) {
 	if err != nil {
 		return nil, digestError(err)
 	}
+	if run.rules, err = s.suppression(); err != nil {
+		return nil, err
+	}
 	osv := enrich.NewOSVClient(hc, "")
 	en := enrich.NewEnricher(d.Logger, nil, osv, d.Config.Config.GitHub.Concurrency)
+	en.SetSuppressor(run.rules)
 	results, problems, err := en.Enrich(ctx, out.EnrichRequests(resolveFunc(ctx, s), dg.Universe))
 	if err != nil {
 		return nil, err //nolint:wrapcheck // only a canceled context
@@ -235,6 +258,7 @@ func auditFormats() []render.Format {
 		render.FormatJSON,
 		render.FormatSARIF,
 		render.FormatGitHub,
+		render.FormatOpenVEX,
 	}
 }
 
@@ -247,6 +271,7 @@ func writeAudit(w io.Writer, f render.Format, d *app.Deps, g *globals, r *auditR
 			return render.AuditSARIF(r.out, r.scan.Problems, buildinfo.Get().Version)
 		},
 		text: func(w io.Writer, color bool) error { return render.AuditText(w, r.out, color) },
+		vex:  func(w io.Writer) error { return render.AuditOpenVEX(w, r.out, d.Clock(), buildinfo.Get().Version) },
 	}.write(w, f, d, g)
 }
 
@@ -280,6 +305,9 @@ func (r *auditRun) warn(cmd *cobra.Command, d *app.Deps) {
 		d.Logger.WarnContext(ctx, "OSV failed; those pins are unchecked", "tool", p.Tool, "error", p.Err)
 	}
 	warnLatestAffected(ctx, d, r.out.Fixes())
+	// With --tool, entries for the other tools can't match, so only an unfiltered run says which
+	// are unused.
+	warnSuppression(ctx, d, r.rules, len(r.tools) == 0)
 	for _, t := range r.tools {
 		if !slices.ContainsFunc(r.scan.Pins, func(p scan.Pin) bool { return p.Tool == t }) {
 			d.Logger.WarnContext(ctx, "no repository pins this tool", "tool", t)

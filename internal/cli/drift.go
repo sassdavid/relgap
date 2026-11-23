@@ -270,7 +270,7 @@ func writeDrift(
 		return sarif.Write(w, render.DriftSARIF(out, res.Problems, buildinfo.Get().Version))
 	case render.FormatGitHub:
 		return sarif.WriteGitHub(w, render.DriftSARIF(out, res.Problems, buildinfo.Get().Version))
-	case render.FormatAuto, render.FormatTTY, render.FormatPlain, render.FormatCSV:
+	case render.FormatAuto, render.FormatTTY, render.FormatPlain, render.FormatCSV, render.FormatOpenVEX:
 	}
 	color := f == render.FormatTTY &&
 		render.UseColor(render.ColorMode(g.color), d.Env.Lookup, app.IsTerminal(d.Stdout))

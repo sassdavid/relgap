@@ -40,6 +40,21 @@ lists its tool's versions for this.
 A pin OSV wasn't asked about is listed with the reason, and never counts as clean:
 no-advisory-source, private-source, not-exact, unresolved, offline or failed.
 
+Config vulns.ignore suppresses an advisory by its ID or any alias, with a required reason, an
+optional until date and optional tools globs (kubectl, npm:\*, action:actions/\*). --vex
+(config vulns.vex) reads OpenVEX v0.2.0 documents: the latest statement about an advisory
+whose product or subcomponent purl names the pin suppresses it when it says not\_affected or
+fixed. A suppressed advisory is listed under "Suppressed" with its reason (suppressed in
+--format json), doesn't count for --fail-on and doesn't hold back the fix target. relgap
+warns about an entry past its until date, which suppresses nothing, and, without --tool,
+about an entry that suppressed nothing.
+
+--format openvex writes an OpenVEX v0.2.0 document: one statement per advisory and tool
+version, affected with the fix target as the action statement, and not\_affected (or the VEX
+status that suppressed it) with the reason. Products are the purls of the advisories'
+packages, such as pkg:golang/stdlib@v1.22.0, pkg:npm/lodash@4.17.20 or
+pkg:githubactions/actions/checkout@v4.1.2.
+
 --format sarif writes a SARIF 2.1.0 log for GitHub code scanning: a result per finding at each
 pin's file and line (one rule per OSV ID), a note per unchecked pin (unchecked), and a result
 per file or version lookup that failed (failed). The results don't depend on --fail-on.
@@ -76,9 +91,10 @@ relgap audit [roots...] [flags]
 | `--fail-on` | exit 3 when this matches: vuln or unchecked; repeatable; replaces the default vuln, which config policy.fail\_on adds to | list, repeatable |  | `vuln`: a known vulnerability in a pinned version<br>`unchecked`: a pinned version OSV wasn't asked about | [`policy.fail_on`](/reference/config#policy-fail-on) |  |
 | `--md-max-chars` | cut Markdown output to this many characters at a row or section boundary; 0 means no limit | int | `60000` |  |  |  |
 | `--min-count` | findings a --fail-on value needs before it exits 3 | int | `1` |  |  |  |
-| `--out` | also write the report to a file as format=path (repeatable); format is one of plain, md, json, sarif or github | string, repeatable |  | `plain`: table without color<br>`md`: Markdown<br>`json`: JSON envelope for scripts<br>`sarif`: SARIF 2.1.0 for code scanning<br>`github`: GitHub Actions annotations |  |  |
+| `--out` | also write the report to a file as format=path (repeatable); format is one of plain, md, json, sarif, github or openvex | string, repeatable |  | `plain`: table without color<br>`md`: Markdown<br>`json`: JSON envelope for scripts<br>`sarif`: SARIF 2.1.0 for code scanning<br>`github`: GitHub Actions annotations<br>`openvex`: OpenVEX v0.2.0 document |  |  |
 | `--submodules` | scan checked-out git submodules as repositories | bool |  |  |  |  |
 | `--tool` | audit only this tool; repeatable | list, repeatable |  |  |  |  |
+| `--vex` | OpenVEX v0.2.0 document whose not\_affected and fixed statements suppress advisories; repeatable; replaces config vulns.vex | list, repeatable |  |  | [`vulns.vex`](/reference/config#vulns-vex) |  |
 | `--vuln-fixable` | --fail-on vuln counts only advisories with a fixed version above the pinned one (config policy.vuln\_fixable) | bool |  |  | [`policy.vuln_fixable`](/reference/config#policy-vuln-fixable) |  |
 | `--vuln-severity` | lowest rating --fail-on vuln counts: low, medium, high or critical; an unknown rating always counts, and empty counts all (config policy.vuln\_severity) | string |  | `low`: CVSS 0.1 to 3.9<br>`medium`: CVSS 4.0 to 6.9<br>`high`: CVSS 7.0 to 8.9<br>`critical`: CVSS 9.0 to 10.0 | [`policy.vuln_severity`](/reference/config#policy-vuln-severity) |  |
 
@@ -86,7 +102,7 @@ The [global flags](/cli/global-flags) work with every command.
 
 ## Output formats
 
-`--format` accepts `tty`, `plain`, `md`, `json`, `sarif`, `github`. Without it, the format is `tty` when stdout is a terminal and `plain` otherwise. Formats are described on the [global flags](/cli/global-flags) page.
+`--format` accepts `tty`, `plain`, `md`, `json`, `sarif`, `github`, `openvex`. Without it, the format is `tty` when stdout is a terminal and `plain` otherwise. Formats are described on the [global flags](/cli/global-flags) page.
 
 ## Fail-on values
 
@@ -119,6 +135,7 @@ relgap audit --tool terraform --tool node
 relgap audit --vuln-severity high --format sarif > audit.sarif
 relgap audit --fail-on vuln --fail-on unchecked
 relgap audit --vuln-fixable --vuln-severity high
+relgap audit --vex vex/platform.json --format openvex > audit.vex.json
 relgap audit --format json | jq '.data.findings[] | {tool, version, id}'
 ```
 

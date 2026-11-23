@@ -178,6 +178,33 @@ Lowest OSV rating --fail-on vuln counts; an advisory without a rating always cou
 
 --fail-on vuln counts only advisories with a fixed version above the pinned one. Advisories without one still show in the report.
 
+## vulns
+
+### vulns.ignore
+
+| Type | Default | Allowed | Environment | Flag |
+|---|---|---|---|---|
+| `list of object` | `[]` |  |  |  |
+
+Advisories to suppress, by ID or any alias. A suppressed advisory stays in the report with its reason and doesn't count for --fail-on.
+
+Each entry has these fields:
+
+| Field | Type | Description |
+|---|---|---|
+| `id` | `string` | Advisory ID or any of its aliases, such as GHSA-cxww-7g56-2vh6, GO-2024-3080 or CVE-2024-42471. |
+| `reason` | `string` | Why the advisory is accepted. Reports show it next to the advisory. |
+| `until` | `string` | Last day (YYYY-MM-DD, UTC) the entry applies. After it the entry suppresses nothing and relgap warns. |
+| `tools` | `list of string` | Tool names as pins show them, where \* matches any characters: kubectl, npm:\*, action:actions/\*. Empty means every tool. |
+
+### vulns.vex
+
+| Type | Default | Allowed | Environment | Flag |
+|---|---|---|---|---|
+| `list of string` | `[]` |  | `RELGAP_VULNS_VEX` | `--vex` |
+
+OpenVEX v0.2.0 documents whose not\_affected and fixed statements suppress advisories, like --vex. A relative path resolves against the directory of the config file that lists it.
+
 ## llm
 
 ### llm.provider
@@ -312,6 +339,10 @@ schema_version: 1
 #   min_confidence: 0.5           # hide entries below this confidence, 0 to 1
 #   vuln_severity: ""             # low, medium, high or critical; empty counts every advisory
 #   vuln_fixable: false           # count only advisories with a fixed version above the pin
+#
+# vulns:                          # advisories audit and outdated suppress
+#   ignore: []                    # entries: id (or an alias), reason, until (YYYY-MM-DD), tools (globs)
+#   vex: []                       # OpenVEX v0.2.0 files, relative to this file
 #
 # llm:                            # only for 'relgap digest --summarize'
 #   provider: ""                  # empty is off; openai-compatible, anthropic, bedrock or bedrock-mantle

@@ -739,6 +739,7 @@
         "url": "https://osv.dev/vulnerability/GO-2025-3547"
       }
     ],
+    "suppressed": [],
     "unchecked": [
       {
         "tool": "image:node",

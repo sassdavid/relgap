@@ -269,7 +269,7 @@ func writeDigest(
 		case render.FormatMD:
 			return render.DigestMarkdown(w, data, errs, notes)
 		case render.FormatAuto, render.FormatTTY, render.FormatPlain, render.FormatCSV, render.FormatSARIF,
-			render.FormatGitHub, render.FormatJSON:
+			render.FormatGitHub, render.FormatOpenVEX, render.FormatJSON:
 		}
 		color := f == render.FormatTTY &&
 			render.UseColor(render.ColorMode(g.color), d.Env.Lookup, app.IsTerminal(d.Stdout))

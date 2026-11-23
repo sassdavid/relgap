@@ -22,6 +22,7 @@ import (
 	"github.com/sassdavid/relgap/internal/report"
 	"github.com/sassdavid/relgap/internal/sarif"
 	"github.com/sassdavid/relgap/internal/scan"
+	"github.com/sassdavid/relgap/internal/vex"
 )
 
 const flagBinaries = "binaries"
@@ -72,6 +73,10 @@ A pin with a vulnerability gets a fix target, listed under "Fix targets" and as 
 left behind, checked against OSV, and the same within CURRENT's line. An advisory the latest
 release still has is one no release fixes, and relgap warns when the latest release has any.
 
+Config vulns.ignore and OpenVEX documents in vulns.vex or --vex suppress advisories the way
+'relgap audit' says: VULNS and --fail-on vuln leave them out, and the "Suppressed" list and
+suppressed in --format json give the reason.
+
 --binaries also reads the Go build info of each pinned tool's installed executables (on
 PATH and in mise's installs directory) and lists the OSV vulnerabilities of the Go version
 and main module they were built with. Like govulncheck's binary mode, minus the check that
@@ -109,6 +114,7 @@ under --fail-on vuln, since a pass on partial data proves nothing.`,
 		},
 	}
 	addGateFlags(cmd, outdatedValues())
+	addVEXFlag(cmd)
 	addOutputFlags(cmd, g, outdatedFormats()...)
 	cmd.Flags().Bool(flagBinaries, false,
 		"also check the Go version and main module of the pinned tools' installed executables against OSV")
@@ -153,6 +159,7 @@ type comparison struct {
 	out      *report.Outdated
 	problems []enrich.Problem
 	digester *report.Digester // lists versions for the fix targets, reusing the comparison's lists
+	rules    *vex.Rules       // the vulns.ignore entries and VEX statements; nil without enrichment
 }
 
 // compareOptions says what a comparison adds to the pins.
@@ -216,8 +223,14 @@ func (s *session) compare(
 // vulnerabilities of installed executables. Failed sources become problems, not errors.
 func (s *session) enrich(ctx context.Context, c *comparison, hc *http.Client, pins []scan.Pin, binaries bool) error {
 	d := s.d
+	rules, err := s.suppression()
+	if err != nil {
+		return err
+	}
+	c.rules = rules
 	en := enrich.NewEnricher(d.Logger, enrich.NewEOLClient(hc, ""), enrich.NewOSVClient(hc, ""),
 		d.Config.Config.GitHub.Concurrency)
+	en.SetSuppressor(rules)
 	results, problems, err := en.Enrich(ctx, c.out.EnrichRequests(resolveFunc(ctx, s), c.digester.Universe))
 	if err != nil {
 		return err //nolint:wrapcheck // only a canceled context
@@ -322,6 +335,7 @@ type reportWriter struct {
 	md     func(io.Writer) error
 	sarif  func() *sarif.Log
 	text   func(w io.Writer, color bool) error // tty and plain
+	vex    func(io.Writer) error               // openvex; nil for a command without it
 }
 
 func (r reportWriter) write(w io.Writer, f render.Format, d *app.Deps, g *globals) error {
@@ -336,6 +350,10 @@ func (r reportWriter) write(w io.Writer, f render.Format, d *app.Deps, g *global
 		return sarif.Write(w, r.sarif())
 	case render.FormatGitHub:
 		return sarif.WriteGitHub(w, r.sarif())
+	case render.FormatOpenVEX:
+		if r.vex != nil {
+			return r.vex(w)
+		}
 	case render.FormatAuto, render.FormatTTY, render.FormatPlain, render.FormatCSV:
 	}
 	color := f == render.FormatTTY &&
@@ -375,6 +393,7 @@ func (c *comparison) warn(cmd *cobra.Command, d *app.Deps) {
 			"source", p.Source, "tool", p.Tool, "error", p.Err)
 	}
 	warnLatestAffected(cmd.Context(), d, c.out.Fixes())
+	warnSuppression(cmd.Context(), d, c.rules, true)
 	if n := countUnresolved(c.scan.Pins, c.ignore); n > 0 {
 		_, _ = fmt.Fprintf(d.Stderr, "%s: %d %s no known tool; list them with 'relgap pins --unresolved'\n",
 			config.AppName, n, plural(n, "pin has", "pins have"))
