@@ -1,5 +1,30 @@
 # Changelog
 
+## [0.13.0](https://github.com/sassdavid/relgap/compare/v0.12.1...v0.13.0) (2026-11-23)
+
+
+### Features
+
+* add relgap audit for the vulnerabilities of every pin ([#111](https://github.com/sassdavid/relgap/issues/111)) ([9ad5f63](https://github.com/sassdavid/relgap/commit/9ad5f637adc2b693a9bbc9eb2a5cdf2e07912c41))
+* add the MCP audit tool and notify kind audit ([#119](https://github.com/sassdavid/relgap/issues/119)) ([e3a1710](https://github.com/sassdavid/relgap/commit/e3a17100c59fbed120bab5dba91558a55fb1dea6))
+* annotate advisories with CISA KEV and EPSS ([#117](https://github.com/sassdavid/relgap/issues/117)) ([284793f](https://github.com/sassdavid/relgap/commit/284793f8a34447a912c771361ff0b9aaeb0dfb8a))
+* check action pins against the GitHub Actions ecosystem ([#115](https://github.com/sassdavid/relgap/issues/115)) ([bb306cc](https://github.com/sassdavid/relgap/commit/bb306ccdab1fa77ee88ce3ef30af49cd7efe2633))
+* check every pin against OSV by its backend ([#102](https://github.com/sassdavid/relgap/issues/102)) ([27eb875](https://github.com/sassdavid/relgap/commit/27eb8754e09937f94210ddfb166cfe020a34874d))
+* list pins OSV didn't check, with a reason ([#110](https://github.com/sassdavid/relgap/issues/110)) ([c24191c](https://github.com/sassdavid/relgap/commit/c24191c4df23e5150c2c9e4640af57c74ec4cda9))
+* report a fix target for each vulnerable pin ([#114](https://github.com/sassdavid/relgap/issues/114)) ([9e15bb1](https://github.com/sassdavid/relgap/commit/9e15bb116e31d8c73a8faf67ca8b57a95eaeac5f))
+* suppress advisories with vulns.ignore and OpenVEX ([#116](https://github.com/sassdavid/relgap/issues/116)) ([cd70ff0](https://github.com/sassdavid/relgap/commit/cd70ff0ac25f42c9952cf93ee0c84565676edc72))
+
+
+### Bug Fixes
+
+* **ci:** let aube-lock rewrite a stale docs lockfile ([#112](https://github.com/sassdavid/relgap/issues/112)) ([9d12fc3](https://github.com/sassdavid/relgap/commit/9d12fc361305cbd2004ab614c0f0a9663d3780f3))
+* **deps:** update aws-sdk-go-v2 monorepo ([#106](https://github.com/sassdavid/relgap/issues/106)) ([91e1038](https://github.com/sassdavid/relgap/commit/91e10389afd0b48f53a227d67e7e61e43a653c6b))
+* **deps:** update dependency oxfmt to v0.79.0 ([#108](https://github.com/sassdavid/relgap/issues/108)) ([5b3f569](https://github.com/sassdavid/relgap/commit/5b3f5698493b54311ce4fd521036fac185256680))
+* **deps:** update module github.com/klauspost/compress to v1.20.5 ([#118](https://github.com/sassdavid/relgap/issues/118)) ([04ce94e](https://github.com/sassdavid/relgap/commit/04ce94e543b4c2b8779f5d5905b957048c2de163))
+* **deps:** update module golang.org/x/net to v0.63.0 ([#109](https://github.com/sassdavid/relgap/issues/109)) ([c0ee400](https://github.com/sassdavid/relgap/commit/c0ee400b1801cf6d5069441d1214fcbee7d570b8))
+* keep private repositories and modules away from OSV ([#121](https://github.com/sassdavid/relgap/issues/121)) ([356702a](https://github.com/sassdavid/relgap/commit/356702a73ea9af3f6c719699e2f093a425f17f42))
+* rate GO advisories from their GHSA alias and count unrated ones ([#113](https://github.com/sassdavid/relgap/issues/113)) ([cec74d6](https://github.com/sassdavid/relgap/commit/cec74d6a19487c4cb9b8113df7ad475ce9a83379))
+
 ## [0.12.1](https://github.com/sassdavid/relgap/compare/v0.12.0...v0.12.1) (2026-11-20)
 
 
