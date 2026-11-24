@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.14.0](https://github.com/sassdavid/relgap/compare/v0.13.1...v0.14.0) (2026-11-24)
+
+
+### Features
+
+* decide color per stream and render tables with lipgloss ([#129](https://github.com/sassdavid/relgap/issues/129)) ([fdbabbf](https://github.com/sassdavid/relgap/commit/fdbabbfa729ca37c28b3d51f51bd5f90af755190))
+
+
+### Bug Fixes
+
+* follow tag prefix switches and release lines ([#127](https://github.com/sassdavid/relgap/issues/127)) ([a298404](https://github.com/sassdavid/relgap/commit/a29840496c07bdf51447fd43a6173be64e5ae0c2))
+
 ## [0.13.1](https://github.com/sassdavid/relgap/compare/v0.13.0...v0.13.1) (2026-11-24)
 
 
