@@ -6,65 +6,52 @@ import (
 	"slices"
 	"strconv"
 	"strings"
-	"unicode/utf8"
 
 	"github.com/sassdavid/relgap/internal/registry"
 
 	"github.com/sassdavid/relgap/internal/classify"
 	"github.com/sassdavid/relgap/internal/enrich"
 	"github.com/sassdavid/relgap/internal/report"
+	"github.com/sassdavid/relgap/internal/term"
 )
 
 const (
-	ansiGreen  = "\x1b[32m"
-	ansiYellow = "\x1b[33m"
-	noValue    = "-"
-	headTool   = "TOOL" // the first column header of the tables
-	columnGap  = 2      // spaces between columns, as in the tabwriter tables
+	noValue  = "-"
+	headTool = "TOOL" // the first column header of the tables
 )
 
-// cell is a table cell with an optional ANSI style.
+// cell is a table cell with the tone the tty format shows it in.
 type cell struct {
-	text  string
-	style string
+	text string
+	tone term.Tone
 }
 
-// OutdatedText writes the pins as an aligned table followed by notes. With color it marks
-// outdated versions yellow, current ones green and breaking counts red (the tty format).
-// Skipped pins are left out; JSON lists them.
-func OutdatedText(w io.Writer, o *report.Outdated, color bool) error {
+// OutdatedText writes the pins as a table followed by notes wrapped at width (0 for no
+// wrapping). It styles outdated versions yellow, current ones green and breaking counts red; a
+// writer with no color profile drops the styles. Skipped pins are left out; JSON lists them.
+func OutdatedText(w io.Writer, o *report.Outdated, width int) error {
 	rows, notes := outdatedRows(o, plain)
 	var b strings.Builder
-	writeAligned(&b, rows, color)
+	writeAligned(&b, rows)
 	if len(notes) > 0 {
 		b.WriteString("\nNotes:\n")
-		for _, n := range notes {
-			b.WriteString("  " + n + "\n")
-		}
+		writeLines(&b, notes, width)
 	}
 	if lines := fixLines(o.Fixes(), plain); len(lines) > 0 {
 		b.WriteString("\n" + FixTitle + ":\n")
-		for _, line := range lines {
-			b.WriteString("  " + line + "\n")
-		}
+		writeLines(&b, lines, width)
 	}
 	if lines := outdatedSuppressedLines(o, plain); len(lines) > 0 {
 		b.WriteString("\n" + SuppressedTitle + ":\n")
-		for _, line := range lines {
-			b.WriteString("  " + line + "\n")
-		}
+		writeLines(&b, lines, width)
 	}
 	if len(o.Unchecked) > 0 {
 		b.WriteString("\n" + UncheckedTitle + ":\n")
-		for _, line := range uncheckedLines(o.Unchecked, plain) {
-			b.WriteString("  " + line + "\n")
-		}
+		writeLines(&b, uncheckedLines(o.Unchecked, plain), width)
 	}
 	if o.Binaries != nil {
 		b.WriteString("\nBinaries (" + enrich.ReachabilityNote + "):\n")
-		for _, line := range binaryLines(o.Binaries, plain) {
-			b.WriteString("  " + line + "\n")
-		}
+		writeLines(&b, binaryLines(o.Binaries, plain), width)
 	}
 	b.WriteString("\n" + summary(o) + "\n")
 	if _, err := io.WriteString(w, b.String()); err != nil {
@@ -73,27 +60,31 @@ func OutdatedText(w io.Writer, o *report.Outdated, color bool) error {
 	return nil
 }
 
-// writeAligned writes rows as columns padded to their widest cell. With color it wraps styled
-// cells in ANSI codes, which don't count toward the width.
-func writeAligned(b *strings.Builder, rows [][]cell, color bool) {
-	widths := make([]int, len(rows[0]))
-	for _, r := range rows {
-		for i, c := range r {
-			widths[i] = max(widths[i], utf8.RuneCountInString(c.text))
+// writeAligned writes rows as a [term.Table], the first row being the header.
+func writeAligned(b *strings.Builder, rows [][]cell) {
+	header := make([]string, len(rows[0]))
+	for i, c := range rows[0] {
+		header[i] = c.text
+	}
+	body := make([][]term.Cell, len(rows)-1)
+	for i, r := range rows[1:] {
+		body[i] = make([]term.Cell, len(r))
+		for j, c := range r {
+			body[i][j] = term.Cell{Text: c.text, Tone: c.tone}
 		}
 	}
-	for _, r := range rows {
-		for i, c := range r {
-			text := c.text
-			if color && c.style != "" {
-				text = c.style + text + ansiReset
-			}
-			b.WriteString(text)
-			if i < len(r)-1 {
-				b.WriteString(strings.Repeat(" ", widths[i]-utf8.RuneCountInString(c.text)+columnGap))
-			}
+	b.WriteString(term.Table(header, body))
+}
+
+// writeLines writes each line indented by two spaces, wrapped at width with continuation lines
+// indented by four, in the tone of its label ([term.NoteTone]). Control characters from release
+// notes or advisories are made visible.
+func writeLines(b *strings.Builder, lines []string, width int) {
+	for _, l := range lines {
+		tone := term.NoteTone(l)
+		for line := range strings.Lines(term.Wrap(term.Sanitize(l), width, "  ", "    ")) {
+			b.WriteString(tone.Paint(strings.TrimSuffix(line, "\n")) + "\n")
 		}
-		b.WriteString("\n")
 	}
 }
 
@@ -205,11 +196,11 @@ func outdatedRow(p *report.OutdatedPin, code func(string) string) []cell {
 	}
 	switch p.Status {
 	case report.StatusCurrent:
-		row[2] = cell{text: p.Latest, style: ansiGreen}
+		row[2] = cell{text: p.Latest, tone: term.Good}
 	case report.StatusOutdated:
-		row[2] = cell{text: p.Latest, style: ansiYellow}
+		row[2] = cell{text: p.Latest, tone: term.Warn}
 	case report.StatusError:
-		row[2] = cell{text: "error", style: ansiRed}
+		row[2] = cell{text: "error", tone: term.Bad}
 		return row
 	case report.StatusUnknown, report.StatusSkipped:
 		return row
@@ -221,9 +212,13 @@ func outdatedRow(p *report.OutdatedPin, code func(string) string) []cell {
 	breaking := p.Counts[classify.KindBreaking]
 	row[4] = cell{text: strconv.Itoa(breaking)}
 	if breaking > 0 {
-		row[4].style = ansiBold + ansiRed
+		row[4].tone = term.Severe
 	}
-	row[5] = cell{text: strconv.Itoa(p.Counts[classify.KindDeprecation])}
+	deprecations := p.Counts[classify.KindDeprecation]
+	row[5] = cell{text: strconv.Itoa(deprecations)}
+	if deprecations > 0 {
+		row[5].tone = term.Warn
+	}
 	return row
 }
 
@@ -240,7 +235,7 @@ func eolCell(e *enrich.EOL) cell {
 		if e.Current.EOLFrom != "" {
 			text += " (" + e.Current.EOLFrom + ")"
 		}
-		return cell{text: text, style: ansiBold + ansiRed}
+		return cell{text: text, tone: term.Severe}
 	default:
 		return cell{text: "no"}
 	}
@@ -278,8 +273,11 @@ func vulnCell(p *report.OutdatedPin) cell {
 		text += " (" + strings.Join(notes, ", ") + ")"
 	}
 	c := cell{text: text}
-	if len(vs) > 0 {
-		c.style = ansiRed
+	switch {
+	case kev > 0:
+		c.tone = term.Severe
+	case len(vs) > 0:
+		c.tone = term.Bad
 	}
 	return c
 }

@@ -11,6 +11,7 @@ cmd/<tool>/main.go        # only: os.Exit(cli.Run(ctx, os.Args, os.Stdout, os.St
 internal/cli/             # cobra commands, flag binding, no business logic
 internal/<domain>/        # one package per concept (e.g. version, registry, scan, source)
 internal/render/          # tty / plain / md / json / sarif renderers
+internal/term/            # terminal and color detection, styles, tables, sanitizing (ADR-0017)
 internal/httpx/           # retrying, caching, rate-limited HTTP client
 internal/testutil/        # fixtures, fakes, golden helpers
 testdata/                 # golden files, recorded HTTP/AWS responses, fixture repos
@@ -51,7 +52,7 @@ cobra/POSIX usage-error code. Docs explain the mapping.
 - **stdout = data, stderr = logs and progress.** Piping must never capture spinners or log lines.
 - `--format tty|plain|md|json|sarif` (not every command supports sarif). Default: `tty` when stdout is a TTY, otherwise `plain`.
 - JSON output is an envelope: `{"schema_version": "1", "tool": "...", "version": "...", "generated_at": "...", "data": {...}, "errors": [...]}`. A JSON Schema lives in `schemas/` and is tested. Breaking a schema bumps `schema_version`.
-- Colors follow `NO_COLOR`, `CLICOLOR_FORCE`, `--color auto|always|never` and TTY detection.
+- Colors follow `--color auto|always|never`, then `NO_COLOR`, `CLICOLOR_FORCE`/`FORCE_COLOR`, `CLICOLOR=0`/`TERM=dumb` and TTY detection, decided once per stream in `internal/term` ([ADR-0017](adr/0017-terminal-output.md)). Only the 16 basic ANSI colors, and never color alone to carry meaning.
 - Nothing ever prints secrets. Tokens are redacted in logs and debug HTTP dumps.
 
 ## Configuration

@@ -3,11 +3,11 @@
 env TEST_NOW=2026-11-11T00:00:00Z
 exec relgap pins --format plain
 stdout '^-  +2.1.0 +dockerfile +app/Dockerfile:2$'
-stderr '^relgap: 2 pins have no known tool; list them with --unresolved$'
+stderr 'WRN pins with no known tool; list them with --unresolved count=2$'
 
 exec relgap pins --unresolved --format plain
 cmp stdout want.txt
-stderr '^relgap: map these names to tools with aliases.<raw name>: <tool> in .relgap.yaml$'
+stderr 'WRN map these names to tools with aliases.<raw name>: <tool> file=.relgap.yaml$'
 
 exec relgap pins --unresolved --format json
 jsonschema pins-v1.json stdout

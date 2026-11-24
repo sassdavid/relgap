@@ -1,8 +1,8 @@
-[1mkubectl 1.36.0..1.37.2[0m  kubernetes/kubernetes
+[1mkubectl 1.36.0..1.37.2[m  kubernetes/kubernetes
 9 versions: 1.36.1, 1.36.2, 1.36.3, 1.36.4, 1.36.5, 1.36.6, 1.37.0, 1.37.1, 1.37.2
 breaking 4, deprecation 4, security 0, feature 122, fix 193, other 125; 1 below --min-confidence hidden
 
-[1m[31mBreaking changes[0m
+[1;31mBreaking changes[m
   1.37.0
     - ACTION REQUIRED: Graduated the `SELinuxMount` feature gate to GA. The feature is enabled by default in `v1.37`, which may break existing workloads in clusters with SELinux enabled. Please see [the Kubernetes blog post](https://kubernetes.io/blog/2026/04/22/breaking-changes-in-selinux-volume-labeling/) to identify potentially problematic workloads in a `v1.36` cluster and how to fix them or opt out of `SELinuxMount` changes before upgrading to `v1.37`. Admins of clusters without SELinux enabled can ignore this release note. ([#139956](https://github.com/kubernetes/kubernetes/pull/139956), [@jsafrane](https://github.com/jsafrane)) [SIG API Machinery, Apps and Node]
     - ACTION REQUIRED: Converted the `DisruptionMode` enum field to a struct to support future extensibility. Promoted the `scheduling.k8s.io` API group from `v1alpha2` to `v1alpha3` and dropped `v1alpha2` entirely.
@@ -10,14 +10,14 @@ breaking 4, deprecation 4, security 0, feature 122, fix 193, other 125; 1 below 
     - ACTION REQUIRED: Fixed `eventRecordQPS` handling in `kubelet` configuration to treat 0 as unlimited (no rate limit), aligning behavior with the documentation. Users relying on the previous default behavior should explicitly set a non-zero value (for example, 50). ([#117119](https://github.com/kubernetes/kubernetes/pull/117119), [@HirazawaUi](https://github.com/HirazawaUi)) [SIG API Machinery, Auth and Node]
     - ACTION REQUIRED: Updated the `kubelet` to log its effective configuration at startup. Because these logs can expose configuration details, cluster administrators should restrict the `nodes/logs` ClusterRole to trusted users. This is largely a reminder of an existing best practice, since most effective configuration values can already be inferred from other log messages or `kubelet` behavior. ([#139837](https://github.com/kubernetes/kubernetes/pull/139837), [@SergeyKanzhelev](https://github.com/SergeyKanzhelev)) [SIG Node]
 
-[1mDeprecations[0m
+[33mDeprecations[m
   1.37.0
     - Changed `kubeadm` to explicitly set `KubeProxyConfiguration.mode` to iptables when `KubeProxyConfiguration` is not provided or when the `mode` field is empty. In `v1.37`, `kube-proxy` will warn if the field is not explicitly set as part of the planned transition to nftables as the default mode in a future release. ([#139777](https://github.com/kubernetes/kubernetes/pull/139777), [@neolit123](https://github.com/neolit123)) [SIG Cluster Lifecycle]
     - Deprecated the ignored `--filename`/`-f` flag on `kubectl run`. ([#138671](https://github.com/kubernetes/kubernetes/pull/138671), [@Suknna](https://github.com/Suknna)) [SIG CLI]
     - Locked the deprecated `DeclarativeValidationTakeover` feature gate to its default value; it can no longer be set. ([#139212](https://github.com/kubernetes/kubernetes/pull/139212), [@yongruilin](https://github.com/yongruilin)) [SIG API Machinery]
     - `kubeadm`: Added a (delayed) warning that `kube-proxy`'s ipvs mode is deprecated since `v1.35` and users on newer Linux kernels should be using the nftables mode instead, which became GA in `v1.33`. For older kernel versions, users can use iptables, which is still the default. ([#139067](https://github.com/kubernetes/kubernetes/pull/139067), [@neolit123](https://github.com/neolit123)) [SIG Cluster Lifecycle]
 
-[1mFeatures[0m
+[1mFeatures[m
   1.36.2
     - Kubernetes is now built using Go 1.26.4 ([#139585](https://github.com/kubernetes/kubernetes/pull/139585), [@cpanato](https://github.com/cpanato)) [SIG Release and Testing]
     - Kubernetes is now built with Go 1.26.4 ([#138871](https://github.com/kubernetes/kubernetes/pull/138871), [@BenTheElder](https://github.com/BenTheElder)) [SIG Release]
@@ -149,7 +149,7 @@ breaking 4, deprecation 4, security 0, feature 122, fix 193, other 125; 1 below 
     - Kubernetes is now built using Go 1.26.10 ([#143341](https://github.com/kubernetes/kubernetes/pull/143341), [@palnabarun](https://github.com/palnabarun)) [SIG Release and Testing]
     - Kubernetes is now built using Go 1.26.9 ([#143117](https://github.com/kubernetes/kubernetes/pull/143117), [@xmudrii](https://github.com/xmudrii)) [SIG Release and Testing]
 
-[1mFixes[0m
+[1mFixes[m
   1.36.1
     - DRA metadata read helper (KEP-5304): on decode skip only if version is unknown, return error if object/file is malformed ([#138859](https://github.com/kubernetes/kubernetes/pull/138859), [@alaypatel07](https://github.com/alaypatel07)) [SIG Node]
     - Fixed kubelet failure starting on ZFS due to missing cadvisor plugin. ([#138590](https://github.com/kubernetes/kubernetes/pull/138590), [@BenTheElder](https://github.com/BenTheElder)) [SIG Node]
@@ -378,7 +378,7 @@ breaking 4, deprecation 4, security 0, feature 122, fix 193, other 125; 1 below 
       `nf_conntrack_max` could cause kube-proxy to now want a different
       (lower) value than it had before. ([#142198](https://github.com/kubernetes/kubernetes/pull/142198), [@danwinship](https://github.com/danwinship)) [SIG Network]
 
-[1mOther[0m
+[1mOther[m
   1.36.3
     - Fixed a bug when the DRADeviceTaintRules feature is enabled that caused kube-scheduler to panic when DeviceTaintRules exist and ResourceSlices are changed or to ignore new changes to DeviceTaintRules. ([#139681](https://github.com/kubernetes/kubernetes/pull/139681), [@nojnhuh](https://github.com/nojnhuh)) [SIG Node and Testing]
   1.36.5

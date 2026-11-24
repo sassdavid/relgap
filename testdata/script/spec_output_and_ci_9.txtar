@@ -17,8 +17,8 @@ exec relgap digest --base main --format json
 jsonschema digest-v1.json stdout
 stdout '"tool": "terraform-provider-random",\n\s+"repo": "hashicorp/terraform-provider-random",\n\s+"from": "3\.6\.0",\n\s+"to": "3\.7\.0"'
 stdout '"pins": \[\n\s+\{\n\s+"repo": "\.",\n\s+"file": "versions\.tf",\n\s+"line": 5,\n\s+"raw_name": "hashicorp/random",\n\s+"base": ">= 3\.6\.0, < 4\.0\.0",\n\s+"head": ">= 3\.7\.0, < 4\.0\.0"'
-stderr '^relgap: tfprovider:hashicorp/random >= 3\.6\.0, < 4\.0\.0 to >= 3\.7\.0, < 4\.0\.0 \(versions\.tf:5\): digested from the old lower bound to the new one$'
-stderr '^relgap: not digested: tfprovider:hashicorp/null >= 3\.0\.0 to < 4\.0\.0 \(versions\.tf:9\): neither an exact version on both sides nor a raised lower bound$'
+stderr 'WRN tfprovider:hashicorp/random >= 3\.6\.0, < 4\.0\.0 to >= 3\.7\.0, < 4\.0\.0 \(versions\.tf:5\): digested from the old lower bound to the new one$'
+stderr 'WRN not digested pin="tfprovider:hashicorp/null >= 3\.0\.0 to < 4\.0\.0 \(versions\.tf:9\): neither an exact version on both sides nor a raised lower bound"$'
 ! stderr 'hashicorp/random.*not digested'
 
 -- repo/versions.tf --

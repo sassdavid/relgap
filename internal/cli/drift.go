@@ -13,7 +13,6 @@ import (
 	"github.com/sassdavid/relgap/internal/app"
 	"github.com/sassdavid/relgap/internal/buildinfo"
 	"github.com/sassdavid/relgap/internal/complete"
-	"github.com/sassdavid/relgap/internal/config"
 	"github.com/sassdavid/relgap/internal/registry"
 	"github.com/sassdavid/relgap/internal/render"
 	"github.com/sassdavid/relgap/internal/report"
@@ -272,9 +271,7 @@ func writeDrift(
 		return sarif.WriteGitHub(w, render.DriftSARIF(out, res.Problems, buildinfo.Get().Version))
 	case render.FormatAuto, render.FormatTTY, render.FormatPlain, render.FormatCSV, render.FormatOpenVEX:
 	}
-	color := f == render.FormatTTY &&
-		render.UseColor(render.ColorMode(g.color), d.Env.Lookup, app.IsTerminal(d.Stdout))
-	return render.DriftText(w, out, render.DriftOptions{All: all, Color: color})
+	return render.DriftText(w, out, render.DriftOptions{All: all, Width: g.textWidth(f)})
 }
 
 // driftErrors lists the files that didn't parse and the tools whose latest version GitHub
@@ -304,8 +301,12 @@ func warnDrift(
 		}
 	}
 	if n := countUnresolved(res.Pins, ignore); n > 0 {
-		_, _ = fmt.Fprintf(d.Stderr, "%s: %d %s no known tool; list them with 'relgap pins --unresolved'\n",
-			config.AppName, n, plural(n, "pin has", "pins have"))
+		d.Logger.WarnContext(
+			cmd.Context(),
+			"pins with no known tool; list them with 'relgap pins --unresolved'",
+			"count",
+			n,
+		)
 	}
 }
 

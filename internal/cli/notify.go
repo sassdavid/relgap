@@ -9,7 +9,6 @@ import (
 	"os"
 	"slices"
 	"strings"
-	"text/tabwriter"
 
 	"github.com/spf13/cobra"
 
@@ -23,6 +22,7 @@ import (
 	"github.com/sassdavid/relgap/internal/httpx"
 	"github.com/sassdavid/relgap/internal/render"
 	"github.com/sassdavid/relgap/internal/report"
+	"github.com/sassdavid/relgap/internal/term"
 )
 
 const (
@@ -161,7 +161,9 @@ func runNotify(cmd *cobra.Command, d *app.Deps, g *globals, from []string, dryRu
 	if g.outFormat == render.FormatJSON {
 		err = render.JSON(d.Stdout, env)
 	} else {
-		err = writeNotifyText(d.Stdout, &data, env.Errors)
+		// Styles reach stdout only in the tty format when stdout has color.
+		color := g.outFormat == render.FormatTTY && g.stdout.Color
+		err = writeNotifyText(term.Writer(d.Stdout, term.Stream{Color: color}.Profile()), &data, env.Errors)
 	}
 	if err != nil {
 		return err
@@ -204,13 +206,13 @@ func notifyExit(failures []error) error {
 
 func writeNotifyText(w io.Writer, data *notifyData, errs []render.Error) error {
 	var b strings.Builder
-	tw := tabwriter.NewWriter(&b, 0, 0, 2, ' ', 0) //nolint:mnd // column padding
-	for _, r := range data.Results {
-		_, _ = fmt.Fprintf(tw, "%s\t%s\t%s\t%s\n", notifierPR, r.Target, r.Op, r.Kind)
+	rows := make([][]string, len(data.Results))
+	for i, r := range data.Results {
+		rows[i] = []string{notifierPR, r.Target, string(r.Op), r.Kind}
 	}
-	_ = tw.Flush()
+	b.WriteString(term.Table(nil, term.Rows(rows)))
 	for _, e := range errs {
-		fmt.Fprintf(&b, "error: %s: %s\n", e.Target, e.Message)
+		b.WriteString(term.Bad.Paint("error: "+e.Target+": "+e.Message) + "\n")
 	}
 	if data.DryRun {
 		fmt.Fprintf(&b, "\nno changes made (--%s)\n", flagDryRunNotify)

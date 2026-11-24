@@ -2,13 +2,13 @@ package cli
 
 import (
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"runtime"
 	"slices"
 	"strconv"
 	"strings"
-	"text/tabwriter"
 	"time"
 
 	"github.com/spf13/cobra"
@@ -22,6 +22,7 @@ import (
 	"github.com/sassdavid/relgap/internal/httpx"
 	"github.com/sassdavid/relgap/internal/registry/remote"
 	"github.com/sassdavid/relgap/internal/render"
+	"github.com/sassdavid/relgap/internal/term"
 )
 
 const defaultPruneAge = 30 * 24 * time.Hour
@@ -179,11 +180,11 @@ func writeRemoved(d *app.Deps, g *globals, r httpx.Removed) error {
 }
 
 func writeTable(d *app.Deps, rows [][2]string) error {
-	tw := tabwriter.NewWriter(d.Stdout, 0, 0, 2, ' ', 0) //nolint:mnd // column padding
-	for _, r := range rows {
-		_, _ = fmt.Fprintf(tw, "%s\t%s\n", r[0], r[1])
+	cells := make([][]term.Cell, len(rows))
+	for i, r := range rows {
+		cells[i] = []term.Cell{{Text: r[0]}, {Text: r[1]}}
 	}
-	if err := tw.Flush(); err != nil {
+	if _, err := io.WriteString(d.Stdout, term.Table(nil, cells)); err != nil {
 		return fmt.Errorf("write output: %w", err)
 	}
 	return nil

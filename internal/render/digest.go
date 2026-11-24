@@ -8,19 +8,15 @@ import (
 
 	"github.com/sassdavid/relgap/internal/classify"
 	"github.com/sassdavid/relgap/internal/report"
+	"github.com/sassdavid/relgap/internal/term"
 )
 
-const (
-	ansiBold  = "\x1b[1m"
-	ansiRed   = "\x1b[31m"
-	ansiReset = "\x1b[0m"
-)
-
-// DigestText writes d as plain text, breaking changes first and entries grouped by version. A
-// --summarize summary comes first, labelled as LLM output.
-// With color it adds ANSI bold headings and red breaking changes (the tty format).
-func DigestText(w io.Writer, d *report.Digest, color bool) error {
-	tw := &textWriter{w: w, color: color}
+// DigestText writes d as text, breaking changes first and entries grouped by version, with
+// entries wrapped at width (0 for no wrapping). A --summarize summary comes first, labelled as
+// LLM output. It styles headings bold and breaking changes red; a writer with no color profile
+// drops the styles.
+func DigestText(w io.Writer, d *report.Digest, width int) error {
+	tw := &textWriter{width: width}
 	if d.Summary != nil {
 		tw.summary(d.Summary)
 		tw.line("")
@@ -31,8 +27,8 @@ func DigestText(w io.Writer, d *report.Digest, color bool) error {
 		}
 		tw.tool(&t)
 	}
-	if tw.err != nil {
-		return fmt.Errorf("write digest: %w", tw.err)
+	if _, err := io.WriteString(w, tw.b.String()); err != nil {
+		return fmt.Errorf("write digest: %w", err)
 	}
 	return nil
 }
@@ -56,27 +52,33 @@ func kindTitle(k classify.Kind) string {
 	}
 }
 
+// textWriter builds a digest in memory, so it reaches the output in one write.
 type textWriter struct {
-	w     io.Writer
-	color bool
-	err   error
+	b     strings.Builder
+	width int // columns to wrap entries at in the text formats; 0 means don't wrap
 }
 
 func (tw *textWriter) line(s string) {
-	if tw.err == nil {
-		_, tw.err = io.WriteString(tw.w, s+"\n")
-	}
+	tw.b.WriteString(s)
+	tw.b.WriteByte('\n')
 }
 
-func (tw *textWriter) style(s string, codes ...string) string {
-	if !tw.color {
-		return s
+// kindTone is the tone of a kind's heading in the text formats.
+func kindTone(k classify.Kind) term.Tone {
+	switch k {
+	case classify.KindBreaking:
+		return term.Severe
+	case classify.KindSecurity:
+		return term.Bad
+	case classify.KindDeprecation:
+		return term.Warn
+	case classify.KindFeature, classify.KindFix, classify.KindOther:
 	}
-	return strings.Join(codes, "") + s + ansiReset
+	return term.Heading
 }
 
 func (tw *textWriter) tool(t *report.ToolDigest) {
-	tw.line(tw.style(fmt.Sprintf("%s %s..%s", t.Tool, t.From, t.To), ansiBold) + "  " + t.Repo)
+	tw.line(term.Heading.Paint(fmt.Sprintf("%s %s..%s", t.Tool, t.From, t.To)) + "  " + term.Sanitize(t.Repo))
 	versions := make([]string, len(t.Versions))
 	for i, v := range t.Versions {
 		versions[i] = v.Version
@@ -91,9 +93,9 @@ func (tw *textWriter) tool(t *report.ToolDigest) {
 	if t.Hidden > 0 {
 		summary += fmt.Sprintf("; %d below --min-confidence hidden", t.Hidden)
 	}
-	tw.line(summary)
+	tw.line(term.Wrap(summary, tw.width, "", ""))
 	for _, warn := range t.Warnings {
-		tw.line("warning: " + warn)
+		tw.line(term.Warn.Paint("warning: " + warn))
 	}
 	urls := map[string]string{}
 	for _, v := range t.Versions {
@@ -104,11 +106,7 @@ func (tw *textWriter) tool(t *report.ToolDigest) {
 			continue
 		}
 		tw.line("")
-		codes := []string{ansiBold}
-		if k == classify.KindBreaking {
-			codes = append(codes, ansiRed)
-		}
-		tw.line(tw.style(kindTitle(k), codes...))
+		tw.line(kindTone(k).Paint(kindTitle(k)))
 		tw.entries(t.Entries, k, urls)
 	}
 }
@@ -130,14 +128,14 @@ func (tw *textWriter) entries(entries []classify.Entry, k classify.Kind, urls ma
 			if u := urls[e.Version]; u != "" {
 				header += "  " + u
 			}
-			tw.line(header)
+			tw.line(term.Sanitize(header))
 		}
-		for i, l := range strings.Split(e.Text, "\n") {
+		for i, l := range strings.Split(term.Sanitize(e.Text), "\n") {
 			prefix := "      "
 			if i == 0 {
 				prefix = "    - "
 			}
-			tw.line(strings.TrimRight(prefix+l, " "))
+			tw.line(strings.TrimRight(term.Wrap(l, tw.width, prefix, "      "), " "))
 		}
 	}
 }

@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/sassdavid/relgap/internal/report"
+	"github.com/sassdavid/relgap/internal/term"
 )
 
 // sourceURLs maps each entry ID of d to its source URL.
@@ -38,17 +39,17 @@ func pluralClaims(n int) string {
 
 // summary writes the summary block of the tty and plain formats.
 func (tw *textWriter) summary(s *report.Summary) {
-	tw.line(tw.style("Upgrade risk summary", ansiBold))
+	tw.line(term.Heading.Paint("Upgrade risk summary"))
 	tw.line(summaryNote(s))
 	for _, sec := range summarySections(s) {
 		tw.line("")
-		tw.line(tw.style(sec.title, ansiBold))
+		tw.line(term.Heading.Paint(sec.title))
 		for _, c := range sec.claims {
 			ids := make([]string, len(c.Cites))
 			for i, id := range c.Cites {
 				ids[i] = "[" + id + "]"
 			}
-			tw.line("  - " + c.Text + " " + strings.Join(ids, " "))
+			tw.line(term.Wrap(term.Sanitize(c.Text+" "+strings.Join(ids, " ")), tw.width, "  - ", "    "))
 		}
 	}
 }

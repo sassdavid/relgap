@@ -10,14 +10,39 @@ with any other value exits 2.
 
 | Format | What it is | Commands |
 |---|---|---|
-| `tty` | a table with colour, for a terminal; the default when stdout is a terminal | every command with a report |
-| `plain` | the same table without colour; the default otherwise | every command with a report |
+| `tty` | a table with colour, notes wrapped at the terminal width; the default when stdout is a terminal or gets colour anyway | every command with a report |
+| `plain` | the same table without colour or wrapping; the default otherwise | every command with a report |
 | `md` | Markdown for a pull request comment or a step summary | `digest`, `outdated`, `drift`, `pins` |
 | `json` | the JSON envelope below | every command with a report |
 | `sarif` | SARIF 2.1.0 for GitHub code scanning ([SARIF rules](/reference/sarif-rules)) | `outdated`, `drift` |
 | `github` | GitHub Actions workflow commands, which show as annotations on the pull request | `outdated`, `drift` |
 
-`--color always|never|auto` controls colour in `tty`. `auto` turns it off when `NO_COLOR` is set.
+## Colour
+
+relgap decides colour once for stdout and once for stderr (the logs). The first rule that applies
+wins:
+
+1. `--color always` or `--color never`.
+2. `NO_COLOR` set to anything but an empty string turns colour off.
+3. `CLICOLOR_FORCE` or `FORCE_COLOR` set to anything but an empty string, `0` or `false` turns it
+   on, also when the output is a pipe or a file.
+4. `CLICOLOR=0` or `TERM=dumb` turns it off.
+5. Otherwise the stream gets colour when it is a terminal.
+
+The tty format uses the 16 basic terminal colours, so it follows your terminal theme, and every
+coloured cell also says what it means in text. `plain`, `md`, `json` and the `--out` files never
+contain colour codes, and neither does a `--log-file`. `COLUMNS` sets the wrap width of notes and
+release-note entries; tables are never cut.
+
+CI logs are not terminals, so they stay plain. GitHub Actions shows colours in step logs: add
+`--color always` or set `CLICOLOR_FORCE: "1"` on a step whose tty output you read in the log.
+
+Release-note, advisory and repository text can contain control characters. The tty and plain
+formats show them in caret notation (`^[` for escape), so text from outside can't move the cursor,
+change the window title or write the clipboard.
+
+When stdout is a pipe that closes early, as in `relgap outdated | head -3`, relgap stops writing
+stdout, still writes the `--out` files and exits with the code it would have used.
 
 ## The JSON envelope
 
@@ -36,7 +61,7 @@ Every `--format json` report has the same outer object, described by
 
 A report with entries in `errors` is partial. The exit code says whether a `--fail-on` value
 matched anyway ([exit codes](/reference/exit-codes)). The text and Markdown formats of `digest`
-print each one on stderr as `relgap: failed: <target>: <message>`. The Markdown also starts with
+log each one on stderr as a warning, `digest failed target=<target> error=<message>`. The Markdown also starts with
 a "Not digested" section that lists them, with the pins `digest` skipped and why.
 
 ```sh

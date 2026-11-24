@@ -31,7 +31,9 @@ golden stdout outdated/project.sarif
 exec relgap digest --all --format json
 jsonschema digest-v1.json stdout
 cp stdout $WORK/all.json
-cmp stderr ../all.stderr
+stderr -count=2 ' WRN '
+stderr 'WRN at the latest version, no digest pins="gh 2\.103\.3, ruff 0\.17\.4, uv 0\.13\.7"$'
+stderr 'WRN not digested pin="node lts \(mise\.toml:7\): can.t compare: .*lts.* is a channel"$'
 [!recording] countsmatch -every $WORK/outdated.json $WORK/all.json
 
 # digest --from-mise keeps the pins of mise config files.
@@ -39,7 +41,9 @@ env TEST_CASSETTE=$CASSETTES/outdated/from-mise.yaml,$CASSETTES/outdated/from-mi
 exec relgap digest --from-mise --format json
 jsonschema digest-v1.json stdout
 cp stdout $WORK/from-mise.json
-cmp stderr ../from-mise.stderr
+stderr -count=2 ' WRN '
+stderr 'WRN at the latest version, no digest pins="gh 2\.103\.3, ruff 0\.17\.4, uv 0\.13\.7"$'
+stderr 'WRN not digested pin="node lts \(mise\.toml:7\): can.t compare: .*lts.* is a channel"$'
 [!recording] countsmatch $WORK/outdated.json $WORK/from-mise.json
 
 # Each range digested on its own, the way a user would run it, gives the same counts.
@@ -56,12 +60,6 @@ env TEST_CASSETTE=$CASSETTES/outdated/project.yaml,$CASSETTES/outdated/project-i
 [!recording] cp stdout $WORK/alpine.json
 [!recording] countsmatch -every $WORK/outdated.json $WORK/go.json $WORK/helm.json $WORK/k9s.json $WORK/terraform.json $WORK/alpine.json
 
--- all.stderr --
-relgap: at the latest version, no digest: gh 2.103.3, ruff 0.17.4, uv 0.13.7
-relgap: not digested: node lts (mise.toml:7): can't compare: "lts" is a channel
--- from-mise.stderr --
-relgap: at the latest version, no digest: gh 2.103.3, ruff 0.17.4, uv 0.13.7
-relgap: not digested: node lts (mise.toml:7): can't compare: "lts" is a channel
 -- project/mise.toml --
 [tools]
 terraform = "1.15.8"

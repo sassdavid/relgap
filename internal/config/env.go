@@ -40,8 +40,14 @@ func EnvVars() []EnvVar {
 		{"XDG_CACHE_HOME", "Base of the cache directory: $XDG_CACHE_HOME/relgap."},
 		{"XDG_DATA_HOME", "Base of mise's data directory for outdated --binaries when MISE_DATA_DIR is not set."},
 		{"MISE_DATA_DIR", "mise's data directory, whose installs outdated --binaries looks at."},
-		{"NO_COLOR", "Turns color off with --color auto."},
-		{"CLICOLOR_FORCE", "Turns color on with --color auto, even when output is not a terminal."},
+		{"NO_COLOR", "Turns color off with --color auto when set to anything but an empty string."},
+		{"CLICOLOR_FORCE", "Turns color on with --color auto, even when output is not a terminal, unless it is 0 " +
+			"or NO_COLOR is set."},
+		{"FORCE_COLOR", "Turns color on like CLICOLOR_FORCE unless it is 0 or false."},
+		{"CLICOLOR", "Set to 0, turns color off with --color auto."},
+		{"TERM", "Set to dumb, turns color off with --color auto."},
+		{"COLUMNS", "Width in columns that tty output wraps notes and release-note entries at; " +
+			"default: the terminal's width."},
 		{"PATH", "Where outdated --binaries looks for installed tools, and where mise, gh and git are looked up."},
 		{"PATHEXT", "File extensions of programs on Windows, for the same lookup."},
 	}

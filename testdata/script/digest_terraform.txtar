@@ -21,8 +21,8 @@ golden stdout digest/terraform.md
 ! stderr .
 
 exec relgap digest tf 1.15.8..1.17.1 --format tty --color always
-stdout '^\x1b\[1mterraform 1\.15\.8\.\.1\.17\.1\x1b\[0m  hashicorp/terraform$'
-stdout '^\x1b\[1m\x1b\[31mBreaking changes\x1b\[0m$'
+stdout '^\x1b\[1mterraform 1\.15\.8\.\.1\.17\.1\x1b\[m  hashicorp/terraform$'
+stdout '^\x1b\[1;31mBreaking changes\x1b\[m$'
 
 exec relgap digest terraform 1.15.8..1.17.1 --format json -vv
 stderr 'DBG github client authenticated=true token_source=GH_TOKEN concurrency=8'

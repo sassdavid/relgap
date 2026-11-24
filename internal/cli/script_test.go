@@ -1014,3 +1014,10 @@ func cmdSlowGitHub(ts *testscript.TestScript, neg bool, args []string) {
 		ts.Fatalf("unknown slowgithub command %q", args[0])
 	}
 }
+
+// TestSpec_output_and_ci_14: color follows the stream and the color variables: CLICOLOR_FORCE
+// and FORCE_COLOR color piped output, NO_COLOR beats them, and --color always beats NO_COLOR.
+func TestSpec_output_and_ci_14(t *testing.T) {
+	t.Parallel()
+	testscript.Run(t, scriptParams(t, filepath.Join(scriptDir, "spec_output_and_ci_14.txtar")))
+}

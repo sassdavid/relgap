@@ -14,7 +14,6 @@ import (
 	"github.com/sassdavid/relgap/internal/app"
 	"github.com/sassdavid/relgap/internal/buildinfo"
 	"github.com/sassdavid/relgap/internal/complete"
-	"github.com/sassdavid/relgap/internal/config"
 	"github.com/sassdavid/relgap/internal/enrich"
 	"github.com/sassdavid/relgap/internal/render"
 	"github.com/sassdavid/relgap/internal/report"
@@ -290,7 +289,7 @@ func writeAudit(w io.Writer, f render.Format, d *app.Deps, g *globals, r *auditR
 		sarif: func() *sarif.Log {
 			return render.AuditSARIF(r.out, r.scan.Problems, buildinfo.Get().Version)
 		},
-		text: func(w io.Writer, color bool) error { return render.AuditText(w, r.out, color) },
+		text: func(w io.Writer, width int) error { return render.AuditText(w, r.out, width) },
 		vex:  func(w io.Writer) error { return render.AuditOpenVEX(w, r.out, d.Clock(), buildinfo.Get().Version) },
 	}.write(w, f, d, g)
 }
@@ -339,8 +338,7 @@ func (r *auditRun) warn(cmd *cobra.Command, d *app.Deps) {
 		return
 	}
 	if n := countUnresolved(r.scan.Pins, r.ignore); n > 0 {
-		_, _ = fmt.Fprintf(d.Stderr, "%s: %d %s no known tool; list them with 'relgap pins --unresolved'\n",
-			config.AppName, n, plural(n, "pin has", "pins have"))
+		d.Logger.WarnContext(ctx, "pins with no known tool; list them with 'relgap pins --unresolved'", "count", n)
 	}
 }
 
