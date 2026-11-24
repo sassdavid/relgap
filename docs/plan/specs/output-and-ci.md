@@ -130,6 +130,12 @@ reasoning; tfcensus shares the code.
   without a backlink. Code spans and code blocks stay as they are, and JSON keeps the original
   text. A comment on sassdavid/action-test#1 quoted jq's notes and notified about 50 authors
   (sassdavid/relgap-action#13).
+- Outdated and drift Markdown stay as they are: they quote no third-party text. Their errors
+  carry a URL and a status code, never a response body, and the rest is relgap's own text or
+  comes from the user's files and config. A scoped npm name such as `npm:@types/node` is no mention, since GitHub reads `@scope/name` as a
+  team, and only organization members can notify a team. A zero-width space would break the
+  name for someone who copies it back into a config file. Renovate and Dependabot also silence
+  only the text they quote.
 - `docs/ci/outdated.yml` is the example workflow: one `outdated` run with `--out`, the step
   summary, the SARIF upload and the comment on pull requests from the same repository.
 
