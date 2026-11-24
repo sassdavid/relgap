@@ -42,7 +42,7 @@ func markdownMissed(mw *textWriter, failed []Error, notes []string) {
 	mw.line("## Not digested")
 	mw.line("")
 	for _, e := range failed {
-		mw.line("- " + silence(e.Target+": failed: "+e.Message))
+		mw.line("- " + mdCode(e.Target) + silence(": failed: "+e.Message))
 	}
 	for _, n := range notes {
 		mw.line("- " + silence(n))
@@ -71,7 +71,7 @@ func markdownTool(mw *textWriter, t *report.ToolDigest) {
 }
 
 func markdownSummary(mw *textWriter, t *report.ToolDigest) {
-	mw.line(fmt.Sprintf("## %s %s..%s", t.Tool, t.From, t.To))
+	mw.line(fmt.Sprintf("## %s %s..%s", mdCode(t.Tool), t.From, t.To))
 	mw.line("")
 	versions := make([]string, len(t.Versions))
 	for i, v := range t.Versions {

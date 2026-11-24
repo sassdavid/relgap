@@ -29,10 +29,10 @@ func sarifSuppression(s *enrich.Suppression) sarif.Suppression {
 }
 
 // auditSuppressedLines describes each suppressed finding: the advisory, the tool version and why.
-func auditSuppressedLines(a *report.Audit) []string {
+func auditSuppressedLines(a *report.Audit, code func(string) string) []string {
 	out := make([]string, 0, len(a.Suppressed))
 	for _, f := range a.Suppressed {
-		out = append(out, fmt.Sprintf("%s in %s %s: %s", f.ID, toolName(f.Tool), f.Version,
+		out = append(out, fmt.Sprintf("%s in %s %s: %s", f.ID, code(toolName(f.Tool)), f.Version,
 			suppressionText(f.Suppressed)))
 	}
 	return out
@@ -40,7 +40,7 @@ func auditSuppressedLines(a *report.Audit) []string {
 
 // outdatedSuppressedLines describes each suppressed advisory of a pin's current version, once per
 // tool version.
-func outdatedSuppressedLines(o *report.Outdated) []string {
+func outdatedSuppressedLines(o *report.Outdated, code func(string) string) []string {
 	var out []string
 	seen := map[string]bool{}
 	for i := range o.Pins {
@@ -51,7 +51,7 @@ func outdatedSuppressedLines(o *report.Outdated) []string {
 				continue
 			}
 			seen[key] = true
-			out = append(out, fmt.Sprintf("%s in %s %s: %s", v.ID, toolName(p.Tool), p.Current,
+			out = append(out, fmt.Sprintf("%s in %s %s: %s", v.ID, code(toolName(p.Tool)), p.Current,
 				suppressionText(v.Suppressed)))
 		}
 	}

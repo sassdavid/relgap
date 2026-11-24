@@ -27,7 +27,7 @@ type DriftOptions struct {
 // DriftText writes the matrix (a row per repo, a column per drifting tool), the tools left out
 // and a summary.
 func DriftText(w io.Writer, d *report.Drift, o DriftOptions) error {
-	rows, footer := driftRows(d, o.All)
+	rows, footer := driftRows(d, o.All, plain)
 	var b strings.Builder
 	if rows != nil {
 		writeAligned(&b, rows, o.Color)
@@ -45,7 +45,7 @@ func DriftText(w io.Writer, d *report.Drift, o DriftOptions) error {
 
 // DriftMarkdown writes the matrix as a Markdown table, the tools left out as a list and a summary.
 func DriftMarkdown(w io.Writer, d *report.Drift, o DriftOptions) error {
-	rows, footer := driftRows(d, o.All)
+	rows, footer := driftRows(d, o.All, mdCode)
 	var b strings.Builder
 	if rows != nil {
 		for _, r := range rows {
@@ -74,7 +74,7 @@ func mdEscapeStar(s string) string { return strings.ReplaceAll(s, outlierMark, `
 
 // driftRows returns the matrix rows (nil without columns) and a line each for the tools in
 // agreement and the tools with nothing to compare.
-func driftRows(d *report.Drift, all bool) ([][]cell, []string) {
+func driftRows(d *report.Drift, all bool, code func(string) string) ([][]cell, []string) {
 	var cols []*report.DriftTool
 	var agree, uncompared []string
 	latest := false
@@ -85,9 +85,9 @@ func driftRows(d *report.Drift, all bool) ([][]cell, []string) {
 		case all || t.Drift:
 			cols = append(cols, t)
 		case len(t.Versions) == 1:
-			agree = append(agree, agreeing(t))
+			agree = append(agree, agreeing(t, code))
 		default:
-			uncompared = append(uncompared, notCompared(t))
+			uncompared = append(uncompared, notCompared(t, code))
 		}
 	}
 	var footer []string
@@ -102,7 +102,7 @@ func driftRows(d *report.Drift, all bool) ([][]cell, []string) {
 	}
 	header := []cell{{text: "REPO"}}
 	for _, t := range cols {
-		header = append(header, cell{text: toolName(t.Tool)})
+		header = append(header, cell{text: code(toolName(t.Tool))})
 	}
 	rows := [][]cell{header}
 	if latest {
@@ -161,7 +161,7 @@ func matrixCell(c report.Cell) cell {
 	return out
 }
 
-func agreeing(t *report.DriftTool) string {
+func agreeing(t *report.DriftTool, code func(string) string) string {
 	v := t.Versions[0]
 	approx := true
 	for _, p := range t.Pins {
@@ -178,10 +178,10 @@ func agreeing(t *report.DriftTool) string {
 	if t.Latest != "" {
 		detail += ", latest " + t.Latest
 	}
-	return fmt.Sprintf("%s %s (%s)", toolName(t.Tool), text, detail)
+	return fmt.Sprintf("%s %s (%s)", code(toolName(t.Tool)), text, detail)
 }
 
-func notCompared(t *report.DriftTool) string {
+func notCompared(t *report.DriftTool, code func(string) string) string {
 	var values []string
 	repos := map[string]bool{}
 	for _, p := range t.Pins {
@@ -194,7 +194,7 @@ func notCompared(t *report.DriftTool) string {
 	if t.Latest != "" {
 		detail += ", latest " + t.Latest
 	}
-	return fmt.Sprintf("%s %s (%s)", toolName(t.Tool), strings.Join(values, " "), detail)
+	return fmt.Sprintf("%s %s (%s)", code(toolName(t.Tool)), strings.Join(values, " "), detail)
 }
 
 func driftSummary(d *report.Drift) string {
