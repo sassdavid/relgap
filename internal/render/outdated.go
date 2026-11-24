@@ -77,10 +77,14 @@ func writeAligned(b *strings.Builder, rows [][]cell) {
 }
 
 // writeLines writes each line indented by two spaces, wrapped at width with continuation lines
-// indented by four. Control characters from release notes or advisories are made visible.
+// indented by four, in the tone of its label ([term.NoteTone]). Control characters from release
+// notes or advisories are made visible.
 func writeLines(b *strings.Builder, lines []string, width int) {
 	for _, l := range lines {
-		b.WriteString(term.Wrap(term.Sanitize(l), width, "  ", "    ") + "\n")
+		tone := term.NoteTone(l)
+		for line := range strings.Lines(term.Wrap(term.Sanitize(l), width, "  ", "    ")) {
+			b.WriteString(tone.Paint(strings.TrimSuffix(line, "\n")) + "\n")
+		}
 	}
 }
 

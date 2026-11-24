@@ -13,6 +13,7 @@
 - Terminal handling follows engineering ADR-0017: color is decided once per stream (`--color`,
   then `NO_COLOR`, `CLICOLOR_FORCE`/`FORCE_COLOR`, `CLICOLOR=0`/`TERM=dumb`, then the terminal),
   only the 16 basic ANSI colors are used, and the text always carries the meaning without color.
+  Note lines labelled `warning:` are yellow and `error:` red.
   Auto format is tty when stdout is a terminal or has color, so `CLICOLOR_FORCE=1` colors piped
   output. Tables measure display cells and never cut a cell. Release-note, advisory and repository
   text shows control characters in caret notation. A closed stdout pipe (`| head`) still writes
