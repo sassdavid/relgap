@@ -12,6 +12,7 @@ import (
 	"github.com/sassdavid/relgap/internal/report"
 	"github.com/sassdavid/relgap/internal/sarif"
 	"github.com/sassdavid/relgap/internal/scan"
+	"github.com/sassdavid/relgap/internal/term"
 )
 
 // AuditUncheckedTitle heads audit's list of tool versions OSV wasn't asked about.
@@ -21,44 +22,35 @@ const AuditUncheckedTitle = "Not checked for vulnerabilities"
 func AuditRules() []string { return []string{RuleFailed, RuleUnchecked} }
 
 // AuditText writes the findings as an aligned table, then the advisories, the fix targets, the
-// suppressed findings, the unchecked tool versions and a summary. With color it marks high and critical ratings red (the
-// tty format).
-func AuditText(w io.Writer, a *report.Audit, color bool) error {
+// suppressed findings, the unchecked tool versions and a summary, with lines wrapped at width (0 for no wrapping).
+// It styles critical ratings and KEV entries bold red, high red and medium yellow; a writer with no color profile
+// drops the styles.
+func AuditText(w io.Writer, a *report.Audit, width int) error {
 	var b strings.Builder
 	if len(a.Findings) > 0 {
-		writeAligned(&b, auditRows(a, plain), color)
+		writeAligned(&b, auditRows(a, plain))
 		b.WriteString("\nAdvisories:\n")
-		for _, line := range advisoryLines(a) {
-			b.WriteString("  " + line + "\n")
-		}
+		writeLines(&b, advisoryLines(a), width)
 		b.WriteString("\n")
 	}
 	if lines := fixLines(a.Fixes(), plain); len(lines) > 0 {
 		b.WriteString(FixTitle + ":\n")
-		for _, line := range lines {
-			b.WriteString("  " + line + "\n")
-		}
+		writeLines(&b, lines, width)
 		b.WriteString("\n")
 	}
 	if lines := auditSuppressedLines(a, plain); len(lines) > 0 {
 		b.WriteString(SuppressedTitle + ":\n")
-		for _, line := range lines {
-			b.WriteString("  " + line + "\n")
-		}
+		writeLines(&b, lines, width)
 		b.WriteString("\n")
 	}
 	if lines := auditFailedLines(a, plain); len(lines) > 0 {
 		b.WriteString("Failed:\n")
-		for _, line := range lines {
-			b.WriteString("  " + line + "\n")
-		}
+		writeLines(&b, lines, width)
 		b.WriteString("\n")
 	}
 	if len(a.Unchecked) > 0 {
 		b.WriteString(AuditUncheckedTitle + ":\n")
-		for _, line := range uncheckedLines(a.Unchecked, plain) {
-			b.WriteString("  " + line + "\n")
-		}
+		writeLines(&b, uncheckedLines(a.Unchecked, plain), width)
 		b.WriteString("\n")
 	}
 	b.WriteString(auditSummary(a) + "\n")
@@ -165,7 +157,7 @@ func kevCell(k *enrich.KEV) cell {
 	if k.Ransomware {
 		text += " ransomware"
 	}
-	return cell{text: text, style: ansiBold + ansiRed}
+	return cell{text: text, tone: term.Severe}
 }
 
 // epssText shows an EPSS score as a percentage with its percentile, such as "89.5% (99.8th)",
@@ -197,8 +189,13 @@ func severityCell(s *enrich.Score) cell {
 		text += " " + strconv.FormatFloat(s.Score, 'f', 1, 64)
 	}
 	c := cell{text: text}
-	if s.Rating == "critical" || s.Rating == "high" {
-		c.style = ansiRed
+	switch s.Rating {
+	case "critical":
+		c.tone = term.Severe
+	case "high":
+		c.tone = term.Bad
+	case "medium":
+		c.tone = term.Warn
 	}
 	return c
 }

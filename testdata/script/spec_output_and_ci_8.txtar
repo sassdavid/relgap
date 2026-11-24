@@ -22,9 +22,9 @@ stdout '"tool": "helm",\n\s+"repo": "helm/helm",\n\s+"from": "3\.21\.0",\n\s+"to
 stdout '"tool": "kubectl",\n\s+"repo": "kubernetes/kubernetes",\n\s+"from": "1\.36\.0",\n\s+"to": "1\.37\.2"'
 stdout '"file": "mise\.toml",\n\s+"line": 2,\n\s+"raw_name": "kubectl",\n\s+"base": "1\.36\.0",\n\s+"head": "1\.37\.2"'
 ! stdout '"tool": "terraform"'
-stderr '^relgap: not digested: gh 2\.80\.0 \(mise\.toml:4\): removed$'
-stderr '^relgap: not digested: terraform 1\.15\.8 \(mise\.toml:4\): added$'
-stderr '^relgap: not digested: tfprovider:hashicorp/aws ~> 6\.0 to >= 6\.0, < 7\.0 \(versions\.tf:5\): neither an exact version on both sides nor a raised lower bound$'
+stderr 'WRN not digested pin="gh 2\.80\.0 \(mise\.toml:4\): removed"$'
+stderr 'WRN not digested pin="terraform 1\.15\.8 \(mise\.toml:4\): added"$'
+stderr 'WRN not digested pin="tfprovider:hashicorp/aws ~> 6\.0 to >= 6\.0, < 7\.0 \(versions\.tf:5\): neither an exact version on both sides nor a raised lower bound"$'
 ! stderr 'Dockerfile'
 
 # Each digest counts once for --fail-on.
@@ -40,7 +40,7 @@ stdout '"from": "1\.36\.0"'
 stdout '"from": "3\.21\.0"'
 exec relgap digest --base main --head main --format json
 stdout '"tools": \[\]'
-stderr '^relgap: no pin changed between main and main$'
+stderr 'WRN no pin changed base=main head=main$'
 
 # --pull-request reads the event. Its base commit isn't in this clone, so the target branch of
 # Renovate's debug comment is next. The Renovate branch names kubectl, so helm has no digest.
@@ -49,7 +49,7 @@ env GITHUB_EVENT_PATH=$WORK/renovate.json
 exec relgap digest --pull-request --format json
 stdout '"tool": "kubectl"'
 ! stdout '"tool": "helm"'
-stderr '^relgap: not digested: helm 3\.21\.0 to 3\.22\.1 \(mise\.toml:3\): the Renovate branch renovate/kubectl-1\.x names another dependency$'
+stderr 'WRN not digested pin="helm 3\.21\.0 to 3\.22\.1 \(mise\.toml:3\): the Renovate branch renovate/kubectl-1\.x names another dependency"$'
 
 # A group branch names no single dependency, so every upgraded pin gets a digest. Without a
 # Renovate comment the pull request's base branch is the fallback.

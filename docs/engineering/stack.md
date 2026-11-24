@@ -67,9 +67,11 @@ age except where the docs-site spec names the version ([ADR-0016](adr/0016-docs-
 | Go module path patterns | `golang.org/x/mod` (`module.MatchPrefixPatterns`) | v0.43.0 | the go command's own GOPRIVATE matcher; already in the module graph as an indirect dependency, at the version tfcensus has (relgap ADR-0020 detail 40) |
 | HTTP cache | own ETag layer in `internal/httpx` | — | [relgap ADR-0006](../plan/adr/0006-http-cache.md). `bartventer/httpcache` v0.14.0 rejected: RFC 9111 never caches POST and stores `Vary: Authorization` request values; `gregjones/httpcache` is archived |
 | Compression | `github.com/klauspost/compress` (zstd cache files) | v1.20.4 | |
-| Styling | `charm.land/lipgloss/v2` (+ `/table`) | **v2.1.0** (released today) | latest at M0; gh/terragrunt/goreleaser are on v2.0.x |
-| Markdown to terminal | `charm.land/glamour/v2` | v2.0.1 | |
-| TTY | `github.com/mattn/go-isatty` | v0.0.24 | |
+| Styling and tables | `charm.land/lipgloss/v2` (+ `/table`) | v2.1.1 | [ADR-0017](adr/0017-terminal-output.md). Styles and borderless tables in `internal/term`; display width from `clipperhouse/displaywidth` v0.11.0. Brings `ultraviolet`, `x/termios`, `x/windows`, `go-colorful` v1.4.1, `go-runewidth` v0.0.24, `uniseg` v0.4.7, `cancelreader` v0.2.2 and `xo/terminfo` as indirect modules, all MIT |
+| Color profile | `github.com/charmbracelet/colorprofile` | v0.4.3 | the writer that keeps (`ANSI`) or strips (`NoTTY`) styles; we pass the profile ourselves and never call `Detect` |
+| ANSI text | `github.com/charmbracelet/x/ansi` | v0.11.8 | display width and word wrap for prose; the version lipgloss v2.1.1 requires |
+| Terminal size | `github.com/charmbracelet/x/term` | v0.2.2 | `GetSize` for the wrap width; already required by lipgloss |
+| TTY | `github.com/mattn/go-isatty` | v0.0.24 | kept over `x/term.IsTerminal` because it also detects Cygwin and MSYS ptys |
 | Prompts | stdlib `bufio` → `charm.land/huh/v2` later | — / v2.0.3 | [ADR-0007](adr/0007-interactive-prompts.md) |
 | JSON Schema validate | `github.com/santhosh-tekuri/jsonschema/v6` | v6.0.3 | |
 | JSON Schema generate | `github.com/invopop/jsonschema` | v0.14.0 | config struct → schema; test-only (the schema sync test generates `schemas/config-v1.json`) |
@@ -139,7 +141,7 @@ v0.52.0, `go.yaml.in/yaml/v3` v3.0.6, `buger/jsonparser` v1.6.1, `agext/levensht
 
 | Concern | Module | Version | Why |
 |---|---|---|---|
-| Windows console colors | `golang.org/x/sys` (`windows`) | v0.50.0 | turns on VT processing so tint's ANSI colors render in conhost; already required by isatty |
+| Windows console colors | `golang.org/x/sys` (`windows`) | v0.50.0 | turns on VT processing on stdout and stderr so ANSI styles render in conhost; already required by isatty |
 
 ## Refresh
 The checker used for this table is in the session scratchpad. Re-create it in the repo as `scripts/latest-deps.py`

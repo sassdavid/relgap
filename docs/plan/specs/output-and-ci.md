@@ -3,13 +3,20 @@
 ## Renderers
 | Format | digest | outdated | drift | pins |
 |---|---|---|---|---|
-| `tty` | glamour-rendered sections; breaking first; per-version collapse markers; counts header | aligned table with ANSI colors: latest yellow when behind, green when current, breaking counts red | matrix table (a row per repo, a column per drifting tool), outliers yellow and marked `*` | table |
-| `plain` | same structure, no ANSI | TSV-like aligned | aligned | aligned |
+| `tty` | counts header, then sections, breaking first; tool and section headings bold, breaking red and bold, security red, deprecations yellow; entries wrapped at the terminal width | table: latest yellow when behind, green when current, `error` red; breaking counts, EOL and KEV red and bold; vulnerabilities red; deprecations yellow; notes wrapped | matrix table (a row per repo, a column per drifting tool), outliers yellow and marked `*`, latest green | table, pins with no known tool faint |
+| `plain` | same structure, no ANSI, no wrapping | same table, no ANSI | same | same |
 | `md` | PR-ready: `<details>` per version, Breaking/Security at top, source links | Markdown table and a notes list | Markdown table | table |
 | `json` | envelope (`schema_version`), `data.tools[]` = `ToolReport` | envelope, `data.pins[]` (`schemas/outdated-v1.json`) | envelope, `data.tools[]` (`schemas/drift-v1.json`) | envelope |
 | `sarif` | - | one result per finding (outdated/eol/vuln/breaking/deprecation/failed), location = pin file:line | one result per drifted pin, plus failed | - |
 | `github` | - | one workflow command (annotation) per SARIF result | one per SARIF result | - |
 
+- Terminal handling follows engineering ADR-0017: color is decided once per stream (`--color`,
+  then `NO_COLOR`, `CLICOLOR_FORCE`/`FORCE_COLOR`, `CLICOLOR=0`/`TERM=dumb`, then the terminal),
+  only the 16 basic ANSI colors are used, and the text always carries the meaning without color.
+  Auto format is tty when stdout is a terminal or has color, so `CLICOLOR_FORCE=1` colors piped
+  output. Tables measure display cells and never cut a cell. Release-note, advisory and repository
+  text shows control characters in caret notation. A closed stdout pipe (`| head`) still writes
+  the `--out` files and keeps the exit code. Hints and per-target failures go to the logger.
 - Markdown output stays under 60,000 characters by default (GitHub comment limit 65,536). When truncated, a footer says what was cut (`--md-max-chars`, formerly planned as `--md-max-bytes`).
 - `--out <format>=<path>` (repeatable) writes the same report in more formats in one run, with the exit code `--format` alone gives.
 - JSON schemas: `schemas/report-v1.json`. Every testscript that emits JSON validates against it.
@@ -237,6 +244,13 @@ the exit codes.
   ([ADR-0017](../adr/0017-chart-versions-extract-version-and-floors.md);
   `TestSpec_output_and_ci_9` with `hashicorp/random` `>= 3.6.0, < 4.0.0` to `>= 3.7.0, < 4.0.0`,
   `TestFloorRaise`).
+- [x] Color and layout follow the stream: `CLICOLOR_FORCE=1` and `FORCE_COLOR=1` color piped
+  output in the tty layout, `NO_COLOR` beats both, `TERM=dumb` and `--format plain` never color,
+  and `--color always` beats `NO_COLOR` (`TestSpec_output_and_ci_14`,
+  `spec_output_and_ci_14.txtar`). Table columns stay aligned with `≈`, wide characters and
+  styled cells, control characters in third-party text show in caret notation (`TestTable`,
+  `TestSanitize`, `TestDigestTextSanitized`), and a closed stdout still writes every `--out` file
+  with no error (`TestSinkBrokenPipe`).
 - [x] Each digest in JSON has `id`, the tool's identity that `outdated` prints in `tool` and
   `digest` accepts, next to the short name in `tool`, so a chart and its application with the
   same short name stay apart

@@ -8,6 +8,7 @@ import (
 
 	"github.com/sassdavid/relgap/internal/report"
 	"github.com/sassdavid/relgap/internal/scan"
+	"github.com/sassdavid/relgap/internal/term"
 )
 
 const (
@@ -21,7 +22,7 @@ const (
 // DriftOptions says how to lay out the drift matrix.
 type DriftOptions struct {
 	All   bool // a column for every tool, drifting or not
-	Color bool // yellow outliers (the tty format)
+	Width int  // columns to wrap the legend and footer at in the text formats; 0 means don't wrap
 }
 
 // DriftText writes the matrix (a row per repo, a column per drifting tool), the tools left out
@@ -30,11 +31,13 @@ func DriftText(w io.Writer, d *report.Drift, o DriftOptions) error {
 	rows, footer := driftRows(d, o.All, plain)
 	var b strings.Builder
 	if rows != nil {
-		writeAligned(&b, rows, o.Color)
-		b.WriteString("\n" + legendApprox + "\n" + legendOutlier + "\n")
+		writeAligned(&b, rows)
+		b.WriteString(
+			"\n" + term.Wrap(legendApprox, o.Width, "", "") + "\n" + term.Wrap(legendOutlier, o.Width, "", "") + "\n",
+		)
 	}
 	for _, f := range footer {
-		b.WriteString(f + "\n")
+		b.WriteString(term.Wrap(term.Sanitize(f), o.Width, "", "  ") + "\n")
 	}
 	b.WriteString(driftSummary(d) + "\n")
 	if _, err := io.WriteString(w, b.String()); err != nil {
@@ -130,11 +133,11 @@ func driftRows(d *report.Drift, all bool, code func(string) string) ([][]cell, [
 func latestCell(t *report.DriftTool) cell {
 	switch {
 	case t.Err != nil:
-		return cell{text: "error", style: ansiRed}
+		return cell{text: "error", tone: term.Bad}
 	case t.Latest == "":
 		return cell{text: noValue}
 	default:
-		return cell{text: t.Latest, style: ansiGreen}
+		return cell{text: t.Latest, tone: term.Good}
 	}
 }
 
@@ -153,7 +156,7 @@ func matrixCell(c report.Cell) cell {
 		}
 		if v.Outlier {
 			text += outlierMark
-			out.style = ansiYellow
+			out.tone = term.Warn
 		}
 		parts[i] = text
 	}

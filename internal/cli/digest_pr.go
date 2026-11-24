@@ -14,7 +14,6 @@ import (
 
 	"github.com/sassdavid/relgap/internal/app"
 	"github.com/sassdavid/relgap/internal/complete"
-	"github.com/sassdavid/relgap/internal/config"
 	"github.com/sassdavid/relgap/internal/render"
 	"github.com/sassdavid/relgap/internal/report"
 	"github.com/sassdavid/relgap/internal/scan"
@@ -161,7 +160,7 @@ func runDigestPR(cmd *cobra.Command, d *app.Deps, g *globals, f digestFlags, roo
 	if err = writeDigest(cmd, d, g, data, errs, missed); err != nil {
 		return err
 	}
-	prNotes(d, diff.base, diff.head, len(changes), floors, missed)
+	prNotes(cmd.Context(), d, diff.base, diff.head, len(changes), floors, missed)
 	var partial error
 	if len(errs) > 0 {
 		partial = fmt.Errorf("%d %s failed; the report is partial", len(errs), plural(len(errs), "digest", "digests"))
@@ -444,16 +443,16 @@ func changeReason(c scan.Change) string {
 
 // prNotes tells on stderr what the diff found, which digests read lower bounds and which changed
 // pins have no digest.
-func prNotes(d *app.Deps, base, head string, changed int, floors, notes []string) {
+func prNotes(ctx context.Context, d *app.Deps, base, head string, changed int, floors, notes []string) {
 	if changed == 0 {
-		_, _ = fmt.Fprintf(d.Stderr, "%s: no pin changed between %s and %s\n", config.AppName, shortRef(base), head)
+		d.Logger.WarnContext(ctx, "no pin changed", "base", shortRef(base), "head", head)
 		return
 	}
 	for _, n := range floors {
-		_, _ = fmt.Fprintf(d.Stderr, "%s: %s\n", config.AppName, n)
+		d.Logger.WarnContext(ctx, n)
 	}
 	for _, n := range notes {
-		_, _ = fmt.Fprintf(d.Stderr, "%s: not digested: %s\n", config.AppName, n)
+		d.Logger.WarnContext(ctx, "not digested", "pin", n)
 	}
 }
 

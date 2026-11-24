@@ -17,17 +17,17 @@ cp ../change/main.tf main.tf
 
 exec expect-exit 1 relgap digest --base main --format plain
 stdout 'kubectl 1\.36\.0\.\.1\.37\.2'
-stderr '^relgap: failed: bitbucket:example-ws/private-mod@main\.tf:1: .+'
+stderr 'WRN digest failed target=bitbucket:example-ws/private-mod@main\.tf:1 error=.+'
 stderr '^relgap: 1 digest failed; the report is partial$'
 ! stdout 'Not digested'
 
 exec expect-exit 1 relgap digest --base main --format md
-stderr '^relgap: failed: bitbucket:example-ws/private-mod@main\.tf:1: .+'
+stderr 'WRN digest failed target=bitbucket:example-ws/private-mod@main\.tf:1 error=.+'
 stdout '\A## Not digested\n\n- bitbucket:example-ws/private-mod@main\.tf:1: failed: .+\n\n## kubectl 1\.36\.0\.\.1\.37\.2\n'
 
 exec expect-exit 1 relgap digest --base main --format json
 stdout '"target": "bitbucket:example-ws/private-mod@main\.tf:1"'
-! stderr 'relgap: failed:'
+! stderr 'WRN digest failed'
 
 -- repo/mise.toml --
 [tools]

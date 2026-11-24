@@ -4,9 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io"
 	"strconv"
 	"strings"
-	"text/tabwriter"
 
 	"github.com/spf13/cobra"
 
@@ -18,6 +18,7 @@ import (
 	"github.com/sassdavid/relgap/internal/misex"
 	"github.com/sassdavid/relgap/internal/registry"
 	"github.com/sassdavid/relgap/internal/render"
+	"github.com/sassdavid/relgap/internal/term"
 )
 
 func newResolveCmd(d *app.Deps, g *globals) *cobra.Command {
@@ -157,25 +158,25 @@ func newRunner(d *app.Deps) *execx.Runner {
 
 func writeResolution(d *app.Deps, res *registry.Resolution) error {
 	t := res.Tool
-	tw := tabwriter.NewWriter(d.Stdout, 0, 0, 2, ' ', 0) //nolint:mnd // column padding
-	_, _ = fmt.Fprintf(tw, "input\t%s (%s, found in %s)\n", res.Input, res.Match.By, res.Match.Layer)
-	_, _ = fmt.Fprintf(tw, "mise registry\t%s\n", res.MiseSource)
+	head := [][]string{
+		{"input", fmt.Sprintf("%s (%s, found in %s)", res.Input, res.Match.By, res.Match.Layer)},
+		{"mise registry", res.MiseSource},
+	}
 	if res.RelgapSource != "" {
-		_, _ = fmt.Fprintf(tw, "relgap registry\t%s\n", res.RelgapSource)
+		head = append(head, []string{"relgap registry", res.RelgapSource})
 	}
 	if res.Confidence != "" {
-		_, _ = fmt.Fprintf(tw, "confidence\t%s\n", res.Confidence)
+		head = append(head, []string{"confidence", res.Confidence})
 	}
 	if len(res.Alternatives) > 0 {
-		_, _ = fmt.Fprintf(tw, "alternatives\t%s\n", strings.Join(res.Alternatives, ", "))
+		head = append(head, []string{"alternatives", strings.Join(res.Alternatives, ", ")})
 	}
-	_, _ = fmt.Fprintln(tw)
-	_, _ = fmt.Fprintln(tw, "FIELD\tVALUE\tSOURCE")
+	var fields [][]string
 	row := func(key, value string) {
 		if value == "" {
 			return
 		}
-		_, _ = fmt.Fprintf(tw, "%s\t%s\t%s\n", key, value, provenance(res, key))
+		fields = append(fields, []string{key, value, provenance(res, key)})
 	}
 	row("name", t.Name)
 	row("aliases", strings.Join(t.Aliases, ", "))
@@ -193,7 +194,7 @@ func writeResolution(d *app.Deps, res *registry.Resolution) error {
 		row("sources", "auto-discovery")
 	}
 	for i, s := range t.Sources {
-		_, _ = fmt.Fprintf(tw, "sources.%d\t%s\t%s\n", i, sourceText(s), provenance(res, "sources"))
+		fields = append(fields, []string{"sources." + strconv.Itoa(i), sourceText(s), provenance(res, "sources")})
 	}
 	if t.EOL != nil {
 		row("eol", strings.TrimSpace(t.EOL.Product+" "+t.EOL.Cycle))
@@ -205,7 +206,8 @@ func writeResolution(d *app.Deps, res *registry.Resolution) error {
 	row("osv", strings.Join(osv, ", "))
 	row("breaking_markers", strings.Join(t.BreakingMarkers, ", "))
 	row("bin", strings.Join(t.Bin, ", "))
-	if err := tw.Flush(); err != nil {
+	out := term.Table(nil, term.Rows(head)) + "\n" + term.Table([]string{"FIELD", "VALUE", "SOURCE"}, term.Rows(fields))
+	if _, err := io.WriteString(d.Stdout, out); err != nil {
 		return fmt.Errorf("write resolution: %w", err)
 	}
 	return nil

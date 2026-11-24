@@ -287,6 +287,20 @@ func TestDigestTextOneVersion(t *testing.T) {
 		Tool: "mod", Repo: "ws/mod", From: "2.0.0", To: "2.1.0", Versions: []report.Version{{Version: "2.1.0"}},
 	}}}
 	var buf bytes.Buffer
-	require.NoError(t, render.DigestText(&buf, d, false))
+	require.NoError(t, render.DigestText(&buf, d, 0))
 	assert.Contains(t, buf.String(), "\n1 version: 2.1.0\n")
+}
+
+func TestDigestTextSanitized(t *testing.T) {
+	t.Parallel()
+	d := &report.Digest{Tools: []report.ToolDigest{{
+		Tool: "mod", Repo: "ws/mod", From: "2.0.0", To: "2.1.0",
+		Versions: []report.Version{{Version: "2.1.0"}},
+		Entries: []classify.Entry{{
+			Version: "2.1.0", Kind: classify.KindFix, Text: "fix\x1b]52;c;aGk=\x07 the \x1b[2Jparser",
+		}},
+	}}}
+	var buf bytes.Buffer
+	require.NoError(t, render.DigestText(&buf, d, 0))
+	assert.Contains(t, buf.String(), "    - fix^[]52;c;aGk=^G the ^[[2Jparser\n")
 }

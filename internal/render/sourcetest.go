@@ -9,6 +9,7 @@ import (
 	"github.com/sassdavid/relgap/internal/classify"
 	"github.com/sassdavid/relgap/internal/registry"
 	"github.com/sassdavid/relgap/internal/report"
+	"github.com/sassdavid/relgap/internal/term"
 )
 
 // SourceTestText writes what each source of a registry entry produced as an aligned table,
@@ -36,20 +37,20 @@ func SourceTestText(w io.Writer, t *report.SourceTest) error {
 			{text: strconv.Itoa(s.Counts[classify.KindSecurity])},
 		})
 	}
-	writeAligned(&b, rows, false)
+	writeAligned(&b, rows)
 	for _, s := range all {
 		if len(s.URLs) == 0 && len(s.Warnings) == 0 && s.Error == "" {
 			continue
 		}
 		b.WriteString("\n" + sourceName(s) + ":\n")
 		for _, u := range s.URLs {
-			b.WriteString("  " + u + "\n")
+			b.WriteString("  " + term.Sanitize(u) + "\n")
 		}
 		for _, warn := range s.Warnings {
-			b.WriteString("  warning: " + warn + "\n")
+			b.WriteString("  " + term.Warn.Paint("warning: "+warn) + "\n")
 		}
 		if s.Error != "" {
-			b.WriteString("  error: " + s.Error + "\n")
+			b.WriteString("  " + term.Bad.Paint("error: "+s.Error) + "\n")
 		}
 	}
 	if _, err := io.WriteString(w, b.String()); err != nil {

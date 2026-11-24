@@ -6,21 +6,29 @@ import (
 	"path"
 	"strconv"
 	"strings"
-	"text/tabwriter"
 
 	"github.com/sassdavid/relgap/internal/scan"
+	"github.com/sassdavid/relgap/internal/term"
 )
 
 // ApproxMark prefixes a pin value that allows more than one version.
 const ApproxMark = "≈"
 
-// PinsText writes pins as an aligned table. unresolved swaps the TOOL column for RAW NAME.
+// PinsText writes pins as a table, pins with no known tool faint. unresolved swaps the TOOL
+// column for RAW NAME.
 func PinsText(w io.Writer, pins []scan.Pin, unresolved bool) error {
-	tw := tabwriter.NewWriter(w, 0, 0, 2, ' ', 0) //nolint:mnd // column padding
-	for _, row := range pinRows(pins, unresolved, plain) {
-		_, _ = fmt.Fprintln(tw, strings.Join(row, "\t"))
+	rows := pinRows(pins, unresolved, plain)
+	body := make([][]term.Cell, len(rows)-1)
+	for i, r := range rows[1:] {
+		body[i] = make([]term.Cell, len(r))
+		for j, s := range r {
+			body[i][j] = term.Cell{Text: s}
+		}
+		if r[0] == noValue {
+			body[i][0].Tone = term.Muted
+		}
 	}
-	if err := tw.Flush(); err != nil {
+	if _, err := io.WriteString(w, term.Table(rows[0], body)); err != nil {
 		return fmt.Errorf("write pins: %w", err)
 	}
 	return nil

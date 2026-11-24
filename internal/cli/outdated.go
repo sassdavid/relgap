@@ -358,7 +358,7 @@ func writeOutdated(w io.Writer, f render.Format, d *app.Deps, g *globals, c *com
 		sarif: func() *sarif.Log {
 			return render.OutdatedSARIF(c.out, c.scan.Problems, buildinfo.Get().Version)
 		},
-		text: func(w io.Writer, color bool) error { return render.OutdatedText(w, c.out, color) },
+		text: func(w io.Writer, width int) error { return render.OutdatedText(w, c.out, width) },
 	}.write(w, f, d, g)
 }
 
@@ -368,8 +368,8 @@ type reportWriter struct {
 	errors []render.Error // the JSON envelope's errors
 	md     func(io.Writer) error
 	sarif  func() *sarif.Log
-	text   func(w io.Writer, color bool) error // tty and plain
-	vex    func(io.Writer) error               // openvex; nil for a command without it
+	text   func(w io.Writer, width int) error // tty and plain, wrapped at width
+	vex    func(io.Writer) error              // openvex; nil for a command without it
 }
 
 func (r reportWriter) write(w io.Writer, f render.Format, d *app.Deps, g *globals) error {
@@ -390,9 +390,7 @@ func (r reportWriter) write(w io.Writer, f render.Format, d *app.Deps, g *global
 		}
 	case render.FormatAuto, render.FormatTTY, render.FormatPlain, render.FormatCSV:
 	}
-	color := f == render.FormatTTY &&
-		render.UseColor(render.ColorMode(g.color), d.Env.Lookup, app.IsTerminal(d.Stdout))
-	return r.text(w, color)
+	return r.text(w, g.textWidth(f))
 }
 
 // errors lists the files that didn't parse and the pins GitHub failed for.
@@ -431,8 +429,12 @@ func (c *comparison) warn(cmd *cobra.Command, d *app.Deps) {
 	warnLatestAffected(cmd.Context(), d, c.out.Fixes())
 	warnSuppression(cmd.Context(), d, c.rules, true)
 	if n := countUnresolved(c.scan.Pins, c.ignore); n > 0 {
-		_, _ = fmt.Fprintf(d.Stderr, "%s: %d %s no known tool; list them with 'relgap pins --unresolved'\n",
-			config.AppName, n, plural(n, "pin has", "pins have"))
+		d.Logger.WarnContext(
+			cmd.Context(),
+			"pins with no known tool; list them with 'relgap pins --unresolved'",
+			"count",
+			n,
+		)
 	}
 }
 

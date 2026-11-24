@@ -15,7 +15,6 @@ import (
 	"github.com/sassdavid/relgap/internal/buildinfo"
 	"github.com/sassdavid/relgap/internal/classify"
 	"github.com/sassdavid/relgap/internal/complete"
-	"github.com/sassdavid/relgap/internal/config"
 	"github.com/sassdavid/relgap/internal/github"
 	"github.com/sassdavid/relgap/internal/httpx"
 	"github.com/sassdavid/relgap/internal/render"
@@ -255,15 +254,17 @@ func writeDigest(
 	errs []render.Error,
 	notes []string,
 ) error {
+	// Text has no place for errors, so formats other than JSON also log them.
+	if g.outFormat != render.FormatJSON {
+		for _, e := range errs {
+			d.Logger.WarnContext(cmd.Context(), "digest failed", "target", e.Target, "error", e.Message)
+		}
+	}
 	return g.sink(cmd, d).Write(func(w io.Writer, f render.Format) error {
 		if f == render.FormatJSON {
 			env := render.NewEnvelope(buildinfo.Get().Version, d.Clock(), data)
 			env.Errors = errs
 			return render.JSON(w, env)
-		}
-		// Text has no place for errors, so the other formats also name them on stderr.
-		for _, e := range errs {
-			_, _ = fmt.Fprintf(d.Stderr, "%s: failed: %s: %s\n", config.AppName, e.Target, e.Message)
 		}
 		switch f {
 		case render.FormatMD:
@@ -271,9 +272,7 @@ func writeDigest(
 		case render.FormatAuto, render.FormatTTY, render.FormatPlain, render.FormatCSV, render.FormatSARIF,
 			render.FormatGitHub, render.FormatOpenVEX, render.FormatJSON:
 		}
-		color := f == render.FormatTTY &&
-			render.UseColor(render.ColorMode(g.color), d.Env.Lookup, app.IsTerminal(d.Stdout))
-		return render.DigestText(w, data, color)
+		return render.DigestText(w, data, g.textWidth(f))
 	})
 }
 
@@ -311,7 +310,7 @@ func runDigestProject(cmd *cobra.Command, d *app.Deps, g *globals, f digestFlags
 		return err
 	}
 	run.warn(cmd, d)
-	run.notDigested(d, missed)
+	run.notDigested(cmd.Context(), d, missed)
 	return run.exit(cmd, d, gate)
 }
 
@@ -329,9 +328,9 @@ func (c *comparison) missed() []string {
 	return out
 }
 
-// notDigested tells on stderr which compared pins have no digest and why; other are the notes
-// from [comparison.missed].
-func (c *comparison) notDigested(d *app.Deps, other []string) {
+// notDigested logs which compared pins have no digest and why; other are the notes from
+// [comparison.missed].
+func (c *comparison) notDigested(ctx context.Context, d *app.Deps, other []string) {
 	var latest []string
 	skipped := 0
 	for _, p := range c.out.Pins {
@@ -344,19 +343,13 @@ func (c *comparison) notDigested(d *app.Deps, other []string) {
 		}
 	}
 	if len(latest) > 0 {
-		_, _ = fmt.Fprintf(
-			d.Stderr,
-			"%s: at the latest version, no digest: %s\n",
-			config.AppName,
-			strings.Join(latest, ", "),
-		)
+		d.Logger.WarnContext(ctx, "at the latest version, no digest", "pins", strings.Join(latest, ", "))
 	}
 	for _, o := range other {
-		_, _ = fmt.Fprintf(d.Stderr, "%s: not digested: %s\n", config.AppName, o)
+		d.Logger.WarnContext(ctx, "not digested", "pin", o)
 	}
 	if skipped > 0 {
-		_, _ = fmt.Fprintf(d.Stderr, "%s: %d %s skipped; 'relgap outdated --format json' says why\n",
-			config.AppName, skipped, plural(skipped, "pin", "pins"))
+		d.Logger.WarnContext(ctx, "pins skipped; 'relgap outdated --format json' says why", "count", skipped)
 	}
 }
 

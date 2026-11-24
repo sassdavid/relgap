@@ -164,12 +164,11 @@ func writePins(
 		return err
 	}
 	if unresolved && len(pins) > 0 {
-		_, _ = fmt.Fprintf(d.Stderr, "%s: map these names to tools with aliases.<raw name>: <tool> in %s\n",
-			config.AppName, config.ProjectFileName)
+		d.Logger.WarnContext(cmd.Context(), "map these names to tools with aliases.<raw name>: <tool>",
+			"file", config.ProjectFileName)
 	}
 	if n := countUnresolved(res.Pins, ignore); !unresolved && n > 0 {
-		_, _ = fmt.Fprintf(d.Stderr, "%s: %d %s no known tool; list them with --unresolved\n",
-			config.AppName, n, plural(n, "pin has", "pins have"))
+		d.Logger.WarnContext(cmd.Context(), "pins with no known tool; list them with --unresolved", "count", n)
 	}
 	return nil
 }

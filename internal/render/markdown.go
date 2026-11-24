@@ -15,7 +15,7 @@ import (
 // "Not digested" section, which lists failed digests and pins without a digest, comes first so
 // truncation never cuts it, then a --summarize summary labelled as LLM output.
 func DigestMarkdown(w io.Writer, d *report.Digest, failed []Error, notes []string) error {
-	mw := &textWriter{w: w}
+	mw := &textWriter{}
 	markdownMissed(mw, failed, notes)
 	if d.Summary != nil {
 		mw.summaryMarkdown(d.Summary, sourceURLs(d))
@@ -27,8 +27,8 @@ func DigestMarkdown(w io.Writer, d *report.Digest, failed []Error, notes []strin
 		}
 		markdownTool(mw, &t)
 	}
-	if mw.err != nil {
-		return fmt.Errorf("write digest: %w", mw.err)
+	if _, err := io.WriteString(w, mw.b.String()); err != nil {
+		return fmt.Errorf("write digest: %w", err)
 	}
 	return nil
 }

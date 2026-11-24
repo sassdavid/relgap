@@ -1,0 +1,46 @@
+# Color follows the stream, not the format flag alone. Output here is a pipe, so auto color is
+# off; CLICOLOR_FORCE and FORCE_COLOR turn it on and pick the tty layout, NO_COLOR beats both,
+# --format plain never colors and --color always beats NO_COLOR. The harness sets NO_COLOR=1.
+env TEST_NOW=2026-11-11T12:00:00Z
+env HTTPS_PROXY=http://127.0.0.1:1
+env HTTP_PROXY=http://127.0.0.1:1
+gentree tree
+
+exec relgap drift tree
+! stdout '\x1b'
+stdout '^tree/team-00/repo-00  1\.26\.1\* '
+
+env NO_COLOR=
+exec relgap drift tree
+! stdout '\x1b'
+
+env CLICOLOR_FORCE=1
+exec relgap drift tree
+stdout '^tree/team-00/repo-00  \x1b\[33m1\.26\.1\*\x1b\[m '
+! stdout ' +$'
+
+env CLICOLOR_FORCE=0
+exec relgap drift tree
+! stdout '\x1b'
+
+env CLICOLOR_FORCE=
+env FORCE_COLOR=1
+exec relgap drift tree
+stdout '\x1b\[33m1\.26\.1\*\x1b\[m'
+
+exec relgap drift tree --format plain
+! stdout '\x1b'
+
+exec relgap drift tree --color never
+! stdout '\x1b'
+
+env NO_COLOR=1
+exec relgap drift tree
+! stdout '\x1b'
+
+env FORCE_COLOR=
+exec relgap drift tree --color always
+stdout '\x1b\[33m1\.26\.1\*\x1b\[m'
+
+exec relgap drift tree --color always --format json
+! stdout '\x1b'
