@@ -124,18 +124,29 @@ reasoning; tfcensus shares the code.
   GITHUB_TOKEN or gh, the repository from `GITHUB_REPOSITORY` and the pull request from the
   `GITHUB_EVENT_PATH` event. Exit 2 when either is missing, 4 when GitHub refuses the token.
 - Digest Markdown silences the release notes it quotes, as Renovate's `sanitizeMarkdown` does
-  for its pull request bodies: a zero-width space (`&#8203;`) follows each `@`, `#` and `GH-`
-  that would mention a user or reference an issue, and github.com issue, pull request and
-  discussion links go through `redirect.github.com`, which GitHub's autolink docs give for links
-  without a backlink. Code spans and code blocks stay as they are, and JSON keeps the original
-  text. A comment on sassdavid/action-test#1 quoted jq's notes and notified about 50 authors
+  for its pull request bodies: a zero-width space (`&#8203;`) follows each `@`, `#`, `GH-` and
+  `/issues/`, `/pull/` or `/discussions/` before a number that would mention a user or reference
+  an issue, and github.com issue, pull request and discussion links go through
+  `redirect.github.com`, which GitHub's autolink docs give for links without a backlink. Code
+  spans and code blocks stay as they are, and JSON keeps the original text. A comment on
+  sassdavid/action-test#1 quoted jq's notes and notified about 50 authors
   (sassdavid/relgap-action#13).
-- Outdated and drift Markdown stay as they are: they quote no third-party text. Their errors
+- The rules follow what GitHub links, checked on 2026-11-24 with its Markdown API, which renders
+  as comments do. An `@` or `GH-` counts after anything but an ASCII letter or digit: `感谢@user`,
+  `é@user` and `_@user_` (emphasis) link. Character references count as the character they
+  stand for (`&#64;user`, `&#35;1`, `@&#103;ithub`), and a reference without a semicolon is
+  broken too. `o/r/issues/1` is a reference after any host or none. A URL is left alone only
+  when GitHub links it, which needs a valid domain, so `https://localhost/@user` is scanned.
+  Code is found after table rows split into cells, as GitHub splits them. Release-note text
+  doesn't change: the new rules left 526 release bodies from 18 projects as they were.
+- Outdated and drift Markdown quote no third-party text, so they aren't silenced. Their errors
   carry a URL and a status code, never a response body, and the rest is relgap's own text or
-  comes from the user's files and config. A scoped npm name such as `npm:@types/node` is no mention, since GitHub reads `@scope/name` as a
-  team, and only organization members can notify a team. A zero-width space would break the
-  name for someone who copies it back into a config file. Renovate and Dependabot also silence
-  only the text they quote.
+  comes from the user's files and config. Every Markdown format (digest, outdated, drift, audit
+  and pins) writes a tool name that silence would change, such as `npm:@types/node`, as a code
+  span: GitHub links nothing in code, and the name copies as written. Without it GitHub reads
+  `@types/node` as a team, which notifies only when the comment's token belongs to a member of
+  that organization. A name with a backtick is silenced instead. Renovate and Dependabot also
+  silence only the text they quote.
 - `docs/ci/outdated.yml` is the example workflow: one `outdated` run with `--out`, the step
   summary, the SARIF upload and the comment on pull requests from the same repository.
 
@@ -205,7 +216,11 @@ the exit codes.
   `internal/render` checks the footer counts. `out.txtar` checks `--md-max-chars` end to end.)
 - [x] Digest Markdown mentions nobody and references no issue: mentions, `#123`, `GH-123` and
   `owner/repo#123` get a zero-width space, issue links go through `redirect.github.com`, and code,
-  emails and other URLs stay as they are (`TestDigestMarkdownSilence`; the digest goldens).
+  emails and other URLs stay as they are (`TestDigestMarkdownSilence`; the digest goldens). The
+  cases GitHub links after a non-ASCII letter, through a character reference, in an issue path,
+  in a URL without a valid domain and across table cells are silenced too
+  (`TestDigestMarkdownSilence`), and tool names that would need it are code spans in every
+  Markdown format (`TestMarkdownNames`).
 - [x] `outdated` over a fixture project with 10 pins matches golden files in tty, plain, md and json, and each pin's counts equal those of the full digest `current..latest` (`TestSpec_output_and_ci_5`).
 - [x] `drift` over a generated tree of 60 repos matches golden files in tty, plain, md and json, marks constraint pins `≈`, sends no request (a refusing proxy and an empty request log), and `--fail-on drift` exits 3 (`TestSpec_output_and_ci_6`).
 - [x] `drift --latest` over the same tree adds the latest versions of 10 tools (8 until M8 added the node and terraform-provider-aws entries) from 1 GraphQL request, and a second run answers from the cache with 0 requests (`TestSpec_output_and_ci_7`).

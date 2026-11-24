@@ -11,9 +11,9 @@ import (
 // FixTitle heads the list of fix targets.
 const FixTitle = "Fix targets"
 
-// fixLine describes the fix target of version of tool: the release to move to, the advisories
-// no release fixes, and the advisories the latest release still has.
-func fixLine(tool, version string, f *enrich.Fix) string {
+// fixLine describes the fix target of version of the tool shown as name: the release to move to,
+// the advisories no release fixes, and the advisories the latest release still has.
+func fixLine(name, version string, f *enrich.Fix) string {
 	var parts []string
 	switch {
 	case f.Lowest != "" && f.LowestInLine == "":
@@ -29,7 +29,7 @@ func fixLine(tool, version string, f *enrich.Fix) string {
 	if f.LatestAffected {
 		parts = append(parts, LatestAffected(f))
 	}
-	return toolName(tool) + " " + version + ": " + strings.Join(parts, "; ")
+	return name + " " + version + ": " + strings.Join(parts, "; ")
 }
 
 // LatestAffected is the warning for a fix target whose latest release still has advisories,
@@ -57,10 +57,10 @@ func fixText(f *enrich.Fix, id string) string {
 }
 
 // fixLines describes each fix target.
-func fixLines(fixes []report.ToolFix) []string {
+func fixLines(fixes []report.ToolFix, code func(string) string) []string {
 	var out []string
 	for _, t := range fixes {
-		out = append(out, fixLine(t.Tool, t.Version, t.Fix))
+		out = append(out, fixLine(code(toolName(t.Tool)), t.Version, t.Fix))
 	}
 	return out
 }

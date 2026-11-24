@@ -193,8 +193,8 @@ func TestDigestMarkdownSilence(t *testing.T) {
 			`<a href="https://redirect.github.com/o/r/pull/2">@&#8203;x</a>`,
 		},
 		{
-			"other URLs", "https://github.com/o/r/releases/tag/v1 https://x.test/@me/#1 [a](#2)",
-			"https://github.com/o/r/releases/tag/v1 https://x.test/@me/#1 [a](#2)",
+			"other URLs", "https://github.com/o/r/releases/tag/v1 https://x.test/@me/#1 [a](https://x.test/#2) [b](#3)",
+			"https://github.com/o/r/releases/tag/v1 https://x.test/@me/#1 [a](https://x.test/#2) [b](#&#8203;3)",
 		},
 		{"not a mention", "mail a@b.test, pkg@1.2.3, &#123; C# @ #x", "mail a@b.test, pkg@1.2.3, &#123; C# @ #x"},
 		{"code span", "use `@types/node` and `#1` @x", "use `@types/node` and `#1` @&#8203;x"},
@@ -203,6 +203,41 @@ func TestDigestMarkdownSilence(t *testing.T) {
 			"removed x\n\n  ```sh\n  # @x #1 https://github.com/o/r/pull/1\n  ```\n\n  @&#8203;y",
 		},
 		{"already silenced", "@&#8203;x #&#8203;1", "@&#8203;x #&#8203;1"},
+		{
+			"after a non-ASCII letter", "感谢@itchyny é@a Ж@b 中GH-1 ü#2",
+			"感谢@&#8203;itchyny é@&#8203;a Ж@&#8203;b 中GH-&#8203;1 ü#&#8203;2",
+		},
+		{"after an ASCII letter or digit", "x@y 1@y xGH-1", "x@y 1@y xGH-1"},
+		{
+			"emphasis", "_@a_ __@b__ *@c* ~~@d~~ _GH-1_ x_@e",
+			"_@&#8203;a_ __@&#8203;b__ *@&#8203;c* ~~@&#8203;d~~ _GH-&#8203;1_ x_@&#8203;e",
+		},
+		{
+			"character references", "&#35;1 &#x23;2 &num;3 #&#49; o/r&#35;4 GH&#45;5 &#71;H-6",
+			"&#35;&#8203;1 &#x23;&#8203;2 &num;&#8203;3 #&#8203;&#49; o/r&#35;&#8203;4 GH&#45;&#8203;5 &#71;H-&#8203;6",
+		},
+		{
+			"mention by reference", "&#64;a &#x40;b &commat;c @&#103;ithub &#97;@d",
+			"&#64;&#8203;a &#x40;&#8203;b &commat;&#8203;c @&#8203;&#103;ithub &#97;@&#8203;d",
+		},
+		{
+			"reference without a semicolon", "<b>&#64github &#x40github &#35 1</b> Q&#1 x",
+			"<b>&#&#8203;64github &#&#8203;x40github &#&#8203;35 1</b> Q&#&#8203;1 x",
+		},
+		{
+			"issue path without a scheme",
+			"see github.com/o/r/issues/1. (GitHub.com/o/r/pull/2) redirect.github.com/o/r/pull/3 o/r/discussions/4 o/r#5",
+			"see github.com/o/r/issues/&#8203;1. (GitHub.com/o/r/pull/&#8203;2) redirect.github.com/o/r/pull/&#8203;3 " +
+				"o/r/discussions/&#8203;4 o/r#&#8203;5",
+		},
+		{
+			"URL GitHub doesn't link", "https://localhost/@a https://x_y.z_w/#1 ](https://localhost/@b) ](@c)",
+			"https://localhost/@&#8203;a https://x_y.z_w/#&#8203;1 ](https://localhost/@&#8203;b) ](@&#8203;c)",
+		},
+		{
+			"code across table cells", "x\n\n| a | b | c |\n| --- | --- | --- |\n| `c @d | e` | `@f` |",
+			"x\n\n  | a | b | c |\n  | --- | --- | --- |\n  | `c @&#8203;d | e` | `@f` |",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

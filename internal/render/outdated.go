@@ -33,7 +33,7 @@ type cell struct {
 // outdated versions yellow, current ones green and breaking counts red (the tty format).
 // Skipped pins are left out; JSON lists them.
 func OutdatedText(w io.Writer, o *report.Outdated, color bool) error {
-	rows, notes := outdatedRows(o)
+	rows, notes := outdatedRows(o, plain)
 	var b strings.Builder
 	writeAligned(&b, rows, color)
 	if len(notes) > 0 {
@@ -42,13 +42,13 @@ func OutdatedText(w io.Writer, o *report.Outdated, color bool) error {
 			b.WriteString("  " + n + "\n")
 		}
 	}
-	if lines := fixLines(o.Fixes()); len(lines) > 0 {
+	if lines := fixLines(o.Fixes(), plain); len(lines) > 0 {
 		b.WriteString("\n" + FixTitle + ":\n")
 		for _, line := range lines {
 			b.WriteString("  " + line + "\n")
 		}
 	}
-	if lines := outdatedSuppressedLines(o); len(lines) > 0 {
+	if lines := outdatedSuppressedLines(o, plain); len(lines) > 0 {
 		b.WriteString("\n" + SuppressedTitle + ":\n")
 		for _, line := range lines {
 			b.WriteString("  " + line + "\n")
@@ -56,13 +56,13 @@ func OutdatedText(w io.Writer, o *report.Outdated, color bool) error {
 	}
 	if len(o.Unchecked) > 0 {
 		b.WriteString("\n" + UncheckedTitle + ":\n")
-		for _, line := range uncheckedLines(o.Unchecked) {
+		for _, line := range uncheckedLines(o.Unchecked, plain) {
 			b.WriteString("  " + line + "\n")
 		}
 	}
 	if o.Binaries != nil {
 		b.WriteString("\nBinaries (" + enrich.ReachabilityNote + "):\n")
-		for _, line := range binaryLines(o.Binaries) {
+		for _, line := range binaryLines(o.Binaries, plain) {
 			b.WriteString("  " + line + "\n")
 		}
 	}
@@ -99,7 +99,7 @@ func writeAligned(b *strings.Builder, rows [][]cell, color bool) {
 
 // OutdatedMarkdown writes the pins as a Markdown table followed by notes.
 func OutdatedMarkdown(w io.Writer, o *report.Outdated) error {
-	rows, notes := outdatedRows(o)
+	rows, notes := outdatedRows(o, mdCode)
 	var b strings.Builder
 	writeMarkdownTable(&b, rows, "| --- | --- | --- | ---: | ---: | ---: | --- | ---: | --- |")
 	if len(notes) > 0 {
@@ -108,13 +108,13 @@ func OutdatedMarkdown(w io.Writer, o *report.Outdated) error {
 			b.WriteString("- " + mdCell(n) + "\n")
 		}
 	}
-	if lines := fixLines(o.Fixes()); len(lines) > 0 {
+	if lines := fixLines(o.Fixes(), mdCode); len(lines) > 0 {
 		b.WriteString("\n" + FixTitle + ":\n\n")
 		for _, line := range lines {
 			b.WriteString("- " + mdCell(line) + "\n")
 		}
 	}
-	if lines := outdatedSuppressedLines(o); len(lines) > 0 {
+	if lines := outdatedSuppressedLines(o, mdCode); len(lines) > 0 {
 		b.WriteString("\n" + SuppressedTitle + ":\n\n")
 		for _, line := range lines {
 			b.WriteString("- " + mdCell(line) + "\n")
@@ -122,13 +122,13 @@ func OutdatedMarkdown(w io.Writer, o *report.Outdated) error {
 	}
 	if len(o.Unchecked) > 0 {
 		b.WriteString("\n" + UncheckedTitle + ":\n\n")
-		for _, line := range uncheckedLines(o.Unchecked) {
+		for _, line := range uncheckedLines(o.Unchecked, mdCode) {
 			b.WriteString("- " + mdCell(line) + "\n")
 		}
 	}
 	if o.Binaries != nil {
 		b.WriteString("\nBinaries (" + enrich.ReachabilityNote + "):\n\n")
-		for _, line := range binaryLines(o.Binaries) {
+		for _, line := range binaryLines(o.Binaries, mdCode) {
 			b.WriteString("- " + mdCell(line) + "\n")
 		}
 	}
@@ -157,7 +157,7 @@ func mdCell(s string) string {
 	return strings.ReplaceAll(strings.ReplaceAll(s, "|", `\|`), "\n", " ")
 }
 
-func outdatedRows(o *report.Outdated) ([][]cell, []string) {
+func outdatedRows(o *report.Outdated, code func(string) string) ([][]cell, []string) {
 	header := []string{headTool, "CURRENT", "LATEST", "BEHIND", "BREAKING", "DEPRECATION", "EOL", "VULNS", "PIN"}
 	rows := [][]cell{make([]cell, len(header))}
 	for i, h := range header {
@@ -169,14 +169,14 @@ func outdatedRows(o *report.Outdated) ([][]cell, []string) {
 		if p.Status == report.StatusSkipped {
 			continue
 		}
-		rows = append(rows, outdatedRow(p))
-		if n := outdatedNote(p); n != "" {
+		rows = append(rows, outdatedRow(p, code))
+		if n := outdatedNote(p, code); n != "" {
 			notes = append(notes, n)
 		}
 		if p.EOL != nil && p.EOL.Current != nil && p.EOL.Current.Note != "" {
 			notes = append(
 				notes,
-				fmt.Sprintf("%s %s (%s): %s", toolName(p.Tool), p.Current, PinLocation(p.Pin.Location),
+				fmt.Sprintf("%s %s (%s): %s", code(toolName(p.Tool)), p.Current, PinLocation(p.Pin.Location),
 					p.EOL.Current.Note),
 			)
 		}
@@ -184,7 +184,7 @@ func outdatedRows(o *report.Outdated) ([][]cell, []string) {
 	return rows, notes
 }
 
-func outdatedRow(p *report.OutdatedPin) []cell {
+func outdatedRow(p *report.OutdatedPin, code func(string) string) []cell {
 	current := p.Current
 	if current == "" {
 		current = p.Pin.Value
@@ -193,7 +193,7 @@ func outdatedRow(p *report.OutdatedPin) []cell {
 		current = ApproxMark + current
 	}
 	row := []cell{
-		{text: toolName(p.Tool)},
+		{text: code(toolName(p.Tool))},
 		{text: current},
 		{text: noValue},
 		{text: noValue},
@@ -288,7 +288,7 @@ func vulnCell(p *report.OutdatedPin) cell {
 const UncheckedTitle = "Not checked for vulnerabilities (VULNS ?)"
 
 // uncheckedLines describes each unchecked tool version: its reason and where it is pinned.
-func uncheckedLines(us []report.Unchecked) []string {
+func uncheckedLines(us []report.Unchecked, code func(string) string) []string {
 	out := make([]string, 0, len(us))
 	for _, u := range us {
 		locs := make([]string, len(u.Pins))
@@ -297,7 +297,7 @@ func uncheckedLines(us []report.Unchecked) []string {
 		}
 		out = append(
 			out,
-			fmt.Sprintf("%s %s (%s): %s", toolName(u.Tool), u.Version, strings.Join(locs, ", "), u.Reason),
+			fmt.Sprintf("%s %s (%s): %s", code(toolName(u.Tool)), u.Version, strings.Join(locs, ", "), u.Reason),
 		)
 	}
 	return out
@@ -305,7 +305,7 @@ func uncheckedLines(us []report.Unchecked) []string {
 
 // binaryLines describes each installed executable, its unsuppressed vulnerabilities and the
 // suppressed ones with the reason.
-func binaryLines(bins []*enrich.Binary) []string {
+func binaryLines(bins []*enrich.Binary, code func(string) string) []string {
 	if len(bins) == 0 {
 		return []string{"no Go executables of the pinned tools found"}
 	}
@@ -327,7 +327,7 @@ func binaryLines(bins []*enrich.Binary) []string {
 			}
 			ids = append(ids, id)
 		}
-		line := fmt.Sprintf("%s %s (%s): %d %s", b.Tool, b.Path, built, len(ids),
+		line := fmt.Sprintf("%s %s (%s): %d %s", code(b.Tool), b.Path, built, len(ids),
 			pinsWord(len(ids), "vulnerability", "vulnerabilities"))
 		if len(ids) > 0 {
 			line += ": " + strings.Join(ids, ", ")
@@ -341,8 +341,8 @@ func binaryLines(bins []*enrich.Binary) []string {
 }
 
 // outdatedNote explains a non-exact pin or a pin that wasn't compared.
-func outdatedNote(p *report.OutdatedPin) string {
-	where := fmt.Sprintf("%s %s (%s)", toolName(p.Tool), p.Pin.Value, PinLocation(p.Pin.Location))
+func outdatedNote(p *report.OutdatedPin, code func(string) string) string {
+	where := fmt.Sprintf("%s %s (%s)", code(toolName(p.Tool)), p.Pin.Value, PinLocation(p.Pin.Location))
 	switch {
 	case p.Status == report.StatusUnknown || p.Status == report.StatusError:
 		return where + ": " + p.Note

@@ -26,28 +26,28 @@ func AuditRules() []string { return []string{RuleFailed, RuleUnchecked} }
 func AuditText(w io.Writer, a *report.Audit, color bool) error {
 	var b strings.Builder
 	if len(a.Findings) > 0 {
-		writeAligned(&b, auditRows(a), color)
+		writeAligned(&b, auditRows(a, plain), color)
 		b.WriteString("\nAdvisories:\n")
 		for _, line := range advisoryLines(a) {
 			b.WriteString("  " + line + "\n")
 		}
 		b.WriteString("\n")
 	}
-	if lines := fixLines(a.Fixes()); len(lines) > 0 {
+	if lines := fixLines(a.Fixes(), plain); len(lines) > 0 {
 		b.WriteString(FixTitle + ":\n")
 		for _, line := range lines {
 			b.WriteString("  " + line + "\n")
 		}
 		b.WriteString("\n")
 	}
-	if lines := auditSuppressedLines(a); len(lines) > 0 {
+	if lines := auditSuppressedLines(a, plain); len(lines) > 0 {
 		b.WriteString(SuppressedTitle + ":\n")
 		for _, line := range lines {
 			b.WriteString("  " + line + "\n")
 		}
 		b.WriteString("\n")
 	}
-	if lines := auditFailedLines(a); len(lines) > 0 {
+	if lines := auditFailedLines(a, plain); len(lines) > 0 {
 		b.WriteString("Failed:\n")
 		for _, line := range lines {
 			b.WriteString("  " + line + "\n")
@@ -56,7 +56,7 @@ func AuditText(w io.Writer, a *report.Audit, color bool) error {
 	}
 	if len(a.Unchecked) > 0 {
 		b.WriteString(AuditUncheckedTitle + ":\n")
-		for _, line := range uncheckedLines(a.Unchecked) {
+		for _, line := range uncheckedLines(a.Unchecked, plain) {
 			b.WriteString("  " + line + "\n")
 		}
 		b.WriteString("\n")
@@ -75,7 +75,7 @@ func AuditText(w io.Writer, a *report.Audit, color bool) error {
 func AuditMarkdown(w io.Writer, a *report.Audit, failed []Error) error {
 	var b strings.Builder
 	if len(a.Findings) > 0 {
-		rows := auditRows(a)
+		rows := auditRows(a, mdCode)
 		writeMarkdownTable(&b, rows, strings.Repeat("| --- ", len(rows[0]))+"|")
 		b.WriteString("\nAdvisories:\n\n")
 		for _, line := range advisoryLines(a) {
@@ -83,23 +83,23 @@ func AuditMarkdown(w io.Writer, a *report.Audit, failed []Error) error {
 		}
 		b.WriteString("\n")
 	}
-	if lines := fixLines(a.Fixes()); len(lines) > 0 {
+	if lines := fixLines(a.Fixes(), mdCode); len(lines) > 0 {
 		b.WriteString(FixTitle + ":\n\n")
 		for _, line := range lines {
 			b.WriteString("- " + mdCell(line) + "\n")
 		}
 		b.WriteString("\n")
 	}
-	if lines := auditSuppressedLines(a); len(lines) > 0 {
+	if lines := auditSuppressedLines(a, mdCode); len(lines) > 0 {
 		b.WriteString(SuppressedTitle + ":\n\n")
 		for _, line := range lines {
 			b.WriteString("- " + mdCell(line) + "\n")
 		}
 		b.WriteString("\n")
 	}
-	lines := auditFailedLines(a)
+	lines := auditFailedLines(a, mdCode)
 	for _, e := range failed {
-		lines = append(lines, errorLine(e))
+		lines = append(lines, errorLine(e, mdCode))
 	}
 	if len(lines) > 0 {
 		b.WriteString("Failed:\n\n")
@@ -110,7 +110,7 @@ func AuditMarkdown(w io.Writer, a *report.Audit, failed []Error) error {
 	}
 	if len(a.Unchecked) > 0 {
 		b.WriteString(AuditUncheckedTitle + ":\n\n")
-		for _, line := range uncheckedLines(a.Unchecked) {
+		for _, line := range uncheckedLines(a.Unchecked, mdCode) {
 			b.WriteString("- " + mdCell(line) + "\n")
 		}
 		b.WriteString("\n")
@@ -123,7 +123,7 @@ func AuditMarkdown(w io.Writer, a *report.Audit, failed []Error) error {
 }
 
 // auditRows has a column for the KEV entry and the EPSS score when the run asked those feeds.
-func auditRows(a *report.Audit) [][]cell {
+func auditRows(a *report.Audit, code func(string) string) [][]cell {
 	feeds := a.Feeds()
 	header := []string{headTool, "VERSION", "ADVISORY", "SEVERITY"}
 	if feeds.KEV {
@@ -143,7 +143,7 @@ func auditRows(a *report.Audit) [][]cell {
 		if fixed == "" {
 			fixed = noValue
 		}
-		row := []cell{{text: toolName(f.Tool)}, {text: f.Version}, {text: f.ID}, severityCell(f.Severity)}
+		row := []cell{{text: code(toolName(f.Tool))}, {text: f.Version}, {text: f.ID}, severityCell(f.Severity)}
 		if feeds.KEV {
 			row = append(row, kevCell(f.KEV))
 		}
@@ -237,11 +237,14 @@ func advisoryLines(a *report.Audit) []string {
 }
 
 // auditFailedLines describes the pins whose version lookup failed.
-func auditFailedLines(a *report.Audit) []string {
+func auditFailedLines(a *report.Audit, code func(string) string) []string {
 	var out []string
 	for _, p := range a.Failed() {
-		out = append(out, fmt.Sprintf("%s %s (%s): %s", toolName(p.Tool), p.Pin.Value, PinLocation(p.Pin.Location),
-			p.Note))
+		out = append(
+			out,
+			fmt.Sprintf("%s %s (%s): %s", code(toolName(p.Tool)), p.Pin.Value, PinLocation(p.Pin.Location),
+				p.Note),
+		)
 	}
 	return out
 }
@@ -329,9 +332,9 @@ func AuditSARIF(a *report.Audit, problems []scan.Problem, version string) *sarif
 }
 
 // errorLine describes an envelope error as "target: message".
-func errorLine(e Error) string {
+func errorLine(e Error, code func(string) string) string {
 	if e.Target == "" {
 		return e.Message
 	}
-	return e.Target + ": " + e.Message
+	return code(e.Target) + ": " + e.Message
 }

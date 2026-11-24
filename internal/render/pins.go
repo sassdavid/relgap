@@ -17,7 +17,7 @@ const ApproxMark = "≈"
 // PinsText writes pins as an aligned table. unresolved swaps the TOOL column for RAW NAME.
 func PinsText(w io.Writer, pins []scan.Pin, unresolved bool) error {
 	tw := tabwriter.NewWriter(w, 0, 0, 2, ' ', 0) //nolint:mnd // column padding
-	for _, row := range pinRows(pins, unresolved) {
+	for _, row := range pinRows(pins, unresolved, plain) {
 		_, _ = fmt.Fprintln(tw, strings.Join(row, "\t"))
 	}
 	if err := tw.Flush(); err != nil {
@@ -29,7 +29,7 @@ func PinsText(w io.Writer, pins []scan.Pin, unresolved bool) error {
 // PinsMarkdown writes pins as a Markdown table.
 func PinsMarkdown(w io.Writer, pins []scan.Pin, unresolved bool) error {
 	var b strings.Builder
-	for i, row := range pinRows(pins, unresolved) {
+	for i, row := range pinRows(pins, unresolved, mdCode) {
 		for j := range row {
 			row[j] = strings.ReplaceAll(row[j], "|", `\|`)
 		}
@@ -44,7 +44,7 @@ func PinsMarkdown(w io.Writer, pins []scan.Pin, unresolved bool) error {
 	return nil
 }
 
-func pinRows(pins []scan.Pin, unresolved bool) [][]string {
+func pinRows(pins []scan.Pin, unresolved bool, code func(string) string) [][]string {
 	first := headTool
 	if unresolved {
 		first = "RAW NAME"
@@ -56,6 +56,9 @@ func pinRows(pins []scan.Pin, unresolved bool) [][]string {
 			name = p.RawName
 		} else if name == "" {
 			name = "-"
+		}
+		if name != "-" {
+			name = code(name)
 		}
 		value := p.Value
 		if !p.Exact {

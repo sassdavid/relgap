@@ -1,35 +1,46 @@
 package render
 
 import (
+	"html"
 	"regexp"
 	"slices"
 	"strings"
-	"unicode"
 	"unicode/utf8"
 
 	"github.com/yuin/goldmark/v2/ast"
+	"github.com/yuin/goldmark/v2/extension"
 	"github.com/yuin/goldmark/v2/parser"
 	"github.com/yuin/goldmark/v2/text"
 )
 
-// zeroWidth goes after an @ or # that would start a GitHub mention or issue reference. It renders
-// as nothing, so the reader sees the original text.
+// zeroWidth goes after an @, # or GH- that would start a GitHub mention or issue reference. It
+// renders as nothing, so the reader sees the original text.
 const zeroWidth = "&#8203;"
 
+// domain matches a domain as GitHub's autolink extension accepts it.
+const domain = `(?:[a-z0-9_-]+\.)*[a-z0-9-]+\.[a-z0-9-]+`
+
 var (
-	// mdURL matches a URL as GitHub's autolink extension finds it, and a link destination.
-	mdURL = regexp.MustCompile("(?i)(?:https?://|www\\.)[^\\s<>\"'()\\[\\]`]+|\\]\\([^)\\s]*")
+	// mdURL matches a URL that GitHub's autolink extension turns into a link, and such a URL as a
+	// link destination. Like GitHub, it needs a valid domain: one with a period and no underscore
+	// in its last two segments. https://localhost/@x stays text on GitHub, so silence scans it.
+	mdURL = regexp.MustCompile("(?i)(?:https?://|www\\.)" + domain + "[^\\s<>\"'()\\[\\]`]*|" +
+		"\\]\\((?:https?://|www\\.)" + domain + "[^)\\s]*")
 	// ghRef matches a github.com issue, pull request or discussion URL, which GitHub turns into
 	// a backlink on that issue.
 	ghRef = regexp.MustCompile(
 		`(?i)^(?:https?://)?(?:www\.)?github\.com(/[^/\s]+/[^/\s]+/(?:issues|pull|discussions)/\d+\S*)$`,
 	)
+	// charRef matches a character reference that ends with a semicolon, which Markdown and HTML
+	// both decode.
+	charRef = regexp.MustCompile(`^&(?:#[0-9]{1,7}|#[xX][0-9a-fA-F]{1,6}|[A-Za-z][A-Za-z0-9]{1,31});`)
 )
 
 // silence returns md with every GitHub mention and issue reference broken by a zero-width space,
 // and with issue, pull request and discussion links sent through redirect.github.com. A comment
 // that quotes release notes then notifies nobody and adds no backlink to the upstream issues.
-// Code spans and code blocks stay as they are.
+// Code spans and code blocks stay as they are; they're found as GitHub finds them, after it
+// splits table rows into cells.
 func silence(md string) string {
 	var spans []span
 	for _, r := range codeRanges([]byte(md)) {
@@ -42,6 +53,7 @@ func silence(md string) string {
 
 	var b strings.Builder
 	b.Grow(len(md))
+	var last history
 	next := 0
 	for i := 0; i < len(md); {
 		for next < len(spans) && spans[next].stop <= i {
@@ -54,31 +66,102 @@ func silence(md string) string {
 				b.WriteString(md[i:s[0].stop])
 			}
 			i = s[0].stop
+			last = history{}
 			continue
 		}
-		b.WriteByte(md[i])
-		i++
-		if opensReference(md, i) {
+		u := unitAt(md, i)
+		b.WriteString(md[i : i+u.size])
+		i += u.size
+		copy(last[:], last[1:])
+		last[len(last)-1] = u
+		if opensReference(&last, unitAt(md, i)) {
 			b.WriteString(zeroWidth)
 		}
 	}
 	return b.String()
 }
 
-// opensReference reports whether md[:i] ends with an @, # or GH- that GitHub reads as the start
-// of a mention or an issue reference of the text at i.
-func opensReference(md string, i int) bool {
-	const gh = "gh-"
-	switch c := md[i-1]; {
-	case c == '@':
-		return !wordBefore(md, i-1) && alnumAt(md, i)
-	case c == '#':
-		return (i < 2 || md[i-2] != '&') && digitAt(md, i) // not an entity such as &#123;
-	case c == '-' && i >= len(gh):
-		return strings.EqualFold(md[i-len(gh):i], gh) && !wordBefore(md, i-len(gh)) && digitAt(md, i)
+// unit is one character of the Markdown: a byte, a UTF-8 rune or a character reference.
+type unit struct {
+	r    rune // the character, decoded when it's a character reference
+	size int  // its length in the Markdown
+	word bool // an ASCII letter or digit written as itself, which no Markdown syntax uses
+}
+
+// unitAt returns the unit that starts at md[i], or a zero unit at the end of md.
+func unitAt(md string, i int) unit {
+	if i >= len(md) {
+		return unit{}
+	}
+	if md[i] == '&' {
+		if ref := charRef.FindString(md[i:]); ref != "" {
+			if dec := html.UnescapeString(ref); dec != ref {
+				r, _ := utf8.DecodeRuneInString(dec)
+				return unit{r: r, size: len(ref)}
+			}
+		}
+	}
+	r, size := utf8.DecodeRuneInString(md[i:])
+	return unit{r: r, size: size, word: asciiAlnum(r)}
+}
+
+// history holds the units before the current position, the latest last. A zero unit stands for
+// the start of the text or the end of a span silence skipped.
+type history [len("/discussions/")]unit
+
+// opensReference reports whether last, the units before next, end with an @, #, GH- or issue
+// path that GitHub reads as the start of a mention or an issue reference. GitHub skips an @ or GH-
+// only after an ASCII letter, digit or underscore, reads o/r/issues/1 as a reference after any
+// host or none, and decodes character references first. An underscore can be emphasis, after
+// which GitHub does link, so only a letter or digit counts.
+func opensReference(last *history, next unit) bool {
+	n := len(last)
+	switch last[n-1].r {
+	case '@':
+		return !last[n-2].word && asciiAlnum(next.r)
+	case '#':
+		// &#x40 without a semicolon is still @ in HTML, so break any hex reference.
+		return asciiDigit(next.r) || last[n-2].r == '&' && (next.r == 'x' || next.r == 'X')
+	case '-':
+		return last.endsWith("gh-") && !last[n-4].word && asciiDigit(next.r)
+	case '/':
+		return asciiDigit(next.r) &&
+			(last.endsWith("/issues/") || last.endsWith("/pull/") || last.endsWith("/discussions/"))
 	}
 	return false
 }
+
+// endsWith reports whether the latest units spell s, ignoring ASCII case.
+func (h *history) endsWith(s string) bool {
+	off := len(h) - len(s)
+	for i := range len(s) {
+		r := h[off+i].r
+		if r >= 'A' && r <= 'Z' {
+			r += 'a' - 'A'
+		}
+		if r != rune(s[i]) {
+			return false
+		}
+	}
+	return true
+}
+
+// mdCode returns s as a Markdown code span when silence would change it, such as the name
+// npm:@types/node: GitHub reads no mention or reference in code, and the name copies as written.
+// An s with a backtick can't be a simple code span, so it comes back silenced.
+func mdCode(s string) string {
+	silenced := silence(s)
+	switch {
+	case silenced == s:
+		return s
+	case strings.Contains(s, "`"):
+		return silenced
+	}
+	return "`" + s + "`"
+}
+
+// plain returns s; it's the text formats' counterpart of [mdCode].
+func plain(s string) string { return s }
 
 // span is a part of the Markdown that silence leaves alone: code, or a URL it may redirect.
 type span struct {
@@ -119,7 +202,8 @@ func redirect(u string) string {
 // codeRanges returns the byte ranges of the code spans and code block lines of src.
 func codeRanges(src []byte) []text.Index {
 	var out []text.Index
-	_ = ast.Walk(parser.New().Parse(src), func(n ast.Node, entering bool) (ast.WalkStatus, error) {
+	p := parser.New(parser.WithExtensions(extension.NewTableParser()))
+	_ = ast.Walk(p.Parse(src), func(n ast.Node, entering bool) (ast.WalkStatus, error) {
 		if !entering {
 			return ast.WalkContinue, nil
 		}
@@ -138,17 +222,6 @@ func codeRanges(src []byte) []text.Index {
 	return out
 }
 
-// wordBefore reports whether the rune before md[i] is a letter, a digit or an underscore.
-func wordBefore(md string, i int) bool {
-	if i <= 0 {
-		return false
-	}
-	r, _ := utf8.DecodeLastRuneInString(md[:i])
-	return r == '_' || unicode.IsLetter(r) || unicode.IsDigit(r)
-}
+func asciiAlnum(r rune) bool { return asciiDigit(r) || r >= 'a' && r <= 'z' || r >= 'A' && r <= 'Z' }
 
-func alnumAt(md string, i int) bool {
-	return i < len(md) && (digitAt(md, i) || md[i] >= 'a' && md[i] <= 'z' || md[i] >= 'A' && md[i] <= 'Z')
-}
-
-func digitAt(md string, i int) bool { return i < len(md) && md[i] >= '0' && md[i] <= '9' }
+func asciiDigit(r rune) bool { return r >= '0' && r <= '9' }
