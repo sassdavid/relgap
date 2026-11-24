@@ -53,6 +53,11 @@ mise reads these fields: `package_version_candidates` and `versioned_package_fro
   with the note "0.24.2 is newer than the latest version found (0.15.1) and has no tag; check the
   tag prefix". A pin with a tag above the latest stable version, such as a prerelease, stays
   current. Unknown pins don't count as compared in the summary line.
+- A prefix can also name a release line. When a tool has several prefixes and a pin that would
+  otherwise be a channel starts with one of them, such as linkerd2's `edge-24.11.8` or
+  `stable-2.14.9`, `outdated` compares it as an exact version with that prefix's tags only and
+  says so in the pin's note. A pin without a prefix still uses every prefix, which is what a
+  renamed prefix needs (lychee, oxlint).
 
 ## Alternatives rejected
 - Evaluating aqua's expr-lang filters and constraints: it needs an expression engine as a new
@@ -65,8 +70,9 @@ mise reads these fields: `package_version_candidates` and `versioned_package_fro
 
 ## Consequences
 - lychee and oxlint compare with lychee-v0.24.2 and oxlint_v1.95.0 (`spec_output_and_ci_12.txtar`).
-  linkerd2 now reads `edge-` and `stable-` tags as one list, as aqua's overrides name both; a
-  registry entry can narrow it if that mixes its lines badly.
+  linkerd2's `edge-` and `stable-` pins, refused as channels before, compare within their own
+  line (versions-and-ranges criterion 7). Without a pin, as in `drift --latest`, the latest
+  linkerd2 version comes from both lines, which is an edge release.
 - An OSV GIT query for a version from before a switch uses the newest prefix
   (`enrich.Request.tag`), so it can name a tag that doesn't exist. OSV then returns nothing for
   it, as it did before.

@@ -38,3 +38,7 @@
   `v0.15.1` and `lychee-v0.24.2` without its `lychee-lib-v*` tags, and oxlint's `oxlint_v`,
   `apps_v` and `oxlint_v` tags without oxc's `crates_v`, `oxfmt_v` and plain `v0.1.1` tags. One
   version under two prefixes is kept once. (`TestSpec_versions_and_ranges_6`)
+- [x] A pin that starts with one of a tool's several tag prefixes is compared with that prefix's
+  tags only: linkerd2's `edge-24.11.8` is behind `edge-24.11.9` and `stable-2.14.9` behind
+  `stable-2.14.10`, and a channel without a prefix, such as `lts`, stays uncomparable.
+  (`TestSpec_versions_and_ranges_7`)

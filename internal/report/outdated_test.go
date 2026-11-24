@@ -612,3 +612,53 @@ func TestOutdatedSortsByShownName(t *testing.T) {
 	assert.Equal(t, []string{pagesChart, "chart:gpu-operator/gpu-operator", "chart:metrics-server/metrics-server"},
 		tools, "chart:aws/... sorts first, as the table shows it")
 }
+
+// TestSpec_versions_and_ranges_7: a pin that starts with one of several tag prefixes, such as
+// linkerd2's edge- and stable- lines, is compared only with the tags of its own line. A channel
+// without such a prefix stays uncomparable.
+func TestSpec_versions_and_ranges_7(t *testing.T) {
+	t.Parallel()
+	gh, _ := outdatedFixture()
+	gh.releases["o/l"] = []github.Release{
+		{Tag: "edge-24.11.9"}, {Tag: "edge-24.11.8"}, {Tag: "stable-2.14.10"}, {Tag: "stable-2.14.9"},
+	}
+	gh.recent = map[string][]github.Release{"o/l": gh.releases["o/l"]}
+	resolve := func(string) (registry.ToolSpec, error) {
+		return registry.ToolSpec{Name: "linkerd", Repo: "o/l", Version: registry.VersionSpec{
+			Scheme:      version.SchemeLoose,
+			TagPrefixes: registry.Prefixes{"", "edge-", "stable-"},
+			Universe:    registry.UniverseReleases,
+		}}, nil
+	}
+	pins := []scan.Pin{
+		pin("linkerd", "edge-24.11.8", scan.MatchChannel, ".", "mise.toml", 1),
+		pin("linkerd", "stable-2.14.9", scan.MatchChannel, ".", "mise.toml", 2),
+		pin("linkerd", "stable-2.14.10", scan.MatchChannel, ".", "mise.toml", 3),
+		pin("linkerd", "lts", scan.MatchChannel, ".", "mise.toml", 4),
+	}
+	digester := report.NewDigester(slog.New(slog.DiscardHandler), gh, nil)
+	got, err := report.NewOutdater(digester, gh).Outdated(t.Context(), report.OutdatedRequest{
+		Repos: []string{"."}, Pins: pins, Resolve: resolve, MinConfidence: 0.5, Concurrency: 1,
+	})
+	require.NoError(t, err)
+	tests := []struct {
+		current, latest string
+		status          report.Status
+		via             string
+	}{
+		{"24.11.8", "24.11.9", report.StatusOutdated, "compared with the edge- tags only"},
+		{"2.14.9", "2.14.10", report.StatusOutdated, "compared with the stable- tags only"},
+		{"2.14.10", "2.14.10", report.StatusCurrent, "compared with the stable- tags only"},
+		{"", "", report.StatusUnknown, ""},
+	}
+	require.Len(t, got.Pins, len(tests))
+	for i, tt := range tests {
+		p := got.Pins[i]
+		assert.Equal(t, tt.current, p.Current, p.Pin.Value)
+		assert.Equal(t, tt.latest, p.Latest, p.Pin.Value)
+		assert.Equal(t, tt.status, p.Status, p.Pin.Value)
+		assert.Equal(t, tt.via, p.Via, p.Pin.Value)
+		assert.Equal(t, pins[i].Match, p.Pin.Match, "the report keeps the pin as found")
+	}
+	assert.Contains(t, got.Pins[3].Note, `"lts" is a channel`)
+}
