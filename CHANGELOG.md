@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.13.1](https://github.com/sassdavid/relgap/compare/v0.13.0...v0.13.1) (2026-11-24)
+
+
+### Bug Fixes
+
+* close mention and reference gaps in silenced Markdown ([#124](https://github.com/sassdavid/relgap/issues/124)) ([678f55b](https://github.com/sassdavid/relgap/commit/678f55bc3aededcb15d69283d71e4fabde0d5a1a))
+
 ## [0.13.0](https://github.com/sassdavid/relgap/compare/v0.12.1...v0.13.0) (2026-11-23)
 
 
