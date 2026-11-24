@@ -1,0 +1,117 @@
+{
+  "schema_version": "1",
+  "tool": "relgap",
+  "version": "dev",
+  "generated_at": "2026-11-24T12:00:00Z",
+  "data": {
+    "repos": [
+      "."
+    ],
+    "pins": [
+      {
+        "tool": "github:oxc-project/oxc@apps_v",
+        "repo": "oxc-project/oxc",
+        "pin": {
+          "tool": "github:oxc-project/oxc@apps_v",
+          "raw_name": "oxc-project/oxc",
+          "kind": "tool",
+          "value": "1.95.0",
+          "version": "1.95.0",
+          "exact": true,
+          "match": "exact",
+          "location": {
+            "repo": ".",
+            "file": "versions.tf",
+            "line": 3,
+            "detector": "renovate-comment"
+          }
+        },
+        "current": "1.95.0",
+        "latest": "1.84.0",
+        "status": "unknown",
+        "note": "1.95.0 is newer than the latest version found (1.84.0) and has no tag; check the tag prefix",
+        "vulns": []
+      },
+      {
+        "tool": "lychee",
+        "repo": "lycheeverse/lychee",
+        "pin": {
+          "tool": "lychee",
+          "raw_name": "lychee",
+          "kind": "tool",
+          "value": "0.23.0",
+          "version": "0.23.0",
+          "exact": true,
+          "match": "exact",
+          "location": {
+            "repo": ".",
+            "file": "mise.toml",
+            "line": 2,
+            "detector": "mise"
+          }
+        },
+        "current": "0.23.0",
+        "latest": "0.24.2",
+        "behind": {
+          "releases": 3,
+          "major": 0,
+          "minor": 1,
+          "patch": 0,
+          "since": "2026-04-24T08:51:16Z"
+        },
+        "counts": {
+          "breaking": 1,
+          "deprecation": 0,
+          "feature": 14,
+          "fix": 11,
+          "other": 15,
+          "security": 0
+        },
+        "hidden": 2,
+        "status": "outdated",
+        "vulns": []
+      },
+      {
+        "tool": "oxlint",
+        "repo": "oxc-project/oxc",
+        "pin": {
+          "tool": "oxlint",
+          "raw_name": "oxlint",
+          "kind": "tool",
+          "value": "1.84.0",
+          "version": "1.84.0",
+          "exact": true,
+          "match": "exact",
+          "location": {
+            "repo": ".",
+            "file": "mise.toml",
+            "line": 3,
+            "detector": "mise"
+          }
+        },
+        "current": "1.84.0",
+        "latest": "1.95.0",
+        "behind": {
+          "releases": 11,
+          "major": 0,
+          "minor": 11,
+          "patch": 0,
+          "since": "2026-09-21T15:31:51Z"
+        },
+        "counts": {
+          "breaking": 4,
+          "deprecation": 0,
+          "feature": 37,
+          "fix": 266,
+          "other": 6,
+          "security": 0
+        },
+        "hidden": 59,
+        "status": "outdated",
+        "vulns": []
+      }
+    ],
+    "unchecked": []
+  },
+  "errors": []
+}

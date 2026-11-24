@@ -64,8 +64,11 @@ type AquaEntry struct {
 	Repo          string   `json:"repo,omitempty"` // empty for packages not hosted on GitHub
 	Aliases       []string `json:"aliases,omitempty"`
 	VersionPrefix string   `json:"version_prefix,omitempty"`
-	VersionFilter string   `json:"version_filter,omitempty"` // an expr-lang expression
-	VersionSource string   `json:"version_source,omitempty"` // github_tag or github_release
+	// VersionPrefixes lists every prefix the package and its version_overrides use, newest first,
+	// with "" for unprefixed tags. It is set only when it differs from VersionPrefix alone.
+	VersionPrefixes []string `json:"version_prefixes,omitempty"`
+	VersionFilter   string   `json:"version_filter,omitempty"` // an expr-lang expression
+	VersionSource   string   `json:"version_source,omitempty"` // github_tag or github_release
 }
 
 type snapshotFile[E any] struct {

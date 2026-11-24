@@ -913,6 +913,14 @@ func TestSpec_output_and_ci_9(t *testing.T) {
 	testscript.Run(t, scriptParams(t, filepath.Join(scriptDir, "spec_output_and_ci_9.txtar")))
 }
 
+// TestSpec_output_and_ci_12: outdated compares lychee and oxlint, whose tags switched prefix,
+// with their newest versions, and a pin newer than every version found that has no tag is
+// unknown with a note.
+func TestSpec_output_and_ci_12(t *testing.T) {
+	t.Parallel()
+	testscript.Run(t, scriptParams(t, filepath.Join(scriptDir, "spec_output_and_ci_12.txtar")))
+}
+
 // TestSpec_output_and_ci_5: outdated over a 10-pin project matches the goldens in tty, plain, md
 // and json, and its counts equal those of the full digests of the same ranges.
 func TestSpec_output_and_ci_5(t *testing.T) {

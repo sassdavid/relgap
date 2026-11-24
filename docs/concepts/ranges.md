@@ -20,7 +20,10 @@ Each tag then goes through the entry's rules:
 - `exclude` is a regular expression; a matching tag is ignored (kubectl drops its alpha, beta and
   rc tags this way).
 - `tag_prefix` is cut from the front of the tag (`v`, `go`, `jdk-`). A tag without the prefix is
-  ignored, which keeps the tags of other components in a monorepo out.
+  ignored, which keeps the tags of other components in a monorepo out. A list of prefixes covers
+  a tool whose tags changed prefix (oxlint tagged `oxlint_v`, then `apps_v`, then `oxlint_v`
+  again): the longest prefix a tag starts with is cut, and `""` in the list keeps unprefixed tags.
+  Tools from the aqua registry get the prefixes of its `version_overrides`.
 - the scheme parses what is left. A tag that doesn't parse is ignored.
 
 Two tags that the scheme reads as the same version, such as `3.7.12` and `v3.7.12`, are kept once.

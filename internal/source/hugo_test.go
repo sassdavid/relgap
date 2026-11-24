@@ -127,7 +127,7 @@ func TestSpec_source_adapters_7(t *testing.T) {
 	}, "\n")
 	tool := registry.ToolSpec{
 		Name: "karpenter", Repo: "aws/karpenter-provider-aws",
-		Version: registry.VersionSpec{Scheme: "semver", TagPrefix: "v"},
+		Version: registry.VersionSpec{Scheme: "semver", TagPrefixes: registry.Prefixes{"v"}},
 	}
 	src := registry.Source{
 		Kind: source.KindChangelogFile, PathTemplate: karpenterGuide, Heading: "^Upgrading to `{version}`\\+$",

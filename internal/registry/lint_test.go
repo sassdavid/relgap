@@ -89,6 +89,17 @@ func TestLintSemantics(t *testing.T) {
 			[]string{"x.yaml:4:3: version.extract: extract needs scheme regex"},
 		},
 		{"valid", "name: x\nrepo: a/b\nversion:\n  scheme: regex\n  extract: \"jdk-(\\\\d+)\"\n", nil},
+		{"tag prefix list", "name: x\nrepo: a/b\nversion:\n  tag_prefix: [lychee-v, \"\"]\n", nil},
+		{
+			"tag prefix of the wrong type",
+			"name: x\nrepo: a/b\nversion:\n  tag_prefix: 1\n",
+			[]string{"x.yaml:4:15: version.tag_prefix: wrong type: got number, want string or array"},
+		},
+		{
+			"empty tag prefix list",
+			"name: x\nrepo: a/b\nversion:\n  tag_prefix: []\n",
+			[]string{"x.yaml:4:15: version.tag_prefix: minItems: got 0, want 1"},
+		},
 		{
 			"host outside the allow-list",
 			"name: x\nrepo: a/b\nsources:\n  - kind: web-doc\n    url_template: https://raw.githubusercontent.com/a/b/{version}\n",

@@ -182,9 +182,10 @@ func writeResolution(d *app.Deps, res *registry.Resolution) error {
 	row("repo", t.Repo)
 	row("version.scheme", t.Version.Scheme)
 	row("version.extract", t.Version.Extract)
-	if t.Version.TagPrefix != "" {
-		row("version.tag_prefix", strconv.Quote(t.Version.TagPrefix))
+	if len(t.Version.TagPrefixes) > 0 {
+		row("version.tag_prefix", t.Version.TagPrefixes.String())
 	}
+	row("version.include", t.Version.Include)
 	row("version.exclude", t.Version.Exclude)
 	row("version.universe", t.Version.Universe)
 	row("version.line", t.Version.Line)

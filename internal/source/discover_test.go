@@ -123,7 +123,7 @@ func TestSpec_source_adapters_4(t *testing.T) {
 	repo := &fakeRepo{files: map[string]string{"CHANGELOG.md": string(stale)}}
 	tool := registry.ToolSpec{
 		Name: "argocd", Repo: "argoproj/argo-cd",
-		Version: registry.VersionSpec{Scheme: version.SchemeSemver, TagPrefix: "v"},
+		Version: registry.VersionSpec{Scheme: version.SchemeSemver, TagPrefixes: registry.Prefixes{"v"}},
 	}
 	vs := versions(t, "v3.6.0", "v3.6.1")
 	newest := vs[1].V

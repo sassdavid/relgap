@@ -34,7 +34,7 @@ func TestResolveForge(t *testing.T) {
 		assert.Equal(t, tt.name, res.Tool.Name, tt.in)
 		assert.Equal(t, tt.repo, res.Tool.Repo, tt.in)
 		assert.Equal(t, tt.host, res.Tool.Host, tt.in)
-		assert.Equal(t, tt.prefix, res.Tool.Version.TagPrefix, tt.in)
+		assert.Equal(t, tt.prefix, res.Tool.Version.TagPrefixes.Newest(), tt.in)
 		assert.Equal(t, registry.UniverseTags, res.Tool.Version.Universe, "%s: Bitbucket has no releases", tt.in)
 	}
 

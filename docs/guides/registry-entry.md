@@ -49,7 +49,8 @@ keys. [Registry entry schema](/reference/registry-schema) lists every key.
 
 - `scheme` is `semver`, `loose` (the default), `calver`, `python` or `regex` with `extract`.
 - `tag_prefix` is stripped before parsing, and tags without it are ignored. Use it for tags such
-  as `jdk-21.0.9+10` or `go1.25.4`.
+  as `jdk-21.0.9+10` or `go1.25.4`. A tool whose tags changed prefix takes a list, newest first,
+  such as `["lychee-v", ""]`, where `""` keeps the unprefixed tags.
 - `exclude` is a regular expression for tags to drop, such as release candidates.
 - `universe` is `releases` (GitHub releases, the default) or `tags`, for projects that tag
   without publishing releases.

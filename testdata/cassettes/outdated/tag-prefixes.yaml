@@ -1,0 +1,691 @@
+# Recorded on 2026-11-24 for spec_output_and_ci_12.txtar, then cut down: the release lists keep only the lychee and oxc tags the ranges and tag rules need, such as v0.15.1, lychee-lib-v0.24.2, apps_v1.84.0 and v0.1.1.
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 490
+        host: api.github.com
+        body: |
+            {"query":"query($first:Int!$n0:String!$n1:String!$o0:String!$o1:String!){r0: repository(owner: $o0, name: $n0){releases(first: $first, orderBy: {field: CREATED_AT, direction: DESC}){nodes{tagName,isDraft,isPrerelease,publishedAt,url}}},r1: repository(owner: $o1, name: $n1){releases(first: $first, orderBy: {field: CREATED_AT, direction: DESC}){nodes{tagName,isDraft,isPrerelease,publishedAt,url}}}}","variables":{"first":30,"n0":"lychee","n1":"oxc","o0":"lycheeverse","o1":"oxc-project"}}
+        headers:
+            Content-Type:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.github.com/graphql
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 3049
+        body: '{"data":{"r0":{"releases":{"nodes":[{"isDraft":false,"isPrerelease":false,"publishedAt":"2026-05-01T15:41:38Z","tagName":"lychee-v0.24.2","url":"https://github.com/lycheeverse/lychee/releases/tag/lychee-v0.24.2"},{"isDraft":false,"isPrerelease":false,"publishedAt":"2026-05-01T15:40:48Z","tagName":"lychee-lib-v0.24.2","url":"https://github.com/lycheeverse/lychee/releases/tag/lychee-lib-v0.24.2"},{"isDraft":false,"isPrerelease":false,"publishedAt":"2026-04-24T15:38:34Z","tagName":"lychee-v0.24.1","url":"https://github.com/lycheeverse/lychee/releases/tag/lychee-v0.24.1"},{"isDraft":false,"isPrerelease":false,"publishedAt":"2026-04-24T08:51:16Z","tagName":"lychee-v0.24.0","url":"https://github.com/lycheeverse/lychee/releases/tag/lychee-v0.24.0"},{"isDraft":false,"isPrerelease":false,"publishedAt":"2026-02-13T15:47:23Z","tagName":"lychee-v0.23.0","url":"https://github.com/lycheeverse/lychee/releases/tag/lychee-v0.23.0"}]}},"r1":{"releases":{"nodes":[{"isDraft":false,"isPrerelease":false,"publishedAt":"2026-11-23T16:10:56Z","tagName":"oxlint_v1.95.0","url":"https://github.com/oxc-project/oxc/releases/tag/oxlint_v1.95.0"},{"isDraft":false,"isPrerelease":false,"publishedAt":"2026-11-23T16:10:50Z","tagName":"oxfmt_v0.80.0","url":"https://github.com/oxc-project/oxc/releases/tag/oxfmt_v0.80.0"},{"isDraft":false,"isPrerelease":false,"publishedAt":"2026-11-16T12:26:24Z","tagName":"oxlint_v1.94.0","url":"https://github.com/oxc-project/oxc/releases/tag/oxlint_v1.94.0"},{"isDraft":false,"isPrerelease":false,"publishedAt":"2026-11-09T11:47:15Z","tagName":"oxlint_v1.93.0","url":"https://github.com/oxc-project/oxc/releases/tag/oxlint_v1.93.0"},{"isDraft":false,"isPrerelease":false,"publishedAt":"2026-11-06T12:28:40Z","tagName":"oxlint_v1.92.0","url":"https://github.com/oxc-project/oxc/releases/tag/oxlint_v1.92.0"},{"isDraft":false,"isPrerelease":false,"publishedAt":"2026-11-03T14:02:06Z","tagName":"oxlint_v1.91.0","url":"https://github.com/oxc-project/oxc/releases/tag/oxlint_v1.91.0"},{"isDraft":false,"isPrerelease":false,"publishedAt":"2026-10-27T05:51:29Z","tagName":"oxlint_v1.90.0","url":"https://github.com/oxc-project/oxc/releases/tag/oxlint_v1.90.0"},{"isDraft":false,"isPrerelease":false,"publishedAt":"2026-10-19T17:24:26Z","tagName":"oxlint_v1.89.0","url":"https://github.com/oxc-project/oxc/releases/tag/oxlint_v1.89.0"},{"isDraft":false,"isPrerelease":false,"publishedAt":"2026-10-13T09:47:50Z","tagName":"oxlint_v1.88.0","url":"https://github.com/oxc-project/oxc/releases/tag/oxlint_v1.88.0"},{"isDraft":false,"isPrerelease":false,"publishedAt":"2026-10-05T11:04:25Z","tagName":"oxlint_v1.87.0","url":"https://github.com/oxc-project/oxc/releases/tag/oxlint_v1.87.0"},{"isDraft":false,"isPrerelease":false,"publishedAt":"2026-09-28T10:29:50Z","tagName":"oxlint_v1.86.0","url":"https://github.com/oxc-project/oxc/releases/tag/oxlint_v1.86.0"},{"isDraft":false,"isPrerelease":false,"publishedAt":"2026-09-21T15:31:51Z","tagName":"oxlint_v1.85.0","url":"https://github.com/oxc-project/oxc/releases/tag/oxlint_v1.85.0"}]}}}}'
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/json; charset=utf-8
+            Date:
+                - Tue, 24 Nov 2026 14:21:56 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept-Encoding, Accept, X-Requested-With
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.v4; format=json
+            X-Ratelimit-Limit:
+                - "5000"
+            X-Ratelimit-Remaining:
+                - "4989"
+            X-Ratelimit-Reset:
+                - "1795530908"
+            X-Ratelimit-Resource:
+                - graphql
+            X-Ratelimit-Used:
+                - "11"
+            X-Xss-Protection:
+                - "0"
+        status: 200 OK
+        code: 200
+        duration: 732.867541ms
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 360
+        host: api.github.com
+        body: |
+            {"query":"query($cursor:String$first:Int!$name:String!$owner:String!){repository(owner: $owner, name: $name){releases(first: $first, after: $cursor, orderBy: {field: CREATED_AT, direction: DESC}){nodes{tagName,isDraft,isPrerelease,publishedAt,url},pageInfo{hasNextPage,endCursor}}}}","variables":{"cursor":null,"first":100,"name":"oxc","owner":"oxc-project"}}
+        headers:
+            Content-Type:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.github.com/graphql
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 2573
+        body: '{"data":{"repository":{"releases":{"nodes":[{"isDraft":false,"isPrerelease":false,"publishedAt":"2026-11-23T16:10:56Z","tagName":"oxlint_v1.95.0","url":"https://github.com/oxc-project/oxc/releases/tag/oxlint_v1.95.0"},{"isDraft":false,"isPrerelease":false,"publishedAt":"2026-11-23T16:10:50Z","tagName":"oxfmt_v0.80.0","url":"https://github.com/oxc-project/oxc/releases/tag/oxfmt_v0.80.0"},{"isDraft":false,"isPrerelease":false,"publishedAt":"2026-11-16T12:26:24Z","tagName":"oxlint_v1.94.0","url":"https://github.com/oxc-project/oxc/releases/tag/oxlint_v1.94.0"},{"isDraft":false,"isPrerelease":false,"publishedAt":"2026-11-09T11:47:15Z","tagName":"oxlint_v1.93.0","url":"https://github.com/oxc-project/oxc/releases/tag/oxlint_v1.93.0"},{"isDraft":false,"isPrerelease":false,"publishedAt":"2026-11-06T12:28:40Z","tagName":"oxlint_v1.92.0","url":"https://github.com/oxc-project/oxc/releases/tag/oxlint_v1.92.0"},{"isDraft":false,"isPrerelease":false,"publishedAt":"2026-11-03T14:02:06Z","tagName":"oxlint_v1.91.0","url":"https://github.com/oxc-project/oxc/releases/tag/oxlint_v1.91.0"},{"isDraft":false,"isPrerelease":false,"publishedAt":"2026-10-27T05:51:29Z","tagName":"oxlint_v1.90.0","url":"https://github.com/oxc-project/oxc/releases/tag/oxlint_v1.90.0"},{"isDraft":false,"isPrerelease":false,"publishedAt":"2026-10-19T17:24:26Z","tagName":"oxlint_v1.89.0","url":"https://github.com/oxc-project/oxc/releases/tag/oxlint_v1.89.0"},{"isDraft":false,"isPrerelease":false,"publishedAt":"2026-10-13T09:47:50Z","tagName":"oxlint_v1.88.0","url":"https://github.com/oxc-project/oxc/releases/tag/oxlint_v1.88.0"},{"isDraft":false,"isPrerelease":false,"publishedAt":"2026-10-05T11:04:25Z","tagName":"oxlint_v1.87.0","url":"https://github.com/oxc-project/oxc/releases/tag/oxlint_v1.87.0"},{"isDraft":false,"isPrerelease":false,"publishedAt":"2026-09-28T10:29:50Z","tagName":"oxlint_v1.86.0","url":"https://github.com/oxc-project/oxc/releases/tag/oxlint_v1.86.0"},{"isDraft":false,"isPrerelease":false,"publishedAt":"2026-09-21T15:31:51Z","tagName":"oxlint_v1.85.0","url":"https://github.com/oxc-project/oxc/releases/tag/oxlint_v1.85.0"},{"isDraft":false,"isPrerelease":false,"publishedAt":"2026-09-21T13:03:33Z","tagName":"apps_v1.84.0","url":"https://github.com/oxc-project/oxc/releases/tag/apps_v1.84.0"},{"isDraft":false,"isPrerelease":false,"publishedAt":"2026-09-14T12:12:16Z","tagName":"apps_v1.83.0","url":"https://github.com/oxc-project/oxc/releases/tag/apps_v1.83.0"}],"pageInfo":{"endCursor":"Y3Vyc29yOnYyOpK0MjAyNi0wMy0wMlQxMToyMjowNlrOEWgvYQ==","hasNextPage":true}}}}}'
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/json; charset=utf-8
+            Date:
+                - Tue, 24 Nov 2026 14:21:56 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept-Encoding, Accept, X-Requested-With
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.v4; format=json
+            X-Ratelimit-Limit:
+                - "5000"
+            X-Ratelimit-Remaining:
+                - "4961"
+            X-Ratelimit-Reset:
+                - "1795530907"
+            X-Ratelimit-Resource:
+                - graphql
+            X-Ratelimit-Used:
+                - "39"
+            X-Xss-Protection:
+                - "0"
+        status: 200 OK
+        code: 200
+        duration: 568.046333ms
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 363
+        host: api.github.com
+        body: |
+            {"query":"query($cursor:String$first:Int!$name:String!$owner:String!){repository(owner: $owner, name: $name){releases(first: $first, after: $cursor, orderBy: {field: CREATED_AT, direction: DESC}){nodes{tagName,isDraft,isPrerelease,publishedAt,url},pageInfo{hasNextPage,endCursor}}}}","variables":{"cursor":null,"first":100,"name":"lychee","owner":"lycheeverse"}}
+        headers:
+            Content-Type:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.github.com/graphql
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1367
+        body: '{"data":{"repository":{"releases":{"nodes":[{"isDraft":false,"isPrerelease":false,"publishedAt":"2026-05-01T15:41:38Z","tagName":"lychee-v0.24.2","url":"https://github.com/lycheeverse/lychee/releases/tag/lychee-v0.24.2"},{"isDraft":false,"isPrerelease":false,"publishedAt":"2026-05-01T15:40:48Z","tagName":"lychee-lib-v0.24.2","url":"https://github.com/lycheeverse/lychee/releases/tag/lychee-lib-v0.24.2"},{"isDraft":false,"isPrerelease":false,"publishedAt":"2026-04-24T15:38:34Z","tagName":"lychee-v0.24.1","url":"https://github.com/lycheeverse/lychee/releases/tag/lychee-v0.24.1"},{"isDraft":false,"isPrerelease":false,"publishedAt":"2026-04-24T08:51:16Z","tagName":"lychee-v0.24.0","url":"https://github.com/lycheeverse/lychee/releases/tag/lychee-v0.24.0"},{"isDraft":false,"isPrerelease":false,"publishedAt":"2026-02-13T15:47:23Z","tagName":"lychee-v0.23.0","url":"https://github.com/lycheeverse/lychee/releases/tag/lychee-v0.23.0"},{"isDraft":false,"isPrerelease":false,"publishedAt":"2024-04-29T08:07:19Z","tagName":"v0.15.1","url":"https://github.com/lycheeverse/lychee/releases/tag/v0.15.1"},{"isDraft":false,"isPrerelease":false,"publishedAt":"2024-04-25T07:45:46Z","tagName":"v0.15.0","url":"https://github.com/lycheeverse/lychee/releases/tag/v0.15.0"}],"pageInfo":{"endCursor":"Y3Vyc29yOnYyOpK0MjAyMC0xMi0wM1QxNDowMzoxMFrOAhJkMg==","hasNextPage":false}}}}}'
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/json; charset=utf-8
+            Date:
+                - Tue, 24 Nov 2026 14:21:56 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept-Encoding, Accept, X-Requested-With
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.v4; format=json
+            X-Ratelimit-Limit:
+                - "5000"
+            X-Ratelimit-Remaining:
+                - "4988"
+            X-Ratelimit-Reset:
+                - "1795530908"
+            X-Ratelimit-Resource:
+                - graphql
+            X-Ratelimit-Used:
+                - "12"
+            X-Xss-Protection:
+                - "0"
+        status: 200 OK
+        code: 200
+        duration: 610.325833ms
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 491
+        host: api.github.com
+        body: |
+            {"query":"query($name:String!$owner:String!$t0:String!$t1:String!$t2:String!){repository(owner: $owner, name: $name){r0: release(tagName: $t0){tagName,isDraft,isPrerelease,publishedAt,url,description},r1: release(tagName: $t1){tagName,isDraft,isPrerelease,publishedAt,url,description},r2: release(tagName: $t2){tagName,isDraft,isPrerelease,publishedAt,url,description}}}","variables":{"name":"lychee","owner":"lycheeverse","t0":"lychee-v0.24.0","t1":"lychee-v0.24.1","t2":"lychee-v0.24.2"}}
+        headers:
+            Content-Type:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.github.com/graphql
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"data":{"repository":{"r0":{"tagName":"lychee-v0.24.0","isDraft":false,"isPrerelease":false,"publishedAt":"2026-04-24T08:51:16Z","url":"https://github.com/lycheeverse/lychee/releases/tag/lychee-v0.24.0","description":"**Breaking**: in v0.24.0 the release names are scrambled. See v0.24.1 where the previous naming convention are restored.\r\n**Breaking**: with v0.24.0 the structure of the released archive files has changed.\r\n\r\n### Added\r\n\r\n- Check text fragments ([#2138](https://github.com/lycheeverse/lychee/pull/2138))\r\n- Allow bool flag merging ([#2137](https://github.com/lycheeverse/lychee/pull/2137))\r\n- Show redirects & remaps ([#2094](https://github.com/lycheeverse/lychee/pull/2094))\r\n- Hide progress bar if input is `stdin` only ([#1938](https://github.com/lycheeverse/lychee/pull/1938))\r\n- Support sitemap.xml ([#2071](https://github.com/lycheeverse/lychee/pull/2071))\r\n- Allow accepting timeouts ([#2063](https://github.com/lycheeverse/lychee/pull/2063))\r\n- Support multiple config files ([#2007](https://github.com/lycheeverse/lychee/pull/2007))\r\n- Show line & column numbers ([#2056](https://github.com/lycheeverse/lychee/pull/2056))\r\n- Add JUnit format ([#2066](https://github.com/lycheeverse/lychee/pull/2066))\r\n- Respect HTTP error codes in CLI inputs ([#2101](https://github.com/lycheeverse/lychee/pull/2101))\r\n- Add shell completions for lychee ([#1972](https://github.com/lycheeverse/lychee/pull/1972))\r\n- Document file format support ([#2052](https://github.com/lycheeverse/lychee/pull/2052))\r\n- Increase value for --max-redirects ([#2087](https://github.com/lycheeverse/lychee/pull/2087))\r\n\r\n### Fixed\r\n\r\n- Prevent 0 value for max-concurrency and threads ([#2145](https://github.com/lycheeverse/lychee/pull/2145))\r\n- Use the remapped URI for the cache key ([#1818](https://github.com/lycheeverse/lychee/pull/1818)) ([#2109](https://github.com/lycheeverse/lychee/pull/2109))\r\n- *(cli)* bump open files limit on macOS and Linux ([#2106](https://github.com/lycheeverse/lychee/pull/2106))\r\n- Fix matching logic for glob hidden files ([#2130](https://github.com/lycheeverse/lychee/pull/2130))\r\n- Fix output path not validated before the run ([#2148](https://github.com/lycheeverse/lychee/pull/2148))\r\n- Fix double count ([#2088](https://github.com/lycheeverse/lychee/pull/2088))\r\n- Prevent duplicate requests to the same URLs ([#2067](https://github.com/lycheeverse/lychee/pull/2067))\r\n- Fix Windows Absolute Path Parsing and Remove HTTP Assumption ([#1837](https://github.com/lycheeverse/lychee/pull/1837))\r\n\r\n### Other\r\n\r\n- Make website checker return Status always, rather than Result ([#2140](https://github.com/lycheeverse/lychee/pull/2140))\r\n- Remove the `Redirect` and `Remapped` wrapper variants from the `Status` enum. ([#2129](https://github.com/lycheeverse/lychee/pull/2129))\r\n- Allow root-dir that doesn''t exist ([#2127](https://github.com/lycheeverse/lychee/pull/2127))\r\n- Unify input URL fetching with the link-checker''s HostPool ([#2100](https://github.com/lycheeverse/lychee/pull/2100))\r\n- Unify Releases Across Operating Systems ([#1957](https://github.com/lycheeverse/lychee/pull/1957))\r\n- Remove raw mode ([#2086](https://github.com/lycheeverse/lychee/pull/2086))\r\n- Always show full config parse errors with full details in output ([#2149](https://github.com/lycheeverse/lychee/pull/2149))\r\n- Add tests for the current state of \"Checking a Local Folder with URL Remapping\" ([#1965](https://github.com/lycheeverse/lychee/pull/1965))\r\n- Move caching logic to cache ([#2123](https://github.com/lycheeverse/lychee/pull/2123))\r\n- Support multiple config file formats and refactor config module ([#2104](https://github.com/lycheeverse/lychee/pull/2104))\r\n- Never cache errors on disk\r\n- Report input source errors rather than tokio panics ([#2074](https://github.com/lycheeverse/lychee/pull/2074))\r\n- Add WaitGroup for waiting for a dynamic set of tasks  ([#2046](https://github.com/lycheeverse/lychee/pull/2046))\r\n- [**breaking**] add BaseInfo for resolving links, delete Base, cleanup utils ([#2005](https://github.com/lycheeverse/lychee/pull/2005))"},"r1":{"tagName":"lychee-v0.24.1","isDraft":false,"isPrerelease":false,"publishedAt":"2026-04-24T15:38:34Z","url":"https://github.com/lycheeverse/lychee/releases/tag/lychee-v0.24.1","description":"**Breaking**: with v0.24.0 the structure of the released archive files has changed.\r\n\r\n### Fixed\r\n\r\n- Restore naming convention of released files (#2161)\r\n- Fix Docker build (#2163)"},"r2":{"tagName":"lychee-v0.24.2","isDraft":false,"isPrerelease":false,"publishedAt":"2026-05-01T15:41:38Z","url":"https://github.com/lycheeverse/lychee/releases/tag/lychee-v0.24.2","description":"### Added\r\n\r\n- User hints ([#2021](https://github.com/lycheeverse/lychee/pull/2021))\r\n\r\n### Fixed\r\n\r\n- Typo in README.md ([#2173](https://github.com/lycheeverse/lychee/pull/2173))\r\n\r\n### Other\r\n\r\n- *(deps)* bump the dependencies group with 8 updates"}}}}'
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/json; charset=utf-8
+            Date:
+                - Tue, 24 Nov 2026 14:21:57 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept-Encoding, Accept, X-Requested-With
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.v4; format=json
+            X-Ratelimit-Limit:
+                - "5000"
+            X-Ratelimit-Remaining:
+                - "4959"
+            X-Ratelimit-Reset:
+                - "1795530907"
+            X-Ratelimit-Resource:
+                - graphql
+            X-Ratelimit-Used:
+                - "41"
+            X-Xss-Protection:
+                - "0"
+        status: 200 OK
+        code: 200
+        duration: 364.511625ms
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 410
+        host: api.github.com
+        body: |
+            {"query":"query($cursor:String$first:Int!$name:String!$owner:String!){repository(owner: $owner, name: $name){releases(first: $first, after: $cursor, orderBy: {field: CREATED_AT, direction: DESC}){nodes{tagName,isDraft,isPrerelease,publishedAt,url},pageInfo{hasNextPage,endCursor}}}}","variables":{"cursor":"Y3Vyc29yOnYyOpK0MjAyNi0wMy0wMlQxMToyMjowNlrOEWgvYQ==","first":100,"name":"oxc","owner":"oxc-project"}}
+        headers:
+            Content-Type:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.github.com/graphql
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 667
+        body: '{"data":{"repository":{"releases":{"nodes":[{"isDraft":false,"isPrerelease":false,"publishedAt":"2026-03-02T14:03:24Z","tagName":"crates_v0.116.0","url":"https://github.com/oxc-project/oxc/releases/tag/crates_v0.116.0"},{"isDraft":false,"isPrerelease":false,"publishedAt":"2025-11-10T16:55:11Z","tagName":"apps_v1.28.0","url":"https://github.com/oxc-project/oxc/releases/tag/apps_v1.28.0"},{"isDraft":false,"isPrerelease":false,"publishedAt":"2025-09-16T19:15:44Z","tagName":"oxlint_v1.16.0","url":"https://github.com/oxc-project/oxc/releases/tag/oxlint_v1.16.0"}],"pageInfo":{"endCursor":"Y3Vyc29yOnYyOpK0MjAyNS0wMy0xMVQwODowNzoxMVrODDcPgw==","hasNextPage":true}}}}}'
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/json; charset=utf-8
+            Date:
+                - Tue, 24 Nov 2026 14:21:57 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept-Encoding, Accept, X-Requested-With
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.v4; format=json
+            X-Ratelimit-Limit:
+                - "5000"
+            X-Ratelimit-Remaining:
+                - "4960"
+            X-Ratelimit-Reset:
+                - "1795530907"
+            X-Ratelimit-Resource:
+                - graphql
+            X-Ratelimit-Used:
+                - "40"
+            X-Xss-Protection:
+                - "0"
+        status: 200 OK
+        code: 200
+        duration: 620.618333ms
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 410
+        host: api.github.com
+        body: |
+            {"query":"query($cursor:String$first:Int!$name:String!$owner:String!){repository(owner: $owner, name: $name){releases(first: $first, after: $cursor, orderBy: {field: CREATED_AT, direction: DESC}){nodes{tagName,isDraft,isPrerelease,publishedAt,url},pageInfo{hasNextPage,endCursor}}}}","variables":{"cursor":"Y3Vyc29yOnYyOpK0MjAyNS0wMy0xMVQwODowNzoxMVrODDcPgw==","first":100,"name":"oxc","owner":"oxc-project"}}
+        headers:
+            Content-Type:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.github.com/graphql
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 481
+        body: '{"data":{"repository":{"releases":{"nodes":[{"isDraft":false,"isPrerelease":false,"publishedAt":"2025-03-04T02:05:26Z","tagName":"oxlint_v0.15.13","url":"https://github.com/oxc-project/oxc/releases/tag/oxlint_v0.15.13"},{"isDraft":false,"isPrerelease":false,"publishedAt":"2023-06-08T14:39:52Z","tagName":"v0.1.1","url":"https://github.com/oxc-project/oxc/releases/tag/v0.1.1"}],"pageInfo":{"endCursor":"Y3Vyc29yOnYyOpK0MjAyMy0wNi0wN1QxNTo1NDozNlrOBmtfRQ==","hasNextPage":true}}}}}'
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/json; charset=utf-8
+            Date:
+                - Tue, 24 Nov 2026 14:21:57 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept-Encoding, Accept, X-Requested-With
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.v4; format=json
+            X-Ratelimit-Limit:
+                - "5000"
+            X-Ratelimit-Remaining:
+                - "4958"
+            X-Ratelimit-Reset:
+                - "1795530907"
+            X-Ratelimit-Resource:
+                - graphql
+            X-Ratelimit-Used:
+                - "42"
+            X-Xss-Protection:
+                - "0"
+        status: 200 OK
+        code: 200
+        duration: 557.999542ms
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 410
+        host: api.github.com
+        body: |
+            {"query":"query($cursor:String$first:Int!$name:String!$owner:String!){repository(owner: $owner, name: $name){releases(first: $first, after: $cursor, orderBy: {field: CREATED_AT, direction: DESC}){nodes{tagName,isDraft,isPrerelease,publishedAt,url},pageInfo{hasNextPage,endCursor}}}}","variables":{"cursor":"Y3Vyc29yOnYyOpK0MjAyMy0wNi0wN1QxNTo1NDozNlrOBmtfRQ==","first":100,"name":"oxc","owner":"oxc-project"}}
+        headers:
+            Content-Type:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.github.com/graphql
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 306
+        body: '{"data":{"repository":{"releases":{"nodes":[{"isDraft":false,"isPrerelease":false,"publishedAt":"2023-05-31T11:31:52Z","tagName":"v0.0.7","url":"https://github.com/oxc-project/oxc/releases/tag/v0.0.7"}],"pageInfo":{"endCursor":"Y3Vyc29yOnYyOpK0MjAyMy0wMi0yOFQxNTo0NDoyMlrOBZmkvA==","hasNextPage":false}}}}}'
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/json; charset=utf-8
+            Date:
+                - Tue, 24 Nov 2026 14:21:58 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept-Encoding, Accept, X-Requested-With
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.v4; format=json
+            X-Ratelimit-Limit:
+                - "5000"
+            X-Ratelimit-Remaining:
+                - "4957"
+            X-Ratelimit-Reset:
+                - "1795530907"
+            X-Ratelimit-Resource:
+                - graphql
+            X-Ratelimit-Used:
+                - "43"
+            X-Xss-Protection:
+                - "0"
+        status: 200 OK
+        code: 200
+        duration: 444.237791ms
+    - id: 7
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 254
+        host: api.github.com
+        body: |
+            {"query":"query($name:String!$owner:String!$t0:String!){repository(owner: $owner, name: $name){r0: release(tagName: $t0){tagName,isDraft,isPrerelease,publishedAt,url,description}}}","variables":{"name":"oxc","owner":"oxc-project","t0":"oxlint_v1.95.0"}}
+        headers:
+            Content-Type:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.github.com/graphql
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: "{\"data\":{\"repository\":{\"r0\":{\"tagName\":\"oxlint_v1.95.0\",\"isDraft\":false,\"isPrerelease\":false,\"publishedAt\":\"2026-11-23T16:10:56Z\",\"url\":\"https://github.com/oxc-project/oxc/releases/tag/oxlint_v1.95.0\",\"description\":\"### \U0001F680 Features\\r\\n\\r\\n- a96e2bd linter/typescript/no-unsafe-class-instance-assignment: Add rule (#29982) (Cameron)\\r\\n\\r\\n### \U0001F41B Bug Fixes\\r\\n\\r\\n- 11d16bd linter/eslint/prefer-object-spread: Prefix semicolon when the fix could merge with the previous statement (#30080) (oxc-captain[bot])\\r\\n- 106d301 linter/unicorn/prefer-math-trunc: Report `parseInt(String(...), 10)` (#30067) (Lê Văn Xuân Hoàn)\\r\\n- 226ba04 linter/unicorn/prefer-import-meta-properties: Stop flagging `fileURLToPath(new URL('.', import.meta.url))` (#30041) (oxc-captain[bot])\\r\\n- 04cdaec linter/unicorn/no-useless-spread: Replace holes with `undefined` in spread array literals (#30042) (oxc-captain[bot])\\r\\n- 7141c26 linter/eslint/no-implicit-coercion: Skip autofix when coercion constructor is shadowed (#30043) (oxc-captain[bot])\\r\\n- f22709d linter/eslint/no-unused-vars: Fixes remove a whole CRLF after an unused import (#30047) (Nicholas Rayburn)\\r\\n- 6998259 linter/eslint/max-lines: Report diagnostic at the start of the last character (#30046) (Nicholas Rayburn)\\r\\n- 48ed7f7 linter: Find tsgolint in case-sensitive directories on Windows (#26234) (Nicolas Stepien)\\r\\n- f92aeab linter/vitest/valid-expect: Validate `expectTypeOf` matcher chains (#30023) (Cameron)\\r\\n- 0f774dc linter/react/exhaustive-deps: Report setters accessed through member expressions (#30017) (Cameron)\\r\\n- 8726fca linter/react/exhaustive-deps: Report setters from parenthesized or `as`-cast `useState` calls (#30016) (Cameron)\\r\\n- 1a19370 linter/eslint/no-extra-boolean-cast: Parenthesize the replacement when needed (#30012) (Thejesh)\\r\\n- 4452bb6 linter/eslint/operator-assignment: Parenthesize a conditional right operand in the \\\"never\\\" fix (#30013) (Thejesh)\\r\\n- ad91ec9 linter/react/exhaustive-deps: Don't report `useReducer` dispatches as `setState` calls (#29986) (oxc-captain[bot])\\r\\n- 589d281 linter/oxc/branches-sharing-code: Skip move suggestions for branch-local references (#30006) (Cameron)\\r\\n- 27440dc linter/react/jsx-curly-brace-presence: Don't report or fix props with escape sequences and preserve raw text (#29976) (oxc-captain[bot])\\r\\n- 18d6e27 linter: Escape file and rule names in checkstyle and junit reporters (#28962) (Zain Qureshi)\\r\\n- 9882eab linter/unicorn/prefer-bigint-literals: Provide fix for hex literals containing `e` or `E` (#29915) (overlookmotel)\\r\\n- 9c39045 linter/eslint/no-unneeded-ternary: Don't drop side-effecting tests in equal-literal fix (#29880) (oxc-captain[bot])\\r\\n- 7261f5b linter/unicorn/prefer-logical-operator-over-ternary: Parenthesize operands that bind looser than `||` in fixer (#29882) (oxc-captain[bot])\\r\\n- d4c3cbe linter/typescript/array-type: Report and fix `Readonly<T[]>` (#29841) (camc314)\\r\\n- 35694db linter/typescript/explicit-function-return-type: Check block-bodied arrows in returned objects (#29843) (camc314)\\r\\n- cf124c8 linter/typescript/prefer-as-const: Report angle-bracket literal assertions (#29839) (camc314)\\r\\n- 86cdc9d linter: Do not flag one export { a, b } from as duplicate (#26992) (Bartok)\\r\\n- 4263221 agent: Implement all_rules for --rules support (#27585) (Bartok)\\r\\n- 2f6a11f semantic: Keep catch parameters in the catch clause scope (#29635) (Dunqing)\\r\\n- f84e6b2 linter/import/extensions: Read options next to `pattern` (#29442) (Nadir Ali)\\r\\n- a527e7b linter: Preserve code in Jest and Vitest padding fixes (#29496) (oxc-captain[bot])\\r\\n- 536e240 linter/unicorn/catch-error-name: Keep the key of a shorthand property (#28727) (YT)\\r\\n- f860f1b semantic: Resolve a private name to the enclosing class that declares it (#29714) (Nadir Ali)\\r\\n- 279185a react-compiler: Ignore ESLint suppressions when hooks and memo validations are enabled (#29655) (Boshen)\\r\\n- ddedec8 linter/eslint/new-cap: Allow `UTC()` only on the global `Date` (#29711) (Nadir Ali)\\r\\n- 709d89d linter/eslint/no-async-promise-executor: Ignore shadowed Promise (#29706) (Nadir Ali)\\r\\n- 90196a5 linter/eslint/radix: Only report literal and `undefined` radixes, skip spreads (#29708) (Nadir Ali)\\r\\n- 0fb527b linter/eslint/no-invalid-regexp: Ignore a shadowed `RegExp` (#29715) (Nadir Ali)\\r\\n- 60fedf9 linter/eslint/no-loss-of-precision: Ignore a `.` with no fraction digits (#29713) (Nadir Ali)\\r\\n- 4069cb3 linter/eslint/use-isnan: Ignore a shadowed `NaN` or `Number` (#29707) (Nadir Ali)\\r\\n- dd9683c linter/eslint/prefer-promise-reject-errors: Ignore a shadowed `Promise` (#29710) (Nadir Ali)\\r\\n- d7e12de linter/eslint/no-extra-boolean-cast: Ignore a shadowed `Boolean` (#29709) (Nadir Ali)\\r\\n- 1ac8a63 linter/eslint/no-obj-calls: Respect shadowed globalThis (#29705) (周星星同学)\\r\\n- 3464a0d linter/eslint/prefer-numeric-literals: Avoid invalid fixes for signed strings (#29703) (周星星同学)\\r\\n- d3af621 linter/typescript/class-literal-property-style: Only suggest readonly fields in TypeScript files (#29704) (Chung-il)\\r\\n- 49b935a linter/eslint/no-unneeded-ternary: Preserve boolean binary results (#29702) (周星星同学)\\r\\n- 3f05c06 linter/react/require-render-return: Check non-JSX render methods (#29701) (oxc-captain)\\r\\n- 78b6494 linter/vitest/prefer-called-times: Preserve expect head in fixes (#29699) (camc314)\\r\\n- f2cd3c7 linter/jest/prefer-to-contain,linter/vitest/prefer-to-contain: Offer rewrites as suggestions (#29698) (camc314)\\r\\n- 3398425 linter/typescript/ban-tslint-comment: Preserve line breaks in fixes (#29695) (camc314)\\r\\n- a0214ae linter/eslint/no-unsafe-negation: Offer rewrite as a suggestion (#29694) (camc314)\\r\\n- 658762e linter/eslint/no-unexpected-multiline: Recognize all line terminators (#29682) (周星星同学)\\r\\n- 89ad201 linter/eslint/no-compare-neg-zero: Exclude BigInt zero (#29683) (周星星同学)\\r\\n- 5629d00 linter/eslint/no-unsafe-finally: Report labeled continues escaping finally (#29681) (周星星同学)\\r\\n- 7ab52dd linter/jest/no-restricted-jest-methods,linter/vitest/no-restricted-vi-methods: Report restricted methods in call chains (#29660) (oxc-captain[bot])\\r\\n- 5d2129c oxlint: Write --init errors to stderr (#29654) (oxc-captain[bot])\\r\\n- a53df45 linter/eslint/no-fallthrough: Recognize all line terminators (#29676) (周星星同学)\\r\\n- 8270346 linter/typescript/consistent-type-definitions: Add a semicolon when code follows on the same line (#29634) (Jingbo Chai)\\r\\n- 132793f linter/eslint: Preserve statement boundaries in autofixes (#29633) (Jingbo Chai)\\r\\n\\r\\n### ⚡ Performance\\r\\n\\r\\n- 2c4240a oxlint: Convert diagnostic offsets to positions with a line index (#29987) (Nicholas Rayburn)\\r\\n- 892f086 various: Avoid copying source text in `OxcDiagnostic::render_with_source_code` callers (#29850) (overlookmotel)\\r\\n- 27777a9 diagnostics: Loosen lifetime bound on `OxcDiagnostic::with_source_code` (#29849) (overlookmotel)\\r\\n- f43a92f linter/plugins: Match selectors without allocating ancestor arrays (#29652) (Shanon Jackson)\"}}}}"
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/json; charset=utf-8
+            Date:
+                - Tue, 24 Nov 2026 14:21:58 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept-Encoding, Accept, X-Requested-With
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.v4; format=json
+            X-Ratelimit-Limit:
+                - "5000"
+            X-Ratelimit-Remaining:
+                - "4956"
+            X-Ratelimit-Reset:
+                - "1795530907"
+            X-Ratelimit-Resource:
+                - graphql
+            X-Ratelimit-Used:
+                - "44"
+            X-Xss-Protection:
+                - "0"
+        status: 200 OK
+        code: 200
+        duration: 397.758459ms
+    - id: 8
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 1307
+        host: api.github.com
+        body: |
+            {"query":"query($name:String!$owner:String!$t0:String!$t1:String!$t2:String!$t3:String!$t4:String!$t5:String!$t6:String!$t7:String!$t8:String!$t9:String!){repository(owner: $owner, name: $name){r0: release(tagName: $t0){tagName,isDraft,isPrerelease,publishedAt,url,description},r1: release(tagName: $t1){tagName,isDraft,isPrerelease,publishedAt,url,description},r2: release(tagName: $t2){tagName,isDraft,isPrerelease,publishedAt,url,description},r3: release(tagName: $t3){tagName,isDraft,isPrerelease,publishedAt,url,description},r4: release(tagName: $t4){tagName,isDraft,isPrerelease,publishedAt,url,description},r5: release(tagName: $t5){tagName,isDraft,isPrerelease,publishedAt,url,description},r6: release(tagName: $t6){tagName,isDraft,isPrerelease,publishedAt,url,description},r7: release(tagName: $t7){tagName,isDraft,isPrerelease,publishedAt,url,description},r8: release(tagName: $t8){tagName,isDraft,isPrerelease,publishedAt,url,description},r9: release(tagName: $t9){tagName,isDraft,isPrerelease,publishedAt,url,description}}}","variables":{"name":"oxc","owner":"oxc-project","t0":"oxlint_v1.85.0","t1":"oxlint_v1.86.0","t2":"oxlint_v1.87.0","t3":"oxlint_v1.88.0","t4":"oxlint_v1.89.0","t5":"oxlint_v1.90.0","t6":"oxlint_v1.91.0","t7":"oxlint_v1.92.0","t8":"oxlint_v1.93.0","t9":"oxlint_v1.94.0"}}
+        headers:
+            Content-Type:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.github.com/graphql
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: "{\"data\":{\"repository\":{\"r0\":{\"tagName\":\"oxlint_v1.85.0\",\"isDraft\":false,\"isPrerelease\":false,\"publishedAt\":\"2026-09-21T15:31:51Z\",\"url\":\"https://github.com/oxc-project/oxc/releases/tag/oxlint_v1.85.0\",\"description\":\"### \U0001F680 Features\\n\\n- 415b742 oxlint,oxfmt: Do not discover nested config in Vite+ mode (#26763) (leaysgur)\"},\"r1\":{\"tagName\":\"oxlint_v1.86.0\",\"isDraft\":false,\"isPrerelease\":false,\"publishedAt\":\"2026-09-28T10:29:50Z\",\"url\":\"https://github.com/oxc-project/oxc/releases/tag/oxlint_v1.86.0\",\"description\":\"### \U0001F680 Features\\n\\n- 9d80eed linter/react/only-export-components: Support `allowCompoundComponents` (#27117) (Kuroda Kayn)\\n- e05b155 linter: Add typescript/no-generated-empty-object-type (#26958) (camc314)\\n\\n### \U0001F41B Bug Fixes\\n\\n- 8306aa4 linter/typescript/no-unnecessary-parameter-property-assignment: Account for parameter property reassignment (#26955) (camc314)\\n- 42dfbb5 linter/eslint/one-var: Keep `declare` when splitting declarations (#27081) (Cheolhee Lee)\\n- 2ba7e33 linter/eslint/require-await: Count `await using` as an await (#27080) (Cheolhee Lee)\\n- 611e4ed linter/plugins: Include executing selectors in JS plugin rule timings (#27111) (overlookmotel)\\n- 2cac66f react-compiler: Handle recursive function expressions (#26796) (Brennan Butler)\\n- e996e6c react-compiler: Treat zero-argument new Date as impure (#26894) (Boshen)\\n- 571cfa3 oxlint: Skip type-aware lint rules in type-check-only mode (#27076) (camc314)\\n- d0b2462 oxlint: Skip undefined children in CFG walker (#27075) (camc314)\\n- 5186328 parser: Handle HTML comment values (#22933) (Boshen)\\n- 0b630e8 linter/typescript/unified-signatures: Align rule with upstream (#26956) (camc314)\\n- ebb22f1 linter/node/no-exports-assign: Change category from style to suspicious (#26555) (Bartok)\\n- cce28a0 linter/import/no-duplicates: Distinguish import attributes (#26936) (camc314)\\n- feb733b linter/unicorn/prefer-spread: Stop checking string split calls (#26935) (camc314)\\n- 929e154 linter/eslint/no-unused-vars: Honor ignore patterns inside array rest bindings (#26923) (camc314)\\n- 5bdb9b8 linter/eslint/no-unused-vars: Recognize consumed update expressions (#26782) (camc314)\\n- 5c05bef linter/eslint/prefer-const: Ignore embedded assignments (#26920) (camc314)\\n\\n### ⚡ Performance\\n\\n- ded4c29 linter/eslint/no-unused-vars: Skip sequence checks when absent (#26921) (camc314)\"},\"r2\":{\"tagName\":\"oxlint_v1.87.0\",\"isDraft\":false,\"isPrerelease\":false,\"publishedAt\":\"2026-10-05T11:04:25Z\",\"url\":\"https://github.com/oxc-project/oxc/releases/tag/oxlint_v1.87.0\",\"description\":\"### \U0001F680 Features\\n\\n- 42dcfd2 linter/react/no-unescaped-entities: Implement suggestion (#27292) (Mikhail Baev)\\n- cd4510d linter/unicorn/no-useless-switch-case: Implement suggestion (#27245) (Mikhail Baev)\\n- 1a7c902 linter/react/jsx-no-target-blank: Implement suggestion (#27181) (Mikhail Baev)\\n\\n### \U0001F41B Bug Fixes\\n\\n- 176b4b9 linter/jsx-a11y/label-has-associated-control: Validate label attribute values (#27302) (sama Pyb)\\n- 7d381c3 linter/jsx-a11y/mouse-events-have-key-events: Handle nullish event handlers (#27306) (sama Pyb)\\n- 4e09837 linter/jsx-a11y/lang: Validate lang expression strings (#27304) (sama Pyb)\\n- 7d28a66 linter/unicorn/numeric-separators-style: Report misgrouped BigInt literals (#27207) (breken)\\n- e928322 linter/unicorn/no-zero-fractions: Parenthesize separator and large integers in fixer (#27206) (breken)\\n- 3d61a59 parser: Validate TypeScript type member separators (#27222) (camc314)\\n- f08236b linter/eslint/prefer-exponentiation-operator: Preserve autofix precedence (#27150) (camc314)\\n- 7d60ae3 linter/valid-title: Continue checks after allowed words (#27146) (Cameron)\\n- ad5dd5d linter/eslint/no-unused-vars: Respect disabled argument checks for used ignore patterns (#26925) (camc314)\"},\"r3\":{\"tagName\":\"oxlint_v1.88.0\",\"isDraft\":false,\"isPrerelease\":false,\"publishedAt\":\"2026-10-13T09:47:50Z\",\"url\":\"https://github.com/oxc-project/oxc/releases/tag/oxlint_v1.88.0\",\"description\":\"### \U0001F4A5 BREAKING CHANGES\\n\\n- 7730e14 ast: [**BREAKING**] Refactor comment attachment storage (#27512) (camc314)\\n- c904b61 ast: [**BREAKING**] Add comment attachment storage (#27393) (camc314)\\n\\n### \U0001F680 Features\\n\\n- bde9f69 oxlint/lsp: Show config errors to LSP client (#25486) (Sysix)\\n- 3c361a7 linter/unicorn/prefer-query-selector: Add `allowWithVariables` option (#27346) (Mikhail Baev)\\n\\n### \U0001F41B Bug Fixes\\n\\n- 82ecc43 linter/sort-keys: Compare natural order like ESLint (#27579) (Dunqing)\\n- 598ac03 linter/unicorn/prefer-bigint-literals: Unwrap redundant constructor call; don't auto-fix for lost precision (#25690) (Jacob Bandes-Storch)\\n- 2512213 linter: Prevent conflicting type import fixes (#27409) (camc314)\\n- 2349a31 oxfmt: Follow symlinked configs in discovery (#27389) (leaysgur)\\n- 6e573f9 oxlint,oxfmt: Set stderr blocking (#27363) (leaysgur)\\n\\n### ⚡ Performance\\n\\n- 91b588c linter/oxc/bad-array-method-on-arguments: Check arguments references once (#26930) (camc314)\\n- c5f47ed linter/plugins: Inline `firstCommentAtOrAfter` into call sites (#27539) (overlookmotel)\\n- c5f9235 linter/plugins: Use shift over multiply for powers of 2 (#27536) (overlookmotel)\\n- 8c57c5e linter: Share one source per file across type-aware diagnostics (#27462) (Max Schwenk)\\n- 19c227d minifier: Use ident when checking specific id names (#27208) (Armano)\\n\\n### \U0001F4DA Documentation\\n\\n- 98cc2b4 linter/plugins: Improve documentation for `firstCommentAtOrAfter` (#27538) (overlookmotel)\\n- 3bb54f6 linter: Update stale comment (#27519) (overlookmotel)\\n- 848a4e7 linter: Update fix metadata for tsgolint rules that already provide fixes (#27408) (Mikhail Baev)\"},\"r4\":{\"tagName\":\"oxlint_v1.89.0\",\"isDraft\":false,\"isPrerelease\":false,\"publishedAt\":\"2026-10-19T17:24:26Z\",\"url\":\"https://github.com/oxc-project/oxc/releases/tag/oxlint_v1.89.0\",\"description\":\"### \U0001F4A5 BREAKING CHANGES\\n\\n- e3c1b11 ast: [**BREAKING**] Preserve lone surrogates in static property names (#27095) (Dunqing)\\n- a0a987c ast: [**BREAKING**] Preserve lone surrogates in static member names (#26677) (Dunqing)\\n\\n### \U0001F680 Features\\n\\n- 770ada4 linter: Mark vue 3 rules as recommended (#27717) (Cam McHenry)\\n- ba38c1d linter: Mark react/react-hooks rules as recommended (#27701) (Cam McHenry)\\n- d85a3ba linter: Mark promise rules as recommended (#27693) (Cam McHenry)\\n- e71c88a linter: Mark node rule as recommended (#27692) (Cam McHenry)\\n- 7213f61 linter: Mark nextjs rules as recommended (#27691) (Cam McHenry)\\n- d7c6b26 linter: Mark jsx-a11y rules as recommended (#27690) (Cam McHenry)\\n- 199dfdc linter: Mark jsdoc rules as recommended (#27689) (Cam McHenry)\\n- 780bff3 linter: Mark jest/vitest rules as recommended (#27672) (Cam McHenry)\\n- 6ae6859 linter: Mark import rules as recommended (#27671) (Cam McHenry)\\n- b7a1df3 linter: Mark unicorn rules as recommended (#27670) (Cam McHenry)\\n- c44a355 linter: Mark typescript rules as recommended from upstream (#27634) (Cam McHenry)\\n- 6b49dba linter: Mark eslint rules as recommended from upstream (#27632) (Cam McHenry)\\n\\n### \U0001F41B Bug Fixes\\n\\n- 7c47246 linter: Check module specifiers and string values that contain lone surrogates (#26717) (Dunqing)\\n- 782ab6e linter: Search string values without UTF-8 conversion (#26716) (Dunqing)\\n- 326904f linter/unicorn/no-useless-undefined: Allow `undefined` in `React.useRef` (#25027) (Chris Dokurno)\\n- f9cf165 linter/unicorn/prefer-spread: Ignore super method calls (#27868) (camc314)\\n- 00484e1 linter/eslint/prefer-const: Report destructuring assignments inside blocks (#27856) (camc314)\\n- 9c35461 linter/eslint/sort-vars: Report every out-of-order declaration (#27767) (camc314)\\n- 01e1c5e linter/unicorn/prefer-string-replace-all: Resolve regex variables (#27769) (camc314)\\n- 7f474d5 linter/eslint/no-loop-func: Detect writes after the loop (#27754) (camc314)\\n- 4b7fea6 linter/eslint/block-scoped-var: Ignore declarations without writes (#27760) (camc314)\\n- 2947917 linter/eslint/no-lonely-if: Check final else blocks in else-if chains (#27759) (camc314)\\n- fc039b5 linter/eslint/sort-imports: Check imports after other statements (#27749) (camc314)\\n- 1acba97 linter/unicorn/prefer-at: Report slice index reads once (#27762) (camc314)\\n- 6190e26 linter/eslint/prefer-arrow-callback: Ignore functions used as conditional tests (#27533) (Anzal Husain Abidi)\\n- b3cdaaf linter/eslint/sort-keys: Check computed identifier names (#27748) (camc314)\\n- 170e608 linter/unicorn/prefer-native-coercion-functions: Check object methods and function properties (#27750) (camc314)\\n- 9261df7 linter/unicorn/prefer-string-raw: Check object property values (#27758) (camc314)\\n- ddea86b linter/eslint/prefer-template: Report separate nested concatenations (#27764) (camc314)\\n- 2c67197 linter/eslint/no-unused-vars: Count conditional calls in sequences as uses (#27755) (camc314)\\n- 7f22fa0 linter/unicorn/prefer-regexp-test: Check logical operands in boolean contexts (#27761) (camc314)\\n- 3c44398 linter/eslint/class-methods-use-this: Count this in parameter defaults (#27756) (camc314)\\n- d85923f linter/eslint/no-param-reassign: Report rest parameter writes (#27765) (camc314)\\n- 8ea47bb linter/unicorn/prefer-type-error: Handle parenthesized type checks (#27766) (camc314)\\n- e96856c linter/unicorn/catch-error-name: Check unused underscore-prefixed names (#27751) (camc314)\\n- d8ca399 linter/unicorn/no-array-callback-reference: Ignore callback factory calls (#27763) (camc314)\\n- 1267ab8 linter/eslint/max-params: Count rest parameters (#27757) (camc314)\\n- 9ff25c3 linter/eslint/no-useless-assignment: Report dead stores to function parameters (#27735) (camc314)\\n- ee5e730 linter/eslint/no-setter-return: Check setters in property descriptors (#27731) (camc314)\\n- edbb5ed linter/eslint/id-length: Check destructuring assignment targets (#27724) (Yunus Ozen)\\n- 0e40acb linter/eslint/no-magic-numbers: Restrict unary exemptions to numeric signs (#27723) (Yunus Ozen)\\n- ae7e44b linter/eslint/no-div-regex: Report quantified leading equals (#27722) (Yunus Ozen)\\n- eb461f8 linter/unicorn/consistent-function-scoping: Count self-referencing variables as captures (#27726) (camc314)\\n- 5c8e731 linter/unicorn/catch-error-name: Avoid fix symbol name collisions (#27702) (camc314)\\n- 9a424c2 oxlint,oxfmt: Correct Node.js TypeScript support range (#27699) (camc314)\\n- 5dc0152 linter/eslint/no-var: Avoid fixes for redeclared bindings (#27697) (camc314)\\n\\n### ⚡ Performance\\n\\n- 4944cba linter/react/jsx-key: Avoid redundant key clones (#27915) (camc314)\\n\\n### \U0001F4DA Documentation\\n\\n- 0aa41ac linter: Fix invalid code example in rule docs (#27645) (leaysgur)\"},\"r5\":{\"tagName\":\"oxlint_v1.90.0\",\"isDraft\":false,\"isPrerelease\":false,\"publishedAt\":\"2026-10-27T05:51:29Z\",\"url\":\"https://github.com/oxc-project/oxc/releases/tag/oxlint_v1.90.0\",\"description\":\"### \U0001F680 Features\\n\\n- cf34678 oxlint: Export `Oxlintrc` type (#28132) (Sysix)\\n- 831cdf1 oxlint: Require mininum oxlint-tsgolint version v7.0.2005 (#28118) (camc314)\\n- d1b00f4 linter/typescript: Implement no-unsafe-enum-assignment rule (#28117) (camc314)\\n- 165c91f linter/typescript/await-thenable: Support `allowMixedPromiseArrays` option (#28116) (camc314)\\n\\n### \U0001F41B Bug Fixes\\n\\n- 7f3c908 linter/eslint/array-callback-return: Check callbacks passed with extra arguments (#28133) (sarankumar)\\n- 53be530 linter: Filter by type aware rules when looking up tsgolint rule severity (#28138) (NavpreetSSidhu)\\n- e0f8937 react-compiler: Compile a `try` whose `catch` is unreachable instead of panicking (#28066) (Dunqing)\\n- f5b625f linter/eslint/no-useless-concat: See through parenthesized expressions (#27984) (Rahul Kashyap)\\n- 4629bb2 linter/jest/no-conditional-expect: Check function expression callbacks (#28055) (camc314)\\n- 5c84098 semantic,linter: Report names with lone surrogates in enum and lint checks (#27991) (Dunqing)\\n- f3705a9 linter/eslint/prefer-const: Skip fixers if any declarator is reassigned (#28008) (Prince Jain)\\n- 4c0fa90 minifier,linter: Keep `delete` of constant members and later JSX keys (#27990) (Dunqing)\\n- 0298062 linter/arrow-body-style: Keep type assertions when adding a block body (#27978) (Yan Almeida)\"},\"r6\":{\"tagName\":\"oxlint_v1.91.0\",\"isDraft\":false,\"isPrerelease\":false,\"publishedAt\":\"2026-11-03T14:02:06Z\",\"url\":\"https://github.com/oxc-project/oxc/releases/tag/oxlint_v1.91.0\",\"description\":\"### \U0001F680 Features\\n\\n- 004647a track_memory_allocs: Add allocation tracking for linter rules (#28470) (Cam McHenry)\\n- 419c1b0 linter: Add allow and allowPattern options to react/capitalized-calls (Christian Vuerings)\\n\\n### \U0001F41B Bug Fixes\\n\\n- a205cd3 linter/eslint/no-control-regex: Detect raw control characters (#28548) (camc314)\\n- 7c65777 linter/unicorn/prefer-global-this: Align typeof and worker API handling (#28549) (camc314)\\n- 987d5f1 linter/unicorn/no-invalid-fetch-options: Avoid treating unknown methods as GET (#28547) (camc314)\\n- e234dc8 linter/unicorn/no-useless-error-capture-stack-trace: Move to suspicious category (#28545) (camc314)\\n- b3dc411 linter/typescript/no-non-null-asserted-nullish-coalescing: Move to suspicious category (#28546) (camc314)\\n- cb64638 regular_expression: Reject incomplete Unicode atom escapes (#28448) (Boshen)\\n- c67167e linter: Only run React Compiler rules on files with top-level components or hooks (Boshen)\\n- 4c9d5aa linter: Treat Reanimated shared values as ref-like in React Compiler rules (Boshen)\\n- 61fe2af linter/react: Ignore impure calls in async components in react/purity (Rahul Kashyap)\\n- ed7df7d ast/estree: Include comments in TS Program span (#28326) (camc314)\\n- 31cbe37 linter: Make gitlab fingerprints unique per diagnostic (#28307) (camc314)\\n\\n### ⚡ Performance\\n\\n- 564559d linter/prefer-const: Avoid collecting resolved references (#28732) (Dunqing)\\n- bb947dc linter: Skip numeric separator formatting for short integers (#28485) (Cam McHenry)\\n- 1043dfa linter: Avoid collecting prefer-const binding identifiers (#28484) (Cam McHenry)\\n- 7c93eef linter: Reduce branches-sharing-code scratch allocations (#28483) (Cam McHenry)\\n- c0065fd linter: Allocate escape-case replacements only when needed (#28482) (Cam McHenry)\\n- d837414 linter: Lazily normalize capitalized-comments text (#28481) (Cam McHenry)\\n- 6baaad6 linter: Avoid no-var binding identifier allocations (#28480) (Cam McHenry)\\n- 882053b linter: Skip read-only parameters in no-param-reassign (#28479) (Cam McHenry)\\n- 92deebf linter: Reduce no-unmodified-loop-condition allocations (#28478) (Cam McHenry)\\n- f01d52d linter: Reduce no-duplicate-case allocations (#28477) (Cam McHenry)\\n- 6a72d84 linter: Reduce no-dupe-class-members allocations (#28476) (Cam McHenry)\\n- 77599ef linter: Reduce no-this-before-super allocations (#28475) (Cam McHenry)\\n- 2ea9f58 linter/no-dupe-else-if: Use smallvec to reduce allocs (#28474) (Cam McHenry)\\n- 69f0204 linter/react/rules-of-hooks: Reduce allocs (#28473) (Cam McHenry)\\n- b138c20 linter: Reduce allocs in no-dupe-keys (#28472) (Cam McHenry)\\n- 6f3e982 linter: Avoid operator allocations in no-useless-length-check (#28471) (Cam McHenry)\\n- fd68928 react-compiler: Skip passes lint does not need (Yagiz Nizipli)\\n- 224f4dd linter/eslint/sort-keys: Reserve initial capacity for string (#27624) (Cam McHenry)\\n- e4e01a3 linter/import/no-cycle: Compare visited modules by absolute resolved path (#27517) (Cam McHenry)\\n- 741b29b linter/import/no-cycle: Cache sorted module record snapshots (#27516) (Cam McHenry)\\n- 20022bb linter/import/no-cycle: Reuse traversal buffers between imports (#27481) (Cam McHenry)\\n- fd5edb7 linter/import/no-cycle: Reuse module records in diagnostic stack (#27480) (Cam McHenry)\\n- 73e877c linter/import/no-cycle: Don't allocate paths already seen (#27478) (Cam McHenry)\\n- 1515d53 linter/react/forward-ref-uses-ref: Narrow forward-ref-uses-ref dispatch (#28367) (Cam McHenry)\\n- ee51c01 linter/react/no-string-refs: Narrow AST dispatch (#28366) (Cam McHenry)\\n- bbfd692 linter/react/no-children-pop: Narrow AST dispatch (#28365) (Cam McHenry)\\n- a86158b linter/unicorn/prefer-set-size: Narrow AST dispatch (#28364) (Cam McHenry)\\n- a777fa6 linter/eslint/no-iterator: Narrow member dispatch (#28363) (Cam McHenry)\\n- bc5e94d linter/eslint/no-extra-boolean-cast: Narrow AST dispatch (#28362) (Cam McHenry)\\n- 93c6e6d linter/unicorn/no-useless-fallback-in-spread: Narrow AST dispatch (#28361) (Cam McHenry)\\n- 1a1f66e linter/typescript/no-this-alias: Narrow AST dispatch (#28360) (Cam McHenry)\\n- b102a91 linter/typescript/no-wrapper-object-types: Index references (#28359) (Cam McHenry)\\n- dbd8a0b linter/eslint/no-unassigned-vars: Batch by declaration (#28358) (Cam McHenry)\\n- 1108352 linter/typescript/prefer-as-const: Narrow AST dispatch (#28357) (Cam McHenry)\\n- d65531f linter/eslint/no-const-assign: Batch by declaration (#28356) (Cam McHenry)\\n- 1ec9991 linter/oxc/number-arg-out-of-range: Narrow AST dispatch (#28355) (Cam McHenry)\\n- 7a1243e linter/unicorn/no-invalid-fetch-options: Narrow AST dispatch (#28354) (Cam McHenry)\\n- 2ab73cc linter/unicorn/no-single-promise-in-promise-methods: Narrow AST dispatch (#28353) (Cam McHenry)\\n- 483c4c9 linter/eslint/no-compare-neg-zero: Narrow no-compare-neg-zero dispatch (#28352) (Cam McHenry)\\n- 56c99c6 linter/eslint/no-unsafe-negation: Narrow AST dispatch (#28351) (Cam McHenry)\\n- 84d974b linter/unicorn/prefer-string-starts-ends-with: Narrow AST dispatch (#28350) (Cam McHenry)\\n- 142ef4f unicorn: Narrow no-await-in-promise-methods dispatch (#28349) (Cam McHenry)\\n- a3dc7a2 linter/unicorn/no-await-expression-member: Optimize AST dispatch (#28348) (Cam McHenry)\\n- 481b638 linter/plugins: Create AST nodes with `Object.create` instead of `__proto__` literals (#27816) (Charles Wang)\"},\"r7\":{\"tagName\":\"oxlint_v1.92.0\",\"isDraft\":false,\"isPrerelease\":false,\"publishedAt\":\"2026-11-06T12:28:40Z\",\"url\":\"https://github.com/oxc-project/oxc/releases/tag/oxlint_v1.92.0\",\"description\":\"### \U0001F680 Features\\n\\n- 4a52ba2 oxlint: Discover tsrs for type-aware linting (#28751) (camc314)\\n- b7d2c75 linter/eslint/no-redeclare: Add `ignoreDeclarationMerge` option (#28816) (Cam McHenry)\\n\\n### \U0001F41B Bug Fixes\\n\\n- fa66fde oxlint,oxfmt: Resolve Vite+ config root from the config file directory (#28801) (MK (fengmk2))\\n- 2091564 linter/jsdoc/require-param: Ignore enclosing function JSDoc (#28866) (camc314)\\n- c6ec50b linter/react/only-export-components: Classify JSX values as non-components (#28761) (camc314)\\n- 3c051ab linter/vitest/prefer-called-exactly-once-with: Preserve neighboring code in autofix (#28864) (camc314)\\n- 674b962 linter/eslint/no-misleading-character-class: Use lazy regex for combining marks (#28822) (Sysix)\\n- 838d339 linter/vitest/prefer-called-exactly-once-with: Avoid panic on non-ASCII text (#28850) (YT)\\n- 8d24c26 linter/jsx-a11y/aria-role: Allow role={undefined} (#28804) (Abhay Godavarthy)\\n- a7143bf linter/eslint/no-restricted-imports: Respect allowTypeImports correctly for empty patterns (#28842) (Cam McHenry)\\n- 3d3a6f4 react-compiler: Ignore callback-local reassignments (#28820) (camc314)\\n- 0cc6515 linter/unicorn/prefer-type-error: Report throws in unbraced if branches (#28819) (camc314)\\n- ae43c80 linter/unicorn/prefer-single-call: Remove duplicate fix status (#28763) (Mikhail Baev)\\n- a8a621a linter/eslint/no-fallthrough: Ignore unreachable exits from infinite loops (#28755) (camc314)\\n- 7a17a80 linter/eslint/prefer-spread: Report calls on non-member expressions (#28753) (camc314)\\n- 28442f7 oxlint: Prevent --init from overwriting existing configs (#28754) (camc314)\\n- 0ae350d linter/unicorn/no-zero-fractions: Preserve exponent case (#28752) (camc314)\\n- b5b3f3f linter/eslint/no-misleading-character-class: Detect more combining characters (#28733) (Sysix)\\n\\n### ⚡ Performance\\n\\n- 74d50c1 linter: Overlap import graph batches instead of polling on a pool worker (#28323) (Dunqing)\"},\"r8\":{\"tagName\":\"oxlint_v1.93.0\",\"isDraft\":false,\"isPrerelease\":false,\"publishedAt\":\"2026-11-09T11:47:15Z\",\"url\":\"https://github.com/oxc-project/oxc/releases/tag/oxlint_v1.93.0\",\"description\":\"### \U0001F680 Features\\n\\n- 6195265 linter/promise/prefer-catch: Implement suggestion (#28919) (Mikhail Baev)\\n\\n### \U0001F41B Bug Fixes\\n\\n- 866664e linter/unicorn/no-useless-undefined: Skip var initializers (#29007) (camc314)\\n- 30603cb linter/react/exhaustive-deps: Preserve comments in dependency removals (#29047) (camc314)\\n- 4630fe4 linter/unicorn/no-useless-undefined: Narrow return type exemptions (#29000) (camc314)\\n- b63870a linter/vitest/expect-expect: Recognize benchmark fixtures (#29044) (camc314)\\n- 9c62d2a linter/eslint/no-unreachable-loop: Ignore enclosing finalizers for continues (#29004) (camc314)\\n- 6303df1 jsdoc: Preserve param tags after unmatched description delimiters (#28923) (Vishal Punjabi)\\n- fe66fa7 linter/eslint/no-lone-blocks: Report redundant blocks in function bodies (#29043) (camc314)\\n- e1694bd linter/unicorn/no-useless-undefined: Preserve shadowed bindings (#29046) (camc314)\\n- 791b5f5 linter/unicorn/prefer-regexp-test: Restrict automatic argument swaps (#29045) (camc314)\\n- e7654f6 linter/react/display-name: Ignore unrelated memo and forwardRef calls (#29005) (camc314)\\n- 2487360 linter/unicorn/no-useless-undefined: Report guarded indexed access (#29014) (camc314)\\n- a791a5b cfg: Resolve continues through stacked loop labels (#29016) (camc314)\\n- 287ba19 linter/eslint/id-length: Ignore TypeScript qualified references (#29037) (camc314)\\n- b71234f cfg: Skip labeled contexts for unlabeled jumps (#29001) (camc314)\\n- bb21a3c linter/import/no-anonymous-default-export: Report parenthesized exports (#29002) (camc314)\\n- f38f738 linter/eslint/prefer-destructuring: Skip fixes that remove comments (#29003) (camc314)\\n- bf11006 linter/react/exhaustive-deps: Suggest dependency removals (#28925) (camc314)\\n- 6bbb92a linter: Remove unused `oxlint-disable` directives with `--fix` (#27698) (Ryan Tsao)\\n- 3b35cb6 linter/disable-directives: Preserve separators and disable spans (#28921) (camc314)\\n- 1253445 linter/eslint/no-restricted-imports: Report re-exported imports once (#28920) (Ramy Akin Saidi)\\n\\n### ⚡ Performance\\n\\n- da620e6 linter: Start tsgolint before the regular lint pass (#28824) (Max Schwenk)\"},\"r9\":{\"tagName\":\"oxlint_v1.94.0\",\"isDraft\":false,\"isPrerelease\":false,\"publishedAt\":\"2026-11-16T12:26:24Z\",\"url\":\"https://github.com/oxc-project/oxc/releases/tag/oxlint_v1.94.0\",\"description\":\"### \U0001F680 Features\\n\\n- db5bc6b linter: Output recommended flag in `--rules` JSON output (#29338) (Cam McHenry)\\n- acd8814 linter/typescript/no-misused-promises: Add `flagUnions` option (#29380) (camc314)\\n- fa492d6 minifier: Merge adjacent switch cases with identical bodies (#29316) (camc314)\\n- ca3b2cb linter/vue/no-shared-component-data: Implement fixer (#29291) (Mikhail Baev)\\n- bfe3498 linter: Mark oxc rules as recommended (#28091) (Cam McHenry)\\n- 5da83ae linter/eslint/no-unused-vars: Suggest removing unused type parameters (#28762) (YanYunCY)\\n- 6816662 linter/jsdoc/require-param-description: Implement suggestion (#29118) (Mikhail Baev)\\n\\n### \U0001F41B Bug Fixes\\n\\n- 8d49552 linter/vitest/prefer-importing-vitest-globals: Insert imports after shebangs and directives (#29674) (camc314)\\n- 4526cae linter: Drop `## Example` headings from overrides config docs (#29670) (oxc-captain[bot])\\n- 97ed4b7 linter: Mark undefined argument removal as dangerous (#29266) (周星星同学)\\n- 58ef81d linter/typescript/prefer-function-type: Strip a trailing comma from the fixed signature (#28145) (NavpreetSSidhu)\\n- dcb465f linter/jsx-a11y/prefer-tag-over-role: Allow role=\\\"img\\\" on svg (#29440) (Nadir Ali)\\n- 994ddc3 linter/eslint/no-div-regex: Offer regex rewrites as suggestions (#29493) (oxc-captain[bot])\\n- dc5add7 linter/jsx-a11y/lang: Don't report a missing lang attribute (#29441) (Nadir Ali)\\n- f010115 linter/jest/prefer-to-be,linter/vitest/prefer-to-be: Emit rewrites as suggestions (#29503) (oxc-captain[bot])\\n- b31fb57 linter/eslint/no-new-wrappers: Offer wrapper rewrites as suggestions (#29494) (oxc-captain[bot])\\n- 9abb941 linter/jsx-a11y/scope: Preserve effectful attribute values in safe fixes (#29507) (oxc-captain[bot])\\n- a1664a9 linter/jsx-a11y/no-redundant-roles: Use the first valid ARIA role token (#29497) (oxc-captain[bot])\\n- 64df21d linter/eslint/yoda: Skip safe fixes for relational regex comparisons (#29495) (oxc-captain[bot])\\n- df8887a linter/typescript/no-import-type-side-effects: Make the import rewrite a suggestion (#29502) (oxc-captain[bot])\\n- 2ce7f06 linter/jest/no-unneeded-async-expect-function,linter/vitest/no-unneeded-async-expect-function: Suggest unwrapping async callbacks (#29501) (oxc-captain[bot])\\n- 45c2159 linter/eslint/no-regex-spaces: Offer regex rewrites as suggestions (#29499) (oxc-captain[bot])\\n- 5167945 linter/vitest/prefer-import-in-mock: Preserve quotes and escapes in fixes (#29509) (oxc-captain[bot])\\n- 7127aa6 linter/jest/prefer-called-with,linter/vitest/prefer-called-with: Offer matcher rewrites as suggestions (#29498) (oxc-captain[bot])\\n- 5472a21 linter/typescript: Offer @ts-ignore rewrites as suggestions (#29511) (oxc-captain[bot])\\n- 523d59b linter/eslint/no-useless-escape: Demote useless escape fixes to suggestions (#29508) (oxc-captain[bot])\\n- 7ce5692 linter/jest/prefer-todo,linter/vitest/prefer-todo: Restrict safe fixes (#29512) (oxc-captain[bot])\\n- 0d3f45a linter/vitest/prefer-importing-vitest-globals: Avoid duplicate imports for type-only bindings (#29564) (Ahmed Alhaidary)\\n- d22f2c2 linter/vitest/prefer-strict-boolean-matchers: Offer rewrites as suggestions (#29500) (oxc-captain[bot])\\n- 2170319 linter/react/only-export-components: Classify export specifiers like declarations (#29520) (Rahul Kashyap)\\n- 79c0b73 linter/eslint/prefer-object-spread: Skip __proto__ sources and suggest unsafe rewrites (#29510) (oxc-captain[bot])\\n- 69be73e linter/jsx-a11y: Match event handler props case-insensitively (#29570) (Nadir Ali)\\n- 1ae09b9 linter/jsx-a11y/aria-unsupported-elements: Preserve effectful attribute values (#29506) (oxc-captain[bot])\\n- 4092e2f linter/jsx-a11y/no-aria-hidden-on-focusable: Suggest removing aria-hidden (#29505) (oxc-captain[bot])\\n- 4059ff7 linter/react/rules-of-hooks: Match namespaced additional effect hooks (#29517) (Boshen)\\n- 65659e6 linter/react/no-unstable-nested-components: Ignore prop callbacks that return an object holding JSX (#29605) (Nadir Ali)\\n- bff48d0 linter/unicorn/prefer-set-size: Keep a space after a keyword before `[` (#29597) (Jingbo Chai)\\n- 2bb4c72 linter/vitest/prefer-importing-vitest-globals: Skip value imports from non-Vitest sources (#29563) (Abdul karim mia)\\n- a087125 linter/oxc/no-accumulating-spread: Check reduce callbacks that take the index or array (#29573) (Nadir Ali)\\n- 1a6fa05 linter/eslint/no-useless-rename: Don't fix a parenthesized target with a default (#29602) (Jingbo Chai)\\n- 121b55c linter/typescript/prefer-function-type: Don't fix or double-report `export default interface` (#29593) (Jingbo Chai)\\n- 9a3d7a1 linter/unicorn/prefer-export-from: Don't offer a fix that drops other names from the export list (#29574) (Nadir Ali)\\n- b188db6 linter/unicorn/prefer-response-static-json: Fix the suggestion when a comment follows `new` (#29591) (Jingbo Chai)\\n- 915a851 linter/eslint/no-var: Don't fix when `let` or `const` changes behavior (#29590) (Jingbo Chai)\\n- 9674aec linter: Don't skip code between comments when checking for an ASI hazard (#29601) (Jingbo Chai)\\n- 5e74d21 linter/unicorn/prefer-at: Preserve grouping in slice pop and shift fixes (#29598) (Jingbo Chai)\\n- c39f4fc linter/oxc/only-used-in-recursion: Keep the line break after a line comment (#29606) (Jingbo Chai)\\n- 66d30ee linter/jest/no-untyped-mock-factory: Copy the module name as written (#29604) (Jingbo Chai)\\n- 1a0460a linter/unicorn/prefer-single-call: Skip comments when checking for a trailing comma (#29596) (Jingbo Chai)\\n- 42395f2 linter/import/no-duplicates: Handle comments after a trailing comma when merging (#29595) (Jingbo Chai)\\n- 22cfb3f linter/eslint/curly: Don't remove braces when the statement needs a semicolon (#29592) (Jingbo Chai)\\n- 40b81d2 linter/unicorn/no-useless-spread: Replace holes with `undefined` in spread arguments (#29600) (Jingbo Chai)\\n- 00704a6 linter: Print config: remove redundant extends in output (#29585) (Cam McHenry)\\n- fe779e8 linter/vitest/require-awaited-expect-poll: Allow implicit arrow-function returns (#29576) (oxc-captain[bot])\\n- 6da36f8 linter: Print config: validate CLI options before printing config (#29538) (Cam McHenry)\\n- dda4d11 linter: Print config: reflect CLI options like `--type-aware` in the printed config (#29537) (Cam McHenry)\\n- dadb64f linter: Print config: include JS plugin settings in output JSON (#29534) (Cam McHenry)\\n- 0b643b3 linter: Print config: use resolved config instead of config builder (#29533) (Cam McHenry)\\n- 0a557ae linter: Print config: flatten single-element options arrays (#29531) (Cam McHenry)\\n- 09ef22f linter: Print config: preserve original rule configuration when generating rule sets (#29530) (Cam McHenry)\\n- 9314042 linter/react: Exhaustive-deps misses ref.current method calls on custom refs (#29571) (Boshen)\\n- 1dc0ee9 semantic: Preserve catch and var binding identities (#28739) (Dunqing)\\n- bebe76c linter/unicorn/prefer-spread: Avoid stack overflow on cyclic initializers (#29433) (camc314)\\n- eefd253 linter/react/exhaustive-deps: Stop autofixing missing dependency arrays (#29430) (camc314)\\n- 2b4f13e linter/unicorn/prefer-date-now: Preserve negation and comments (#29352) (Guru \U0001F984)\\n- 2dc1839 linter/eslint/func-style: Report functions sharing type names (#29378) (Abdul karim mia)\\n- db80510 linter/jsx-a11y/no-redundant-roles: Preserve link roles without href (#29384) (oxc-captain[bot])\\n- 9c20c2a linter: Infer omitted RegExp flags from known patterns (#29428) (oxc-captain[bot])\\n- 95f1081 linter/unicorn/no-accessor-recursion: Distinguish private and public keys (#29429) (oxc-captain[bot])\\n- 9f465fd react-compiler: Preserve ref mutation hints (#28553) (Nash Aschenbath)\\n- e5fb59e linter/vitest/require-test-timeout: Avoid overflow when sorting configurations (#29299) (camc314)\\n- 9f72ce2 linter/unicorn/consistent-template-literal-escape: Avoid panics after CRLF (#29298) (camc314)\\n- a2bd61d linter/react/jsx-key: Only check direct JSX array elements (#29294) (camc314)\\n- ed4fb73 linter/oxc/no-accumulating-spread: Avoid panic on parenthesized optional chains (#29293) (camc314)\\n- 4a9d681 linter/jest/prefer-to-be,linter/vitest/prefer-to-be: Avoid Unicode whitespace panics (#29292) (camc314)\\n- d8c1333 linter/vitest/prefer-called-once: Avoid panics on escaped matcher names (#29289) (camc314)\\n- 4959267 linter/unicorn/prefer-includes: Avoid panic on parenthesized optional chains (#29286) (camc314)\\n- a5f7617 linter/unicorn/prefer-object-from-entries: Avoid panic on wrapped callees (#29285) (camc314)\\n- 925633b linter/unicorn/prefer-dom-node-remove: Avoid panic on parenthesized optional chains (#29279) (camc314)\\n- f991b20 linter/unicorn/no-length-as-slice-end: Avoid panic on wrapped callees (#29277) (camc314)\\n- d5385ca linter/unicorn/no-useless-spread: Avoid panics on Unicode whitespace (#29278) (camc314)\\n- 06d5e6d linter/typescript/consistent-type-imports: Avoid panic on quoted import names (#29274) (camc314)\\n- db58bd1 linter/unicorn/prefer-set-has: Avoid panics on Unicode whitespace (#29276) (camc314)\\n- a87cecd linter/unicorn/no-document-cookie: Stop resolving cyclic aliases (#29275) (camc314)\\n- 9c9ffb6 linter/unicorn/prefer-array-flat: Avoid panic on rest parameters (#29273) (camc314)\\n- d068722 linter/no-large-snapshots: Avoid panics on Unicode whitespace (#29272) (camc314)\\n- 411624a linter/eslint/no-empty: Use byte offsets for finally suggestions (#29271) (camc314)\\n- 84fd230 linter/import/no-duplicates: Ignore braces in module strings (#29270) (camc314)\\n- 5d669bb linter/vitest/no-standalone-expect: Support Vitest `.extend` test functions (#29243) (camchenry)\\n- d1bd197 linter/vitest/prefer-snapshot-hint: Recognize conditional test scopes (#29221) (camc314)\\n- 3b16ccf linter/vitest/require-awaited-expect-poll: Avoid duplicated reports (#29174) (sapphi-red)\\n- f0e3270 linter/prefer-mock-return-shorthand: Avoid mock return shorthand for mutations (#29136) (camc314)\\n- 8fe22b1 linter/eslint/no-useless-assignment: Handle instance field captures (#29135) (camc314)\\n- 3e1303e linter/eslint/no-use-before-defne: Fix numerous failing cases (#28861) (Cam McHenry)\\n- 50278cc linter/eslint/no-restricted-imports: Report invalid regex configuration (#29119) (camc314)\\n- dde6024 linter/eslint/arrow-body-style: Converge fixes for wrapped object returns (#29101) (camc314)\\n- 5a32ad0 linter/unicorn/prefer-negative-index: Avoid panic on non-ASCII whitespace (#28877) (YT)\\n\\n### ⚡ Performance\\n\\n- aed0190 parser: Skip unused identifier hashes (#29168) (Boshen)\\n- 0dfb188 oxlint: Build diagnostic output while linting runs (#28747) (YT)\\n\\n### \U0001F4DA Documentation\\n\\n- cdb5ac4 oxlint: Remove experimental label from `typeCheck` (#29175) (Yuji Sugiura)\\n- ae514b3 linter: Move rule creation guidance into crate AGENTS.md (#29122) (camc314)\"}}}}"
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/json; charset=utf-8
+            Date:
+                - Tue, 24 Nov 2026 14:21:58 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept-Encoding, Accept, X-Requested-With
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.v4; format=json
+            X-Ratelimit-Limit:
+                - "5000"
+            X-Ratelimit-Remaining:
+                - "4987"
+            X-Ratelimit-Reset:
+                - "1795530908"
+            X-Ratelimit-Resource:
+                - graphql
+            X-Ratelimit-Used:
+                - "13"
+            X-Xss-Protection:
+                - "0"
+        status: 200 OK
+        code: 200
+        duration: 474.973958ms
+    - id: 9
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 136
+        host: api.github.com
+        body: |
+            {"query":"query($n0:String!$o0:String!){r0: repository(owner: $o0, name: $n0){isPrivate}}","variables":{"n0":"oxc","o0":"oxc-project"}}
+        headers:
+            Content-Type:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.github.com/graphql
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"data":{"r0":{"isPrivate":false}}}'
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
+            Content-Security-Policy:
+                - default-src 'none'
+            Content-Type:
+                - application/json; charset=utf-8
+            Date:
+                - Tue, 24 Nov 2026 14:21:59 GMT
+            Referrer-Policy:
+                - origin-when-cross-origin, strict-origin-when-cross-origin
+            Server:
+                - github.com
+            Strict-Transport-Security:
+                - max-age=31536000; includeSubdomains; preload
+            Vary:
+                - Accept-Encoding, Accept, X-Requested-With
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - deny
+            X-Github-Edge-Region:
+                - fra
+            X-Github-Media-Type:
+                - github.v4; format=json
+            X-Ratelimit-Limit:
+                - "5000"
+            X-Ratelimit-Remaining:
+                - "4955"
+            X-Ratelimit-Reset:
+                - "1795530907"
+            X-Ratelimit-Resource:
+                - graphql
+            X-Ratelimit-Used:
+                - "45"
+            X-Xss-Protection:
+                - "0"
+        status: 200 OK
+        code: 200
+        duration: 277.658416ms
+    - id: 10
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 584
+        host: api.osv.dev
+        body: '{"queries":[{"package":{"ecosystem":"Go","name":"github.com/oxc-project/oxc"},"version":"1.95.0"},{"package":{"ecosystem":"GIT","name":"https://github.com/oxc-project/oxc"},"version":"apps_v1.95.0"},{"package":{"ecosystem":"Go","name":"github.com/lycheeverse/lychee"},"version":"0.23.0"},{"package":{"ecosystem":"GIT","name":"https://github.com/lycheeverse/lychee"},"version":"lychee-v0.23.0"},{"package":{"ecosystem":"Go","name":"github.com/oxc-project/oxc"},"version":"1.84.0"},{"package":{"ecosystem":"GIT","name":"https://github.com/oxc-project/oxc"},"version":"oxlint_v1.84.0"}]}'
+        headers:
+            Accept:
+                - application/json
+            Content-Type:
+                - application/json
+            User-Agent:
+                - relgap/dev (+https://github.com/sassdavid/relgap)
+        url: https://api.osv.dev/v1/querybatch
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 31
+        body: '{"results":[{},{},{},{},{},{}]}'
+        headers:
+            Alt-Svc:
+                - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+            Content-Length:
+                - "31"
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 24 Nov 2026 14:21:59 GMT
+            Grpc-Message:
+                - ""
+            Grpc-Status:
+                - "0"
+            Server:
+                - Google Frontend
+            Traceparent:
+                - 00-f5220efe48c4380b52bc98ec644f7320-1aebe30d0c416764-00
+            X-Cloud-Trace-Context:
+                - f5220efe48c4380b52bc98ec644f7320/1939893709692823396
+            X-Envoy-Decorator-Operation:
+                - ingress QueryAffectedBatch
+        status: 200 OK
+        code: 200
+        duration: 706.509959ms

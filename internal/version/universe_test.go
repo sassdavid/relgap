@@ -74,7 +74,11 @@ func universe(t *testing.T, refs []version.Ref, rules version.Rules) *version.Un
 // correct ordered range for 3.19.0..3.22.1 and for --line major.
 func TestSpec_versions_and_ranges_3(t *testing.T) {
 	t.Parallel()
-	u := universe(t, loadReleases(t, "helm-releases.json"), version.Rules{Scheme: version.Semver(), TagPrefix: "v"})
+	u := universe(
+		t,
+		loadReleases(t, "helm-releases.json"),
+		version.Rules{Scheme: version.Semver(), TagPrefixes: []string{"v"}},
+	)
 	want := []string{
 		"v3.19.1", "v3.19.2", "v3.19.3", "v3.19.4", "v3.19.5",
 		"v3.20.0", "v3.20.1", "v3.20.2",
@@ -131,7 +135,11 @@ func TestSpec_versions_and_ranges_4(t *testing.T) {
 // ignored, using the registry prefix.
 func TestSpec_versions_and_ranges_5(t *testing.T) {
 	t.Parallel()
-	u := universe(t, loadTags(t, "atlascli-tags.json"), version.Rules{Scheme: version.Semver(), TagPrefix: "atlascli/"})
+	u := universe(
+		t,
+		loadTags(t, "atlascli-tags.json"),
+		version.Rules{Scheme: version.Semver(), TagPrefixes: []string{"atlascli/"}},
+	)
 	for _, v := range u.Versions() {
 		assert.Regexp(t, `^atlascli/v`, v.Tag)
 	}
@@ -143,6 +151,104 @@ func TestSpec_versions_and_ranges_5(t *testing.T) {
 	assert.NotContains(t, all, "v1.20.0", "bare tags are not atlascli releases")
 	assert.NotContains(t, all, "mongocli/v1.30.0")
 	assert.Contains(t, all, "atlascli/v1.30.0")
+}
+
+// TestSpec_versions_and_ranges_6: a tool whose tags switched prefix keeps the versions of every
+// prefix in one universe. lychee tagged v0.15.1, then lychee-v0.16.0, next to lychee-lib-v* tags
+// of its library. oxlint tagged oxlint_v, then apps_v, then oxlint_v again, in a repository with
+// crates_v, oxfmt_v and stray v0.1.1 tags.
+func TestSpec_versions_and_ranges_6(t *testing.T) {
+	t.Parallel()
+	lycheeTags := []string{
+		"lychee-v0.24.2", "lychee-lib-v0.24.2", "lychee-v0.24.0", "lychee-lib-v0.24.0",
+		"lychee-v0.16.0", "lychee-lib-v0.16.0", "v0.15.1", "v0.15.0",
+	}
+	oxcTags := []string{
+		"oxlint_v1.94.0", "oxfmt_v0.80.0", "crates_v0.120.0", "apps_v1.85.0", "oxlint_v1.85.0",
+		"apps_v1.84.0", "apps_v1.28.0", "oxlint_v1.16.0", "oxlint_v0.2.2", "v0.1.1", "v0.0.9",
+	}
+	tests := []struct {
+		name   string
+		tags   []string
+		rules  version.Rules
+		want   []string
+		latest string
+		parse  map[string]string // input to the version it parses to
+	}{
+		{
+			name: "lychee",
+			tags: lycheeTags,
+			rules: version.Rules{
+				Scheme:      version.Loose(),
+				TagPrefixes: []string{"lychee-v", ""},
+				Exclude:     regexp.MustCompile(`^lychee-lib-`),
+			},
+			want:   []string{"v0.15.0", "v0.15.1", "lychee-v0.16.0", "lychee-v0.24.0", "lychee-v0.24.2"},
+			latest: "lychee-v0.24.2",
+			parse:  map[string]string{"0.24.2": "0.24.2", "lychee-v0.24.2": "0.24.2", "v0.15.1": "0.15.1"},
+		},
+		{
+			name:   "lychee, prefixes in any order",
+			tags:   lycheeTags,
+			rules:  version.Rules{Scheme: version.Loose(), TagPrefixes: []string{"", "lychee-v"}},
+			want:   []string{"v0.15.0", "v0.15.1", "lychee-v0.16.0", "lychee-v0.24.0", "lychee-v0.24.2"},
+			latest: "lychee-v0.24.2",
+		},
+		{
+			name:   "lychee before the fix: plain tags only",
+			tags:   lycheeTags,
+			rules:  version.Rules{Scheme: version.Loose(), Exclude: regexp.MustCompile(`^lychee-lib-`)},
+			want:   []string{"v0.15.0", "v0.15.1"},
+			latest: "v0.15.1",
+		},
+		{
+			name: "oxlint",
+			tags: oxcTags,
+			rules: version.Rules{
+				Scheme: version.Loose(), TagPrefixes: []string{"oxlint_v", "apps_v", ""},
+				Include: regexp.MustCompile(`^apps_v|^oxlint_v`),
+			},
+			want: []string{
+				"oxlint_v0.2.2", "oxlint_v1.16.0", "apps_v1.28.0", "apps_v1.84.0", "apps_v1.85.0", "oxlint_v1.94.0",
+			},
+			latest: "oxlint_v1.94.0",
+			parse:  map[string]string{"1.94.0": "1.94.0", "apps_v1.84.0": "1.84.0", "oxlint_v1.16.0": "1.16.0"},
+		},
+		{
+			name:  "oxlint without the include filter still drops plain strays",
+			tags:  oxcTags,
+			rules: version.Rules{Scheme: version.Loose(), TagPrefixes: []string{"oxlint_v", "apps_v"}},
+			want: []string{
+				"oxlint_v0.2.2",
+				"oxlint_v1.16.0",
+				"apps_v1.28.0",
+				"apps_v1.84.0",
+				"apps_v1.85.0",
+				"oxlint_v1.94.0",
+			},
+			latest: "oxlint_v1.94.0",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			refs := make([]version.Ref, len(tt.tags))
+			for i, tag := range tt.tags {
+				refs[i] = version.Ref{Tag: tag}
+			}
+			u := universe(t, refs, tt.rules)
+			assert.Equal(t, tt.want, tags(u.Versions()), "1.85.0 keeps apps_v1.85.0, the first of its tags in refs")
+			latest, ok := u.Latest(version.V{}, version.LineNone)
+			require.True(t, ok)
+			assert.Equal(t, tt.latest, latest.Tag)
+			for in, want := range tt.parse {
+				v, err := u.Parse(in)
+				require.NoError(t, err, in)
+				assert.Equal(t, want, v.String(), in)
+				assert.True(t, u.Has(v), in)
+			}
+		})
+	}
 }
 
 func TestNewUniverse(t *testing.T) {
@@ -240,7 +346,7 @@ func TestResolvePrefix(t *testing.T) {
 		{Tag: "go1.26.2"},
 		{Tag: "go1.27rc2"},
 	}
-	u := universe(t, refs, version.Rules{Scheme: version.Loose(), TagPrefix: "go"})
+	u := universe(t, refs, version.Rules{Scheme: version.Loose(), TagPrefixes: []string{"go"}})
 	tests := []struct{ prefix, want, err string }{
 		{prefix: "1.25", want: "1.25.10"},
 		{prefix: "1", want: "1.26.2"},

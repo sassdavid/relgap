@@ -362,8 +362,9 @@ func (r *Resolver) Resolve(ctx context.Context, input string, opts ResolveOption
 		b.setString("version.universe", &b.spec.Version.Universe, UniverseTags, LayerDefault)
 	}
 	if tagPrefix != "" {
-		b.spec.Version.TagPrefix = tagPrefix
+		b.spec.Version.TagPrefixes = Prefixes{tagPrefix}
 		b.prov["version.tag_prefix"] = []Layer{LayerExplicit}
+		b.dropAquaFilter()
 	}
 	b.defaults()
 	b.spec.UserRepo = userRepo(b.prov["repo"])
@@ -971,6 +972,25 @@ func (b *builder) setString(key string, dst *string, val string, l Layer) {
 	}
 }
 
+func (b *builder) setPrefixes(val Prefixes, l Layer) {
+	if len(b.spec.Version.TagPrefixes) == 0 && len(val) > 0 {
+		b.spec.Version.TagPrefixes = slices.Clone(val)
+		b.prov["version.tag_prefix"] = []Layer{l}
+	}
+}
+
+// dropAquaFilter removes the include and exclude rules aqua's version_filter gave, which were
+// written for aqua's tag prefixes.
+func (b *builder) dropAquaFilter() {
+	v := &b.spec.Version
+	for key, dst := range map[string]*string{"version.include": &v.Include, "version.exclude": &v.Exclude} {
+		if slices.Equal(b.prov[key], []Layer{LayerAqua}) {
+			*dst = ""
+			delete(b.prov, key)
+		}
+	}
+}
+
 func (b *builder) addAliases(names []string, l Layer) {
 	added := false
 	for _, n := range names {
@@ -994,7 +1014,7 @@ func (b *builder) fromEntry(e *Entry) {
 	v := &b.spec.Version
 	b.setString("version.scheme", &v.Scheme, e.Version.Scheme, l)
 	b.setString("version.extract", &v.Extract, e.Version.Extract, l)
-	b.setString("version.tag_prefix", &v.TagPrefix, e.Version.TagPrefix, l)
+	b.setPrefixes(e.Version.TagPrefixes, l)
 	b.setString("version.exclude", &v.Exclude, e.Version.Exclude, l)
 	b.setString("version.universe", &v.Universe, e.Version.Universe, l)
 	b.setString("version.line", &v.Line, e.Version.Line, l)
@@ -1024,7 +1044,7 @@ func (b *builder) fromEntry(e *Entry) {
 // fromFound takes the tag rules and the listed versions of a lookup: a chart's versions, or an
 // image's tags with its variant.
 func (b *builder) fromFound(f *Found) {
-	b.setString("version.tag_prefix", &b.spec.Version.TagPrefix, f.TagPrefix, f.Layer)
+	b.setPrefixes(newPrefixes(f.TagPrefix), f.Layer)
 	if f.Versions == nil {
 		return
 	}
@@ -1039,22 +1059,30 @@ func (b *builder) fromFound(f *Found) {
 	b.spec.Versions = f.Versions
 }
 
-// startsWith matches the one aqua version_filter form that maps to a tag prefix.
+// startsWith matches the aqua version_filter form that maps to a tag prefix when the package
+// has none.
 var startsWith = regexp.MustCompile(`^Version startsWith "([^"\\]+)"$`)
 
 func (b *builder) fromAqua(a *AquaEntry) {
 	l := LayerAqua
+	v := &b.spec.Version
 	b.setString("repo", &b.spec.Repo, a.Repo, l)
-	prefix := a.VersionPrefix
-	if prefix == "" {
+	if a.VersionSource == "github_tag" {
+		b.setString("version.universe", &v.Universe, UniverseTags, l)
+	}
+	if len(v.TagPrefixes) > 0 {
+		return // aqua's filter is written for aqua's prefixes, not the ones a higher layer set
+	}
+	prefixes := a.tagPrefixes()
+	include, exclude := aquaFilter(a.VersionFilter)
+	if len(prefixes) == 0 {
 		if m := startsWith.FindStringSubmatch(a.VersionFilter); m != nil {
-			prefix = m[1]
+			prefixes, include = Prefixes{m[1]}, ""
 		}
 	}
-	b.setString("version.tag_prefix", &b.spec.Version.TagPrefix, prefix, l)
-	if a.VersionSource == "github_tag" {
-		b.setString("version.universe", &b.spec.Version.Universe, UniverseTags, l)
-	}
+	b.setPrefixes(prefixes, l)
+	b.setString("version.include", &v.Include, include, l)
+	b.setString("version.exclude", &v.Exclude, exclude, l)
 }
 
 func (b *builder) defaults() {

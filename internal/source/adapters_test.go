@@ -57,7 +57,7 @@ func versionsOf(t *testing.T, tool registry.ToolSpec, tags ...string) []version.
 	require.NoError(t, err)
 	out := make([]version.Version, len(tags))
 	for i, tag := range tags {
-		v, parseErr := rules.Scheme.Parse(strings.TrimPrefix(tag, tool.Version.TagPrefix))
+		v, parseErr := rules.Scheme.Parse(strings.TrimPrefix(tag, tool.Version.TagPrefixes.Newest()))
 		require.NoError(t, parseErr)
 		out[i] = version.Version{V: v, Tag: tag}
 	}
@@ -93,7 +93,7 @@ func toolSpec(name, repo, scheme, prefix string, s registry.Source) registry.Too
 	return registry.ToolSpec{
 		Name:    name,
 		Repo:    repo,
-		Version: registry.VersionSpec{Scheme: scheme, TagPrefix: prefix},
+		Version: registry.VersionSpec{Scheme: scheme, TagPrefixes: registry.Prefixes{prefix}},
 		Sources: []registry.Source{s},
 	}
 }
@@ -237,7 +237,7 @@ func TestUpgradeNotesKubectl(t *testing.T) {
 		name: "kubectl", cassette: "digest/kubectl-1.36.0..1.37.2",
 		tool: registry.ToolSpec{
 			Name: "kubectl", Repo: "kubernetes/kubernetes",
-			Version: registry.VersionSpec{Scheme: version.SchemeSemver, TagPrefix: "v"},
+			Version: registry.VersionSpec{Scheme: version.SchemeSemver, TagPrefixes: registry.Prefixes{"v"}},
 			Sources: []registry.Source{file, {Kind: source.KindUpgradeNotes, FromHeading: "Urgent Upgrade Notes"}},
 		},
 		tags: []string{"v1.36.6", "v1.37.0"},

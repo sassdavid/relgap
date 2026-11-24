@@ -49,7 +49,7 @@ func semver(t *testing.T, s string) version.V {
 func spec(name string, eol *registry.EOL, osv ...registry.OSVPackage) registry.ToolSpec {
 	return registry.ToolSpec{
 		Name:    name,
-		Version: registry.VersionSpec{Scheme: version.SchemeSemver, TagPrefix: "v"},
+		Version: registry.VersionSpec{Scheme: version.SchemeSemver, TagPrefixes: registry.Prefixes{"v"}},
 		EOL:     eol,
 		OSV:     osv,
 	}

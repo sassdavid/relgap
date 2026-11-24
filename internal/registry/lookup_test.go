@@ -113,7 +113,7 @@ func TestResolveLookups(t *testing.T) {
 		assert.Equal(t, []registry.Layer{tt.repoLayer}, res.Provenance["repo"], tt.in)
 		assert.Equal(t, tt.asked, len(f.asked) > 0, tt.in)
 		if tt.prefix != "" {
-			assert.Equal(t, tt.prefix, res.Tool.Version.TagPrefix, tt.in)
+			assert.Equal(t, tt.prefix, res.Tool.Version.TagPrefixes.Newest(), tt.in)
 			assert.Equal(t, []registry.Layer{registry.LayerArtifactHub}, res.Provenance["version.tag_prefix"], tt.in)
 		}
 		assert.Empty(t, res.Confidence, tt.in)
