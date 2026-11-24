@@ -161,7 +161,9 @@ func runNotify(cmd *cobra.Command, d *app.Deps, g *globals, from []string, dryRu
 	if g.outFormat == render.FormatJSON {
 		err = render.JSON(d.Stdout, env)
 	} else {
-		err = writeNotifyText(d.Stdout, &data, env.Errors)
+		// Styles reach stdout only in the tty format when stdout has color.
+		color := g.outFormat == render.FormatTTY && g.stdout.Color
+		err = writeNotifyText(term.Writer(d.Stdout, term.Stream{Color: color}.Profile()), &data, env.Errors)
 	}
 	if err != nil {
 		return err
