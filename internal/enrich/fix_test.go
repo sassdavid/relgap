@@ -22,7 +22,7 @@ func versionsOf(t *testing.T, tool registry.ToolSpec, vs string) enrich.VersionL
 	require.NoError(t, err)
 	refs := make([]version.Ref, 0)
 	for v := range strings.FieldsSeq(vs) {
-		refs = append(refs, version.Ref{Tag: tool.Version.TagPrefix + v})
+		refs = append(refs, version.Ref{Tag: tool.Version.TagPrefixes.Newest() + v})
 	}
 	return func(ctx context.Context) (*version.Universe, error) {
 		return version.NewUniverse(ctx, slog.New(slog.DiscardHandler), refs, rules), nil
@@ -38,7 +38,7 @@ func TestSpec_vulnerability_audit_5(t *testing.T) {
 	terraform := repoTool("terraform", "", "hashicorp/terraform", "v")
 	terraform.OSV = []registry.OSVPackage{{Ecosystem: "Go", Name: "github.com/hashicorp/terraform"}}
 	request := backendTool("npm:request", version.SchemeSemver)
-	request.Version.TagPrefix = "v"
+	request.Version.TagPrefixes = registry.Prefixes{"v"}
 	goTool := toolOf("go", version.SchemeLoose, "go")
 	goTool.OSV = []registry.OSVPackage{{Ecosystem: "Go", Name: "stdlib"}, {Ecosystem: "Go", Name: "toolchain"}}
 	tests := []struct {

@@ -37,7 +37,7 @@ func semverTool(repo string, s registry.Source) registry.ToolSpec {
 	return registry.ToolSpec{
 		Name:    filepath.Base(repo),
 		Repo:    repo,
-		Version: registry.VersionSpec{Scheme: version.SchemeSemver, TagPrefix: "v"},
+		Version: registry.VersionSpec{Scheme: version.SchemeSemver, TagPrefixes: registry.Prefixes{"v"}},
 		Sources: []registry.Source{s},
 	}
 }

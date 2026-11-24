@@ -1,0 +1,31 @@
+# outdated reads a tool whose tags switched prefix. lychee tagged v0.15.1, then lychee-v0.16.0
+# and later; oxlint tagged oxlint_v, then apps_v, then oxlint_v again. aqua's version_overrides
+# name those prefixes, so both pins are behind their newest version, not current at 0.15.1 and
+# 0.1.1. A Renovate comment that reads oxc's tags with the prefix apps_v, which oxlint dropped
+# after 1.84.0, has a pin of 1.95.0 without an apps_v tag: it is unknown with a note, not current.
+# The cassette is a recording cut down to the releases these ranges need.
+env TEST_NOW=2026-11-24T12:00:00Z
+env GH_TOKEN=$TEST_GH_TOKEN
+env TEST_CASSETTE=$CASSETTES/outdated/tag-prefixes.yaml
+cd project
+
+exec relgap outdated --format json
+jsonschema outdated-v1.json stdout
+golden stdout outdated/tag-prefixes.json
+stdout '"latest": "0\.24\.2",\s+"behind": \{\s+"releases": 3,'
+stdout '"latest": "1\.95\.0",\s+"behind": \{\s+"releases": 11,'
+stdout '"latest": "1\.84\.0",\s+"status": "unknown",\s+"note": "1\.95\.0 is newer than the latest version found \(1\.84\.0\) and has no tag; check the tag prefix"'
+
+exec relgap outdated --format plain
+golden stdout outdated/tag-prefixes.txt
+stdout '^2 of 2 compared pins are behind latest\.'
+
+-- project/mise.toml --
+[tools]
+lychee = "0.23.0"
+oxlint = "1.84.0"
+-- project/versions.tf --
+locals {
+  # renovate: datasource=github-releases depName=oxc-project/oxc extractVersion=^apps_v(?<version>.+)$
+  oxlint_release = "1.95.0"
+}

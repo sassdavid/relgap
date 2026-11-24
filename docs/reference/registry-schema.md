@@ -84,5 +84,5 @@ Each source kind needs these keys:
 | `version.extract` | string |  |  | Regular expression for scheme regex; capture groups are joined with dots. |
 | `version.line` | string |  | `none`, `major`, `minor` | Default release line for the end of a range. |
 | `version.scheme` | string |  | `semver`, `loose`, `calver`, `python`, `regex` | How tags are parsed and ordered. Default loose. |
-| `version.tag_prefix` | string |  |  | Stripped from tags before parsing; tags without it are ignored. |
+| `version.tag_prefix` | string or list of strings |  |  | Stripped from tags before parsing; tags without it are ignored. A list names every prefix the tags have used, newest first: the longest one a tag starts with is stripped, and "" takes unprefixed tags. |
 | `version.universe` | string |  | `releases`, `tags` | What defines the versions in a range. Default releases. |

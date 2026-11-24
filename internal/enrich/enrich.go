@@ -44,8 +44,9 @@ type Request struct {
 	goPrivate GoPrivate // set by the enricher; patterns of modules never sent
 }
 
-// tag is the tag of v, which GIT queries use: the tool's tag prefix and the version.
-func (r Request) tag(v version.V) string { return r.Tool.Version.TagPrefix + v.String() }
+// tag is the tag of v, which GIT queries use: the prefix of the tool's newest tags and the
+// version. A version from before a prefix switch gets the newest prefix too.
+func (r Request) tag(v version.V) string { return r.Tool.Version.TagPrefixes.Newest() + v.String() }
 
 // Result is what enrichment found for one request. A nil EOL means the tool has no
 // endoflife.date product or the source failed (see [Problem]). Vulns is nil when OSV wasn't

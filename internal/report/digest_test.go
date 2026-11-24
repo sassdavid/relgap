@@ -60,9 +60,13 @@ func (f *fakeGitHub) ReleaseBodies(_ context.Context, _ string, tags []string) (
 
 func spec(universe string, sources ...registry.Source) registry.ToolSpec {
 	return registry.ToolSpec{
-		Name:    "tool",
-		Repo:    "o/r",
-		Version: registry.VersionSpec{Scheme: version.SchemeSemver, TagPrefix: "v", Universe: universe},
+		Name: "tool",
+		Repo: "o/r",
+		Version: registry.VersionSpec{
+			Scheme:      version.SchemeSemver,
+			TagPrefixes: registry.Prefixes{"v"},
+			Universe:    universe,
+		},
 		Sources: sources,
 	}
 }
@@ -285,7 +289,7 @@ func TestDigestNotFoundNamesPrefix(t *testing.T) {
 		{Tag: "x-helm-chart-1.0.0"}, {Tag: "x-helm-chart-1.1.0"}, {Tag: "v0.1.0"}, {Tag: "x-1.0.0"},
 	}}
 	tool := spec(registry.UniverseReleases)
-	tool.Version.TagPrefix = "x-"
+	tool.Version.TagPrefixes = registry.Prefixes{"x-"}
 	_, err := report.NewDigester(slog.New(slog.DiscardHandler), gh, nil).Digest(t.Context(), report.DigestRequest{
 		Tool: tool, From: "1.0.0", To: "1.1.0",
 	})

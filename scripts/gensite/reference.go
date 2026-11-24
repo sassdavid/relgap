@@ -213,6 +213,8 @@ func schemaType(n *schemaNode) string {
 	switch {
 	case n.Enum != nil:
 		return "string"
+	case n.Items != nil && fmt.Sprint(n.Type) == "[string array]":
+		return "string or list of " + schemaType(n.Items) + "s"
 	case n.Items != nil:
 		if n.Items.Properties != nil {
 			return "list of objects"

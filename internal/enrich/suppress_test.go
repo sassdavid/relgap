@@ -176,7 +176,7 @@ func TestSuppressionFixTarget(t *testing.T) {
 	t.Parallel()
 	lodash := backendTool("npm:lodash", version.SchemeSemver)
 	request := backendTool("npm:request", version.SchemeSemver)
-	request.Version.TagPrefix = "v"
+	request.Version.TagPrefixes = registry.Prefixes{"v"}
 	tests := []struct {
 		cassette string
 		tool     registry.ToolSpec

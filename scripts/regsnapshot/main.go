@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"cmp"
 	"encoding/json"
 	"errors"
 	"flag"
@@ -142,9 +143,35 @@ type aquaPackage struct {
 	VersionPrefix string `yaml:"version_prefix"`
 	VersionFilter string `yaml:"version_filter"`
 	VersionSource string `yaml:"version_source"`
-	Aliases       []struct {
+	// VersionConstraint "false" means the package's own fields apply to no version, only its
+	// overrides do.
+	VersionConstraint string `yaml:"version_constraint"`
+	VersionOverrides  []struct {
+		VersionPrefix *string `yaml:"version_prefix"` // nil keeps the package's prefix
+	} `yaml:"version_overrides"`
+	Aliases []struct {
 		Name string `yaml:"name"`
 	} `yaml:"aliases"`
+}
+
+// versionPrefixes returns every prefix the package's tags use, newest first. aqua tries the
+// overrides in order and the last one usually covers the newest versions, so the overrides go
+// in reverse. The package's own prefix counts when it applies to some version or an override
+// keeps it.
+func (p *aquaPackage) versionPrefixes() []string {
+	var out []string
+	add := func(s string) {
+		if !slices.Contains(out, s) {
+			out = append(out, s)
+		}
+	}
+	if p.VersionConstraint != "false" {
+		add(p.VersionPrefix)
+	}
+	for _, o := range slices.Backward(p.VersionOverrides) {
+		add(*cmp.Or(o.VersionPrefix, &p.VersionPrefix))
+	}
+	return out
 }
 
 func writeAqua(dir string, meta registry.SnapshotMeta, out string) error {
@@ -167,6 +194,9 @@ func writeAqua(dir string, meta registry.SnapshotMeta, out string) error {
 			VersionPrefix: pkg.VersionPrefix,
 			VersionFilter: pkg.VersionFilter,
 			VersionSource: pkg.VersionSource,
+		}
+		if prefixes := pkg.versionPrefixes(); !slices.Equal(prefixes, []string{pkg.VersionPrefix}) {
+			e.VersionPrefixes = prefixes
 		}
 		if pkg.RepoOwner != "" && pkg.RepoName != "" {
 			e.Repo = pkg.RepoOwner + "/" + pkg.RepoName

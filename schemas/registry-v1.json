@@ -42,8 +42,11 @@
           "description": "Regular expression for scheme regex; capture groups are joined with dots."
         },
         "tag_prefix": {
-          "type": "string",
-          "description": "Stripped from tags before parsing; tags without it are ignored."
+          "type": ["string", "array"],
+          "items": { "type": "string" },
+          "minItems": 1,
+          "uniqueItems": true,
+          "description": "Stripped from tags before parsing; tags without it are ignored. A list names every prefix the tags have used, newest first: the longest one a tag starts with is stripped, and \"\" takes unprefixed tags."
         },
         "exclude": {
           "type": "string",

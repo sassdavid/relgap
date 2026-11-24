@@ -164,7 +164,7 @@ func (o *Outdater) Outdated(ctx context.Context, req OutdatedRequest) (*Outdated
 		g.Go(func() error {
 			c := comparer{o: o, req: req, tool: t, recent: recent[recentQuery(t.spec)], digests: digests, auth: auth}
 			for _, i := range t.pins {
-				out.Pins[i] = c.compare(gctx, i)
+				out.Pins[i] = c.comparePin(gctx, i)
 			}
 			return nil
 		})
@@ -280,7 +280,7 @@ type digestOnce struct {
 }
 
 func (s *digestSet) get(ctx context.Context, d *Digester, tool string, req DigestRequest) (*ToolDigest, error) {
-	key := tool + "\x00" + req.From
+	key := tool + "\x00" + strings.Join(req.Tool.Version.TagPrefixes, ",") + "\x00" + req.From
 	s.mu.Lock()
 	e, ok := s.byKey[key]
 	if !ok {
@@ -353,9 +353,11 @@ func (c *comparer) compare(ctx context.Context, i int) OutdatedPin {
 			return row
 		}
 	}
-	if rules.Scheme.Compare(current, latest.V) >= 0 {
-		row.Latest, row.Status, row.Behind, row.Counts = latest.V.String(), StatusCurrent, &Behind{}, zeroCounts()
-		return row
+	switch order := rules.Scheme.Compare(current, latest.V); {
+	case order > 0 && !c.window.Has(current):
+		return c.untagged(ctx, row, current, line, latest)
+	case order >= 0:
+		return atLatest(row, latest)
 	}
 	d, err := c.digests.get(ctx, c.o.digester, c.tool.name, DigestRequest{
 		Tool: t, From: current.String(), Line: line, MinConfidence: c.req.MinConfidence,
@@ -376,6 +378,79 @@ func (c *comparer) compare(ctx context.Context, i int) OutdatedPin {
 	if row.Behind.Releases == 0 {
 		row.Status = StatusCurrent
 	}
+	return row
+}
+
+// comparePin compares pin i, on its release line when it names one.
+func (c *comparer) comparePin(ctx context.Context, i int) OutdatedPin {
+	if prefix, ok := releaseLine(c.tool.spec, c.req.Pins[i]); ok && c.tool.err == nil {
+		return c.onLine(ctx, i, prefix)
+	}
+	return c.compare(ctx, i)
+}
+
+// releaseLine returns the tag prefix a pin starts with when the tool's tags use more than one
+// prefix and the pin would otherwise be a channel, such as "edge-" in linkerd2's "edge-24.11.8".
+// Such a prefix names a release line of its own: linkerd2's edge numbers (24.x) are always above
+// its stable ones (2.x), so comparing across both lines would be wrong.
+func releaseLine(spec registry.ToolSpec, pin scan.Pin) (string, bool) {
+	if pin.Match != scan.MatchChannel || len(spec.Version.TagPrefixes) < 2 {
+		return "", false
+	}
+	best := ""
+	for _, p := range spec.Version.TagPrefixes {
+		if p != "" && len(p) > len(best) && strings.HasPrefix(pin.Value, p) {
+			best = p
+		}
+	}
+	return best, best != ""
+}
+
+// onLine compares pin i as an exact version against the tags with prefix only.
+func (c *comparer) onLine(ctx context.Context, i int, prefix string) OutdatedPin {
+	tool := *c.tool
+	tool.spec.Version.TagPrefixes = registry.Prefixes{prefix}
+	lc := *c
+	lc.tool, lc.window = &tool, nil
+	lc.req.Pins = slices.Clone(c.req.Pins)
+	pin := &lc.req.Pins[i]
+	pin.Match, pin.Exact, pin.Version = scan.MatchExact, true, pin.Value
+	row := lc.compare(ctx, i)
+	row.Pin = c.req.Pins[i]
+	if row.Via == "" {
+		row.Via = "compared with the " + prefix + " tags only"
+	}
+	return row
+}
+
+// atLatest marks row as current at latest.
+func atLatest(row OutdatedPin, latest version.Version) OutdatedPin {
+	row.Latest, row.Status, row.Behind, row.Counts = latest.V.String(), StatusCurrent, &Behind{}, zeroCounts()
+	return row
+}
+
+// untagged compares a pin newer than the latest version when the window has no tag for it. A tag
+// in the full list makes the pin current, such as a prerelease above the latest stable version.
+// Without one the tool's tag rules most likely miss its newest tags, so the status is unknown.
+func (c *comparer) untagged(
+	ctx context.Context, row OutdatedPin, current version.V, line version.Level, latest version.Version,
+) OutdatedPin {
+	full := c.window
+	if fromRecent(c.tool.spec) {
+		var err error
+		if full, err = c.o.digester.Universe(ctx, c.tool.spec); err != nil {
+			return c.fail(row, err)
+		}
+		if l, ok := full.Latest(current, line); ok {
+			latest = l
+		}
+	}
+	if full.Has(current) {
+		return atLatest(row, latest)
+	}
+	row.Latest, row.Status = latest.V.String(), StatusUnknown
+	row.Note = fmt.Sprintf("%s is newer than the latest version found (%s) and has no tag; check the tag prefix",
+		current, latest.V)
 	return row
 }
 

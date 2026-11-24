@@ -1,0 +1,9 @@
+TOOL                           CURRENT  LATEST  BEHIND  BREAKING  DEPRECATION  EOL  VULNS  PIN
+github:oxc-project/oxc@apps_v  1.95.0   -       -       -         -            -    0      versions.tf:3
+lychee                         0.23.0   0.24.2  3       1         0            -    0      mise.toml:2
+oxlint                         1.84.0   1.95.0  11      4         0            -    0      mise.toml:3
+
+Notes:
+  github:oxc-project/oxc@apps_v 1.95.0 (versions.tf:3): 1.95.0 is newer than the latest version found (1.84.0) and has no tag; check the tag prefix
+
+2 of 2 compared pins are behind latest.

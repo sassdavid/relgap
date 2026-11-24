@@ -8,7 +8,7 @@ repo, version scheme, ordered changelog sources, EOL product and OSV packages.
 2. **User config** `tools.<name>` overrides ([config.md](config.md)).
 3. **relgap override registry:** `registry/<tool>.yaml`, embedded in the binary and refreshable from the repo (`relgap registry update`, ETag-cached).
 4. **mise registry:** `mise registry --json` if mise is installed (1,074 entries). Otherwise an embedded snapshot of `registry/*.toml` (MIT, attributed). The first `aqua:`, `github:` or `ubi:` backend gives `owner/repo`; `aliases` give names.
-5. **aqua registry:** an embedded index of the aqua registry's merged `registry.yaml` supplies `repo_owner/repo_name`, `version_prefix`, `version_filter`, `version_source`.
+5. **aqua registry:** an embedded index of the aqua registry's merged `registry.yaml` supplies `repo_owner/repo_name`, `version_prefix`, the prefixes of `version_overrides`, `version_filter`, `version_source`.
 6. **endoflife.date identifiers:** `pkg:github/owner/repo` → EOL product.
 7. **Heuristic:** search GitHub for an exact repo-name match, but only with `--guess`, and always reported as low-confidence.
 
@@ -17,10 +17,17 @@ workflow runs `mise run registry:age` weekly and on snapshot changes, and fails 
 `commit_date` is over 30 days old.
 
 Both snapshots are embedded, not fetched on first use (open question Q8, recorded here at M11).
-The aqua index keeps only what resolution reads: name, repo, aliases and the three version
-fields. On 2026-11-09 it had 2,351 entries in 154 KB (`internal/registry/snapshot/aqua.json`),
-next to the mise snapshot's 1,023 entries in 86 KB. Each keeps its MIT license beside it as
-`<name>.LICENSE`.
+The aqua index keeps only what resolution reads: name, repo, aliases, the three version
+fields and `version_prefixes`. On 2026-11-09 it had 2,351 entries in 154 KB
+(`internal/registry/snapshot/aqua.json`), next to the mise snapshot's 1,023 entries in 86 KB.
+Each keeps its MIT license beside it as `<name>.LICENSE`.
+
+`version_prefixes` lists a package's tag prefixes, newest first, when its `version_overrides`
+switch prefix (21 packages, such as lychee, oxlint, gping and biome). Resolution turns them into
+a `tag_prefix` list and three `version_filter` forms into tag rules: `not (Version startsWith
+"x")` into `exclude`, and `Version startsWith "x"` or `Version matches "re"` terms joined by `||`
+into an include expression. Other filters are ignored. A higher layer that sets the tag prefix
+keeps aqua's prefixes and filter out ([ADR-0021](../adr/0021-tag-prefix-switches.md)).
 
 ## Override registry entry (`registry/<tool>.yaml`)
 
@@ -228,3 +235,10 @@ each.
   notes when the annotation names no GitHub repository; a registry off the allow list gets no
   request. The short chart forms resolve as the URL forms. (`TestSpec_tool_resolution_9`,
   `TestChartShortName`, `outdated_oci_chart.txtar`, `outdated_skip.txtar`)
+- [x] An aqua package whose `version_overrides` switch prefix resolves to all of its prefixes,
+  newest first, with its filter as tag rules: lychee `["lychee-v", ""]` without `lychee-lib-`,
+  oxlint `["oxlint_v", "apps_v", ""]` with only `apps_v` and `oxlint_v` tags, and oxfmt only
+  `oxfmt_v`. `github:owner/repo@prefix` keeps aqua's filter out. `registry lint` accepts a
+  `tag_prefix` list. ([ADR-0021](../adr/0021-tag-prefix-switches.md);
+  `TestSpec_tool_resolution_10`, `TestAquaFilter`, `TestWriteAquaVersionPrefixes`,
+  `TestLintSemantics`)

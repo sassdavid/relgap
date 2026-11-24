@@ -242,3 +242,10 @@ the exit codes.
   same short name stay apart
   ([ADR-0019](../adr/0019-digest-id-oci-charts-short-names.md);
   `TestOutdatedSameNameDifferentTools`, the digest goldens).
+- [x] `outdated` compares a tool whose tags switched prefix with its newest version: lychee 0.23.0
+  is 3 releases behind 0.24.2 and oxlint 1.84.0 (an `apps_v` tag) 11 behind 1.95.0 (`oxlint_v`).
+  A pin newer than the latest version found that no tag has is unknown with the note "1.95.0 is
+  newer than the latest version found (1.84.0) and has no tag; check the tag prefix", and a pin
+  with a tag above the latest stable version, such as a prerelease, stays current
+  ([ADR-0021](../adr/0021-tag-prefix-switches.md); `TestSpec_output_and_ci_12` with a cut-down
+  recording, `TestOutdatedAboveLatest`).

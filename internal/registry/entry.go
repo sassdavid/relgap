@@ -1,8 +1,13 @@
 package registry
 
 import (
+	"encoding/json"
 	"fmt"
 	"regexp"
+	"strconv"
+	"strings"
+
+	"go.yaml.in/yaml/v4"
 
 	"github.com/sassdavid/relgap/internal/version"
 )
@@ -23,13 +28,14 @@ type Entry struct {
 
 // VersionSpec says how a tool's tags become versions.
 type VersionSpec struct {
-	Scheme    string `json:"scheme"               yaml:"scheme"`
-	Extract   string `json:"extract,omitempty"    yaml:"extract"`
-	TagPrefix string `json:"tag_prefix,omitempty" yaml:"tag_prefix"`
-	TagSuffix string `json:"tag_suffix,omitempty" yaml:"-"` // an image variant such as -alpine
-	Exclude   string `json:"exclude,omitempty"    yaml:"exclude"`
-	Universe  string `json:"universe"             yaml:"universe"` // releases or tags; chart and image only from a lookup
-	Line      string `json:"line"                 yaml:"line"`     // none, major or minor
+	Scheme      string   `json:"scheme"               yaml:"scheme"`
+	Extract     string   `json:"extract,omitempty"    yaml:"extract"`
+	TagPrefixes Prefixes `json:"tag_prefix,omitempty" yaml:"tag_prefix"`
+	TagSuffix   string   `json:"tag_suffix,omitempty" yaml:"-"` // an image variant such as -alpine
+	Include     string   `json:"include,omitempty"    yaml:"-"` // from an aqua version_filter
+	Exclude     string   `json:"exclude,omitempty"    yaml:"exclude"`
+	Universe    string   `json:"universe"             yaml:"universe"` // releases or tags; chart and image only from a lookup
+	Line        string   `json:"line"                 yaml:"line"`     // none, major or minor
 	// VersionsURL is where a chart universe's versions come from: an Artifact Hub package page
 	// or a Helm repository index.
 	VersionsURL string `json:"versions_url,omitempty" yaml:"-"`
@@ -45,13 +51,96 @@ func (v VersionSpec) Rules() (version.Rules, error) {
 	if err != nil {
 		return version.Rules{}, fmt.Errorf("version scheme: %w", err)
 	}
-	r := version.Rules{Scheme: s, TagPrefix: v.TagPrefix, TagSuffix: v.TagSuffix}
+	r := version.Rules{Scheme: s, TagPrefixes: v.TagPrefixes, TagSuffix: v.TagSuffix}
+	if v.Include != "" {
+		if r.Include, err = regexp.Compile(v.Include); err != nil {
+			return version.Rules{}, fmt.Errorf("version include: %w", err)
+		}
+	}
 	if v.Exclude != "" {
 		if r.Exclude, err = regexp.Compile(v.Exclude); err != nil {
 			return version.Rules{}, fmt.Errorf("version exclude: %w", err)
 		}
 	}
 	return r, nil
+}
+
+// Prefixes lists the tag prefixes of a tool's versions, newest first. JSON and YAML write one
+// prefix as a string and several as a list, and read both forms.
+type Prefixes []string
+
+// Newest returns the prefix of the newest tags, or "".
+func (p Prefixes) Newest() string {
+	if len(p) == 0 {
+		return ""
+	}
+	return p[0]
+}
+
+// String returns the quoted prefixes, separated by commas.
+func (p Prefixes) String() string {
+	quoted := make([]string, len(p))
+	for i, s := range p {
+		quoted[i] = strconv.Quote(s)
+	}
+	return strings.Join(quoted, ", ")
+}
+
+// MarshalJSON writes one prefix as a string and several as a list.
+func (p Prefixes) MarshalJSON() ([]byte, error) {
+	if len(p) == 1 {
+		return json.Marshal(p[0]) //nolint:wrapcheck // a string always encodes
+	}
+	return json.Marshal([]string(p)) //nolint:wrapcheck // a string list always encodes
+}
+
+// UnmarshalJSON reads a string or a list of strings.
+func (p *Prefixes) UnmarshalJSON(b []byte) error {
+	var one string
+	if err := json.Unmarshal(b, &one); err == nil {
+		*p = newPrefixes(one)
+		return nil
+	}
+	var list []string
+	if err := json.Unmarshal(b, &list); err != nil {
+		return fmt.Errorf("tag_prefix is neither a string nor a list of strings: %w", err)
+	}
+	*p = list
+	return nil
+}
+
+// MarshalYAML writes one prefix as a string and several as a list.
+func (p Prefixes) MarshalYAML() (any, error) {
+	if len(p) == 1 {
+		return p[0], nil
+	}
+	return []string(p), nil
+}
+
+// UnmarshalYAML reads a string or a list of strings.
+func (p *Prefixes) UnmarshalYAML(n *yaml.Node) error {
+	if n.Kind == yaml.ScalarNode {
+		var one string
+		if err := n.Decode(&one); err != nil {
+			return fmt.Errorf("decode tag_prefix: %w", err)
+		}
+		*p = newPrefixes(one)
+		return nil
+	}
+	var list []string
+	if err := n.Decode(&list); err != nil {
+		return fmt.Errorf("decode tag_prefix: %w", err)
+	}
+	*p = list
+	return nil
+}
+
+// newPrefixes returns the prefixes of a single prefix, where "" means none.
+func newPrefixes(s string) Prefixes {
+	if s == "" {
+		return nil
+	}
+	return Prefixes{s}
 }
 
 // Universe values.

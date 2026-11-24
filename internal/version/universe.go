@@ -19,10 +19,31 @@ type Ref struct {
 
 // Rules turn tags into versions.
 type Rules struct {
-	Scheme    Scheme
-	TagPrefix string         // stripped before parsing; tags without it are dropped
-	TagSuffix string         // stripped after the prefix, such as an image variant; tags without it are dropped
-	Exclude   *regexp.Regexp // matched against the whole tag; matching tags are dropped
+	Scheme Scheme
+	// TagPrefixes are the prefixes the tool's tags have used. The longest one a tag starts with
+	// is stripped before parsing, and tags with none of them are dropped. Empty means no prefix;
+	// a list takes unprefixed tags only when it holds "".
+	TagPrefixes []string
+	TagSuffix   string         // stripped after the prefix, such as an image variant; tags without it are dropped
+	Include     *regexp.Regexp // matched against the whole tag; other tags are dropped
+	Exclude     *regexp.Regexp // matched against the whole tag; matching tags are dropped
+}
+
+// cutPrefix strips the longest tag prefix s starts with, and reports whether one did.
+func (r Rules) cutPrefix(s string) (string, bool) {
+	if len(r.TagPrefixes) == 0 {
+		return s, true
+	}
+	best := -1
+	for i, p := range r.TagPrefixes {
+		if strings.HasPrefix(s, p) && (best < 0 || len(p) > len(r.TagPrefixes[best])) {
+			best = i
+		}
+	}
+	if best < 0 {
+		return s, false
+	}
+	return s[len(r.TagPrefixes[best]):], true
 }
 
 // Version is one entry of a [Universe].
@@ -40,21 +61,23 @@ type Universe struct {
 }
 
 // NewUniverse parses refs under rules. Drafts, excluded tags and tags that don't parse are
-// dropped, and versions that compare equal ("3.7.12" and "v3.7.12") are kept once, as the
-// first one in refs. Order comes from the scheme, never from publish dates.
+// dropped, and versions that compare equal ("3.7.12" and "v3.7.12", or one version under two
+// tag prefixes) are kept once, as the first one in refs. Order comes from the scheme, never
+// from publish dates.
 func NewUniverse(ctx context.Context, logger *slog.Logger, refs []Ref, rules Rules) *Universe {
 	vs := make([]Version, 0, len(refs))
 	for _, r := range refs {
 		if r.Draft {
 			continue
 		}
-		if rules.Exclude != nil && rules.Exclude.MatchString(r.Tag) {
+		if rules.Include != nil && !rules.Include.MatchString(r.Tag) ||
+			rules.Exclude != nil && rules.Exclude.MatchString(r.Tag) {
 			logger.DebugContext(ctx, "excluded tag", "tag", r.Tag)
 			continue
 		}
-		text, ok := strings.CutPrefix(r.Tag, rules.TagPrefix)
+		text, ok := rules.cutPrefix(r.Tag)
 		if !ok {
-			logger.DebugContext(ctx, "dropped tag without prefix", "tag", r.Tag, "prefix", rules.TagPrefix)
+			logger.DebugContext(ctx, "dropped tag without prefix", "tag", r.Tag, "prefixes", rules.TagPrefixes)
 			continue
 		}
 		if text, ok = strings.CutSuffix(text, rules.TagSuffix); !ok || text == "" {
@@ -87,7 +110,7 @@ func (u *Universe) Scheme() Scheme { return u.rules.Scheme }
 // Parse parses user input such as "1.30.0", "v1.30.0", the full tag "atlascli/v1.30.0" or the
 // image tag "1.27.0-alpine".
 func (u *Universe) Parse(s string) (V, error) {
-	if text, ok := strings.CutPrefix(s, u.rules.TagPrefix); ok && text != "" {
+	if text, ok := u.rules.cutPrefix(s); ok && text != "" {
 		text, _ = strings.CutSuffix(text, u.rules.TagSuffix)
 		if v, err := u.rules.Scheme.Parse(text); err == nil {
 			return v, nil
@@ -97,6 +120,12 @@ func (u *Universe) Parse(s string) (V, error) {
 		s = text
 	}
 	return u.rules.Scheme.Parse(s) //nolint:wrapcheck // the scheme's error names the input
+}
+
+// Has reports whether the universe holds a version equal to v.
+func (u *Universe) Has(v V) bool {
+	_, ok := u.find(v)
+	return ok
 }
 
 // find returns the index of the version equal to v.

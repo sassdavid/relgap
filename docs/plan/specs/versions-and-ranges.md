@@ -11,6 +11,7 @@
 | `regex` | anything, via registry `extract: "jdk-(\\d+\\.\\d+\\.\\d+)\\+(\\d+)"` | capture groups → loose |
 
 - Tag → version: strip the registry `tag_prefix` (`v`, `go`, `atlascli/v`, `helm-chart-`, `rel/`, `jdk-`), then parse. Unparseable tags are dropped and logged at debug.
+- `tag_prefix` can be a list for a tool whose tags changed prefix (lychee: `v`, then `lychee-v`; oxlint: `oxlint_v`, `apps_v`, then `oxlint_v` again). A tag loses the longest listed prefix it starts with; a tag with none is dropped, and unprefixed tags count only when the list holds `""`. An include expression (from an aqua `version_filter`) drops every tag it doesn't match ([ADR-0021](../adr/0021-tag-prefix-switches.md)).
 - Equal versions under the scheme are deduplicated (`3.7.12` vs `v3.7.12`), the way Renovate does.
 
 ## Version universe
@@ -33,3 +34,11 @@
 - [x] The helm fixture (interleaved v3/v4 publish dates) gives the correct ordered range for `3.19.0..3.22.1` and `--line major`.
 - [x] The awscli fixture (no releases, tags only) yields the correct range from tags.
 - [x] `atlascli/v1.30.0` tags are selected and bare `v1.2.3` strays are ignored, using the registry prefix (MongoDB Atlas CLI, as in the dotfriedrice mise config).
+- [x] A tool whose tags switched prefix keeps every prefix's versions in one universe: lychee's
+  `v0.15.1` and `lychee-v0.24.2` without its `lychee-lib-v*` tags, and oxlint's `oxlint_v`,
+  `apps_v` and `oxlint_v` tags without oxc's `crates_v`, `oxfmt_v` and plain `v0.1.1` tags. One
+  version under two prefixes is kept once. (`TestSpec_versions_and_ranges_6`)
+- [x] A pin that starts with one of a tool's several tag prefixes is compared with that prefix's
+  tags only: linkerd2's `edge-24.11.8` is behind `edge-24.11.9` and `stable-2.14.9` behind
+  `stable-2.14.10`, and a channel without a prefix, such as `lts`, stays uncomparable.
+  (`TestSpec_versions_and_ranges_7`)

@@ -16,7 +16,10 @@ import (
 )
 
 func toolOf(name, scheme, tagPrefix string) registry.ToolSpec {
-	return registry.ToolSpec{Name: name, Version: registry.VersionSpec{Scheme: scheme, TagPrefix: tagPrefix}}
+	return registry.ToolSpec{
+		Name:    name,
+		Version: registry.VersionSpec{Scheme: scheme, TagPrefixes: registry.Prefixes{tagPrefix}},
+	}
 }
 
 func backendTool(backend, scheme string) registry.ToolSpec {

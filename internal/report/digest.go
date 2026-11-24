@@ -558,11 +558,14 @@ func noNotesWarning(t registry.ToolSpec, r *version.Range, hidden int, minConfid
 func tagHint(t registry.ToolSpec, refs []version.Ref, parsed int, want string) string {
 	where := cmp.Or(t.Image, t.Repo)
 	hint := fmt.Sprintf("%d of %d tags of %s are versions", parsed, len(refs), where)
-	switch p, sfx := t.Version.TagPrefix, t.Version.TagSuffix; {
+	switch p, sfx := t.Version.TagPrefixes, t.Version.TagSuffix; {
 	case sfx != "":
-		hint = fmt.Sprintf("%d of %d tags of %s are versions between %q and %q", parsed, len(refs), where, p, sfx)
-	case p != "":
-		hint = fmt.Sprintf("%d of %d tags of %s are versions after the tag prefix %q", parsed, len(refs), where, p)
+		hint = fmt.Sprintf("%d of %d tags of %s are versions between %q and %q", parsed, len(refs), where,
+			p.Newest(), sfx)
+	case len(p) == 1:
+		hint = fmt.Sprintf("%d of %d tags of %s are versions after the tag prefix %q", parsed, len(refs), where, p[0])
+	case len(p) > 1:
+		hint = fmt.Sprintf("%d of %d tags of %s are versions after the tag prefixes %s", parsed, len(refs), where, p)
 	}
 	if want = strings.TrimPrefix(want, "v"); want != "" {
 		var holding []string

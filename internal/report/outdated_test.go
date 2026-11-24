@@ -23,6 +23,7 @@ import (
 // multiGitHub serves releases of several repositories and counts the calls that cost requests.
 type multiGitHub struct {
 	releases  map[string][]github.Release // by repo, newest first
+	recent    map[string][]github.Release // what Recent lists instead of releases, by repo
 	recentErr map[string]error
 
 	mu       sync.Mutex
@@ -37,7 +38,11 @@ func (f *multiGitHub) Recent(_ context.Context, qs []github.RecentQuery) (map[gi
 	f.mu.Unlock()
 	out := map[github.RecentQuery]github.Recent{}
 	for _, q := range qs {
-		out[q] = github.Recent{Releases: f.releases[q.Repo], Err: f.recentErr[q.Repo]}
+		rs, ok := f.recent[q.Repo]
+		if !ok {
+			rs = f.releases[q.Repo]
+		}
+		out[q] = github.Recent{Releases: rs, Err: f.recentErr[q.Repo]}
 	}
 	return out, nil
 }
@@ -118,9 +123,9 @@ func outdatedFixture() (*multiGitHub, report.ResolveFunc) {
 			Name: tool,
 			Repo: repo,
 			Version: registry.VersionSpec{
-				Scheme:    version.SchemeSemver,
-				TagPrefix: "v",
-				Universe:  registry.UniverseReleases,
+				Scheme:      version.SchemeSemver,
+				TagPrefixes: registry.Prefixes{"v"},
+				Universe:    registry.UniverseReleases,
 			},
 			Sources: []registry.Source{{Kind: "gh-release"}},
 		}, nil
@@ -190,6 +195,61 @@ func TestOutdated(t *testing.T) {
 	assert.Equal(t, time.Date(2026, 1, 3, 0, 0, 0, 0, time.UTC), *a.Since)
 	assert.Contains(t, got.Pins[6].Note, `"lts" is a channel`)
 	assert.Contains(t, got.Pins[7].Note, "no GitHub repository")
+}
+
+// TestOutdatedAboveLatest: a pin newer than the latest stable version is current when a tag has
+// its version, such as a prerelease or a tag only the full list has, and unknown with a note
+// when none does.
+func TestOutdatedAboveLatest(t *testing.T) {
+	t.Parallel()
+	gh, resolve := outdatedFixture()
+	gh.releases["o/f"] = []github.Release{{Tag: "v1.3.0"}, {Tag: "v1.2.0"}}
+	gh.recent = map[string][]github.Release{"o/f": {{Tag: "v1.2.0"}}}
+	resolveF := func(tool string) (registry.ToolSpec, error) {
+		if tool == "f" {
+			spec, err := resolve("a")
+			spec.Name, spec.Repo = "f", "o/f"
+			return spec, err
+		}
+		return resolve(tool)
+	}
+	pins := []scan.Pin{
+		pin("a", "2.0.0-rc.1", scan.MatchExact, ".", "mise.toml", 1),
+		pin("a", "1.5.0", scan.MatchExact, ".", "mise.toml", 2),
+		pin("f", "1.3.0", scan.MatchExact, ".", "mise.toml", 3),
+		pin("f", "1.4.0", scan.MatchExact, ".", "mise.toml", 4),
+	}
+	digester := report.NewDigester(slog.New(slog.DiscardHandler), gh, nil)
+	got, err := report.NewOutdater(digester, gh).Outdated(t.Context(), report.OutdatedRequest{
+		Repos: []string{"."}, Pins: pins, Resolve: resolveF, MinConfidence: 0.5, Concurrency: 2,
+	})
+	require.NoError(t, err)
+	tests := []struct {
+		latest string
+		status report.Status
+		note   string
+	}{
+		{"1.2.0", report.StatusCurrent, ""},
+		{
+			"1.2.0",
+			report.StatusUnknown,
+			"1.5.0 is newer than the latest version found (1.2.0) and has no tag; check the tag prefix",
+		},
+		{"1.3.0", report.StatusCurrent, ""},
+		{
+			"1.3.0",
+			report.StatusUnknown,
+			"1.4.0 is newer than the latest version found (1.3.0) and has no tag; check the tag prefix",
+		},
+	}
+	require.Len(t, got.Pins, len(tests))
+	for i, tt := range tests {
+		p := got.Pins[i]
+		assert.Equal(t, tt.latest, p.Latest, p.Pin.Value)
+		assert.Equal(t, tt.status, p.Status, p.Pin.Value)
+		assert.Equal(t, tt.note, p.Note, p.Pin.Value)
+	}
+	assert.Equal(t, 1, gh.listed["o/f"], "the full list is read once, for the pins above the window's latest")
 }
 
 // listFirstGitHub answers Recent only after a full release list has started.
@@ -455,10 +515,10 @@ func TestOutdatedSameNameDifferentTools(t *testing.T) {
 	}
 	specs := map[string]registry.ToolSpec{
 		"chart:o/foo": {Name: "foo", Repo: "o/charts", Version: registry.VersionSpec{
-			Scheme: version.SchemeSemver, TagPrefix: "foo-", Universe: registry.UniverseReleases,
+			Scheme: version.SchemeSemver, TagPrefixes: registry.Prefixes{"foo-"}, Universe: registry.UniverseReleases,
 		}},
 		"github:o/foo": {Name: "foo", Repo: "o/foo", Version: registry.VersionSpec{
-			Scheme: version.SchemeSemver, TagPrefix: "v", Universe: registry.UniverseReleases,
+			Scheme: version.SchemeSemver, TagPrefixes: registry.Prefixes{"v"}, Universe: registry.UniverseReleases,
 		}},
 	}
 	resolve := func(tool string) (registry.ToolSpec, error) { return specs[tool], nil }
@@ -551,4 +611,54 @@ func TestOutdatedSortsByShownName(t *testing.T) {
 	}
 	assert.Equal(t, []string{pagesChart, "chart:gpu-operator/gpu-operator", "chart:metrics-server/metrics-server"},
 		tools, "chart:aws/... sorts first, as the table shows it")
+}
+
+// TestSpec_versions_and_ranges_7: a pin that starts with one of several tag prefixes, such as
+// linkerd2's edge- and stable- lines, is compared only with the tags of its own line. A channel
+// without such a prefix stays uncomparable.
+func TestSpec_versions_and_ranges_7(t *testing.T) {
+	t.Parallel()
+	gh, _ := outdatedFixture()
+	gh.releases["o/l"] = []github.Release{
+		{Tag: "edge-24.11.9"}, {Tag: "edge-24.11.8"}, {Tag: "stable-2.14.10"}, {Tag: "stable-2.14.9"},
+	}
+	gh.recent = map[string][]github.Release{"o/l": gh.releases["o/l"]}
+	resolve := func(string) (registry.ToolSpec, error) {
+		return registry.ToolSpec{Name: "linkerd", Repo: "o/l", Version: registry.VersionSpec{
+			Scheme:      version.SchemeLoose,
+			TagPrefixes: registry.Prefixes{"", "edge-", "stable-"},
+			Universe:    registry.UniverseReleases,
+		}}, nil
+	}
+	pins := []scan.Pin{
+		pin("linkerd", "edge-24.11.8", scan.MatchChannel, ".", "mise.toml", 1),
+		pin("linkerd", "stable-2.14.9", scan.MatchChannel, ".", "mise.toml", 2),
+		pin("linkerd", "stable-2.14.10", scan.MatchChannel, ".", "mise.toml", 3),
+		pin("linkerd", "lts", scan.MatchChannel, ".", "mise.toml", 4),
+	}
+	digester := report.NewDigester(slog.New(slog.DiscardHandler), gh, nil)
+	got, err := report.NewOutdater(digester, gh).Outdated(t.Context(), report.OutdatedRequest{
+		Repos: []string{"."}, Pins: pins, Resolve: resolve, MinConfidence: 0.5, Concurrency: 1,
+	})
+	require.NoError(t, err)
+	tests := []struct {
+		current, latest string
+		status          report.Status
+		via             string
+	}{
+		{"24.11.8", "24.11.9", report.StatusOutdated, "compared with the edge- tags only"},
+		{"2.14.9", "2.14.10", report.StatusOutdated, "compared with the stable- tags only"},
+		{"2.14.10", "2.14.10", report.StatusCurrent, "compared with the stable- tags only"},
+		{"", "", report.StatusUnknown, ""},
+	}
+	require.Len(t, got.Pins, len(tests))
+	for i, tt := range tests {
+		p := got.Pins[i]
+		assert.Equal(t, tt.current, p.Current, p.Pin.Value)
+		assert.Equal(t, tt.latest, p.Latest, p.Pin.Value)
+		assert.Equal(t, tt.status, p.Status, p.Pin.Value)
+		assert.Equal(t, tt.via, p.Via, p.Pin.Value)
+		assert.Equal(t, pins[i].Match, p.Pin.Match, "the report keeps the pin as found")
+	}
+	assert.Contains(t, got.Pins[3].Note, `"lts" is a channel`)
 }
