@@ -39,6 +39,24 @@ They're never a dependency or a copy source:
 | modelcontextprotocol/go-sdk | server examples (stdio, tools, schemas) |
 | aquaproj/aqua | slog + tint, per-host HTTP handling, a large Go CLI |
 
+## Terminal output (engineering ADR-0017)
+
+| Repo | License | Why |
+|---|---|---|
+| charmbracelet/lipgloss | MIT | v2 styles, `table`, `Wrap`, and the init-time `Writer` (lipgloss#749) |
+| charmbracelet/colorprofile | MIT | `Writer` profiles and `Detect`'s env rules, which differ from no-color.org |
+| charmbracelet/x | MIT | `ansi` width and word wrap, `term.GetSize` |
+| charmbracelet/fang | MIT | cobra help styling; queries the terminal background, so not used |
+| muesli/termenv | MIT | the older detection that turns color off when `CI` is set |
+| fatih/color | MIT | stdout-only detection and the Windows VT setup |
+| jedib0t/go-pretty | MIT | the only surveyed library that reads `FORCE_COLOR` |
+| olekukonko/tablewriter | MIT | tables on `displaywidth` |
+| mattn/go-runewidth, mattn/go-colorable | MIT | locale-based East Asian width, ANSI on old consoles |
+| rivo/uniseg | MIT | grapheme clusters, compared with `displaywidth` |
+| golangci/golangci-lint | GPL-3.0, **read only** | `--color` through the global `fatih/color.NoColor` |
+| docker/cli | Apache-2.0 | a `tabwriter` fork that measures with go-runewidth; moby/term VT setup |
+| kubernetes/kubectl, kubernetes/cli-runtime | Apache-2.0 | printers that escape `ESC` in cells and check `TERM=dumb` and `NO_COLOR` per writer |
+
 ## Clone script
 
 ```sh
@@ -52,6 +70,11 @@ for r in jdx/mise aquaproj/aqua-registry renovatebot/renovate dependabot/dependa
          endoflife-date/endoflife.date golang/vuln google/osv-scanner google/osv-scalibr \
          anchore/grype anchore/syft aquasecurity/trivy npm/cli openvex/spec \
          openvex/go-vex; do clone "$r"; done
+# terminal output
+for r in charmbracelet/lipgloss charmbracelet/colorprofile charmbracelet/x charmbracelet/fang \
+         muesli/termenv fatih/color jedib0t/go-pretty olekukonko/tablewriter mattn/go-runewidth \
+         mattn/go-colorable rivo/uniseg golangci/golangci-lint docker/cli kubernetes/kubectl \
+         kubernetes/cli-runtime; do clone "$r"; done
 # Go CLI patterns
 for r in cli/cli goreleaser/goreleaser maratori/golangci-lint-config twpayne/chezmoi \
          modelcontextprotocol/go-sdk aquaproj/aqua; do clone "$r"; done
