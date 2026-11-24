@@ -57,7 +57,9 @@ that covers no tool turns an existing comment into "Nothing to report" and creat
 Release notes are full of `@user` mentions and `#123` references. The Markdown relgap writes
 puts a zero-width space after each `@` and `#` that would mention a user or reference an issue,
 and sends github.com issue links through redirect.github.com, so the comment notifies nobody.
-relgap 0.4.0 and older quote the notes as they are, so use a later release for comments.
+relgap 0.4.0 and older quote the notes as they are, and 0.5.0 to 0.13.0 miss a few cases, such
+as a mention right after a non-ASCII letter or one written as a character reference. Use 0.13.1
+or later for comments; relgap-action refuses comment mode with an older `version`.
 
 The token needs `pull-requests: write`. Pull requests from forks and from Dependabot get a
 read-only `GITHUB_TOKEN`, so the workflow skips the comment for them and writes the step summary
